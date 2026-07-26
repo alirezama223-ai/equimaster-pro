@@ -1,0 +1,158 @@
+import Image from "next/image";
+import { formatListingPrice } from "@/app/lib/listing-validation";
+import { ListingFormData, ListingImage } from "@/app/types/listing";
+
+type Props = {
+  data: ListingFormData;
+  images: ListingImage[];
+  videoFile: File | null;
+  videoPreviewUrl: string | null;
+  existingVideoUrl?: string | null;
+};
+
+export default function ListingPreview({
+  data,
+  images,
+  videoFile,
+  videoPreviewUrl,
+  existingVideoUrl,
+}: Props) {
+  const coverImage =
+    images.find((image) => image.isCover) ?? images[0] ?? null;
+
+  return (
+    <div className="space-y-8">
+      <div className="rounded-3xl overflow-hidden border border-white/10 bg-[#111827]">
+        {coverImage ? (
+          <div className="relative h-80">
+            <Image
+              src={coverImage.previewUrl}
+              alt={data.name}
+              fill
+              unoptimized
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-blue-400 uppercase tracking-[4px] text-xs font-semibold">
+                Listing Preview
+              </p>
+              <h2 className="text-4xl font-black text-white mt-2">{data.name}</h2>
+              <p className="text-gray-300 mt-2">
+                {data.breed} · {data.country}
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="p-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <PreviewStat label="Age" value={`${data.age} yrs`} />
+              <PreviewStat label="Height" value={`${data.height} cm`} />
+              <PreviewStat label="Gender" value={data.gender} />
+              <PreviewStat label="Color" value={data.color} />
+              <PreviewStat label="Discipline" value={data.discipline} />
+              <PreviewStat label="Level" value={data.level} />
+              <PreviewStat label="Sire" value={data.sire} />
+              <PreviewStat label="Dam" value={data.dam} />
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-white mb-3">Description</h3>
+              <p className="text-gray-300 leading-7 whitespace-pre-wrap">
+                {data.description}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-white mb-3">Pedigree</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <PreviewStat label="Sire" value={data.sire} />
+                <PreviewStat label="Dam" value={data.dam} />
+                <PreviewStat label="Dam Sire" value={data.damSire} />
+              </div>
+            </div>
+
+            {images.length > 1 ? (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-3">Gallery</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {images.map((image) => (
+                    <div
+                      key={image.id}
+                      className="relative h-28 overflow-hidden rounded-2xl border border-white/10"
+                    >
+                      <Image
+                        src={image.previewUrl}
+                        alt="Listing gallery preview"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {videoPreviewUrl || existingVideoUrl || data.videoUrl ? (
+              <div>
+                <h3 className="text-xl font-bold text-white mb-3">Video</h3>
+                {videoPreviewUrl ? (
+                  <video
+                    src={videoPreviewUrl}
+                    controls
+                    className="w-full rounded-2xl border border-white/10"
+                  />
+                ) : existingVideoUrl ? (
+                  <video
+                    src={existingVideoUrl}
+                    controls
+                    className="w-full rounded-2xl border border-white/10"
+                  />
+                ) : (
+                  <p className="text-blue-300 break-all">{data.videoUrl}</p>
+                )}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-8">
+              <p className="text-gray-200 text-sm uppercase tracking-wide">Price</p>
+              <p className="text-5xl font-black text-white mt-2">
+                {formatListingPrice(data)}
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#08111F] border border-white/10 p-6 space-y-4">
+              <h3 className="text-xl font-bold text-white">Seller Contact</h3>
+              <PreviewStat label="Name" value={data.sellerName} />
+              <PreviewStat label="Email" value={data.email} />
+              <PreviewStat label="Phone" value={data.phone} />
+              {data.stableName ? (
+                <PreviewStat label="Stable / Company" value={data.stableName} />
+              ) : null}
+            </div>
+
+            {videoFile ? (
+              <p className="text-sm text-gray-400">
+                Video file selected: {videoFile.name}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PreviewStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-[#08111F] border border-white/5 p-4">
+      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
+      <p className="text-white font-semibold mt-2">{value}</p>
+    </div>
+  );
+}

@@ -1,0 +1,71 @@
+export type ListingStatus = "active" | "draft" | "sold" | "archived";
+
+export type HorseListingImageMeta = {
+  name: string;
+  isCover: boolean;
+  size: number;
+  type: string;
+  storagePath?: string;
+  publicUrl?: string;
+};
+
+export type HorseListingRow = {
+  id: string;
+  user_id: string;
+  name: string;
+  breed: string;
+  gender: "Mare" | "Stallion" | "Gelding";
+  age: number;
+  height: number;
+  color: string;
+  country: string;
+  discipline: string;
+  level: string;
+  price: number | null;
+  price_on_request: boolean;
+  sire: string;
+  dam: string;
+  dam_sire: string;
+  description: string;
+  image_urls: string[];
+  cover_image_url: string | null;
+  images_meta: HorseListingImageMeta[];
+  video_url: string | null;
+  video_file_name: string | null;
+  seller_name: string;
+  seller_email: string;
+  seller_phone: string;
+  stable_name: string | null;
+  verified: boolean;
+  status: ListingStatus;
+  pedigree_horse_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CreateHorseListingInput = {
+  name: string;
+  breed: string;
+  gender: "Mare" | "Stallion" | "Gelding";
+  age: number;
+  height: number;
+  color: string;
+  country: string;
+  discipline: string;
+  level: string;
+  price: number | null;
+  price_on_request: boolean;
+  sire: string;
+  dam: string;
+  dam_sire: string;
+  description: string;
+  image_urls: string[];
+  cover_image_url: string | null;
+  images_meta: HorseListingImageMeta[];
+  video_url: string | null;
+  video_file_name: string | null;
+  seller_name: string;
+  seller_email: string;
+  seller_phone: string;
+  stable_name: string | null;
+};

@@ -1,0 +1,70 @@
+import HorseCard from "./HorseCard";
+import FadeUp from "../animations/FadeUp";
+import { Horse } from "@/app/data/horses";
+
+type Props = {
+  horses: Horse[];
+  favoriteListingIds?: string[];
+};
+
+export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Props) {
+  return (
+    <section className="bg-[#08111F] py-32">
+      <div className="max-w-7xl mx-auto px-6">
+
+        <FadeUp>
+          <div className="text-center mb-16">
+
+            <p className="uppercase tracking-[6px] text-blue-500 text-sm font-semibold">
+              Premium Collection
+            </p>
+
+            <h2 className="mt-4 text-6xl font-black text-white">
+              Featured Horses
+            </h2>
+
+            <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-400">
+              Discover Europe&apos;s finest show jumping horses selected from trusted
+              breeders and professional riders.
+            </p>
+
+          </div>
+        </FadeUp>
+
+        {horses.length === 0 ? (
+          <div className="text-center py-20">
+
+            <div className="text-7xl mb-6">
+              🐴
+            </div>
+
+            <h3 className="text-3xl font-bold text-white">
+              No horses found
+            </h3>
+
+            <p className="text-gray-400 mt-4">
+              Try changing your search.
+            </p>
+
+          </div>
+        ) : (
+          <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+            {horses.map((horse) => (
+              <FadeUp key={horse.listingUuid ?? horse.id}>
+                <HorseCard
+                  horse={horse}
+                  isFavorited={
+                    horse.listingUuid
+                      ? favoriteListingIds.includes(horse.listingUuid)
+                      : false
+                  }
+                />
+              </FadeUp>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </section>
+  );
+}
