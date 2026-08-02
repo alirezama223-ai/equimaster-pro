@@ -1,12 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { saveBreederProfile, deleteBreederProfile } from "@/app/actions/breeders";
 import BreederMediaSection from "@/app/components/account/BreederMediaSection";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
+import SearchableSelect from "@/app/components/shared/SearchableSelect";
+import SearchableMultiSelect from "@/app/components/shared/SearchableMultiSelect";
+import { getCountrySelectOptions } from "@/app/lib/constants/countries";
+import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
 import { resolveOwnedStoragePath } from "@/app/lib/breeder-image-storage";
+import { normalizeDisciplines } from "@/app/lib/breeders";
 import {
   BreederFormData,
   BreederImageFieldState,
@@ -16,6 +22,9 @@ import {
   initialBreederFormData,
   initialBreederImageFieldState,
 } from "@/app/types/breeder";
+
+const countryOptions = getCountrySelectOptions();
+const disciplineOptions = getDisciplineSelectOptions();
 
 type Props = {
   breeder: BreederRow | null;
@@ -31,7 +40,7 @@ function rowToForm(row: BreederRow): BreederFormData {
     website: row.website ?? "",
     email: row.email ?? "",
     phone: row.phone ?? "",
-    disciplines: Array.isArray(row.disciplines) ? row.disciplines.join(", ") : "",
+    disciplines: normalizeDisciplines(row.disciplines),
   };
 }
 
@@ -77,6 +86,8 @@ function buildMediaPayload(state: BreederImageFieldState): BreederMediaPayload {
 }
 
 export default function MyBreederSection({ breeder: initialBreeder, ownerId }: Props) {
+  const t = useTranslations("account.breeder");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [form, setForm] = useState<BreederFormData>(
     initialBreeder ? rowToForm(initialBreeder) : initialBreederFormData
@@ -146,7 +157,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
       return;
     }
 
-    setSuccess(initialBreeder ? "Stud farm profile updated." : "Stud farm profile created.");
+    setSuccess(initialBreeder ? t("updatedSuccess") : t("createdSuccess"));
     setShowForm(false);
     setPending(false);
     router.refresh();
@@ -154,7 +165,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
 
   async function handleDelete() {
     if (!initialBreeder) return;
-    const confirmed = window.confirm("Delete your stud farm profile and all associated stallions?");
+    const confirmed = window.confirm(t("deleteConfirm"));
     if (!confirmed) return;
 
     setPending(true);
@@ -177,10 +188,8 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
     <div className="rounded-3xl bg-[#111827] border border-white/10 p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">My Stud Farm / Breeder Profile</h2>
-          <p className="mt-2 text-gray-400 text-sm">
-            Manage your public stud farm profile and contact details.
-          </p>
+          <h2 className="text-xl font-bold text-white">{t("title")}</h2>
+          <p className="mt-2 text-gray-400 text-sm">{t("subtitle")}</p>
         </div>
 
         {initialBreeder && !showForm ? (
@@ -189,7 +198,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
             onClick={() => setShowForm(true)}
             className="rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-white font-semibold transition"
           >
-            Edit Profile
+            {t("editProfile")}
           </button>
         ) : null}
       </div>
@@ -203,18 +212,18 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
               {initialBreeder.country}
             </p>
           </div>
-          <a
+          <Link
             href={`/breeders/${initialBreeder.id}`}
             className="inline-block text-blue-400 hover:text-blue-300 text-sm"
           >
-            View public profile →
-          </a>
+            {t("viewPublicProfile")}
+          </Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          <FormSection title="Stud Farm Details" subtitle="This information appears on your public breeder profile.">
+          <FormSection title={t("studFarmDetails")} subtitle={t("studFarmDetailsSubtitle")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Stud Farm Name" required className="sm:col-span-2">
+              <FormField label={t("studFarmName")} required className="sm:col-span-2">
                 <input
                   type="text"
                   value={form.name}
@@ -224,17 +233,18 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                 />
               </FormField>
 
-              <FormField label="Country" required>
-                <input
-                  type="text"
+              <FormField label={t("country")} required>
+                <SearchableSelect
                   value={form.country}
-                  onChange={(e) => updateField("country", e.target.value)}
-                  className={sellInputClassName}
+                  onChange={(value) => updateField("country", value)}
+                  options={countryOptions}
+                  placeholder={t("searchCountries")}
                   required
+                  inputClassName={sellInputClassName}
                 />
               </FormField>
 
-              <FormField label="City">
+              <FormField label={t("city")}>
                 <input
                   type="text"
                   value={form.city}
@@ -243,17 +253,17 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                 />
               </FormField>
 
-              <FormField label="Disciplines" className="sm:col-span-2">
-                <input
-                  type="text"
-                  value={form.disciplines}
-                  onChange={(e) => updateField("disciplines", e.target.value)}
-                  placeholder="Show Jumping, Dressage, Eventing"
-                  className={sellInputClassName}
+              <FormField label={t("disciplines")} className="sm:col-span-2">
+                <SearchableMultiSelect
+                  values={form.disciplines}
+                  onChange={(values) => updateField("disciplines", values)}
+                  options={disciplineOptions}
+                  placeholder={t("searchDisciplines")}
+                  inputClassName={sellInputClassName}
                 />
               </FormField>
 
-              <FormField label="About" className="sm:col-span-2">
+              <FormField label={t("about")} className="sm:col-span-2">
                 <textarea
                   value={form.description}
                   onChange={(e) => updateField("description", e.target.value)}
@@ -264,9 +274,9 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
             </div>
           </FormSection>
 
-          <FormSection title="Contact">
+          <FormSection title={t("contact")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Public Email">
+              <FormField label={t("publicEmail")}>
                 <input
                   type="email"
                   value={form.email}
@@ -275,7 +285,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                 />
               </FormField>
 
-              <FormField label="Public Phone">
+              <FormField label={t("publicPhone")}>
                 <input
                   type="tel"
                   value={form.phone}
@@ -284,12 +294,12 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                 />
               </FormField>
 
-              <FormField label="Website" className="sm:col-span-2">
+              <FormField label={t("website")} className="sm:col-span-2">
                 <input
                   type="url"
                   value={form.website}
                   onChange={(e) => updateField("website", e.target.value)}
-                  placeholder="https://"
+                  placeholder={t("websitePlaceholder")}
                   className={sellInputClassName}
                 />
               </FormField>
@@ -323,7 +333,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
               disabled={pending}
               className="rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 px-6 py-4 text-white font-semibold transition"
             >
-              {pending ? "Saving..." : initialBreeder ? "Save Changes" : "Create Profile"}
+              {pending ? t("saving") : initialBreeder ? t("saveChanges") : t("createProfile")}
             </button>
 
             {initialBreeder ? (
@@ -336,7 +346,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                   }}
                   className="rounded-xl border border-white/15 px-6 py-4 text-white font-semibold hover:border-blue-500 transition"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </button>
                 <button
                   type="button"
@@ -344,7 +354,7 @@ export default function MyBreederSection({ breeder: initialBreeder, ownerId }: P
                   disabled={pending}
                   className="rounded-xl border border-red-500/40 px-6 py-4 text-red-300 font-semibold hover:bg-red-500/10 transition"
                 >
-                  Delete Profile
+                  {t("deleteProfile")}
                 </button>
               </>
             ) : null}

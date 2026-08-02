@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import AdminNav from "@/app/components/admin/AdminNav";
 import AdminTraitAssessmentEditDialog, {
   AdminTraitAssessmentEditRow,
@@ -15,7 +16,6 @@ import {
 import { getTraitDefinition } from "@/app/lib/traits/constants";
 import { formatSourceType } from "@/app/lib/traits/evidence-labels";
 import { TraitSourceType } from "@/app/types/traits";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 type Props = {
@@ -42,6 +42,8 @@ export default function AdminTraitsClient({
   assessments,
   stats,
 }: Props) {
+  const t = useTranslations("admin.traits");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editingRow, setEditingRow] = useState<AdminTraitAssessmentEditRow | null>(null);
@@ -67,9 +69,9 @@ export default function AdminTraitsClient({
       <AdminNav />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Stat label="Total assessments" value={stats.total} />
-        <Stat label="Pending verification" value={stats.pending} />
-        <Stat label="Verified" value={stats.verified} />
+        <Stat label={t("totalAssessments")} value={stats.total} />
+        <Stat label={t("pendingVerification")} value={stats.pending} />
+        <Stat label={t("verified")} value={stats.verified} />
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -81,7 +83,7 @@ export default function AdminTraitsClient({
               filter === item ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"
             }`}
           >
-            {item.charAt(0).toUpperCase() + item.slice(1)}
+            {item === "all" ? t("filterAll") : item === "pending" ? t("filterPending") : t("filterVerified")}
           </Link>
         ))}
       </div>
@@ -93,7 +95,7 @@ export default function AdminTraitsClient({
             !sourceType ? "bg-white/10 text-white" : "border border-white/10 text-gray-400"
           }`}
         >
-          All sources
+          {t("allSources")}
         </Link>
         {SOURCE_TYPES.map((item) => (
           <Link
@@ -118,23 +120,20 @@ export default function AdminTraitsClient({
         }}
       >
         <label className="text-sm text-gray-300">
-          Filter by pedigree horse ID
+          {t("filterByHorseId")}
           <input
             name="horse"
             defaultValue={pedigreeHorseId ?? ""}
-            placeholder="uuid"
+            placeholder={t("horseIdPlaceholder")}
             className="mt-1 block w-80 max-w-full rounded-xl border border-white/10 bg-[#08111F] px-3 py-2 text-white"
           />
         </label>
         <button type="submit" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
-          Apply
+          {t("apply")}
         </button>
       </form>
 
-      <p className="text-sm text-gray-400">
-        Verification is explicit and never automatic for owner/breeder submissions. Verified status applies a
-        configured evidence-weight boost only; it does not force high confidence.
-      </p>
+      <p className="text-sm text-gray-400">{t("verificationNote")}</p>
 
       <AdminTraitAssessmentForm />
 
@@ -144,14 +143,14 @@ export default function AdminTraitsClient({
         <table className="min-w-full text-sm">
           <thead className="border-b border-white/10 text-left text-gray-400">
             <tr>
-              <th className="px-4 py-3">Horse</th>
-              <th className="px-4 py-3">Trait</th>
-              <th className="px-4 py-3">Score</th>
-              <th className="px-4 py-3">Source</th>
-              <th className="px-4 py-3">Confidence</th>
-              <th className="px-4 py-3">Verified</th>
-              <th className="px-4 py-3">Note</th>
-              <th className="px-4 py-3">Actions</th>
+              <th className="px-4 py-3">{t("horse")}</th>
+              <th className="px-4 py-3">{t("trait")}</th>
+              <th className="px-4 py-3">{t("score")}</th>
+              <th className="px-4 py-3">{t("source")}</th>
+              <th className="px-4 py-3">{t("confidence")}</th>
+              <th className="px-4 py-3">{t("verifiedCol")}</th>
+              <th className="px-4 py-3">{t("note")}</th>
+              <th className="px-4 py-3">{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -164,11 +163,11 @@ export default function AdminTraitsClient({
                 </td>
                 <td className="px-4 py-3">{getTraitDefinition(item.trait_key as never).label}</td>
                 <td className="px-4 py-3">
-                  {item.score}/5 · {item.confidence}
+                  {t("scoreValue", { score: item.score, confidence: item.confidence })}
                 </td>
                 <td className="px-4 py-3">{formatSourceType(item.source_type)}</td>
                 <td className="px-4 py-3 capitalize">{item.confidence}</td>
-                <td className="px-4 py-3">{item.verified ? "Yes" : "No"}</td>
+                <td className="px-4 py-3">{item.verified ? tCommon("yes") : tCommon("no")}</td>
                 <td className="px-4 py-3 max-w-xs truncate text-gray-400">{item.source_note ?? "—"}</td>
                 <td className="px-4 py-3 space-x-2">
                   <button
@@ -187,10 +186,10 @@ export default function AdminTraitsClient({
                     }
                     className="text-xs text-blue-300 hover:text-blue-200"
                   >
-                    Edit
+                    {tCommon("edit")}
                   </button>
                   <AdminVerificationActions
-                    entityLabel="Trait assessment"
+                    entityLabel={t("entityLabel")}
                     verified={item.verified}
                     onVerify={() => setTraitAssessmentVerified(item.id, true)}
                     onUnverify={() => setTraitAssessmentVerified(item.id, false)}
@@ -206,7 +205,7 @@ export default function AdminTraitsClient({
                     }
                     className="text-xs text-red-300 hover:text-red-200"
                   >
-                    Delete
+                    {tCommon("delete")}
                   </button>
                 </td>
               </tr>

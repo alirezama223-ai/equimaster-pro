@@ -1,12 +1,16 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
+import SearchableSelect from "@/app/components/shared/SearchableSelect";
+import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
 import {
-  DISCIPLINES,
   DRESSAGE_LEVELS,
   ListingFormData,
   SHOW_JUMPING_LEVELS,
 } from "@/app/types/listing";
+
+const disciplineOptions = getDisciplineSelectOptions();
 
 type Props = {
   data: ListingFormData;
@@ -18,6 +22,7 @@ type Props = {
 };
 
 export default function SportInfoSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
   const levels =
     data.discipline === "Show Jumping"
       ? SHOW_JUMPING_LEVELS
@@ -26,36 +31,30 @@ export default function SportInfoSection({ data, errors, onChange }: Props) {
         : ["Training", "Competition Ready", "Advanced", "Professional"];
 
   return (
-    <FormSection
-      title="Sport Information"
-      subtitle="Help buyers understand the horse's discipline and competition level."
-    >
+    <FormSection title={t("sportInfo.title")} subtitle={t("sportInfo.subtitle")}>
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField
-          label="Discipline"
+          label={t("sportInfo.discipline")}
           htmlFor="discipline"
           error={errors.discipline}
           required
         >
-          <select
+          <SearchableSelect
             id="discipline"
             value={data.discipline}
-            onChange={(e) => {
-              onChange("discipline", e.target.value);
+            onChange={(value) => {
+              onChange("discipline", value);
               onChange("level", "");
             }}
-            className={sellInputClassName}
-          >
-            {DISCIPLINES.map((discipline) => (
-              <option key={discipline} value={discipline}>
-                {discipline}
-              </option>
-            ))}
-          </select>
+            options={disciplineOptions}
+            placeholder={t("sportInfo.disciplinePlaceholder")}
+            required
+            inputClassName={sellInputClassName}
+          />
         </FormField>
 
         <FormField
-          label="Competition / Training Level"
+          label={t("sportInfo.level")}
           htmlFor="level"
           error={errors.level}
           required
@@ -66,7 +65,7 @@ export default function SportInfoSection({ data, errors, onChange }: Props) {
             onChange={(e) => onChange("level", e.target.value)}
             className={sellInputClassName}
           >
-            <option value="">Select level</option>
+            <option value="">{t("sportInfo.selectLevel")}</option>
             {levels.map((level) => (
               <option key={level} value={level}>
                 {level}

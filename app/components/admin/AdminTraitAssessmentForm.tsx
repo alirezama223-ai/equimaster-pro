@@ -1,7 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import {
   searchAdminPedigreeHorsesForTraits,
   submitAdminTraitAssessment,
@@ -26,6 +27,7 @@ type SelectedHorse = {
 };
 
 export default function AdminTraitAssessmentForm() {
+  const t = useTranslations("admin.traits");
   const router = useRouter();
   const [horseQuery, setHorseQuery] = useState("");
   const [horseResults, setHorseResults] = useState<SelectedHorse[]>([]);
@@ -79,7 +81,7 @@ export default function AdminTraitAssessmentForm() {
     setMessage(null);
 
     if (!pedigreeHorseId) {
-      setMessage("Select a horse from search results or enter a valid pedigree horse UUID.");
+      setMessage(t("selectHorseError"));
       return;
     }
 
@@ -94,11 +96,11 @@ export default function AdminTraitAssessmentForm() {
       });
 
       if (result.success) {
-        setMessage("Admin assessment recorded. It is not automatically verified.");
+        setMessage(t("assessmentRecorded"));
         setSourceNote("");
         router.refresh();
       } else {
-        setMessage(result.error ?? "Submission failed.");
+        setMessage(result.error ?? t("submissionFailed"));
       }
     });
   }
@@ -106,20 +108,18 @@ export default function AdminTraitAssessmentForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl border border-white/10 bg-[#111827] p-6 space-y-5">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Admin Structured Evidence</p>
-        <h3 className="mt-2 text-xl font-bold text-white">Add trait assessment</h3>
-        <p className="mt-2 text-sm text-gray-400">
-          Admin-only source types. Verification remains a separate explicit review step.
-        </p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("formEyebrow")}</p>
+        <h3 className="mt-2 text-xl font-bold text-white">{t("formTitle")}</h3>
+        <p className="mt-2 text-sm text-gray-400">{t("formSubtitle")}</p>
       </div>
 
       <div className="space-y-3">
         <label className="block text-sm text-gray-300">
-          Search pedigree horse
+          {t("searchHorse")}
           <input
             value={horseQuery}
             onChange={(event) => handleHorseQueryChange(event.target.value)}
-            placeholder="Type horse name (min 2 characters)"
+            placeholder={t("searchHorsePlaceholder")}
             className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
           />
         </label>
@@ -150,29 +150,29 @@ export default function AdminTraitAssessmentForm() {
         ) : null}
 
         <label className="block text-sm text-gray-300">
-          Or pedigree horse UUID
+          {t("orHorseUuid")}
           <input
             value={manualHorseId}
             onChange={(event) => {
               setManualHorseId(event.target.value);
               setSelectedHorse(null);
             }}
-            placeholder="uuid"
+            placeholder={t("horseIdPlaceholder")}
             className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
           />
         </label>
 
         {selectedHorse ? (
           <p className="text-sm text-emerald-300">
-            Selected: {selectedHorse.name} ({selectedHorse.id})
+            {t("selectedHorse", { name: selectedHorse.name, id: selectedHorse.id })}
           </p>
         ) : pedigreeHorseId ? (
-          <p className="text-sm text-gray-400">Using pedigree ID: {pedigreeHorseId}</p>
+          <p className="text-sm text-gray-400">{t("usingPedigreeId", { id: pedigreeHorseId })}</p>
         ) : null}
       </div>
 
       <label className="block text-sm text-gray-300">
-        Trait
+        {t("traitLabel")}
         <select
           value={traitKey}
           onChange={(event) => handleTraitChange(event.target.value as TraitKey)}
@@ -193,7 +193,7 @@ export default function AdminTraitAssessmentForm() {
       <TraitScoringGuide traitKey={traitKey} />
 
       <div>
-        <p className="text-sm text-gray-300">Score (1–5)</p>
+        <p className="text-sm text-gray-300">{t("scoreLabel")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -211,20 +211,20 @@ export default function AdminTraitAssessmentForm() {
       </div>
 
       <label className="block text-sm text-gray-300">
-        Confidence
+        {t("confidenceLabel")}
         <select
           value={confidence}
           onChange={(event) => setConfidence(event.target.value as TraitAssessmentConfidence)}
           className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="low">{t("confidenceLow")}</option>
+          <option value="medium">{t("confidenceMedium")}</option>
+          <option value="high">{t("confidenceHigh")}</option>
         </select>
       </label>
 
       <label className="block text-sm text-gray-300">
-        Evidence source type
+        {t("sourceTypeLabel")}
         <select
           value={effectiveSourceType}
           onChange={(event) => setSourceType(event.target.value as TraitSourceType)}
@@ -240,13 +240,13 @@ export default function AdminTraitAssessmentForm() {
       <p className="text-xs text-gray-500">{SOURCE_TYPE_DESCRIPTIONS[effectiveSourceType]}</p>
 
       <label className="block text-sm text-gray-300">
-        Source note (private — cite record, event, or progeny reference)
+        {t("sourceNoteLabel")}
         <textarea
           value={sourceNote}
           onChange={(event) => setSourceNote(event.target.value)}
           rows={3}
           className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
-          placeholder="e.g. competition record, inspection report URL, progeny summary"
+          placeholder={t("sourceNotePlaceholder")}
         />
       </label>
 
@@ -255,7 +255,7 @@ export default function AdminTraitAssessmentForm() {
         disabled={pending}
         className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
       >
-        {pending ? "Saving..." : "Add Assessment"}
+        {pending ? t("saving") : t("addAssessment")}
       </button>
 
       {message ? <p className="text-sm text-gray-300">{message}</p> : null}

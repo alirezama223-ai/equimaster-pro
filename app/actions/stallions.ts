@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isValidBreedName } from "@/app/lib/breeds";
+import { DEFAULT_DISCIPLINE } from "@/app/lib/constants/disciplines";
 import { getMyBreederProfile } from "@/app/actions/breeders";
 import { rowToBreeder } from "@/app/lib/breeders";
 import {
@@ -89,7 +91,7 @@ function buildStallionFields(form: StallionFormData, breederId: string) {
     color: form.color.trim() || "—",
     height: form.height ? Number(form.height) : null,
     country: form.country.trim(),
-    discipline: form.discipline.trim() || "Show Jumping",
+    discipline: form.discipline.trim() || DEFAULT_DISCIPLINE,
     competition_level: form.competitionLevel.trim() || "—",
     sire: form.sire.trim() || "—",
     dam: form.dam.trim() || "—",
@@ -374,6 +376,10 @@ export async function saveStallion(formData: FormData) {
 
   if (!form.name.trim() || !form.breed.trim() || !form.country.trim()) {
     return { error: "Stallion name, breed, and country are required." };
+  }
+
+  if (!isValidBreedName(form.breed)) {
+    return { error: "Select a breed from the list." };
   }
 
   const baseFields = buildStallionFields(form, breederProfile.breeder.id);

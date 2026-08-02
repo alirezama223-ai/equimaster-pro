@@ -1,0 +1,14 @@
+{
+  "title": "❤️ Mijn favorieten",
+  "emptyTitle": "Nog geen favorieten",
+  "emptyDescription": "Bewaar paarden die u aanspreken — ze verschijnen hier.",
+  "browseMarketplace": "Marktplaats bekijken",
+  "button": {
+    "removeAria": "Verwijderen uit favorieten",
+    "saveAria": "Opslaan in favorieten",
+    "saving": "Opslaan …",
+    "saved": "♥ Opgeslagen in favorieten",
+    "save": "♡ Paard opslaan",
+    "loadingIndicator": "…"
+  }
+}

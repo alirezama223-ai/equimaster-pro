@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Horse } from "@/app/data/horses";
 import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
 
@@ -13,30 +14,33 @@ type Props = {
   isAuthenticated: boolean;
 };
 
-export default function ContactSeller({
+export default async function ContactSeller({
   horse,
   returnPath,
   buyerPrefill,
   isAuthenticated,
 }: Props) {
+  const t = await getTranslations("horse");
   const canInquire = Boolean(horse.listingUuid);
+
+  const contactLine = horse.sellerName
+    ? t("contact.withSeller", {
+        seller: horse.sellerName,
+        stable: horse.stableName
+          ? t("contact.atStable", { stable: horse.stableName })
+          : "",
+      })
+    : t("contact.generic");
 
   return (
     <section className="bg-[#111827] rounded-3xl p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
       <div>
-        <h2 className="text-3xl font-bold">Interested in {horse.name}?</h2>
+        <h2 className="text-3xl font-bold">{t("contact.title", { name: horse.name })}</h2>
 
-        <p className="text-gray-400 mt-2">
-          {horse.sellerName
-            ? `Contact ${horse.sellerName}${horse.stableName ? ` at ${horse.stableName}` : ""} for more information.`
-            : "Contact the seller for more information."}
-        </p>
+        <p className="text-gray-400 mt-2">{contactLine}</p>
 
         {canInquire ? (
-          <p className="text-sm text-gray-500 mt-3">
-            Send a private inquiry through EquiMaster Pro. Your message is shared
-            only with the seller.
-          </p>
+          <p className="text-sm text-gray-500 mt-3">{t("contact.privateInquiry")}</p>
         ) : null}
 
         {horse.sellerEmail || horse.sellerPhone ? (
@@ -60,12 +64,12 @@ export default function ContactSeller({
         <a
           href={
             horse.sellerEmail
-              ? `mailto:${horse.sellerEmail}?subject=${encodeURIComponent(`Inquiry about ${horse.name}`)}`
+              ? `mailto:${horse.sellerEmail}?subject=${encodeURIComponent(t("contact.mailSubject", { name: horse.name }))}`
               : undefined
           }
           className={`bg-blue-600 px-8 py-4 rounded-xl whitespace-nowrap ${horse.sellerEmail ? "hover:bg-blue-500 transition" : "opacity-60 pointer-events-none"}`}
         >
-          Contact Seller
+          {t("contact.contactSeller")}
         </a>
       )}
     </section>

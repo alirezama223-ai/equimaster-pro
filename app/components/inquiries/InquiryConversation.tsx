@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { sendInquiryReply } from "@/app/actions/inquiry-messages";
 import { buildConversationMessages } from "@/app/lib/inquiry-conversation";
 import { REPLY_MESSAGE_MAX } from "@/app/types/inquiry";
@@ -43,6 +44,7 @@ export default function InquiryConversation({
   sellerName,
   onReplySent,
 }: Props) {
+  const t = useTranslations("inquiries");
   const [messages, setMessages] = useState(inquiry.messages);
   const [replyText, setReplyText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export default function InquiryConversation({
       if (result.data) {
         setMessages((current) => [...current, result.data!]);
         setReplyText("");
-        setSuccess("Reply sent successfully.");
+        setSuccess(t("conversation.replySent"));
         const nextStatus =
           viewerRole === "seller"
             ? "replied"
@@ -102,12 +104,12 @@ export default function InquiryConversation({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-gray-500">Conversation about</p>
+          <p className="text-sm text-gray-500">{t("conversation.about")}</p>
           <Link
             href={`/horse/${inquiry.horse_listing_id}`}
             className="text-blue-400 hover:text-blue-300 font-semibold transition"
           >
-            {inquiry.horse_name} → View Listing
+            {t("conversation.viewListing", { horseName: inquiry.horse_name })}
           </Link>
         </div>
       </div>
@@ -133,7 +135,7 @@ export default function InquiryConversation({
                     {entry.sender_name}
                   </span>
                   <span className="text-xs uppercase tracking-wide text-gray-500">
-                    {entry.sender_role === "seller" ? "Seller" : "Buyer"}
+                    {entry.sender_role === "seller" ? t("conversation.seller") : t("conversation.buyer")}
                   </span>
                 </div>
                 <p className="text-gray-200 whitespace-pre-wrap leading-7">
@@ -150,13 +152,12 @@ export default function InquiryConversation({
 
       {inquiry.status === "archived" ? (
         <p className="text-sm text-gray-500">
-          This conversation is archived. Unarchive it from inquiry actions to
-          send more messages.
+          {t("conversation.archivedNotice")}
         </p>
       ) : (
         <form className="space-y-3" onSubmit={handleSendReply}>
           <label htmlFor={`reply-${inquiry.id}`} className="block text-sm text-gray-300">
-            {viewerRole === "seller" ? "Reply to buyer" : "Reply to seller"}
+            {viewerRole === "seller" ? t("conversation.replyToBuyer") : t("conversation.replyToSeller")}
           </label>
           <textarea
             id={`reply-${inquiry.id}`}
@@ -168,7 +169,7 @@ export default function InquiryConversation({
               setSuccess(null);
             }}
             maxLength={REPLY_MESSAGE_MAX}
-            placeholder="Write your reply..."
+            placeholder={t("conversation.replyPlaceholder")}
             className="w-full rounded-xl bg-[#08111F] border border-white/10 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-y"
           />
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -180,7 +181,7 @@ export default function InquiryConversation({
               disabled={isSending}
               className="rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-3 text-white font-semibold transition"
             >
-              {isSending ? "Sending..." : "Send Reply"}
+              {isSending ? t("conversation.sending") : t("conversation.sendReply")}
             </button>
           </div>
         </form>

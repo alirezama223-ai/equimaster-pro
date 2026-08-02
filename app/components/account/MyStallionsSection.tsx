@@ -1,13 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import { Link, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { deleteStallion, saveStallion } from "@/app/actions/stallions";
 import StallionMediaSection from "@/app/components/account/StallionMediaSection";
+import SearchableSelect from "@/app/components/shared/SearchableSelect";
 import FormField, { sellInputClassName, sellLabelClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
+import { getBreedSelectOptions } from "@/app/lib/breeds";
+import { getCountrySelectOptions } from "@/app/lib/constants/countries";
+import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
 import { revokeListingImages } from "@/app/lib/listing-media";
 import { formatStudFee, getStallionCoverUrl, stallionImagesFromRow } from "@/app/lib/stallions";
 import { ListingImage } from "@/app/types/listing";
@@ -19,6 +23,10 @@ import {
   StallionRow,
   STALLION_AVAILABILITY_LABELS,
 } from "@/app/types/stallion";
+
+const countryOptions = getCountrySelectOptions();
+const disciplineOptions = getDisciplineSelectOptions();
+const breedOptions = getBreedSelectOptions();
 
 type Props = {
   stallions: StallionRow[];
@@ -55,6 +63,8 @@ export default function MyStallionsSection({
   breederId,
   ownerId,
 }: Props) {
+  const t = useTranslations("account.stallions");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -124,13 +134,13 @@ export default function MyStallionsSection({
     setMediaError(null);
 
     if (images.length === 0) {
-      setMediaError("Add at least one stallion photo.");
+      setMediaError(t("photoRequired"));
       setPending(false);
       return;
     }
 
     if (!images.some((image) => image.isCover)) {
-      setMediaError("Select a cover image.");
+      setMediaError(t("coverRequired"));
       setPending(false);
       return;
     }
@@ -216,7 +226,7 @@ export default function MyStallionsSection({
   }
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm("Delete this stallion permanently?");
+    const confirmed = window.confirm(t("deleteConfirm"));
     if (!confirmed) return;
 
     setPending(true);
@@ -234,9 +244,9 @@ export default function MyStallionsSection({
   if (!hasBreederProfile) {
     return (
       <div className="rounded-3xl bg-[#111827] border border-white/10 p-6">
-        <h2 className="text-xl font-bold text-white">My Stallions</h2>
+        <h2 className="text-xl font-bold text-white">{t("title")}</h2>
         <p className="mt-3 text-gray-400 leading-7">
-          Create your stud farm profile first, then you can add stallions to the directory.
+          {t("needBreederProfile")}
         </p>
       </div>
     );
@@ -246,9 +256,9 @@ export default function MyStallionsSection({
     <div className="rounded-3xl bg-[#111827] border border-white/10 p-6 md:col-span-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">My Stallions</h2>
+          <h2 className="text-xl font-bold text-white">{t("title")}</h2>
           <p className="mt-2 text-gray-400 text-sm">
-            Manage stallions shown in the public directory.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -258,7 +268,7 @@ export default function MyStallionsSection({
             onClick={startCreate}
             className="rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-white font-semibold transition"
           >
-            Add Stallion
+            {t("addStallion")}
           </button>
         ) : null}
       </div>
@@ -271,9 +281,9 @@ export default function MyStallionsSection({
 
       {showForm ? (
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          <FormSection title={editingId ? "Edit Stallion" : "New Stallion"}>
+          <FormSection title={editingId ? t("editStallion") : t("newStallion")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Name" required className="sm:col-span-2">
+              <FormField label={t("name")} required className="sm:col-span-2">
                 <input
                   type="text"
                   value={form.name}
@@ -283,17 +293,18 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Breed" required>
-                <input
-                  type="text"
+              <FormField label={t("breed")} required>
+                <SearchableSelect
                   value={form.breed}
-                  onChange={(e) => updateField("breed", e.target.value)}
-                  className={sellInputClassName}
+                  onChange={(value) => updateField("breed", value)}
+                  options={breedOptions}
+                  placeholder={t("searchBreeds")}
                   required
+                  inputClassName={sellInputClassName}
                 />
               </FormField>
 
-              <FormField label="Studbook">
+              <FormField label={t("studbook")}>
                 <input
                   type="text"
                   value={form.studbook}
@@ -302,7 +313,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Birth Year">
+              <FormField label={t("birthYear")}>
                 <input
                   type="number"
                   value={form.birthYear}
@@ -311,7 +322,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Color">
+              <FormField label={t("color")}>
                 <input
                   type="text"
                   value={form.color}
@@ -320,7 +331,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Height (cm)">
+              <FormField label={t("heightCm")}>
                 <input
                   type="number"
                   value={form.height}
@@ -329,26 +340,28 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Country" required>
-                <input
-                  type="text"
+              <FormField label={t("country")} required>
+                <SearchableSelect
                   value={form.country}
-                  onChange={(e) => updateField("country", e.target.value)}
-                  className={sellInputClassName}
+                  onChange={(value) => updateField("country", value)}
+                  options={countryOptions}
+                  placeholder={t("searchCountries")}
                   required
+                  inputClassName={sellInputClassName}
                 />
               </FormField>
 
-              <FormField label="Discipline">
-                <input
-                  type="text"
+              <FormField label={t("discipline")}>
+                <SearchableSelect
                   value={form.discipline}
-                  onChange={(e) => updateField("discipline", e.target.value)}
-                  className={sellInputClassName}
+                  onChange={(value) => updateField("discipline", value)}
+                  options={disciplineOptions}
+                  placeholder={t("searchDisciplines")}
+                  inputClassName={sellInputClassName}
                 />
               </FormField>
 
-              <FormField label="Competition Level">
+              <FormField label={t("competitionLevel")}>
                 <input
                   type="text"
                   value={form.competitionLevel}
@@ -359,9 +372,9 @@ export default function MyStallionsSection({
             </div>
           </FormSection>
 
-          <FormSection title="Pedigree">
+          <FormSection title={t("pedigree")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Sire">
+              <FormField label={t("sire")}>
                 <input
                   type="text"
                   value={form.sire}
@@ -370,7 +383,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Dam">
+              <FormField label={t("dam")}>
                 <input
                   type="text"
                   value={form.dam}
@@ -379,7 +392,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Dam Sire" className="sm:col-span-2">
+              <FormField label={t("damSire")} className="sm:col-span-2">
                 <input
                   type="text"
                   value={form.damSire}
@@ -390,9 +403,9 @@ export default function MyStallionsSection({
             </div>
           </FormSection>
 
-          <FormSection title="Breeding">
+          <FormSection title={t("breeding")}>
             <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Stud Fee">
+              <FormField label={t("studFee")}>
                 <input
                   type="number"
                   min="0"
@@ -402,7 +415,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Currency">
+              <FormField label={t("currency")}>
                 <select
                   value={form.studFeeCurrency}
                   onChange={(e) => updateField("studFeeCurrency", e.target.value)}
@@ -414,7 +427,7 @@ export default function MyStallionsSection({
                 </select>
               </FormField>
 
-              <FormField label="Availability">
+              <FormField label={t("availability")}>
                 <select
                   value={form.availability}
                   onChange={(e) =>
@@ -433,7 +446,7 @@ export default function MyStallionsSection({
               </FormField>
 
               <div className="sm:col-span-2">
-                <p className={sellLabelClassName}>Breeding Methods</p>
+                <p className={sellLabelClassName}>{t("breedingMethods")}</p>
                 <div className="flex flex-wrap gap-3">
                   {BREEDING_METHODS.map((method) => (
                     <label
@@ -453,9 +466,9 @@ export default function MyStallionsSection({
             </div>
           </FormSection>
 
-          <FormSection title="Content">
+          <FormSection title={t("content")}>
             <div className="grid gap-5">
-              <FormField label="Description">
+              <FormField label={t("description")}>
                 <textarea
                   value={form.description}
                   onChange={(e) => updateField("description", e.target.value)}
@@ -464,7 +477,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Performance / Competition Record">
+              <FormField label={t("performance")}>
                 <textarea
                   value={form.performance}
                   onChange={(e) => updateField("performance", e.target.value)}
@@ -473,7 +486,7 @@ export default function MyStallionsSection({
                 />
               </FormField>
 
-              <FormField label="Breeding Highlights">
+              <FormField label={t("breedingHighlights")}>
                 <textarea
                   value={form.breedingHighlights}
                   onChange={(e) => updateField("breedingHighlights", e.target.value)}
@@ -497,7 +510,7 @@ export default function MyStallionsSection({
               disabled={pending}
               className="rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 px-6 py-4 text-white font-semibold transition"
             >
-              {pending ? "Saving..." : editingId ? "Save Stallion" : "Create Stallion"}
+              {pending ? t("saving") : editingId ? t("saveStallion") : t("createStallion")}
             </button>
             <button
               type="button"
@@ -508,13 +521,13 @@ export default function MyStallionsSection({
               }}
               className="rounded-xl border border-white/15 px-6 py-4 text-white font-semibold hover:border-blue-500 transition"
             >
-              Cancel
+              {tCommon("cancel")}
             </button>
           </div>
         </form>
       ) : stallions.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-8 text-center text-gray-500">
-          No stallions yet. Add your first stallion to appear in the directory.
+          {t("empty")}
         </div>
       ) : (
         <div className="mt-6 space-y-4">
@@ -541,7 +554,7 @@ export default function MyStallionsSection({
                     href={`/stallions/${row.id}`}
                     className="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block"
                   >
-                    View public profile →
+                    {t("viewPublicProfile")}
                   </Link>
                 </div>
               </div>
@@ -552,7 +565,7 @@ export default function MyStallionsSection({
                   onClick={() => startEdit(row)}
                   className="rounded-xl border border-white/15 px-4 py-2 text-white hover:border-blue-500 transition"
                 >
-                  Edit
+                  {tCommon("edit")}
                 </button>
                 <button
                   type="button"
@@ -560,7 +573,7 @@ export default function MyStallionsSection({
                   disabled={pending}
                   className="rounded-xl border border-red-500/40 px-4 py-2 text-red-300 hover:bg-red-500/10 transition"
                 >
-                  Delete
+                  {tCommon("delete")}
                 </button>
               </div>
             </div>

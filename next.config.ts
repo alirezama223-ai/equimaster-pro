@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 function getSupabaseImageHostname(): string | undefined {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,4 +48,4 @@ const nextConfig: NextConfig = {
     : undefined,
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

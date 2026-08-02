@@ -1,0 +1,59 @@
+{
+  "profile": {
+    "eyebrow": "Trait Profile",
+    "title": "Structured Evidence Summary",
+    "subtitle": "Based on available structured assessments only. Missing traits remain unknown.",
+    "overallConfidence": "Overall confidence: {level}",
+    "strengths": "Strengths",
+    "improvementAreas": "Potential improvement areas",
+    "insufficientEvidence": "Insufficient evidence",
+    "noneWithEvidence": "None with sufficient evidence.",
+    "allHaveEvidence": "All listed traits have some evidence.",
+    "sources": "{count} source(s)",
+    "verifiedCount": "{count} verified",
+    "conflictingEvidence": "conflicting evidence",
+    "evidenceInsufficient": "Evidence exists but confidence is insufficient to assess",
+    "insufficientData": "Insufficient Data"
+  },
+  "management": {
+    "profileTab": "Aggregated Profile",
+    "submitTab": "Add Assessment",
+    "historyTab": "Evidence History"
+  },
+  "form": {
+    "eyebrow": "Trait Evidence Submission",
+    "title": "Add assessment for {horseName}",
+    "sourceClassification": "Source classification: {sourceLabel}. Submissions are never auto-verified. Admins may review evidence separately.",
+    "defaultSourceLabel": "Owner/Breeder reported",
+    "traitLabel": "Trait category & trait",
+    "scoreLabel": "Score (1–5)",
+    "confidenceLabel": "Your confidence in this assessment",
+    "confidenceLow": "Low",
+    "confidenceMedium": "Medium",
+    "confidenceHigh": "High",
+    "sourceNoteLabel": "Source note (optional, private to managers/admins)",
+    "sourceNotePlaceholder": "e.g. observed in training, breeder evaluation, competition context",
+    "submitting": "Submitting...",
+    "submit": "Submit Assessment",
+    "successMessage": "Assessment submitted. It is not automatically verified and will be aggregated with other evidence.",
+    "submitFailed": "Submission failed."
+  },
+  "scoringGuide": {
+    "guidanceLabel": "Scoring guidance (structured assessment — not a scientific guarantee)",
+    "scoreEntry": "{score}/5 — {guidance}",
+    "evidenceNature": "Evidence nature: {nature}. Allowed sources for this trait include documented categories such as owner/breeder reports and admin-reviewed records."
+  },
+  "history": {
+    "empty": "No trait assessments submitted yet for this horse.",
+    "trait": "Trait",
+    "score": "Score",
+    "source": "Source",
+    "confidence": "Confidence",
+    "verified": "Verified",
+    "date": "Date",
+    "note": "Note",
+    "no": "No",
+    "delete": "Delete",
+    "footer": "Private provenance view for authorized managers only. Public pages use aggregated evidence without private notes or submitter identity."
+  }
+}

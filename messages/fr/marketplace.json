@@ -4,7 +4,7 @@
     "title": "Chevaux de sport à vendre",
     "subtitle": "Parcourez des annonces premium avec pedigree documenté, médias et contact direct avec le vendeur.",
     "searchLabel": "Recherche",
-    "searchPlaceholder": "Nom, race, discipline, pays …",
+    "searchPlaceholder": "Nom, race, père, mère, éleveur, localisation …",
     "discipline": "Discipline",
     "country": "Pays",
     "breed": "Race",
@@ -24,13 +24,30 @@
     "next": "Suivant",
     "sortOptions": {
       "newest": "Plus récentes",
+      "oldest": "Plus anciennes",
       "price-asc": "Prix : croissant",
       "price-desc": "Prix : décroissant",
       "age-asc": "Âge : plus jeunes",
       "age-desc": "Âge : plus âgés",
       "height-asc": "Taille : petite à grande",
-      "height-desc": "Taille : grande à petite"
+      "height-desc": "Taille : grande à petite",
+      "featured": "À la une"
     },
+    "trainingLevel": "Niveau d'entraînement",
+    "allTrainingLevels": "Tous les niveaux",
+    "studbook": "Stud-book",
+    "studbookPlaceholder": "KWPN, BWP, OS …",
+    "availability": "Disponibilité",
+    "allAvailability": "Toutes les annonces",
+    "availabilityPriced": "Prix affiché",
+    "availabilityOnRequest": "Prix sur demande",
+    "openFilters": "Filtres",
+    "closeFilters": "Fermer",
+    "loadingResults": "Chargement des annonces …",
+    "networkError": "Impossible de charger les annonces. Vérifiez votre connexion et réessayez.",
+    "emptyResultsTitle": "Aucun cheval trouvé",
+    "emptyErrorTitle": "Recherche indisponible",
+    "emptyErrorDescription": "Les annonces n'ont pas pu être chargées. Réessayez ou ajustez vos filtres.",
     "color": "Robe",
     "colorPlaceholder": "Bai, gris, alezan …",
     "verifiedOnly": "Vérifiés uniquement",
@@ -59,7 +76,10 @@
       "verified": "Vérifiés uniquement",
       "price": "Prix : {min}–{max}",
       "age": "Âge : {min}–{max}",
-      "height": "Taille : {min}–{max} cm"
+      "height": "Taille : {min}–{max} cm",
+      "level": "Niveau : {value}",
+      "studbook": "Stud-book : {value}",
+      "availability": "Disponibilité : {value}"
     }
   },
   "home": {

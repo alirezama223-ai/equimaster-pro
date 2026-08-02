@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import LogoutButton from "@/app/components/auth/LogoutButton";
@@ -51,6 +52,7 @@ function useAuthUser() {
 }
 
 export default function NavbarAuthControls() {
+  const t = useTranslations("nav");
   const { user, isAdmin, isLoading } = useAuthUser();
 
   if (isLoading) {
@@ -68,13 +70,13 @@ export default function NavbarAuthControls() {
           href="/signup"
           className="hidden rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white hover:text-black sm:inline-flex lg:px-4 lg:py-2"
         >
-          Sign Up
+          {t("signup")}
         </Link>
         <Link
           href="/login"
           className="inline-flex rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/20 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3"
         >
-          Login
+          {t("login")}
         </Link>
       </>
     );
@@ -87,14 +89,14 @@ export default function NavbarAuthControls() {
           href="/admin"
           className="hidden rounded-xl border border-blue-500/40 px-3 py-1.5 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10 sm:inline-flex lg:px-4 lg:py-2"
         >
-          Admin
+          {t("admin")}
         </Link>
       ) : null}
       <Link
         href="/account"
         className="hidden rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:inline-flex lg:px-4 lg:py-2"
       >
-        Account
+        {t("account")}
       </Link>
       <LogoutButton />
     </>
@@ -102,6 +104,7 @@ export default function NavbarAuthControls() {
 }
 
 export function NavbarMobileAuth() {
+  const t = useTranslations("nav");
   const { user, isAdmin, isLoading } = useAuthUser();
 
   if (isLoading) return null;
@@ -110,10 +113,10 @@ export function NavbarMobileAuth() {
     return (
       <>
         <Link href="/login" className="whitespace-nowrap hover:text-white transition md:hidden">
-          Login
+          {t("login")}
         </Link>
         <Link href="/signup" className="whitespace-nowrap hover:text-white transition sm:hidden">
-          Sign Up
+          {t("signup")}
         </Link>
       </>
     );
@@ -123,11 +126,11 @@ export function NavbarMobileAuth() {
     <>
       {isAdmin ? (
         <Link href="/admin" className="whitespace-nowrap hover:text-blue-400 transition md:hidden">
-          Admin
+          {t("admin")}
         </Link>
       ) : null}
       <Link href="/account" className="whitespace-nowrap hover:text-blue-400 transition md:hidden">
-        Account
+        {t("account")}
       </Link>
       <span className="whitespace-nowrap md:hidden">
         <LogoutButton />

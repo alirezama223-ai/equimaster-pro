@@ -109,43 +109,6 @@ export function rowToPedigreeTreeNode(row: PedigreeHorse): PedigreeTreeNode {
   };
 }
 
-export function buildLegacyPedigreeTree(fields: {
-  subjectName: string;
-  subjectSex?: PedigreeSex;
-  sire: string;
-  dam: string;
-  damSire: string;
-}): PedigreeTreeNode {
-  const damSireNode = fields.damSire.trim()
-    ? createUnknownPedigreeNode(fields.damSire.trim())
-    : createUnknownPedigreeNode();
-
-  const sireNode = fields.sire.trim()
-    ? createUnknownPedigreeNode(fields.sire.trim())
-    : createUnknownPedigreeNode();
-
-  const damNode: PedigreeTreeNode = fields.dam.trim()
-    ? {
-        ...createUnknownPedigreeNode(fields.dam.trim()),
-        sire: damSireNode.id === null ? damSireNode : damSireNode,
-      }
-    : createUnknownPedigreeNode();
-
-  if (fields.dam.trim() && fields.damSire.trim()) {
-    damNode.sire = createUnknownPedigreeNode(fields.damSire.trim());
-  }
-
-  return {
-    id: null,
-    name: fields.subjectName.trim() || UNKNOWN_PEDIGREE_LABEL,
-    sex: fields.subjectSex ?? "unknown",
-    birthYear: null,
-    verified: false,
-    sire: fields.sire.trim() ? sireNode : createUnknownPedigreeNode(),
-    dam: fields.dam.trim() ? damNode : createUnknownPedigreeNode(),
-  };
-}
-
 export function pedigreeGenerationPaths(maxGeneration: number): Array<Array<"sire" | "dam">> {
   const paths: Array<Array<"sire" | "dam">> = [[]];
 

@@ -1,7 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   deleteSavedBreedingAnalysis,
@@ -22,7 +24,6 @@ import {
   riskLevelLabel,
   scorePedigreeCompatibility,
 } from "@/app/lib/breeding-recommendations/score";
-import { BREEDING_DISCLAIMER } from "@/app/lib/breeding/constants";
 import { BreedingAnalysisReport, BreedingCandidate, SavedBreedingAnalysis } from "@/app/types/breeding";
 import { BreedingGoalAnalysisResult, MareBreedingGoals } from "@/app/types/traits";
 
@@ -41,6 +42,7 @@ export default function BreedingLabClient({
   savedAnalyses,
   isAuthenticated,
 }: Props) {
+  const t = useTranslations("breeding");
   const router = useRouter();
   const [mare, setMare] = useState<BreedingCandidate | null>(null);
   const [stallion, setStallion] = useState<BreedingCandidate | null>(null);
@@ -111,7 +113,7 @@ export default function BreedingLabClient({
       if (!mareResult.candidate) {
         setError(
           mareResult.error ??
-            "The saved mare pedigree record could not be loaded. It may have been removed or is inaccessible."
+            t("lab.errorMareLoadFailed")
         );
         setReport(null);
         setCompareReports([]);
@@ -121,7 +123,7 @@ export default function BreedingLabClient({
       if (!stallionResult.candidate) {
         setError(
           stallionResult.error ??
-            "The saved stallion pedigree record could not be loaded. It may have been removed or is inaccessible."
+            t("lab.errorStallionLoadFailed")
         );
         setReport(null);
         setCompareReports([]);
@@ -141,7 +143,7 @@ export default function BreedingLabClient({
           .filter((candidate): candidate is NonNullable<typeof candidate> => Boolean(candidate));
 
         if (extraStallions.length !== stallionPedigreeIds.length - 1) {
-          setError("One or more comparison stallion records could not be loaded.");
+          setError(t("lab.errorCompareLoadFailed"));
           setReport(null);
           setCompareReports([]);
           return false;
@@ -180,7 +182,7 @@ export default function BreedingLabClient({
       });
 
       if (response.error || !response.report) {
-        setError(response.error ?? "Analysis could not be generated.");
+        setError(response.error ?? t("lab.errorAnalysisFailed"));
         setReport(null);
         setCompareReports([]);
         return false;
@@ -230,13 +232,13 @@ export default function BreedingLabClient({
 
   function handleAnalyze() {
     if (!mare) {
-      setError("Select a mare to analyze.");
+      setError(t("lab.errorSelectMare"));
       return;
     }
 
     const stallionIds = compareMode ? compareIds : stallion ? [stallion.id] : [];
     if (stallionIds.length === 0) {
-      setError("Select at least one stallion to analyze.");
+      setError(t("lab.errorSelectStallion"));
       return;
     }
 
@@ -268,7 +270,7 @@ export default function BreedingLabClient({
         stallionPedigreeId: stallionIds[0],
       });
       if (response.error || !response.report) {
-        setError(response.error ?? "Analysis could not be generated.");
+        setError(response.error ?? t("lab.errorAnalysisFailed"));
         setReport(null);
         setCompareReports([]);
         return;
@@ -327,11 +329,10 @@ export default function BreedingLabClient({
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-blue-400">Breeding Decision Support</p>
-        <h1 className="mt-2 text-4xl sm:text-5xl font-black text-white">Breeding Lab</h1>
+        <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("lab.eyebrow")}</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl font-black text-white">{t("lab.title")}</h1>
         <p className="mt-3 max-w-3xl text-gray-400">
-          Mare × Stallion pedigree analysis for common ancestors, linebreeding patterns, close relationship
-          warnings, and data confidence. Deterministic and explainable — not a genetic prediction tool.
+          {t("lab.subtitle")}
         </p>
       </div>
 
@@ -343,7 +344,7 @@ export default function BreedingLabClient({
             !compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"
           }`}
         >
-          Single cross analysis
+          {t("lab.singleCross")}
         </button>
         <button
           type="button"
@@ -352,13 +353,13 @@ export default function BreedingLabClient({
             compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"
           }`}
         >
-          Compare up to 3 stallions
+          {t("lab.compareStallions")}
         </button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <PedigreeHorseSelector
-          label="Left column"
+          label={t("lab.leftColumn")}
           sex="mare"
           selected={mare}
           onSelect={(candidate) => {
@@ -368,7 +369,7 @@ export default function BreedingLabClient({
           initialId={initialMareId}
         />
         <PedigreeHorseSelector
-          label="Right column"
+          label={t("lab.rightColumn")}
           sex="stallion"
           selected={stallion}
           onSelect={setStallion}
@@ -382,13 +383,13 @@ export default function BreedingLabClient({
 
       {compareMode ? (
         <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-          <h3 className="text-xl font-bold text-white">Additional stallions for comparison</h3>
-          <p className="mt-2 text-sm text-gray-400">Add up to two more stallions beside the primary selection.</p>
+          <h3 className="text-xl font-bold text-white">{t("lab.additionalStallionsTitle")}</h3>
+          <p className="mt-2 text-sm text-gray-400">{t("lab.additionalStallionsSubtitle")}</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {[0, 1].map((index) => (
               <PedigreeHorseSelector
                 key={index}
-                label={`Compare stallion ${index + 2}`}
+                label={t("lab.compareStallionN", { n: index + 2 })}
                 sex="stallion"
                 selected={compareStallions[index] ?? null}
                 onSelect={(candidate) => {
@@ -416,7 +417,7 @@ export default function BreedingLabClient({
           disabled={pending}
           className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
         >
-          {pending ? "Analyzing..." : "Generate Pedigree Analysis"}
+          {pending ? t("analyzing") : t("lab.generateAnalysis")}
         </button>
         {report && isAuthenticated && !compareMode ? (
           <button
@@ -425,7 +426,7 @@ export default function BreedingLabClient({
             disabled={pending}
             className="rounded-xl border border-white/15 px-6 py-3 font-semibold text-white hover:border-blue-500"
           >
-            Save analysis
+            {t("lab.saveAnalysis")}
           </button>
         ) : null}
       </div>
@@ -446,7 +447,7 @@ export default function BreedingLabClient({
             pedigreeRiskLabel={
               pedigreeScoreBreakdown
                 ? riskLevelLabel(classifyRecommendationRisk(report))
-                : "INSUFFICIENT DATA"
+                : t("lab.insufficientDataRisk")
             }
             pedigreeCompatibilityScore={
               pedigreeScoreBreakdown?.scoreAvailable ? pedigreeScoreBreakdown.total : null
@@ -460,12 +461,12 @@ export default function BreedingLabClient({
 
       {isAuthenticated ? (
         <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-          <h3 className="text-2xl font-bold text-white">Saved analyses</h3>
+          <h3 className="text-2xl font-bold text-white">{t("lab.savedAnalysesTitle")}</h3>
           <p className="mt-2 text-sm text-gray-400">
-            Saved references recompute from current pedigree data when reopened.
+            {t("lab.savedAnalysesSubtitle")}
           </p>
           {saved.length === 0 ? (
-            <p className="mt-4 text-gray-500">No saved analyses yet.</p>
+            <p className="mt-4 text-gray-500">{t("lab.noSavedAnalyses")}</p>
           ) : (
             <div className="mt-4 space-y-3">
               {saved.map((item) => (
@@ -488,14 +489,14 @@ export default function BreedingLabClient({
                       disabled={pending}
                       className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
                     >
-                      Open
+                      {t("open")}
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteSaved(item.id)}
                       className="rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-300"
                     >
-                      Delete
+                      {t("delete")}
                     </button>
                   </div>
                 </div>
@@ -505,14 +506,14 @@ export default function BreedingLabClient({
         </section>
       ) : (
         <p className="text-sm text-gray-500">
-          <Link href="/login?next=/breeding-lab" className="text-blue-400 hover:text-blue-300">
-            Sign in
+          <Link href={loginRedirectPath("/breeding-lab")} className="text-blue-400 hover:text-blue-300">
+            {t("lab.signInPrompt")}
           </Link>{" "}
-          to save breeding analyses.
+          {t("lab.signInSuffix")}
         </p>
       )}
 
-      <p className="text-sm text-gray-500 leading-6">{BREEDING_DISCLAIMER}</p>
+      <p className="text-sm text-gray-500 leading-6">{t("disclaimer")}</p>
     </div>
   );
 }

@@ -1,0 +1,90 @@
+{
+  "info": {
+    "verified": "Verificado",
+    "askingPrice": "Precio de venta",
+    "breed": "Raza",
+    "age": "Edad",
+    "ageValue": "{age} años",
+    "height": "Altura",
+    "heightValue": "{height} cm",
+    "country": "País",
+    "gender": "Sexo",
+    "training": "Entrenamiento",
+    "color": "Capa",
+    "discipline": "Disciplina",
+    "draftContact": "Este anuncio aún no está publicado. Publíquelo desde su panel de vendedor para activar consultas de compradores.",
+    "contactUnavailable": "El contacto no está disponible para este anuncio.",
+    "viewPedigree": "Ver pedigree completo"
+  },
+  "description": {
+    "title": "Descripción",
+    "fallback": "{name} es un caballo de deporte {breed} de primer nivel procedente de {country}. Un talento en {discipline} con excelente montabilidad y líneas sanguíneas destacadas."
+  },
+  "pedigree": {
+    "title": "Pedigree",
+    "sire": "Padre",
+    "dam": "Madre",
+    "damSire": "Abuelo materno"
+  },
+  "contact": {
+    "title": "¿Interesado en {name}?",
+    "withSeller": "Contacte con {seller}{stable} para más información.",
+    "atStable": " de {stable}",
+    "generic": "Contacte con el vendedor para más información.",
+    "privateInquiry": "Envíe una consulta privada a través de EquiMaster Pro. Su mensaje se comparte únicamente con el vendedor.",
+    "contactSeller": "Contactar vendedor",
+    "mailSubject": "Consulta sobre {name}"
+  },
+  "inquiry": {
+    "modalEyebrow": "Contactar vendedor",
+    "modalTitle": "Contactar al vendedor sobre {name}",
+    "modalSubtitle": "Envíe una consulta privada. Sus datos de contacto se comparten solo con el vendedor.",
+    "successTitle": "Consulta enviada correctamente",
+    "successBody": "Su mensaje sobre {name} ha sido enviado al vendedor. Podrá revisarlo en su panel de cuenta.",
+    "close": "Cerrar",
+    "name": "Nombre",
+    "namePlaceholder": "Su nombre",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "usted@ejemplo.es",
+    "phone": "Teléfono",
+    "phoneOptional": "(opcional)",
+    "phonePlaceholder": "+34 612 345 678",
+    "message": "Mensaje",
+    "messageHint": "Puede editar el mensaje sugerido.",
+    "cancel": "Cancelar",
+    "send": "Enviar consulta",
+    "sending": "Enviando consulta …"
+  },
+  "gallery": {
+    "photoAlt": "{name} — foto {index}",
+    "photoAltDetailed": "{name}, caballo de deporte de {discipline} en venta — foto {index} de {total}",
+    "previousPhoto": "Foto anterior",
+    "nextPhoto": "Foto siguiente",
+    "showPhoto": "Mostrar foto {index}",
+    "thumbnailAlt": "{name} — miniatura {index}",
+    "thumbnailAltDetailed": "{name} — miniatura {index} de {total}",
+    "openLightbox": "Ver foto a tamaño completo",
+    "openLightboxHint": "Pulse para ampliar",
+    "closeLightbox": "Cerrar galería",
+    "lightboxLabel": "Galería de fotos — {name}",
+    "zoomIn": "Ampliar",
+    "zoomOut": "Reducir",
+    "photoCounter": "{index} / {total}",
+    "slideAnnouncement": "Mostrando foto {index} de {total}",
+    "regionLabel": "Galería de fotos — {name}"
+  },
+  "video": {
+    "title": "Vídeo",
+    "unsupported": "Su navegador no admite la reproducción de vídeo HTML5.",
+    "externalLink": "Este anuncio incluye un enlace de vídeo externo.",
+    "watchVideo": "Ver vídeo"
+  },
+  "related": {
+    "title": "Anuncios similares",
+    "browseAll": "Ver todos →"
+  },
+  "shareTitle": "{name} en EquiMaster Pro",
+  "breadcrumbs": {
+    "ariaLabel": "Ruta de navegación"
+  }
+}

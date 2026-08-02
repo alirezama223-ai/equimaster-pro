@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { BreedingAnalysisReport } from "@/app/types/breeding";
 
 type Props = {
@@ -7,21 +8,23 @@ type Props = {
 };
 
 export default function BreedingComparePanel({ reports }: Props) {
+  const t = useTranslations("breeding");
+
   if (reports.length === 0) return null;
 
   return (
     <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-      <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Stallion Comparison</p>
-      <h3 className="mt-2 text-2xl font-bold text-white">Side-by-side pedigree analysis</h3>
+      <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("compare.eyebrow")}</p>
+      <h3 className="mt-2 text-2xl font-bold text-white">{t("compare.title")}</h3>
       <p className="mt-2 text-sm text-gray-400">
-        Factual comparison only. No ranking or predicted breeding success is implied.
+        {t("compare.subtitle")}
       </p>
 
       <div className="mt-6 overflow-x-auto">
         <table className="min-w-[720px] w-full text-sm">
           <thead>
             <tr className="text-left text-gray-500 border-b border-white/10">
-              <th className="py-3 pr-4">Indicator</th>
+              <th className="py-3 pr-4">{t("compare.indicator")}</th>
               {reports.map((report) => (
                 <th key={report.stallion.id} className="py-3 pr-4 font-semibold text-white">
                   {report.stallion.name}
@@ -31,42 +34,42 @@ export default function BreedingComparePanel({ reports }: Props) {
           </thead>
           <tbody>
             <CompareRow
-              label="Stallion pedigree completeness"
+              label={t("compare.stallionCompleteness")}
               values={reports.map(
                 (report) => `${report.dataConfidence.stallionCompleteness.completenessPercent}%`
               )}
             />
             <CompareRow
-              label="Common ancestor count"
+              label={t("compare.commonAncestorCount")}
               values={reports.map((report) => String(report.structureIndicators.commonAncestorCount))}
             />
             <CompareRow
-              label="Closest common ancestor"
+              label={t("compare.closestCommonAncestor")}
               values={reports.map((report) =>
                 report.structureIndicators.closestCommonAncestorName
                   ? `${report.structureIndicators.closestCommonAncestorName} (${report.structureIndicators.closestCommonAncestorDepth})`
-                  : "None"
+                  : t("none")
               )}
             />
             <CompareRow
-              label="Linebreeding patterns"
+              label={t("compare.linebreedingPatterns")}
               values={reports.map((report) => String(report.structureIndicators.linebreedingPatternCount))}
             />
             <CompareRow
-              label="Close relationship warning"
+              label={t("compare.closeRelationshipWarning")}
               values={reports.map((report) =>
-                report.structureIndicators.closeRelationshipDetected ? "Yes" : "No"
+                report.structureIndicators.closeRelationshipDetected ? t("yes") : t("no")
               )}
             />
             <CompareRow
-              label="Data confidence"
+              label={t("compare.dataConfidence")}
               values={reports.map((report) => report.dataConfidence.label)}
             />
             <CompareRow
-              label="Notable linebreeding"
+              label={t("compare.notableLinebreeding")}
               values={reports.map((report) =>
                 report.linebreedingPatterns.slice(0, 2).map((item) => `${item.name} (${item.notation})`).join(", ") ||
-                "None"
+                t("none")
               )}
             />
           </tbody>

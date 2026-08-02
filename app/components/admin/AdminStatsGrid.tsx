@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { AdminDashboardStats } from "@/app/actions/admin";
 
 type Props = {
@@ -28,19 +29,21 @@ function StatCard({
   return content;
 }
 
-export default function AdminStatsGrid({ stats }: Props) {
+export default async function AdminStatsGrid({ stats }: Props) {
+  const t = await getTranslations("admin.stats");
+
   return (
     <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-      <StatCard label="Active Horse Listings" value={stats.activeListings} />
-      <StatCard label="Total Breeders" value={stats.totalBreeders} href="/admin/breeders" />
-      <StatCard label="Total Stallions" value={stats.totalStallions} href="/admin/stallions" />
-      <StatCard label="Verified Breeders" value={stats.verifiedBreeders} href="/admin/breeders?filter=verified" />
-      <StatCard label="Verified Stallions" value={stats.verifiedStallions} href="/admin/stallions?filter=verified" />
-      <StatCard label="Pending Breeders" value={stats.pendingBreeders} href="/admin/breeders?filter=pending" />
-      <StatCard label="Pending Stallions" value={stats.pendingStallions} href="/admin/stallions?filter=pending" />
-      <StatCard label="Pedigree Records" value={stats.totalPedigreeHorses} href="/admin/pedigree" />
-      <StatCard label="Verified Pedigree" value={stats.verifiedPedigreeHorses} href="/admin/pedigree?filter=verified" />
-      <StatCard label="Pending Pedigree" value={stats.pendingPedigreeHorses} href="/admin/pedigree?filter=pending" />
+      <StatCard label={t("activeListings")} value={stats.activeListings} />
+      <StatCard label={t("totalBreeders")} value={stats.totalBreeders} href="/admin/breeders" />
+      <StatCard label={t("totalStallions")} value={stats.totalStallions} href="/admin/stallions" />
+      <StatCard label={t("verifiedBreeders")} value={stats.verifiedBreeders} href="/admin/breeders?filter=verified" />
+      <StatCard label={t("verifiedStallions")} value={stats.verifiedStallions} href="/admin/stallions?filter=verified" />
+      <StatCard label={t("pendingBreeders")} value={stats.pendingBreeders} href="/admin/breeders?filter=pending" />
+      <StatCard label={t("pendingStallions")} value={stats.pendingStallions} href="/admin/stallions?filter=pending" />
+      <StatCard label={t("pedigreeRecords")} value={stats.totalPedigreeHorses} href="/admin/pedigree" />
+      <StatCard label={t("verifiedPedigree")} value={stats.verifiedPedigreeHorses} href="/admin/pedigree?filter=verified" />
+      <StatCard label={t("pendingPedigree")} value={stats.pendingPedigreeHorses} href="/admin/pedigree?filter=pending" />
     </div>
   );
 }

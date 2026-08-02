@@ -1,0 +1,78 @@
+{
+  "directory": {
+    "title": "Stallion Directory",
+    "subtitle": "Search elite breeding stallions by pedigree, discipline, and stud fee.",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Stallion name, sire, dam sire...",
+    "breedLabel": "Breed",
+    "allBreeds": "All Breeds",
+    "allBreedsPlaceholder": "All breeds…",
+    "disciplineLabel": "Discipline",
+    "allDisciplines": "All Disciplines",
+    "allDisciplinesPlaceholder": "All disciplines…",
+    "countryLabel": "Country",
+    "allCountries": "All Countries",
+    "allCountriesPlaceholder": "All countries…",
+    "availabilityLabel": "Availability",
+    "allStatuses": "All Statuses",
+    "sireLabel": "Sire",
+    "sirePlaceholder": "Sire name",
+    "damSireLabel": "Dam Sire",
+    "damSirePlaceholder": "Dam sire name",
+    "minStudFeeLabel": "Min Stud Fee",
+    "maxStudFeeLabel": "Max Stud Fee",
+    "studFeeExampleLow": "e.g. 1000",
+    "studFeeExampleHigh": "e.g. 5000",
+    "birthYearFromLabel": "Birth Year From",
+    "birthYearToLabel": "Birth Year To",
+    "birthYearExampleOld": "e.g. 2005",
+    "birthYearExampleYoung": "e.g. 2018",
+    "showingCount": "Showing {count, plural, =1 {1 stallion} other {# stallions}}",
+    "resetFilters": "Reset Filters",
+    "loadError": "Unable to load stallions: {error}",
+    "emptyTitle": "No stallions found",
+    "emptyNoData": "The stallion directory is ready. Stud farms can add stallions from their account once profiles are created.",
+    "emptyFiltered": "Try adjusting your filters to discover more breeding stallions."
+  },
+  "availability": {
+    "available": "Available",
+    "limited": "Limited",
+    "booked": "Fully Booked",
+    "retired": "Retired"
+  },
+  "card": {
+    "studFee": "Stud Fee",
+    "born": "Born",
+    "discipline": "Discipline",
+    "level": "Level",
+    "height": "Height",
+    "location": "Location",
+    "view": "View →"
+  },
+  "premium": {
+    "eyebrow": "Elite Genetics",
+    "title": "Premium Stallions",
+    "subtitle": "Discover the world's most successful breeding stallions.",
+    "browseDirectory": "Browse Stallion Directory →",
+    "age": "Age",
+    "studFee": "Stud Fee",
+    "viewStallion": "View Stallion"
+  },
+  "contact": {
+    "title": "Contact Stud Farm",
+    "descriptionPrefix": "Reach out to",
+    "descriptionSuffix": "regarding breeding with {stallionName}.",
+    "emailSubject": "Breeding inquiry: {stallionName}",
+    "emailButton": "Email Stud Farm",
+    "callButton": "Call {phone}",
+    "websiteButton": "Visit Website",
+    "noContactDetails": "Public contact details are not yet published for this stud farm."
+  },
+  "pedigree": {
+    "title": "Pedigree",
+    "sire": "Sire",
+    "dam": "Dam",
+    "damSire": "Dam's Sire",
+    "futureRelease": "Extended pedigree charts will be available in a future release."
+  }
+}

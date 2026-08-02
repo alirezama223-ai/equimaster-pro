@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { addFavorite, removeFavorite } from "@/app/actions/favorites";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 
 type Props = {
   listingId: string;
@@ -21,6 +23,7 @@ export default function FavoriteButton({
   className = "",
   onChange,
 }: Props) {
+  const t = useTranslations("favorites");
   const router = useRouter();
   const pathname = usePathname();
   const [favorited, setFavorited] = useState(initialFavorited);
@@ -40,8 +43,7 @@ export default function FavoriteButton({
         : await addFavorite(listingId);
 
       if (result.unauthenticated) {
-        const next = encodeURIComponent(returnPath ?? pathname);
-        router.push(`/login?next=${next}`);
+        router.push(loginRedirectPath(returnPath ?? pathname));
         return;
       }
 
@@ -65,7 +67,7 @@ export default function FavoriteButton({
         onClick={handleClick}
         disabled={isPending}
         aria-pressed={favorited}
-        aria-label={favorited ? "Remove from favorites" : "Save to favorites"}
+        aria-label={favorited ? t("button.removeAria") : t("button.saveAria")}
         className={`w-full py-4 rounded-xl border font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${
           favorited
             ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
@@ -73,10 +75,10 @@ export default function FavoriteButton({
         } ${className}`}
       >
         {isPending
-          ? "Saving..."
+          ? t("button.saving")
           : favorited
-            ? "♥ Saved to Favorites"
-            : "♡ Save Horse"}
+            ? t("button.saved")
+            : t("button.save")}
       </button>
     );
   }
@@ -87,7 +89,7 @@ export default function FavoriteButton({
       onClick={handleClick}
       disabled={isPending}
       aria-pressed={favorited}
-      aria-label={favorited ? "Remove from favorites" : "Save to favorites"}
+      aria-label={favorited ? t("button.removeAria") : t("button.saveAria")}
       className={`absolute top-4 right-4 w-11 h-11 rounded-full backdrop-blur-md flex items-center justify-center transition text-xl disabled:opacity-60 disabled:cursor-not-allowed ${
         favorited
           ? "bg-red-500 text-white"
@@ -95,7 +97,9 @@ export default function FavoriteButton({
       } ${className}`}
     >
       {isPending ? (
-        <span className="text-sm animate-pulse">…</span>
+        <span className="text-sm animate-pulse" aria-hidden="true">
+          {t("button.loadingIndicator")}
+        </span>
       ) : favorited ? (
         "♥"
       ) : (

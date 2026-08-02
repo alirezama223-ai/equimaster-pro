@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import TraitAssessmentForm from "@/app/components/traits/TraitAssessmentForm";
 import TraitEvidenceHistory from "@/app/components/traits/TraitEvidenceHistory";
 import TraitProfileSection from "@/app/components/traits/TraitProfileSection";
@@ -21,18 +22,19 @@ export default function TraitManagementPanel({
   historyRows,
   sourceLabel,
 }: Props) {
+  const t = useTranslations("traits");
   const [tab, setTab] = useState<"profile" | "submit" | "history">("profile");
+
+  const tabs = [
+    ["profile", t("management.profileTab")],
+    ["submit", t("management.submitTab")],
+    ["history", t("management.historyTab")],
+  ] as const;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2">
-        {(
-          [
-            ["profile", "Aggregated Profile"],
-            ["submit", "Add Assessment"],
-            ["history", "Evidence History"],
-          ] as const
-        ).map(([key, label]) => (
+        {tabs.map(([key, label]) => (
           <button
             key={key}
             type="button"

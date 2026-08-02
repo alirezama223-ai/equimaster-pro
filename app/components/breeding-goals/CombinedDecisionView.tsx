@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { BreedingAnalysisReport } from "@/app/types/breeding";
 import { RecommendationScoreBreakdown } from "@/app/types/breeding-recommendations";
 import { BreedingGoalAnalysisResult } from "@/app/types/traits";
@@ -31,68 +32,76 @@ export default function CombinedDecisionView({
   pedigreeCompatibilityScore,
   goalAnalysis,
 }: Props) {
+  const t = useTranslations("breeding");
+
   return (
     <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 space-y-5">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Combined Decision Support</p>
-        <h3 className="mt-2 text-2xl font-bold text-white">Pedigree Safety & Breeding Goal Alignment</h3>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("combined.eyebrow")}</p>
+        <h3 className="mt-2 text-2xl font-bold text-white">{t("combined.title")}</h3>
         <p className="mt-2 text-sm text-gray-400">
-          These dimensions are evaluated separately. A strong result in one does not imply the other.
+          {t("combined.subtitle")}
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-white/10 bg-[#08111F] p-5">
-          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Pedigree Safety</p>
+          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("combined.pedigreeSafety")}</p>
           <p className="mt-2 text-2xl font-black text-white">{pedigreeRiskLabel}</p>
           <p className="mt-2 text-sm text-gray-300">
-            Compatibility Score:{" "}
-            {pedigreeCompatibilityScore !== null ? `${pedigreeCompatibilityScore}/100` : "Insufficient Data"}
+            {t("combined.compatibilityScore")}{" "}
+            {pedigreeCompatibilityScore !== null ? `${pedigreeCompatibilityScore}/100` : t("insufficientData")}
           </p>
           <p className={`mt-2 text-sm ${panelConfidenceClass(report.dataConfidence.level)}`}>
-            Analysis Confidence: {report.dataConfidence.label.toUpperCase()}
+            {t("combined.analysisConfidence", { level: report.dataConfidence.label.toUpperCase() })}
           </p>
           <ul className="mt-4 space-y-1 text-sm text-gray-400">
-            <li>Common ancestors: {report.structureIndicators.commonAncestorCount}</li>
-            <li>Linebreeding patterns: {report.structureIndicators.linebreedingPatternCount}</li>
+            <li>{t("combined.commonAncestors", { count: report.structureIndicators.commonAncestorCount })}</li>
+            <li>{t("combined.linebreedingPatterns", { count: report.structureIndicators.linebreedingPatternCount })}</li>
             <li>
-              Close relationship:{" "}
-              {report.closeRelationshipWarnings.length > 0 ? "Detected" : "None detected in available data"}
+              {t("combined.closeRelationship")}{" "}
+              {report.closeRelationshipWarnings.length > 0
+                ? t("combined.closeRelationshipDetected")
+                : t("combined.closeRelationshipNone")}
             </li>
             <li>
-              Mare completeness: {report.dataConfidence.mareCompleteness.completenessPercent}%
+              {t("combined.mareCompleteness", { percent: report.dataConfidence.mareCompleteness.completenessPercent })}
             </li>
             <li>
-              Stallion completeness: {report.dataConfidence.stallionCompleteness.completenessPercent}%
+              {t("combined.stallionCompleteness", {
+                percent: report.dataConfidence.stallionCompleteness.completenessPercent,
+              })}
             </li>
           </ul>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-[#08111F] p-5">
-          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Breeding Goal Alignment</p>
+          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("combined.goalAlignment")}</p>
           {goalAnalysis ? (
             <>
               <p className="mt-2 text-2xl font-black text-white">
                 {goalAnalysis.goalMatchScoreAvailable
                   ? `${goalAnalysis.goalMatchScore}/100`
-                  : "Insufficient Data"}
+                  : t("insufficientData")}
               </p>
               <p className={`mt-2 text-sm ${panelConfidenceClass(goalAnalysis.goalMatchConfidence)}`}>
-                Evidence Confidence: {goalAnalysis.goalMatchConfidence.replace("_", " ").toUpperCase()}
+                {t("combined.evidenceConfidence", {
+                  level: goalAnalysis.goalMatchConfidence.replace("_", " ").toUpperCase(),
+                })}
               </p>
               <p className="mt-2 text-sm text-gray-400">
-                Goal coverage: {goalAnalysis.goalCoveragePercent}% of selected goals assessable on both horses
+                {t("combined.goalCoverage", { percent: goalAnalysis.goalCoveragePercent })}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
-                <ListBlock title="Strong complements" items={goalAnalysis.strongComplements} />
-                <ListBlock title="Strengths preserved" items={goalAnalysis.strengthsPreserved} />
-                <ListBlock title="Potential concerns" items={goalAnalysis.potentialConcerns} />
-                <ListBlock title="Unknowns" items={goalAnalysis.unknowns} />
+                <ListBlock title={t("combined.strongComplements")} items={goalAnalysis.strongComplements} none={t("combined.none")} />
+                <ListBlock title={t("combined.strengthsPreserved")} items={goalAnalysis.strengthsPreserved} none={t("combined.none")} />
+                <ListBlock title={t("combined.potentialConcerns")} items={goalAnalysis.potentialConcerns} none={t("combined.none")} />
+                <ListBlock title={t("combined.unknowns")} items={goalAnalysis.unknowns} none={t("combined.none")} />
               </div>
             </>
           ) : (
             <p className="mt-4 text-sm text-gray-400">
-              Define breeding goals and ensure trait evidence exists to evaluate goal alignment.
+              {t("combined.defineGoalsPrompt")}
             </p>
           )}
         </div>
@@ -105,7 +114,7 @@ export default function CombinedDecisionView({
   );
 }
 
-function ListBlock({ title, items }: { title: string; items: string[] }) {
+function ListBlock({ title, items, none }: { title: string; items: string[]; none: string }) {
   return (
     <div>
       <p className="font-semibold text-white">{title}</p>
@@ -116,7 +125,7 @@ function ListBlock({ title, items }: { title: string; items: string[] }) {
           ))}
         </ul>
       ) : (
-        <p className="mt-1 text-gray-500">None</p>
+        <p className="mt-1 text-gray-500">{none}</p>
       )}
     </div>
   );

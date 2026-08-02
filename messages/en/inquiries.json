@@ -1,0 +1,15 @@
+{
+  "conversation": {
+    "about": "Conversation about",
+    "viewListing": "{horseName} → View Listing",
+    "seller": "Seller",
+    "buyer": "Buyer",
+    "archivedNotice": "This conversation is archived. Unarchive it from inquiry actions to send more messages.",
+    "replyToBuyer": "Reply to buyer",
+    "replyToSeller": "Reply to seller",
+    "replyPlaceholder": "Write your reply...",
+    "sending": "Sending...",
+    "sendReply": "Send Reply",
+    "replySent": "Reply sent successfully."
+  }
+}

@@ -1,19 +1,24 @@
 {
   "name": "equimaster-pro",
-  "version": "0.1.0",
+  "version": "1.0.0-rc1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:apply-021": "node scripts/apply-and-validate-021.mjs",
+    "db:apply-021-stepwise": "node scripts/apply-021-stepwise.mjs",
+    "i18n:sync": "node scripts/sync-locale-messages.mjs",
+    "i18n:audit": "node scripts/audit-i18n-keys.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
     "framer-motion": "^12.42.2",
     "next": "16.2.10",
+    "next-intl": "^4.13.4",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -24,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "pg": "^8.16.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.4"

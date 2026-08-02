@@ -1,0 +1,36 @@
+{
+  "profile": {
+    "backToBloodlines": "← Back to Bloodlines",
+    "breed": "Breed",
+    "color": "Color",
+    "registration": "Registration / UELN",
+    "sire": "Sire",
+    "dam": "Dam",
+    "analyzeBreeding": "Analyze Breeding →",
+    "useInBreedingLab": "Use in Breeding Lab →",
+    "viewListing": "View Marketplace Listing →",
+    "viewStallionProfile": "View Stallion Profile →",
+    "pedigreeTree": "Pedigree Tree",
+    "manageTraitEvidence": "Manage Trait Evidence →",
+    "eventTimeline": "Event Timeline →",
+    "healthWellness": "Health & Wellness →",
+    "viewTrainingAnalytics": "View Training Analytics →"
+  },
+  "section": {
+    "title": "Pedigree",
+    "subtitle": "Professional bloodline view with up to four generations when structured pedigree data is available.",
+    "sire": "Sire",
+    "dam": "Dam",
+    "damSire": "Dam's Sire"
+  },
+  "tree": {
+    "subject": "Subject",
+    "parents": "Parents",
+    "grandparents": "Grandparents",
+    "greatGrandparents": "Great-Grandparents",
+    "fourthGeneration": "4th Generation",
+    "fifthGeneration": "5th Generation",
+    "generationN": "Gen {n}"
+  },
+  "registrationPrefix": "UELN/Reg: {number}"
+}

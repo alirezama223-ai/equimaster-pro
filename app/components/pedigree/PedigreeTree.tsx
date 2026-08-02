@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import {
   MAX_PEDIGREE_GENERATIONS,
@@ -10,6 +10,7 @@ import {
   pedigreeGenerationPaths,
 } from "@/app/lib/pedigree";
 import { PedigreeTreeNode } from "@/app/types/pedigree";
+import { useTranslations } from "next-intl";
 
 type Props = {
   subjectName: string;
@@ -17,12 +18,6 @@ type Props = {
   maxGenerations?: number;
   subjectLabel?: string;
 };
-
-const DEFAULT_LABELS = ["Subject", "Parents", "Grandparents", "Great-Grandparents", "4th Generation", "5th Generation"];
-
-function generationLabels(maxGenerations: number): string[] {
-  return DEFAULT_LABELS.slice(0, maxGenerations + 1);
-}
 
 function PedigreeCell({ node, branch }: { node: PedigreeTreeNode; branch: "sire" | "dam" | "subject" }) {
   const branchClass =
@@ -65,15 +60,25 @@ export default function PedigreeTree({
   subjectName,
   tree,
   maxGenerations = MAX_PEDIGREE_GENERATIONS,
-  subjectLabel = "Subject",
+  subjectLabel,
 }: Props) {
+  const t = useTranslations("pedigree");
+  const resolvedSubjectLabel = subjectLabel ?? t("tree.subject");
   const paths = pedigreeGenerationPaths(maxGenerations);
-  const generationLabelsList = generationLabels(maxGenerations);
+
+  const generationLabelsList = [
+    t("tree.subject"),
+    t("tree.parents"),
+    t("tree.grandparents"),
+    t("tree.greatGrandparents"),
+    t("tree.fourthGeneration"),
+    t("tree.fifthGeneration"),
+  ];
 
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/10 bg-[#111827] p-5">
-        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{subjectLabel}</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{resolvedSubjectLabel}</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <p className="text-2xl font-bold text-white">{subjectName}</p>
           {tree.verified ? <VerifiedBadge /> : null}
@@ -87,7 +92,7 @@ export default function PedigreeTree({
           return (
             <div key={generation} className="space-y-3">
               <p className="text-xs uppercase tracking-[0.18em] text-gray-500 min-h-[32px]">
-                {generationLabelsList[generation] ?? `Gen ${generation}`}
+                {generationLabelsList[generation] ?? t("tree.generationN", { n: generation })}
               </p>
               <div className="space-y-3">
                 {generationPaths.map((path) => {
@@ -126,7 +131,7 @@ export default function PedigreeTree({
           return (
             <div key={generation} className="rounded-2xl border border-white/10 bg-[#0B1424] p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-gray-500 mb-3">
-                {generationLabelsList[generation] ?? `Gen ${generation}`}
+                {generationLabelsList[generation] ?? t("tree.generationN", { n: generation })}
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {generationPaths.map((path) => {

@@ -4,15 +4,15 @@ export function validateLoginForm(email: string, password: string) {
   const errors: { email?: string; password?: string } = {};
 
   if (!email.trim()) {
-    errors.email = "Email is required.";
+    errors.email = "emailRequired";
   } else if (!emailPattern.test(email.trim())) {
-    errors.email = "Enter a valid email address.";
+    errors.email = "emailInvalid";
   }
 
   if (!password) {
-    errors.password = "Password is required.";
+    errors.password = "passwordRequired";
   } else if (password.length < 6) {
-    errors.password = "Password must be at least 6 characters.";
+    errors.password = "passwordMinLengthLogin";
   }
 
   return errors;
@@ -32,25 +32,25 @@ export function validateSignupForm(
   } = {};
 
   if (!fullName.trim()) {
-    errors.fullName = "Full name is required.";
+    errors.fullName = "nameRequired";
   }
 
   if (!email.trim()) {
-    errors.email = "Email is required.";
+    errors.email = "emailRequired";
   } else if (!emailPattern.test(email.trim())) {
-    errors.email = "Enter a valid email address.";
+    errors.email = "emailInvalid";
   }
 
   if (!password) {
-    errors.password = "Password is required.";
+    errors.password = "passwordRequired";
   } else if (password.length < 8) {
-    errors.password = "Password must be at least 8 characters.";
+    errors.password = "passwordMinLength";
   }
 
   if (!confirmPassword) {
-    errors.confirmPassword = "Please confirm your password.";
+    errors.confirmPassword = "confirmPasswordRequired";
   } else if (password !== confirmPassword) {
-    errors.confirmPassword = "Passwords do not match.";
+    errors.confirmPassword = "passwordsMismatch";
   }
 
   return errors;
@@ -60,18 +60,18 @@ export function getAuthErrorMessage(message: string) {
   const normalized = message.toLowerCase();
 
   if (normalized.includes("invalid login credentials")) {
-    return "Invalid email or password.";
+    return "invalidCredentials";
   }
 
   if (
     normalized.includes("user already registered") ||
     normalized.includes("already been registered")
   ) {
-    return "An account with this email already exists.";
+    return "emailAlreadyExists";
   }
 
   if (normalized.includes("email not confirmed")) {
-    return "Please confirm your email before signing in.";
+    return "emailNotConfirmed";
   }
 
   if (
@@ -79,20 +79,20 @@ export function getAuthErrorMessage(message: string) {
     normalized.includes("weak password") ||
     normalized.includes("password is too weak")
   ) {
-    return "Password is too weak. Use at least 8 characters with a mix of letters and numbers.";
+    return "passwordTooWeak";
   }
 
   if (normalized.includes("invalid email")) {
-    return "Enter a valid email address.";
+    return "emailInvalid";
   }
 
   if (normalized.includes("rate limit") || normalized.includes("too many requests")) {
-    return "Too many attempts. Please wait a moment and try again.";
+    return "rateLimitExceeded";
   }
 
   if (normalized.includes("signup is disabled")) {
-    return "New sign ups are currently disabled. Please contact support.";
+    return "signupDisabled";
   }
 
-  return message;
+  return "genericError";
 }

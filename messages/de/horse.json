@@ -1,0 +1,90 @@
+{
+  "info": {
+    "verified": "Verifiziert",
+    "askingPrice": "Verkaufspreis",
+    "breed": "Rasse",
+    "age": "Alter",
+    "ageValue": "{age} Jahre",
+    "height": "Größe",
+    "heightValue": "{height} cm",
+    "country": "Land",
+    "gender": "Geschlecht",
+    "training": "Ausbildung",
+    "color": "Farbe",
+    "discipline": "Disziplin",
+    "draftContact": "Dieses Inserat ist noch nicht veröffentlicht. Veröffentlichen Sie es im Verkäufer-Dashboard, um Käuferanfragen zu aktivieren.",
+    "contactUnavailable": "Kontakt ist für dieses Inserat nicht verfügbar.",
+    "viewPedigree": "Vollständige Abstammung ansehen"
+  },
+  "description": {
+    "title": "Beschreibung",
+    "fallback": "{name} ist ein erstklassiges {breed}-Sportpferd aus {country}. Ein talentiertes {discipline}-Pferd mit hervorragender Reitbarkeit und ausgezeichneten Blutlinien."
+  },
+  "pedigree": {
+    "title": "Abstammung",
+    "sire": "Vater",
+    "dam": "Mutter",
+    "damSire": "Muttervater"
+  },
+  "contact": {
+    "title": "Interesse an {name}?",
+    "withSeller": "Kontaktieren Sie {seller}{stable} für weitere Informationen.",
+    "atStable": " vom {stable}",
+    "generic": "Kontaktieren Sie den Verkäufer für weitere Informationen.",
+    "privateInquiry": "Senden Sie eine private Anfrage über EquiMaster Pro. Ihre Nachricht wird ausschließlich an den Verkäufer weitergeleitet.",
+    "contactSeller": "Verkäufer kontaktieren",
+    "mailSubject": "Anfrage zu {name}"
+  },
+  "inquiry": {
+    "modalEyebrow": "Verkäufer kontaktieren",
+    "modalTitle": "Verkäufer zu {name} kontaktieren",
+    "modalSubtitle": "Senden Sie eine private Anfrage. Ihre Kontaktdaten werden nur an den Verkäufer weitergegeben.",
+    "successTitle": "Anfrage erfolgreich gesendet",
+    "successBody": "Ihre Nachricht zu {name} wurde an den Verkäufer gesendet. Er kann sie in seinem Konto-Dashboard einsehen.",
+    "close": "Schließen",
+    "name": "Name",
+    "namePlaceholder": "Ihr Name",
+    "email": "E-Mail",
+    "emailPlaceholder": "ihre@email.de",
+    "phone": "Telefon",
+    "phoneOptional": "(optional)",
+    "phonePlaceholder": "+49 170 1234567",
+    "message": "Nachricht",
+    "messageHint": "Sie können die vorgeschlagene Nachricht bearbeiten.",
+    "cancel": "Abbrechen",
+    "send": "Anfrage senden",
+    "sending": "Anfrage wird gesendet …"
+  },
+  "gallery": {
+    "photoAlt": "{name} — Foto {index}",
+    "photoAltDetailed": "{name}, {discipline}-Sportpferd zu verkaufen — Foto {index} von {total}",
+    "previousPhoto": "Vorheriges Foto",
+    "nextPhoto": "Nächstes Foto",
+    "showPhoto": "Foto {index} anzeigen",
+    "thumbnailAlt": "{name} — Vorschaubild {index}",
+    "thumbnailAltDetailed": "{name} — Vorschaubild {index} von {total}",
+    "openLightbox": "Foto in voller Größe ansehen",
+    "openLightboxHint": "Tippen zum Vergrößern",
+    "closeLightbox": "Galerie schließen",
+    "lightboxLabel": "Fotogalerie — {name}",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "photoCounter": "{index} / {total}",
+    "slideAnnouncement": "Foto {index} von {total}",
+    "regionLabel": "Fotogalerie — {name}"
+  },
+  "video": {
+    "title": "Video",
+    "unsupported": "Ihr Browser unterstützt keine HTML5-Videowiedergabe.",
+    "externalLink": "Dieses Inserat enthält einen externen Videolink.",
+    "watchVideo": "Video ansehen"
+  },
+  "related": {
+    "title": "Ähnliche Inserate",
+    "browseAll": "Alle ansehen →"
+  },
+  "shareTitle": "{name} auf EquiMaster Pro",
+  "breadcrumbs": {
+    "ariaLabel": "Brotkrumen-Navigation"
+  }
+}

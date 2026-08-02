@@ -1,0 +1,125 @@
+{
+  "dashboard": {
+    "loadingFallback": "Loading health dashboard...",
+    "backToTraining": "Back to Training",
+    "title": "Health & Wellness",
+    "description": "Daily health checks, injury tracking, farrier and vaccination schedules, and structured health alerts integrated with Horse Readiness.",
+    "somethingWrong": "Something went wrong.",
+    "noManageableHorsesTitle": "No manageable horses",
+    "noManageableHorsesDescription": "Add or claim a horse to start tracking health and wellness.",
+    "overviewTitle": "{horseName} — Overview",
+    "dailyCheckTitle": "Daily Health Check",
+    "dailyCheckDescription": "Log temperature, appetite, hydration, and lameness observations.",
+    "alertsTitle": "Health Rule Alerts",
+    "recordsTitle": "Health Records"
+  },
+  "form": {
+    "checkDate": "Check date",
+    "temperature": "Temperature (°C)",
+    "temperaturePlaceholder": "e.g. 37.8",
+    "appetite": "Appetite",
+    "hydration": "Hydration",
+    "attitude": "Attitude",
+    "manure": "Manure",
+    "notRecorded": "Not recorded",
+    "feverObserved": "Fever observed",
+    "lamenessObserved": "Lameness observed",
+    "lamenessNotes": "Lameness notes",
+    "lamenessNotesPlaceholder": "Which limb, severity, when noticed...",
+    "generalNotes": "General notes",
+    "generalNotesPlaceholder": "Any other wellness observations...",
+    "saving": "Saving...",
+    "updateHealthCheck": "Update health check",
+    "saveDailyHealthCheck": "Save daily health check",
+    "updatedMessage": "Health check updated.",
+    "savedMessage": "Daily health check saved.",
+    "options": {
+      "appetite": {
+        "good": "Good",
+        "reduced": "Reduced",
+        "poor": "Poor"
+      },
+      "hydration": {
+        "good": "Good",
+        "low": "Low"
+      },
+      "attitude": {
+        "normal": "Normal",
+        "dull": "Dull",
+        "anxious": "Anxious"
+      },
+      "manure": {
+        "normal": "Normal",
+        "loose": "Loose",
+        "none": "None"
+      }
+    }
+  },
+  "summary": {
+    "todaysCheck": "Today's Check",
+    "logged": "Logged",
+    "pending": "Pending",
+    "lastCheck": "Last: {dateLabel}",
+    "noChecksYet": "No checks yet",
+    "activeInjuries": "Active Injuries",
+    "noneRecorded": "None recorded",
+    "farrier": "Farrier",
+    "notSet": "Not set",
+    "lastVisit": "Last visit {dateLabel}",
+    "noVisitsLogged": "No visits logged",
+    "overdueVaccines": "Overdue Vaccines",
+    "upToDate": "Up to date",
+    "activeMedications": "Active Medications",
+    "noneActive": "None active"
+  },
+  "alerts": {
+    "title": "Health Alerts",
+    "description": "Structured alerts from the health rule engine.",
+    "healthScore": "Health Score",
+    "severity": {
+      "alert": "Alert",
+      "watch": "Watch",
+      "info": "Info",
+      "positive": "Clear"
+    },
+    "ruleLabels": {
+      "fever": "Fever",
+      "lameness": "Lameness",
+      "overdue_farrier": "Farrier",
+      "overdue_vaccination": "Vaccination",
+      "active_injury": "Injury"
+    }
+  },
+  "records": {
+    "addInjury": "Add injury",
+    "addFarrier": "Add farrier",
+    "addVaccination": "Add vaccination",
+    "bodyArea": "Body area",
+    "description": "Description",
+    "workDone": "Work done",
+    "vaccineName": "Vaccine name",
+    "saveInjury": "Save injury",
+    "saveFarrierVisit": "Save farrier visit",
+    "saveVaccination": "Save vaccination",
+    "severity": {
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "injuryStatus": {
+      "active": "Active",
+      "monitoring": "Monitoring",
+      "resolved": "Resolved"
+    },
+    "injuriesSection": "Injuries",
+    "noInjuries": "No injury records.",
+    "markResolved": "Mark resolved",
+    "farrierSection": "Farrier visits",
+    "noFarrierVisits": "No farrier visits logged.",
+    "nextDue": "Next due: {date}",
+    "vaccinationsSection": "Vaccinations",
+    "noVaccinations": "No vaccinations logged.",
+    "givenOn": "Given {date}",
+    "dueOn": "Due {date}"
+  }
+}

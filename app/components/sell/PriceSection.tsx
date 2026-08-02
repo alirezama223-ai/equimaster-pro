@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
@@ -13,13 +14,17 @@ type Props = {
 };
 
 export default function PriceSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
+
   return (
-    <FormSection
-      title="Price"
-      subtitle="Set a transparent asking price or mark the listing as price on request."
-    >
+    <FormSection title={t("price.title")} subtitle={t("price.subtitle")}>
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Price (EUR)" htmlFor="price" error={errors.price} required={!data.priceOnRequest}>
+        <FormField
+          label={t("price.priceEur")}
+          htmlFor="price"
+          error={errors.price}
+          required={!data.priceOnRequest}
+        >
           <input
             id="price"
             type="number"
@@ -29,7 +34,7 @@ export default function PriceSection({ data, errors, onChange }: Props) {
             disabled={data.priceOnRequest}
             onChange={(e) => onChange("price", e.target.value)}
             className={`${sellInputClassName} disabled:opacity-50 disabled:cursor-not-allowed`}
-            placeholder="32000"
+            placeholder={t("price.pricePlaceholder")}
           />
         </FormField>
 
@@ -43,7 +48,7 @@ export default function PriceSection({ data, errors, onChange }: Props) {
             }}
             className="w-5 h-5"
           />
-          <span>Price on request</span>
+          <span>{t("price.priceOnRequest")}</span>
         </label>
       </div>
     </FormSection>

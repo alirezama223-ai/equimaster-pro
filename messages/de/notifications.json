@@ -1,0 +1,21 @@
+{
+  "page": {
+    "loadingFallback": "Loading notifications..."
+  },
+  "center": {
+    "eyebrow": "Event Engine",
+    "title": "Notification Center",
+    "description": "Central feed of unresolved events published by Training, Health, Analytics, and the Rule Engine. Future AI providers can consume this stream instead of querying every module table.",
+    "unresolvedLabel": "Unresolved",
+    "alertsLabel": "Alerts",
+    "unresolved": "Unresolved: {count}",
+    "alerts": "Alerts: {count}",
+    "loading": "Loading notifications...",
+    "allClearTitle": "All clear",
+    "allClearDescription": "No unresolved events. Modules will publish here when rules or workflows detect something worth your attention."
+  },
+  "bell": {
+    "ariaLabel": "Notifications",
+    "ariaLabelWithCount": "Notifications, {count} unresolved"
+  }
+}

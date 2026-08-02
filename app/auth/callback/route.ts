@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { LOGIN_PATH } from "@/app/lib/auth/paths";
 import { createClient } from "@/app/lib/supabase/server";
 
 function getSafeNextPath(next: string | null) {
@@ -23,5 +24,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+  return NextResponse.redirect(`${origin}${LOGIN_PATH}?error=auth_callback_failed`);
 }

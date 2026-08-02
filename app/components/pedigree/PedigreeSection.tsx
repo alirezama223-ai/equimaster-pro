@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import PedigreeTree from "@/app/components/pedigree/PedigreeTree";
 import { PedigreeTreeNode } from "@/app/types/pedigree";
 
@@ -11,24 +12,25 @@ type Props = {
   } | null;
 };
 
-export default function PedigreeSection({ subjectName, tree, legacy }: Props) {
+export default async function PedigreeSection({ subjectName, tree, legacy }: Props) {
+  const t = await getTranslations("pedigree");
+
   return (
     <section>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold">Pedigree</h2>
+          <h2 className="text-3xl font-bold">{t("section.title")}</h2>
           <p className="mt-2 text-gray-400 text-sm max-w-2xl">
-            Professional bloodline view with up to four generations when structured pedigree data
-            is available.
+            {t("section.subtitle")}
           </p>
         </div>
       </div>
 
       {legacy ? (
         <div className="mb-6 grid gap-4 md:grid-cols-3">
-          <LegacyCard label="Sire" value={legacy.sire} />
-          <LegacyCard label="Dam" value={legacy.dam} />
-          <LegacyCard label="Dam's Sire" value={legacy.damSire || "—"} />
+          <LegacyCard label={t("section.sire")} value={legacy.sire} />
+          <LegacyCard label={t("section.dam")} value={legacy.dam} />
+          <LegacyCard label={t("section.damSire")} value={legacy.damSire || "—"} />
         </div>
       ) : null}
 

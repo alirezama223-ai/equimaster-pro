@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import RecommendationScoreBreakdownPanel from "@/app/components/breeding-recommendations/RecommendationScoreBreakdownPanel";
@@ -47,6 +48,8 @@ export default function RecommendationResultCard({
   onToggleSelect,
   compareDisabled,
 }: Props) {
+  const t = useTranslations("breeding");
+  const tStallions = useTranslations("stallions");
   const [expanded, setExpanded] = useState(false);
   const { candidate } = result;
   const breedingLabUrl = `/breeding-lab?mare=${marePedigreeId}&stallion=${candidate.pedigreeHorseId}`;
@@ -75,7 +78,7 @@ export default function RecommendationResultCard({
                 {candidate.verified ? <VerifiedBadge /> : null}
                 {candidate.availability === "limited" ? (
                   <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-200">
-                    Limited
+                    {tStallions("availability.limited")}
                   </span>
                 ) : null}
                 {candidate.availability === "booked" || candidate.availability === "retired" ? (
@@ -96,16 +99,16 @@ export default function RecommendationResultCard({
             </div>
 
             <div className="text-right">
-              <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Compatibility Score</p>
+              <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("recommendations.compatibilityScore")}</p>
               {result.compatibilityScore !== null ? (
                 <>
                   <p className="text-4xl font-black text-blue-400">{result.compatibilityScore}</p>
-                  <p className="text-xs text-gray-500">Based on available pedigree data</p>
+                  <p className="text-xs text-gray-500">{t("recommendations.basedOnPedigree")}</p>
                 </>
               ) : (
                 <>
-                  <p className="text-2xl font-black text-gray-300">Insufficient Data</p>
-                  <p className="text-xs text-gray-500">N/A — pedigree evidence too limited</p>
+                  <p className="text-2xl font-black text-gray-300">{t("recommendations.insufficientDataTitle")}</p>
+                  <p className="text-xs text-gray-500">{t("recommendations.insufficientDataHint")}</p>
                 </>
               )}
             </div>
@@ -116,7 +119,7 @@ export default function RecommendationResultCard({
               {result.riskLabel}
             </span>
             <span className={`rounded-full border border-white/10 px-3 py-1 text-xs font-semibold ${confidenceBadgeClass(result.analysisConfidence)}`}>
-              Analysis Confidence: {result.analysisConfidenceLabel}
+              {t("recommendations.analysisConfidence", { level: result.analysisConfidenceLabel })}
             </span>
           </div>
 
@@ -129,7 +132,7 @@ export default function RecommendationResultCard({
           ) : null}
 
           <div className="mt-4">
-            <p className="text-sm font-semibold text-white">Why this match?</p>
+            <p className="text-sm font-semibold text-white">{t("recommendations.whyThisMatch")}</p>
             <ul className="mt-2 space-y-1 text-sm text-gray-300">
               {result.reasons.map((reason) => (
                 <li key={reason}>{reason}</li>
@@ -146,26 +149,26 @@ export default function RecommendationResultCard({
                 onChange={() => onToggleSelect(candidate.pedigreeHorseId)}
                 className="rounded border-white/20 bg-[#08111F]"
               />
-              Compare
+              {t("compareAction")}
             </label>
             <Link
               href={breedingLabUrl}
               className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition"
             >
-              Analyze Full Cross
+              {t("recommendations.analyzeFullCross")}
             </Link>
             <Link
               href={`/stallions/${candidate.stallionDirectoryId}`}
               className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition"
             >
-              View Stallion
+              {t("recommendations.viewStallion")}
             </Link>
             <button
               type="button"
               onClick={() => setExpanded((value) => !value)}
               className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition"
             >
-              {expanded ? "Hide score breakdown" : "Score breakdown"}
+              {expanded ? t("recommendations.hideScoreBreakdown") : t("recommendations.scoreBreakdown")}
             </button>
           </div>
 

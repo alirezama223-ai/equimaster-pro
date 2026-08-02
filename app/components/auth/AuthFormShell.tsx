@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 type Props = {
   title: string;
@@ -17,11 +20,13 @@ export default function AuthFormShell({
   footerHref,
   footerLinkLabel,
 }: Props) {
+  const tCommon = useTranslations("common");
+
   return (
     <section className="rounded-3xl bg-[#111C2E] border border-gray-800 shadow-2xl p-6 sm:p-10">
       <div className="text-center mb-8">
         <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
-          EquiMaster Pro
+          {tCommon("brand")}
         </p>
         <h1 className="text-3xl sm:text-4xl font-black text-white mt-4">{title}</h1>
         <p className="mt-3 text-gray-400">{subtitle}</p>

@@ -1,8 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
+import { getPathnameWithoutLocale } from "@/i18n/path";
 
-const protectedRoutes = ["/account", "/sell", "/admin"];
+const protectedRoutes = ["/account", "/sell", "/admin", "/dashboard/seller"];
 
 function isProtectedPath(pathname: string) {
   return protectedRoutes.some(
@@ -18,21 +20,25 @@ function isAuthPath(pathname: string) {
   );
 }
 
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+export async function updateSession(
+  request: NextRequest,
+  response: NextResponse = NextResponse.next({ request })
+) {
+  const pathname = getPathnameWithoutLocale(request.nextUrl.pathname);
   const { url, anonKey, isConfigured } = getSupabaseEnv();
 
   if (!isConfigured) {
-    if (isProtectedPath(request.nextUrl.pathname)) {
+    if (isProtectedPath(pathname)) {
       const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/login";
-      redirectUrl.searchParams.set("next", request.nextUrl.pathname);
+      redirectUrl.pathname = loginRedirectPath(request.nextUrl.pathname);
       redirectUrl.searchParams.set("error", "supabase_not_configured");
       return NextResponse.redirect(redirectUrl);
     }
 
-    return supabaseResponse;
+    return response;
   }
+
+  let supabaseResponse = response;
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {
@@ -44,7 +50,10 @@ export async function updateSession(request: NextRequest) {
           request.cookies.set(name, value);
         });
 
-        supabaseResponse = NextResponse.next({ request });
+        supabaseResponse = NextResponse.next({
+          request,
+          headers: response.headers,
+        });
 
         cookiesToSet.forEach(({ name, value, options }) => {
           supabaseResponse.cookies.set(name, value, options);
@@ -53,6 +62,12 @@ export async function updateSession(request: NextRequest) {
         Object.entries(headers).forEach(([key, value]) => {
           supabaseResponse.headers.set(key, value);
         });
+
+        response.cookies.getAll().forEach(({ name, value }) => {
+          if (!supabaseResponse.cookies.get(name)) {
+            supabaseResponse.cookies.set(name, value);
+          }
+        });
       },
     },
   });
@@ -60,14 +75,13 @@ export async function updateSession(request: NextRequest) {
   const { data, error } = await supabase.auth.getClaims();
   const isAuthenticated = !error && Boolean(data?.claims);
 
-  if (!isAuthenticated && isProtectedPath(request.nextUrl.pathname)) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+  if (!isAuthenticated && isProtectedPath(pathname)) {
+    return NextResponse.redirect(
+      new URL(loginRedirectPath(request.nextUrl.pathname), request.url)
+    );
   }
 
-  if (isAuthenticated && isAuthPath(request.nextUrl.pathname)) {
+  if (isAuthenticated && isAuthPath(pathname)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/account";
     redirectUrl.search = "";

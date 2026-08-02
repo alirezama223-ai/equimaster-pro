@@ -39,6 +39,11 @@ export type HorseListingRow = {
   verified: boolean;
   status: ListingStatus;
   pedigree_horse_id: string | null;
+  slug: string;
+  published_at: string | null;
+  view_count: number;
+  public_training_summary: Record<string, unknown> | null;
+  public_health_summary: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 };

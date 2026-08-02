@@ -1,0 +1,37 @@
+{
+  "timeline": {
+    "loadingFallback": "Loading timeline...",
+    "backToTraining": "Back to Training",
+    "title": "Horse Timeline",
+    "description": "Chronological event history from all EquiMaster modules for the selected horse.",
+    "defaultHorseName": "Horse",
+    "noManageableHorsesTitle": "No manageable horses",
+    "noManageableHorsesDescription": "Add or claim a horse to view its event timeline.",
+    "eventTimelineTitle": "{horseName} — Event Timeline",
+    "unresolvedCount": "{count, plural, =1 {1 unresolved event in this timeline.} other {# unresolved events in this timeline.}}",
+    "noEventsTitle": "No events yet",
+    "noEventsDescription": "Events will appear here as training, health, analytics, and rule engine modules publish them."
+  },
+  "alertsWidget": {
+    "loading": "Loading today's alerts...",
+    "noAlertsTitle": "No active alerts",
+    "noAlertsDescription": "Rule engine and health events will appear here when attention is needed.",
+    "alertCount": "{count, plural, =1 {1 alert requiring attention} other {# alerts requiring attention}}",
+    "notificationCenter": "Notification Center →"
+  },
+  "eventCard": {
+    "resolve": "Resolve",
+    "severity": {
+      "alert": "alert",
+      "watch": "watch",
+      "info": "info",
+      "positive": "positive"
+    },
+    "sourceModule": {
+      "rule_engine": "Rule Engine",
+      "training": "Training",
+      "health": "Health",
+      "analytics": "Analytics"
+    }
+  }
+}

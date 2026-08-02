@@ -4,7 +4,11 @@ import {
   ListingFormData,
   ListingImage,
   MAX_LISTING_IMAGES,
+  MAX_LISTING_IMAGE_BYTES,
 } from "@/app/types/listing";
+import { isValidBreedName } from "@/app/lib/breeds";
+import { isValidCountryName } from "@/app/lib/constants/countries";
+import { isValidDiscipline } from "@/app/lib/constants/disciplines";
 import { validateListingVideoFile } from "@/app/lib/horse-video-storage";
 
 export type ListingFormErrors = Partial<Record<keyof ListingFormData | "images" | "video", string>>;
@@ -19,7 +23,11 @@ export function validateListingForm(
   const errors: ListingFormErrors = {};
 
   if (!data.name.trim()) errors.name = "Horse name is required.";
-  if (!data.breed.trim()) errors.breed = "Breed is required.";
+  if (!data.breed.trim()) {
+    errors.breed = "Breed is required.";
+  } else if (!isValidBreedName(data.breed)) {
+    errors.breed = "Select a breed from the list.";
+  }
   if (!data.age.trim()) {
     errors.age = "Age is required.";
   } else if (!Number.isFinite(Number(data.age)) || Number(data.age) < 0) {
@@ -32,8 +40,16 @@ export function validateListingForm(
   } else if (!Number.isFinite(Number(data.height)) || Number(data.height) <= 0) {
     errors.height = "Enter a valid height in cm.";
   }
-  if (!data.country.trim()) errors.country = "Country is required.";
-  if (!data.discipline.trim()) errors.discipline = "Discipline is required.";
+  if (!data.country.trim()) {
+    errors.country = "Country is required.";
+  } else if (!isValidCountryName(data.country)) {
+    errors.country = "Select a country from the list.";
+  }
+  if (!data.discipline.trim()) {
+    errors.discipline = "Discipline is required.";
+  } else if (!isValidDiscipline(data.discipline)) {
+    errors.discipline = "Select a discipline from the list.";
+  }
   if (!data.level.trim()) errors.level = "Competition level is required.";
 
   if (!data.priceOnRequest) {
@@ -62,6 +78,13 @@ export function validateListingForm(
     errors.images = "One or more selected images are invalid.";
   } else if (!images.some((image) => image.isCover)) {
     errors.images = "Select a cover image.";
+  } else {
+    const oversized = images.find(
+      (image) => image.file && image.file.size > MAX_LISTING_IMAGE_BYTES
+    );
+    if (oversized) {
+      errors.images = "Each image must be 10 MB or smaller.";
+    }
   }
 
   if (videoFile) {

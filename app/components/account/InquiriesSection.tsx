@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import {
   markInquiryRead,
@@ -21,13 +22,6 @@ type Props = {
   loadError?: string;
 };
 
-const STATUS_LABELS: Record<InquiryStatus, string> = {
-  new: "New",
-  read: "Read",
-  replied: "Replied",
-  archived: "Archived",
-};
-
 const STATUS_STYLES: Record<InquiryStatus, string> = {
   new: "bg-blue-500/20 text-blue-300 border-blue-500/30",
   read: "bg-white/10 text-gray-300 border-white/10",
@@ -35,8 +29,8 @@ const STATUS_STYLES: Record<InquiryStatus, string> = {
   archived: "bg-gray-500/20 text-gray-400 border-gray-500/30",
 };
 
-function formatInquiryDate(value: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatInquiryDate(value: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
@@ -48,10 +42,19 @@ export default function InquiriesSection({
   sellerName,
   loadError,
 }: Props) {
+  const t = useTranslations("account.inquiries");
+  const locale = useLocale();
   const [inquiries, setInquiries] = useState(initialInquiries);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const statusLabels: Record<InquiryStatus, string> = {
+    new: t("statusNew"),
+    read: t("statusRead"),
+    replied: t("statusReplied"),
+    archived: t("statusArchived"),
+  };
 
   const visibleInquiries = inquiries.filter(
     (inquiry) => inquiry.status !== "archived"
@@ -152,29 +155,29 @@ export default function InquiriesSection({
                   {inquiry.horse_name}
                 </Link>
                 <p className="text-sm text-gray-500 mt-1">
-                  {formatInquiryDate(inquiry.created_at)}
+                  {formatInquiryDate(inquiry.created_at, locale)}
                 </p>
               </div>
 
               <span
                 className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide ${STATUS_STYLES[inquiry.status]}`}
               >
-                {STATUS_LABELS[inquiry.status]}
+                {statusLabels[inquiry.status]}
               </span>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 text-sm">
               <div>
-                <p className="text-gray-500">Buyer</p>
+                <p className="text-gray-500">{t("buyer")}</p>
                 <p className="text-white font-medium">{inquiry.buyer_name}</p>
               </div>
               <div>
-                <p className="text-gray-500">Email</p>
+                <p className="text-gray-500">{t("email")}</p>
                 <p className="text-white break-all">{inquiry.buyer_email}</p>
               </div>
               {inquiry.buyer_phone ? (
                 <div>
-                  <p className="text-gray-500">Phone</p>
+                  <p className="text-gray-500">{t("phone")}</p>
                   <p className="text-white">{inquiry.buyer_phone}</p>
                 </div>
               ) : null}
@@ -191,7 +194,7 @@ export default function InquiriesSection({
                 disabled={isPending}
                 className="rounded-xl border border-white/20 px-4 py-2 text-sm text-white hover:bg-white/10 transition disabled:opacity-60"
               >
-                {isExpanded ? "Hide" : "View"}
+                {isExpanded ? t("hide") : t("view")}
               </button>
 
               {inquiry.status !== "read" && inquiry.status !== "replied" ? (
@@ -201,7 +204,7 @@ export default function InquiriesSection({
                   disabled={isPending}
                   className="rounded-xl border border-white/20 px-4 py-2 text-sm text-white hover:bg-white/10 transition disabled:opacity-60"
                 >
-                  Mark as Read
+                  {t("markAsRead")}
                 </button>
               ) : null}
 
@@ -212,7 +215,7 @@ export default function InquiriesSection({
                   disabled={isPending}
                   className="rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-400 hover:bg-white/5 transition disabled:opacity-60"
                 >
-                  Archive
+                  {t("archiveAction")}
                 </button>
               ) : null}
             </div>
@@ -237,14 +240,14 @@ export default function InquiriesSection({
     <section className="rounded-3xl bg-[#111827] border border-white/10 p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Inquiries</h2>
-          <p className="mt-2 text-gray-400">
-            Messages from buyers interested in your horse listings.
-          </p>
+          <h2 className="text-xl font-bold text-white">{t("title")}</h2>
+          <p className="mt-2 text-gray-400">{t("subtitle")}</p>
         </div>
         {inquiries.some((inquiry) => inquiry.status === "new") ? (
           <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
-            {inquiries.filter((inquiry) => inquiry.status === "new").length} new
+            {t("newBadge", {
+              count: inquiries.filter((inquiry) => inquiry.status === "new").length,
+            })}
           </span>
         ) : null}
       </div>
@@ -263,11 +266,8 @@ export default function InquiriesSection({
 
       {visibleInquiries.length === 0 ? (
         <div className="rounded-2xl bg-[#08111F] border border-white/5 px-6 py-10 text-center">
-          <p className="text-white font-semibold">No inquiries yet</p>
-          <p className="mt-2 text-gray-400">
-            When buyers contact you about your listings, their messages will
-            appear here.
-          </p>
+          <p className="text-white font-semibold">{t("emptyTitle")}</p>
+          <p className="mt-2 text-gray-400">{t("emptySubtitle")}</p>
         </div>
       ) : (
         <div className="space-y-4">{visibleInquiries.map(renderInquiryCard)}</div>
@@ -276,7 +276,7 @@ export default function InquiriesSection({
       {archivedInquiries.length > 0 ? (
         <div className="mt-8">
           <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-4">
-            Archived
+            {t("archivedHeading")}
           </h3>
           <div className="space-y-4">
             {archivedInquiries.map(renderInquiryCard)}

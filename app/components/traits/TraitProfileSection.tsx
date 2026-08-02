@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import { getTraitDefinition, getTraitsByCategory } from "@/app/lib/traits/constants";
 import { formatAggregatedConfidence } from "@/app/lib/traits/evidence-labels";
@@ -26,6 +27,7 @@ function confidenceClass(level: string): string {
 }
 
 export default function TraitProfileSection({ profile, compact = false, showProvenance = false }: Props) {
+  const t = useTranslations("traits");
   const grouped = getTraitsByCategory();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(
     compact ? null : "sport_performance"
@@ -35,29 +37,29 @@ export default function TraitProfileSection({ profile, compact = false, showProv
     <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Trait Profile</p>
-          <h2 className="mt-2 text-2xl font-bold text-white">Structured Evidence Summary</h2>
+          <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("profile.eyebrow")}</p>
+          <h2 className="mt-2 text-2xl font-bold text-white">{t("profile.title")}</h2>
           <p className="mt-2 text-sm text-gray-400">
-            Based on available structured assessments only. Missing traits remain unknown.
+            {t("profile.subtitle")}
           </p>
         </div>
         <span className={`rounded-full border border-white/10 px-3 py-1 text-xs font-semibold ${confidenceClass(profile.overallConfidence)}`}>
-          Overall confidence: {profile.overallConfidence.replace("_", " ").toUpperCase()}
+          {t("profile.overallConfidence", { level: profile.overallConfidence.replace("_", " ").toUpperCase() })}
         </span>
       </div>
 
       {!compact ? (
         <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <SummaryBlock title="Strengths" items={profile.strengths.map((item) => item.label)} empty="None with sufficient evidence." />
+          <SummaryBlock title={t("profile.strengths")} items={profile.strengths.map((item) => item.label)} empty={t("profile.noneWithEvidence")} />
           <SummaryBlock
-            title="Potential improvement areas"
+            title={t("profile.improvementAreas")}
             items={profile.improvementAreas.map((item) => item.label)}
-            empty="None with sufficient evidence."
+            empty={t("profile.noneWithEvidence")}
           />
           <SummaryBlock
-            title="Insufficient evidence"
+            title={t("profile.insufficientEvidence")}
             items={profile.unknownTraits.slice(0, 6).map((item) => item.label)}
-            empty="All listed traits have some evidence."
+            empty={t("profile.allHaveEvidence")}
           />
         </div>
       ) : null}
@@ -89,11 +91,11 @@ export default function TraitProfileSection({ profile, compact = false, showProv
                         <>
                           <p className="mt-1 text-lg font-bold text-blue-400">{trait.score}/5</p>
                           <p className={`mt-1 text-xs ${confidenceClass(trait.confidence)}`}>
-                            {formatAggregatedConfidence(trait.confidence)} · {trait.evidenceCount} source(s)
+                            {formatAggregatedConfidence(trait.confidence)} · {t("profile.sources", { count: trait.evidenceCount })}
                             {trait.verifiedEvidenceCount > 0
-                              ? ` · ${trait.verifiedEvidenceCount} verified`
+                              ? ` · ${t("profile.verifiedCount", { count: trait.verifiedEvidenceCount })}`
                               : ""}
-                            {trait.hasConflict ? " · conflicting evidence" : ""}
+                            {trait.hasConflict ? ` · ${t("profile.conflictingEvidence")}` : ""}
                           </p>
                           {showProvenance ? (
                             <p className="mt-1 text-xs text-gray-500">{trait.explanation}</p>
@@ -101,10 +103,10 @@ export default function TraitProfileSection({ profile, compact = false, showProv
                         </>
                       ) : trait && trait.evidenceCount > 0 ? (
                         <p className="mt-2 text-sm text-orange-300">
-                          Evidence exists but confidence is insufficient to assess
+                          {t("profile.evidenceInsufficient")}
                         </p>
                       ) : (
-                        <p className="mt-2 text-sm text-gray-500">Insufficient Data</p>
+                        <p className="mt-2 text-sm text-gray-500">{t("profile.insufficientData")}</p>
                       )}
                     </div>
                   );

@@ -1,0 +1,25 @@
+{
+  "directory": {
+    "title": "Breeder & Stud Farm Directory",
+    "subtitle": "Discover professional breeders and stud farms across Europe.",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Stud farm name, location...",
+    "countryLabel": "Country",
+    "allCountries": "All Countries",
+    "allCountriesPlaceholder": "All countries…",
+    "disciplineLabel": "Discipline",
+    "allDisciplines": "All Disciplines",
+    "allDisciplinesPlaceholder": "All disciplines…",
+    "showingCount": "Showing {count, plural, =1 {1 stud farm} other {# stud farms}}",
+    "loadError": "Unable to load breeders: {error}",
+    "emptyTitle": "No stud farms found",
+    "emptyNoData": "The breeder directory is ready. Create your stud farm profile from your account to get started.",
+    "emptyFiltered": "Try adjusting your search to find more breeders."
+  },
+  "card": {
+    "coverAlt": "{name} cover",
+    "logoAlt": "{name} logo",
+    "stallions": "Stallions",
+    "view": "View →"
+  }
+}

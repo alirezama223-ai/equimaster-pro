@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import FormField from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import {
@@ -24,6 +25,8 @@ export default function StallionMediaSection({
   onImagesChange,
   onMediaError,
 }: Props) {
+  const t = useTranslations("account.stallions");
+
   function handleImageSelection(event: React.ChangeEvent<HTMLInputElement>) {
     const files = event.target.files;
     if (!files) return;
@@ -36,7 +39,7 @@ export default function StallionMediaSection({
     }
 
     if (result.images.length > MAX_STALLION_IMAGES) {
-      onMediaError(`You can upload up to ${MAX_STALLION_IMAGES} images.`);
+      onMediaError(t("maxImages", { max: MAX_STALLION_IMAGES }));
       event.target.value = "";
       return;
     }
@@ -47,21 +50,16 @@ export default function StallionMediaSection({
   }
 
   return (
-    <FormSection
-      title="Stallion Photos"
-      subtitle="Upload multiple photos and choose one cover image for the directory and profile."
-    >
+    <FormSection title={t("photosTitle")} subtitle={t("photosSubtitle")}>
       <FormField
-        label={`Photos (${images.length}/${MAX_STALLION_IMAGES})`}
+        label={t("photosLabel", { count: images.length, max: MAX_STALLION_IMAGES })}
         error={mediaError ?? undefined}
         required
       >
         <label className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-blue-500/40 bg-[#08111F] px-6 py-10 text-center cursor-pointer hover:border-blue-500 transition">
           <span className="text-3xl">📸</span>
-          <span className="text-white font-semibold">Select stallion photos</span>
-          <span className="text-sm text-gray-400">
-            JPG, PNG, WEBP, or GIF up to 10 MB each. Choose a cover after upload.
-          </span>
+          <span className="text-white font-semibold">{t("selectPhotos")}</span>
+          <span className="text-sm text-gray-400">{t("photosHint")}</span>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
@@ -83,7 +81,7 @@ export default function StallionMediaSection({
             >
               <Image
                 src={image.previewUrl}
-                alt="Stallion photo"
+                alt={t("photoAlt")}
                 width={400}
                 height={300}
                 unoptimized={image.previewUrl.startsWith("blob:")}
@@ -97,11 +95,11 @@ export default function StallionMediaSection({
                     onClick={() => onImagesChange(setCoverImage(images, image.id))}
                     className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white"
                   >
-                    Set Cover
+                    {t("setCover")}
                   </button>
                 ) : (
                   <span className="rounded-lg bg-blue-600/90 px-3 py-1 text-xs font-semibold text-white">
-                    Cover Image
+                    {t("coverImage")}
                   </span>
                 )}
 
@@ -110,7 +108,7 @@ export default function StallionMediaSection({
                   onClick={() => onImagesChange(removeListingImage(images, image.id))}
                   className="rounded-lg border border-white/20 px-3 py-1 text-xs font-semibold text-white"
                 >
-                  Remove
+                  {t("remove")}
                 </button>
               </div>
             </div>

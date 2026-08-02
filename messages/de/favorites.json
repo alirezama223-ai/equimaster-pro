@@ -1,0 +1,14 @@
+{
+  "title": "❤️ Meine Favoriten",
+  "emptyTitle": "Noch keine Favoriten",
+  "emptyDescription": "Speichern Sie Pferde, die Ihnen gefallen — sie erscheinen hier.",
+  "browseMarketplace": "Marktplatz durchsuchen",
+  "button": {
+    "removeAria": "Aus Favoriten entfernen",
+    "saveAria": "Zu Favoriten hinzufügen",
+    "saving": "Wird gespeichert …",
+    "saved": "♥ Zu Favoriten hinzugefügt",
+    "save": "♡ Pferd speichern",
+    "loadingIndicator": "…"
+  }
+}

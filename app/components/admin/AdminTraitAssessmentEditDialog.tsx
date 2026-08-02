@@ -1,7 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { adminUpdateTraitAssessment } from "@/app/actions/traits";
 import TraitScoringGuide from "@/app/components/traits/TraitScoringGuide";
 import { getTraitsByCategory } from "@/app/lib/traits/constants";
@@ -39,6 +40,8 @@ function AdminTraitAssessmentEditForm({
   row: AdminTraitAssessmentEditRow;
   onClose: () => void;
 }) {
+  const t = useTranslations("admin.traits");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [traitKey, setTraitKey] = useState<TraitKey>(row.trait_key as TraitKey);
   const [score, setScore] = useState(Number(row.score));
@@ -80,7 +83,7 @@ function AdminTraitAssessmentEditForm({
         router.refresh();
         onClose();
       } else {
-        setMessage(result.error ?? "Update failed.");
+        setMessage(result.error ?? t("updateFailed"));
       }
     });
   }
@@ -88,7 +91,7 @@ function AdminTraitAssessmentEditForm({
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
       <label className="block text-sm text-gray-300">
-        Trait
+        {t("traitLabel")}
         <select
           value={traitKey}
           onChange={(event) => handleTraitChange(event.target.value as TraitKey)}
@@ -109,7 +112,7 @@ function AdminTraitAssessmentEditForm({
       <TraitScoringGuide traitKey={traitKey} />
 
       <div>
-        <p className="text-sm text-gray-300">Score (1–5)</p>
+        <p className="text-sm text-gray-300">{t("scoreLabel")}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -127,20 +130,20 @@ function AdminTraitAssessmentEditForm({
       </div>
 
       <label className="block text-sm text-gray-300">
-        Confidence
+        {t("confidenceLabel")}
         <select
           value={confidence}
           onChange={(event) => setConfidence(event.target.value as TraitAssessmentConfidence)}
           className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="low">{t("confidenceLow")}</option>
+          <option value="medium">{t("confidenceMedium")}</option>
+          <option value="high">{t("confidenceHigh")}</option>
         </select>
       </label>
 
       <label className="block text-sm text-gray-300">
-        Evidence source type
+        {t("sourceTypeLabel")}
         <select
           value={effectiveSourceType}
           onChange={(event) => setSourceType(event.target.value as TraitSourceType)}
@@ -156,7 +159,7 @@ function AdminTraitAssessmentEditForm({
       <p className="text-xs text-gray-500">{SOURCE_TYPE_DESCRIPTIONS[effectiveSourceType]}</p>
 
       <label className="block text-sm text-gray-300">
-        Source note
+        {t("sourceNote")}
         <textarea
           value={sourceNote}
           onChange={(event) => setSourceNote(event.target.value)}
@@ -171,14 +174,14 @@ function AdminTraitAssessmentEditForm({
           disabled={pending}
           className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
         >
-          {pending ? "Saving..." : "Save Changes"}
+          {pending ? t("saving") : t("saveChanges")}
         </button>
         <button
           type="button"
           onClick={onClose}
           className="rounded-xl border border-white/10 px-5 py-3 font-semibold text-gray-300"
         >
-          Cancel
+          {tCommon("cancel")}
         </button>
       </div>
 
@@ -188,6 +191,9 @@ function AdminTraitAssessmentEditForm({
 }
 
 export default function AdminTraitAssessmentEditDialog({ row, onClose }: Props) {
+  const t = useTranslations("admin.traits");
+  const tCommon = useTranslations("common");
+
   if (!row) return null;
 
   return (
@@ -200,20 +206,18 @@ export default function AdminTraitAssessmentEditDialog({ row, onClose }: Props) 
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Edit Assessment</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("editEyebrow")}</p>
             <h3 id="admin-trait-edit-title" className="mt-2 text-xl font-bold text-white">
               {row.horseName}
             </h3>
-            <p className="mt-1 text-sm text-gray-400">
-              Verified status is changed separately. Identity fields (horse, author) are not editable here.
-            </p>
+            <p className="mt-1 text-sm text-gray-400">{t("editNote")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-xl border border-white/10 px-3 py-2 text-sm text-gray-300 hover:text-white"
           >
-            Close
+            {tCommon("close")}
           </button>
         </div>
 

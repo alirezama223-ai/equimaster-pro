@@ -1,0 +1,14 @@
+{
+  "title": "❤️ My Favorite Horses",
+  "emptyTitle": "No favorites yet",
+  "emptyDescription": "Save horses you like and they'll appear here.",
+  "browseMarketplace": "Browse Marketplace",
+  "button": {
+    "removeAria": "Remove from favorites",
+    "saveAria": "Save to favorites",
+    "saving": "Saving...",
+    "saved": "♥ Saved to Favorites",
+    "save": "♡ Save Horse",
+    "loadingIndicator": "…"
+  }
+}

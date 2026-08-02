@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "eyebrow": "Bienvenido a EquiMaster Pro",
+    "title": {
+      "line1": "Caballos",
+      "line2": "Deportivos",
+      "line3": "Marketplace"
+    },
+    "subtitle": "Compra, vende y descubre caballos de salto de élite de criadores de confianza en toda Europa.",
+    "browseButton": "Explorar caballos",
+    "sellButton": "Vender caballo",
+    "imageAlt": "Caballo deportivo — imagen principal",
+    "stats": {
+      "sportHorses": {
+        "value": "15K+",
+        "label": "Caballos deportivos"
+      },
+      "breeders": {
+        "value": "1200+",
+        "label": "Criadores"
+      },
+      "countries": {
+        "value": "28",
+        "label": "Países"
+      }
+    }
+  },
+  "search": {
+    "title": "Encuentra tu caballo perfecto",
+    "subtitle": "Busca y filtra los mejores caballos deportivos de Europa.",
+    "queryLabel": "Buscar",
+    "queryPlaceholder": "Buscar caballo...",
+    "breed": "Raza",
+    "allBreeds": "Todas las razas",
+    "allBreedsPlaceholder": "Todas las razas…",
+    "country": "País",
+    "allCountries": "Todos los países",
+    "allCountriesPlaceholder": "Todos los países…",
+    "gender": "Sexo",
+    "allGenders": "Todos los sexos",
+    "mare": "Yegua",
+    "stallion": "Semental",
+    "gelding": "Castrado",
+    "discipline": "Disciplina",
+    "allDisciplines": "Todas las disciplinas",
+    "allDisciplinesPlaceholder": "Todas las disciplinas…",
+    "verifiedOnly": "Solo verificados",
+    "minPrice": "Precio mín. (€)",
+    "maxPrice": "Precio máx. (€)",
+    "minAge": "Edad mín.",
+    "maxAge": "Edad máx.",
+    "minHeight": "Altura mín. (cm)",
+    "maxHeight": "Altura máx. (cm)",
+    "yearsPlaceholder": "Años",
+    "cmPlaceholder": "cm",
+    "pricePlaceholderMin": "p. ej. 30000",
+    "pricePlaceholderMax": "p. ej. 60000",
+    "sortBy": "Ordenar por",
+    "sortDefault": "Orden predeterminado",
+    "sortPriceAsc": "Precio: menor a mayor",
+    "sortPriceDesc": "Precio: mayor a menor",
+    "sortAgeAsc": "Edad: más joven primero",
+    "sortAgeDesc": "Edad: más mayor primero",
+    "sortHeightAsc": "Altura: baja a alta",
+    "sortHeightDesc": "Altura: alta a baja",
+    "resetFilters": "Restablecer filtros"
+  },
+  "featured": {
+    "eyebrow": "Colección Premium",
+    "title": "Caballos destacados",
+    "subtitle": "Descubre los mejores caballos de salto de Europa, seleccionados por criadores y jinetes profesionales de confianza.",
+    "emptyIcon": "🐴",
+    "emptyTitle": "No se encontraron caballos",
+    "emptyDescription": "Prueba a cambiar tu búsqueda."
+  },
+  "premium": {
+    "eyebrow": "Genética de élite",
+    "title": "Sementales Premium",
+    "subtitle": "Descubre los sementales reproductores más exitosos del mundo.",
+    "browseDirectory": "Explorar directorio de sementales →",
+    "age": "Edad",
+    "studFee": "Tarifa de cubrición",
+    "viewStallion": "Ver semental",
+    "stallionImageAlt": "{name} — foto del semental"
+  },
+  "horseCard": {
+    "verified": "✔ VERIFICADO",
+    "price": "Precio",
+    "age": "Edad",
+    "ageValue": "{age} años",
+    "height": "Altura",
+    "heightValue": "{height} cm",
+    "gender": "Sexo",
+    "level": "Nivel",
+    "location": "Ubicación",
+    "view": "Ver →",
+    "imageAlt": "{name} — foto del anuncio",
+    "genderUnknown": "Desconocido"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageAria": "Página {page}"
+  }
+}

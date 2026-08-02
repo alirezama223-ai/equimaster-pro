@@ -1,0 +1,14 @@
+{
+  "title": "❤️ Mes favoris",
+  "emptyTitle": "Aucun favori pour le moment",
+  "emptyDescription": "Enregistrez les chevaux qui vous intéressent — ils apparaîtront ici.",
+  "browseMarketplace": "Parcourir le marketplace",
+  "button": {
+    "removeAria": "Retirer des favoris",
+    "saveAria": "Ajouter aux favoris",
+    "saving": "Enregistrement …",
+    "saved": "♥ Ajouté aux favoris",
+    "save": "♡ Enregistrer ce cheval",
+    "loadingIndicator": "…"
+  }
+}

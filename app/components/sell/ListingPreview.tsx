@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { formatListingPrice } from "@/app/lib/listing-validation";
 import { ListingFormData, ListingImage } from "@/app/types/listing";
@@ -17,8 +18,8 @@ export default function ListingPreview({
   videoPreviewUrl,
   existingVideoUrl,
 }: Props) {
-  const coverImage =
-    images.find((image) => image.isCover) ?? images[0] ?? null;
+  const t = useTranslations("sell");
+  const coverImage = images.find((image) => image.isCover) ?? images[0] ?? null;
 
   return (
     <div className="space-y-8">
@@ -35,7 +36,7 @@ export default function ListingPreview({
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
               <p className="text-blue-400 uppercase tracking-[4px] text-xs font-semibold">
-                Listing Preview
+                {t("preview.eyebrow")}
               </p>
               <h2 className="text-4xl font-black text-white mt-2">{data.name}</h2>
               <p className="text-gray-300 mt-2">
@@ -48,35 +49,36 @@ export default function ListingPreview({
         <div className="p-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <PreviewStat label="Age" value={`${data.age} yrs`} />
-              <PreviewStat label="Height" value={`${data.height} cm`} />
-              <PreviewStat label="Gender" value={data.gender} />
-              <PreviewStat label="Color" value={data.color} />
-              <PreviewStat label="Discipline" value={data.discipline} />
-              <PreviewStat label="Level" value={data.level} />
-              <PreviewStat label="Sire" value={data.sire} />
-              <PreviewStat label="Dam" value={data.dam} />
+              <PreviewStat label={t("preview.age")} value={t("preview.ageValue", { age: data.age })} />
+              <PreviewStat
+                label={t("preview.height")}
+                value={t("preview.heightValue", { height: data.height })}
+              />
+              <PreviewStat label={t("preview.gender")} value={data.gender} />
+              <PreviewStat label={t("preview.color")} value={data.color} />
+              <PreviewStat label={t("preview.discipline")} value={data.discipline} />
+              <PreviewStat label={t("preview.level")} value={data.level} />
+              <PreviewStat label={t("preview.sire")} value={data.sire} />
+              <PreviewStat label={t("preview.dam")} value={data.dam} />
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white mb-3">Description</h3>
-              <p className="text-gray-300 leading-7 whitespace-pre-wrap">
-                {data.description}
-              </p>
+              <h3 className="text-xl font-bold text-white mb-3">{t("preview.description")}</h3>
+              <p className="text-gray-300 leading-7 whitespace-pre-wrap">{data.description}</p>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white mb-3">Pedigree</h3>
+              <h3 className="text-xl font-bold text-white mb-3">{t("preview.pedigree")}</h3>
               <div className="grid md:grid-cols-3 gap-4">
-                <PreviewStat label="Sire" value={data.sire} />
-                <PreviewStat label="Dam" value={data.dam} />
-                <PreviewStat label="Dam Sire" value={data.damSire} />
+                <PreviewStat label={t("preview.sire")} value={data.sire} />
+                <PreviewStat label={t("preview.dam")} value={data.dam} />
+                <PreviewStat label={t("preview.damSire")} value={data.damSire} />
               </div>
             </div>
 
             {images.length > 1 ? (
               <div>
-                <h3 className="text-xl font-bold text-white mb-3">Gallery</h3>
+                <h3 className="text-xl font-bold text-white mb-3">{t("preview.gallery")}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {images.map((image) => (
                     <div
@@ -85,7 +87,7 @@ export default function ListingPreview({
                     >
                       <Image
                         src={image.previewUrl}
-                        alt="Listing gallery preview"
+                        alt={t("preview.galleryAlt")}
                         fill
                         unoptimized
                         className="object-cover"
@@ -98,7 +100,7 @@ export default function ListingPreview({
 
             {videoPreviewUrl || existingVideoUrl || data.videoUrl ? (
               <div>
-                <h3 className="text-xl font-bold text-white mb-3">Video</h3>
+                <h3 className="text-xl font-bold text-white mb-3">{t("preview.video")}</h3>
                 {videoPreviewUrl ? (
                   <video
                     src={videoPreviewUrl}
@@ -120,25 +122,23 @@ export default function ListingPreview({
 
           <div className="space-y-6">
             <div className="rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-8">
-              <p className="text-gray-200 text-sm uppercase tracking-wide">Price</p>
-              <p className="text-5xl font-black text-white mt-2">
-                {formatListingPrice(data)}
-              </p>
+              <p className="text-gray-200 text-sm uppercase tracking-wide">{t("preview.price")}</p>
+              <p className="text-5xl font-black text-white mt-2">{formatListingPrice(data)}</p>
             </div>
 
             <div className="rounded-3xl bg-[#08111F] border border-white/10 p-6 space-y-4">
-              <h3 className="text-xl font-bold text-white">Seller Contact</h3>
-              <PreviewStat label="Name" value={data.sellerName} />
-              <PreviewStat label="Email" value={data.email} />
-              <PreviewStat label="Phone" value={data.phone} />
+              <h3 className="text-xl font-bold text-white">{t("preview.sellerContact")}</h3>
+              <PreviewStat label={t("preview.name")} value={data.sellerName} />
+              <PreviewStat label={t("preview.email")} value={data.email} />
+              <PreviewStat label={t("preview.phone")} value={data.phone} />
               {data.stableName ? (
-                <PreviewStat label="Stable / Company" value={data.stableName} />
+                <PreviewStat label={t("preview.stable")} value={data.stableName} />
               ) : null}
             </div>
 
             {videoFile ? (
               <p className="text-sm text-gray-400">
-                Video file selected: {videoFile.name}
+                {t("preview.videoSelected", { name: videoFile.name })}
               </p>
             ) : null}
           </div>

@@ -1,10 +1,10 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
-import {
-  STALLION_AVAILABILITY_LABELS,
-  StallionCardData,
-} from "@/app/types/stallion";
+import { StallionCardData } from "@/app/types/stallion";
 import { availabilityBadgeClass } from "@/app/lib/stallions";
 
 type Props = {
@@ -12,6 +12,8 @@ type Props = {
 };
 
 export default function StallionCard({ stallion }: Props) {
+  const t = useTranslations("stallions");
+
   return (
     <Link href={`/stallions/${stallion.id}`}>
       <div className="group overflow-hidden rounded-3xl bg-[#111827] border border-white/10 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-500 cursor-pointer h-full flex flex-col">
@@ -35,11 +37,11 @@ export default function StallionCard({ stallion }: Props) {
           <div
             className={`absolute top-4 right-4 rounded-full border px-3 py-1.5 text-xs font-semibold backdrop-blur-md ${availabilityBadgeClass(stallion.availability)}`}
           >
-            {STALLION_AVAILABILITY_LABELS[stallion.availability]}
+            {t(`availability.${stallion.availability}`)}
           </div>
 
           <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md rounded-xl px-4 py-2">
-            <p className="text-xs text-gray-300 uppercase">Stud Fee</p>
+            <p className="text-xs text-gray-300 uppercase">{t("card.studFee")}</p>
             <p className="text-white font-bold text-xl">{stallion.studFeeLabel}</p>
           </div>
         </div>
@@ -59,22 +61,22 @@ export default function StallionCard({ stallion }: Props) {
           <div className="grid grid-cols-2 gap-3 mb-6">
             <InfoCard
               icon="📅"
-              label="Born"
+              label={t("card.born")}
               value={stallion.birthYear?.toString() ?? "—"}
             />
-            <InfoCard icon="🎯" label="Discipline" value={stallion.discipline || "—"} />
-            <InfoCard icon="🏆" label="Level" value={stallion.competitionLevel || "—"} />
-            <InfoCard icon="📏" label="Height" value={stallion.height ? `${stallion.height} cm` : "—"} />
+            <InfoCard icon="🎯" label={t("card.discipline")} value={stallion.discipline || "—"} />
+            <InfoCard icon="🏆" label={t("card.level")} value={stallion.competitionLevel || "—"} />
+            <InfoCard icon="📏" label={t("card.height")} value={stallion.height ? `${stallion.height} cm` : "—"} />
           </div>
 
           <div className="mt-auto flex justify-between items-center border-t border-white/10 pt-5">
             <div>
-              <p className="text-xs uppercase text-gray-500">Location</p>
+              <p className="text-xs uppercase text-gray-500">{t("card.location")}</p>
               <p className="text-white font-medium">📍 {stallion.country}</p>
             </div>
 
             <div className="bg-blue-600 px-5 py-3 rounded-xl text-white font-semibold group-hover:bg-blue-500 transition">
-              View →
+              {t("card.view")}
             </div>
           </div>
         </div>

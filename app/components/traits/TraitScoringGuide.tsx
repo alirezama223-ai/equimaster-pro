@@ -2,12 +2,14 @@
 
 import { getTraitDefinition } from "@/app/lib/traits/constants";
 import { TraitKey } from "@/app/types/traits";
+import { useTranslations } from "next-intl";
 
 type Props = {
   traitKey: TraitKey;
 };
 
 export default function TraitScoringGuide({ traitKey }: Props) {
+  const t = useTranslations("traits");
   const trait = getTraitDefinition(traitKey);
 
   return (
@@ -15,18 +17,17 @@ export default function TraitScoringGuide({ traitKey }: Props) {
       <p className="text-sm font-semibold text-white">{trait.label}</p>
       <p className="mt-2 text-sm text-gray-400">{trait.description}</p>
       <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-        Scoring guidance (structured assessment — not a scientific guarantee)
+        {t("scoringGuide.guidanceLabel")}
       </p>
       <ul className="mt-2 space-y-1 text-sm text-gray-300">
         {([1, 2, 3, 4, 5] as const).map((score) => (
           <li key={score}>
-            <span className="font-semibold text-blue-400">{score}/5</span> — {trait.scoringGuidance[score]}
+            {t("scoringGuide.scoreEntry", { score, guidance: trait.scoringGuidance[score] })}
           </li>
         ))}
       </ul>
       <p className="mt-3 text-xs text-gray-500">
-        Evidence nature: {trait.evidenceNature}. Allowed sources for this trait include documented
-        categories such as owner/breeder reports and admin-reviewed records.
+        {t("scoringGuide.evidenceNature", { nature: trait.evidenceNature })}
       </p>
     </div>
   );

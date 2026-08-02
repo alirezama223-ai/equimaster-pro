@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { searchBloodlines } from "@/app/actions/pedigree";
-import PedigreeHorseCard from "@/app/components/pedigree/PedigreeHorseCard";
+import PedigreeHorseCardClient from "@/app/components/pedigree/PedigreeHorseCardClient";
 import { PedigreeSearchResult } from "@/app/types/pedigree";
+
 type Props = {
   initialResults: PedigreeSearchResult[];
   initialQuery: string;
@@ -18,6 +20,7 @@ export default function BloodlinesSearchClient({
   initialStudbook,
   initialRegistrationNumber,
 }: Props) {
+  const t = useTranslations("bloodlines");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
@@ -48,13 +51,13 @@ export default function BloodlinesSearchClient({
   return (
     <div className="space-y-8">
       <form onSubmit={handleSubmit} className="rounded-3xl border border-white/10 bg-[#111827] p-6 grid gap-4 md:grid-cols-2">
-        <Field label="Horse / ancestor name" value={query} onChange={setQuery} placeholder="Chacco-Blue" />
-        <Field label="Studbook" value={studbook} onChange={setStudbook} placeholder="KWPN, BWP, OS..." />
+        <Field label={t("search.horseNameLabel")} value={query} onChange={setQuery} placeholder={t("search.horseNamePlaceholder")} />
+        <Field label={t("search.studbookLabel")} value={studbook} onChange={setStudbook} placeholder={t("search.studbookPlaceholder")} />
         <Field
-          label="Registration / UELN"
+          label={t("search.registrationLabel")}
           value={registrationNumber}
           onChange={setRegistrationNumber}
-          placeholder="752002910123456"
+          placeholder={t("search.registrationPlaceholder")}
         />
         <div className="md:col-span-2">
           <button
@@ -62,7 +65,7 @@ export default function BloodlinesSearchClient({
             disabled={pending}
             className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
           >
-            {pending ? "Searching..." : "Search Bloodlines"}
+            {pending ? t("search.searching") : t("search.submit")}
           </button>
         </div>
       </form>
@@ -70,13 +73,13 @@ export default function BloodlinesSearchClient({
       {results.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-white/10 px-6 py-12 text-center text-gray-500">
           {searchParams.toString()
-            ? "No pedigree records matched your search."
-            : "Search by horse name, studbook, or registration number."}
+            ? t("search.emptyWithQuery")
+            : t("search.emptyInitial")}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {results.map((result) => (
-            <PedigreeHorseCard key={result.id} result={result} />
+            <PedigreeHorseCardClient key={result.id} result={result} />
           ))}
         </div>
       )}

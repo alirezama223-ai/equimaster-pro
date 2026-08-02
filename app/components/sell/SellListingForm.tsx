@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import BasicInfoSection from "@/app/components/sell/BasicInfoSection";
@@ -20,6 +21,9 @@ import {
   updateHorseListing,
   updateHorseListingVideo,
 } from "@/app/actions/horse-listings";
+import {
+  getListingPreviewPath,
+} from "@/app/lib/marketplace/paths";
 import {
   listingImagesFromRow,
   listingRowToFormData,
@@ -79,6 +83,7 @@ export default function SellListingForm({
   mode = "create",
   initialListing,
 }: Props) {
+  const t = useTranslations("sell");
   const isEditMode = mode === "edit" && Boolean(initialListing);
   const router = useRouter();
   const listingId = initialListing?.id ?? null;
@@ -105,6 +110,7 @@ export default function SellListingForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedListingId, setSavedListingId] = useState<string | null>(listingId);
+  const [savedListingPublished, setSavedListingPublished] = useState(false);
 
   function updateField<K extends keyof ListingFormData>(
     field: K,
@@ -163,7 +169,7 @@ export default function SellListingForm({
       .filter((path): path is string => Boolean(path));
   }
 
-  async function handleCreateSubmit() {
+  async function handleCreateSubmit(publish: boolean) {
     const submission = new FormData();
     submission.append(
       "payload",
@@ -176,6 +182,7 @@ export default function SellListingForm({
           type: image.file!.type,
         })),
         hasVideoFile: Boolean(videoFile),
+        publish,
       })
     );
 
@@ -185,7 +192,7 @@ export default function SellListingForm({
 
     const result = await createHorseListing(submission);
 
-    if (result.error) {
+    if (result.error && !result.data) {
       setSubmitError(result.error);
       return;
     }
@@ -193,7 +200,7 @@ export default function SellListingForm({
     const newListingId = result.data?.id;
 
     if (!newListingId) {
-      setSubmitError("Listing was saved but could not be confirmed. Please check My Listings.");
+      setSubmitError(t("form.errors.saveUnconfirmed"));
       return;
     }
 
@@ -205,9 +212,7 @@ export default function SellListingForm({
 
       if (!user) {
         await rollbackHorseListing(newListingId);
-        setSubmitError(
-          "Your session expired before the video could upload. Please sign in and try again."
-        );
+        setSubmitError(t("form.errors.sessionExpiredVideo"));
         return;
       }
 
@@ -220,9 +225,7 @@ export default function SellListingForm({
 
       if (videoUpload.error || !videoUpload.data) {
         await rollbackHorseListing(newListingId);
-        setSubmitError(
-          videoUpload.error ?? "Your listing was not saved because video upload failed."
-        );
+        setSubmitError(videoUpload.error ?? t("form.errors.videoUploadFailed"));
         return;
       }
 
@@ -240,14 +243,25 @@ export default function SellListingForm({
     }
 
     setSavedListingId(newListingId);
-    setStep("success");
+    setSavedListingPublished(Boolean(result.published));
+
+    if (result.error) {
+      setSubmitError(result.error);
+    }
+
+    if (result.publicUrl) {
+      router.push(result.publicUrl);
+      router.refresh();
+      return;
+    }
+
+    router.push(getListingPreviewPath(newListingId));
     router.refresh();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function handleEditSubmit() {
     if (!listingId) {
-      setSubmitError("Listing could not be identified.");
+      setSubmitError(t("form.errors.listingNotIdentified"));
       return;
     }
 
@@ -271,7 +285,7 @@ export default function SellListingForm({
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setSubmitError("Your session expired. Please sign in and try again.");
+        setSubmitError(t("form.errors.sessionExpired"));
         return;
       }
 
@@ -283,7 +297,7 @@ export default function SellListingForm({
       );
 
       if (videoUpload.error || !videoUpload.data) {
-        setSubmitError(videoUpload.error ?? "Video upload failed. Your listing was not changed.");
+        setSubmitError(videoUpload.error ?? t("form.errors.videoUploadFailedEdit"));
         return;
       }
 
@@ -373,12 +387,11 @@ export default function SellListingForm({
     }
 
     setSavedListingId(listingId);
-    setStep("success");
+    router.push(getListingPreviewPath(listingId));
     router.refresh();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(publish = false) {
     const nextErrors = handleValidate();
     if (Object.keys(nextErrors).length > 0) {
       setStep("form");
@@ -393,15 +406,15 @@ export default function SellListingForm({
       if (isEditMode) {
         await handleEditSubmit();
       } else {
-        await handleCreateSubmit();
+        await handleCreateSubmit(publish);
       }
     } catch (error) {
       const message =
         process.env.NODE_ENV === "development"
           ? formatDevActionError(error)
           : isEditMode
-            ? "Unable to update your listing right now. Please try again."
-            : "Unable to save your listing right now. Please try again.";
+            ? t("form.errors.updateFailed")
+            : t("form.errors.saveFailed");
       setSubmitError(message);
     } finally {
       setIsSubmitting(false);
@@ -431,7 +444,13 @@ export default function SellListingForm({
       return <ListingEditSuccess data={formData} listingId={savedListingId} />;
     }
 
-    return <ListingSuccess data={formData} listingId={savedListingId ?? undefined} />;
+    return (
+      <ListingSuccess
+        data={formData}
+        listingId={savedListingId ?? undefined}
+        published={savedListingPublished}
+      />
+    );
   }
 
   if (step === "preview") {
@@ -439,15 +458,13 @@ export default function SellListingForm({
       <div className="space-y-8">
         <div className="text-center">
           <p className="uppercase tracking-[6px] text-blue-500 text-sm font-semibold">
-            {isEditMode ? "Review Changes" : "Review Listing"}
+            {isEditMode ? t("form.reviewChanges") : t("form.reviewListing")}
           </p>
           <h2 className="text-4xl font-black text-white mt-3">
-            {isEditMode ? "Preview before saving" : "Preview before submission"}
+            {isEditMode ? t("form.previewBeforeSaving") : t("form.previewBeforeSubmission")}
           </h2>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-            {isEditMode
-              ? "Confirm your updates before saving this listing."
-              : "This preview shows how your listing will approximately appear to buyers."}
+            {isEditMode ? t("form.previewEditHint") : t("form.previewCreateHint")}
           </p>
         </div>
 
@@ -476,21 +493,31 @@ export default function SellListingForm({
             disabled={isSubmitting}
             className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition disabled:opacity-60"
           >
-            Back to Edit
+            {t("form.backToEdit")}
           </button>
+          {!isEditMode ? (
+            <button
+              type="button"
+              onClick={() => handleSubmit(false)}
+              disabled={isSubmitting}
+              className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition disabled:opacity-60"
+            >
+              {isSubmitting ? t("form.savingDraft") : t("form.saveDraft")}
+            </button>
+          ) : null}
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={() => handleSubmit(isEditMode ? false : true)}
             disabled={isSubmitting}
             className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold transition"
           >
             {isSubmitting
               ? isEditMode
-                ? "Saving Changes..."
-                : "Saving Listing..."
+                ? t("form.savingChanges")
+                : t("form.publishing")
               : isEditMode
-                ? "Save Changes"
-                : "Submit Listing"}
+                ? t("form.saveChanges")
+                : t("form.publishListing")}
           </button>
         </div>
       </div>
@@ -536,7 +563,7 @@ export default function SellListingForm({
 
       {Object.keys(errors).length > 0 ? (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-300">
-          Please review the highlighted fields before continuing.
+          {t("form.validationError")}
         </div>
       ) : null}
 
@@ -546,7 +573,7 @@ export default function SellListingForm({
             href={`/horse/${listingId}`}
             className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition text-center"
           >
-            Cancel
+            {t("form.cancel")}
           </Link>
         ) : (
           <button
@@ -554,14 +581,14 @@ export default function SellListingForm({
             onClick={handleResetForm}
             className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition"
           >
-            Clear Form
+            {t("form.clearForm")}
           </button>
         )}
         <button
           type="submit"
           className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition"
         >
-          {isEditMode ? "Review Changes" : "Preview Listing"}
+          {isEditMode ? t("form.reviewChanges") : t("form.previewListing")}
         </button>
       </div>
     </form>

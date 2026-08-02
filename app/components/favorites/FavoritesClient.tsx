@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import HorseCard from "@/app/components/featured/HorseCard";
 import { Horse } from "@/app/data/horses";
@@ -14,6 +15,7 @@ export default function FavoritesClient({
   initialHorses,
   initialFavoriteListingIds,
 }: Props) {
+  const t = useTranslations("favorites");
   const [horses, setHorses] = useState(initialHorses);
   const [favoriteListingIds, setFavoriteListingIds] = useState(
     initialFavoriteListingIds
@@ -39,21 +41,21 @@ export default function FavoritesClient({
     <section className="min-h-screen bg-[#0A1224] py-20">
       <div className="max-w-7xl mx-auto px-6">
         <h1 className="text-5xl font-bold text-white mb-12">
-          ❤️ My Favorite Horses
+          {t("title")}
         </h1>
 
         {horses.length === 0 ? (
           <div className="text-center py-32">
             <div className="text-8xl mb-8">🐴</div>
-            <h2 className="text-3xl text-white font-bold">No favorites yet</h2>
+            <h2 className="text-3xl text-white font-bold">{t("emptyTitle")}</h2>
             <p className="text-gray-400 mt-4 max-w-md mx-auto">
-              Save horses you like and they&apos;ll appear here.
+              {t("emptyDescription")}
             </p>
             <Link
               href="/"
               className="inline-block mt-8 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition"
             >
-              Browse Marketplace
+              {t("browseMarketplace")}
             </Link>
           </div>
         ) : (

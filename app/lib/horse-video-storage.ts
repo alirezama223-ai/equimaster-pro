@@ -180,3 +180,40 @@ export function isDirectPlayableVideoUrl(url: string): boolean {
     lower.endsWith(".mov")
   );
 }
+
+export async function copyListingVideoForDuplicate(
+  supabase: SupabaseClient,
+  userId: string,
+  sourceListing: {
+    video_url: string | null;
+    video_file_name: string | null;
+  },
+  targetListingId: string
+): Promise<{ video_url: string | null; video_file_name: string | null; error?: string }> {
+  if (!sourceListing.video_url) {
+    return { video_url: null, video_file_name: null };
+  }
+
+  const sourcePath = extractHorseVideoStoragePath(sourceListing.video_url);
+  if (!sourcePath) {
+    return {
+      video_url: sourceListing.video_url,
+      video_file_name: sourceListing.video_file_name,
+    };
+  }
+
+  const fileName = sourceListing.video_file_name ?? "video.mp4";
+  const targetPath = buildListingVideoStoragePath(userId, targetListingId, fileName);
+  const { error } = await supabase.storage
+    .from(HORSE_VIDEOS_BUCKET)
+    .copy(sourcePath, targetPath);
+
+  if (error) {
+    return { video_url: null, video_file_name: null, error: error.message };
+  }
+
+  return {
+    video_url: getHorseVideoPublicUrl(supabase, targetPath),
+    video_file_name: fileName,
+  };
+}

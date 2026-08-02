@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/app/lib/supabase/client";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function LogoutButton({ variant = "button" }: Props) {
+  const t = useTranslations("auth.logout");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,7 +35,7 @@ export default function LogoutButton({ variant = "button" }: Props) {
         disabled={isLoading}
         className="w-full text-left px-4 py-3 text-sm text-gray-200 hover:bg-white/5 transition disabled:opacity-60"
       >
-        {isLoading ? "Logging out..." : "Logout"}
+        {isLoading ? t("loading") : t("label")}
       </button>
     );
   }
@@ -45,7 +47,7 @@ export default function LogoutButton({ variant = "button" }: Props) {
       disabled={isLoading}
       className="rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-60 lg:px-4 lg:py-2"
     >
-      {isLoading ? "Logging out..." : "Logout"}
+      {isLoading ? t("loading") : t("label")}
     </button>
   );
 }

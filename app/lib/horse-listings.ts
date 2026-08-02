@@ -1,6 +1,8 @@
 import { Horse } from "@/app/data/horses";
 import { extractHorseImageStoragePath } from "@/app/lib/horse-image-storage";
 import { isDirectPlayableVideoUrl } from "@/app/lib/horse-video-storage";
+import { buildListingSlug } from "@/app/lib/marketplace/slug";
+import { getPublicListingPath } from "@/app/lib/marketplace/paths";
 import {
   CreateHorseListingInput,
   HorseListingImageMeta,
@@ -49,19 +51,25 @@ export function slugifyListingName(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export function formatListingRowPrice(row: HorseListingRow): string {
-  if (row.price_on_request) return "Price on request";
-  if (row.price === null) return "Price on request";
+export function formatListingRowPrice(
+  row: HorseListingRow,
+  priceOnRequestLabel = "Price on request"
+): string {
+  if (row.price_on_request) return priceOnRequestLabel;
+  if (row.price === null) return priceOnRequestLabel;
   return `€${Number(row.price).toLocaleString("en-US")}`;
 }
 
-export function listingRowToHorse(row: HorseListingRow): Horse {
+export function listingRowToHorse(
+  row: HorseListingRow,
+  options?: { priceOnRequestLabel?: string }
+): Horse {
   const images = getListingDisplayImages(row);
 
   return {
     id: listingUuidToDisplayId(row.id),
     listingUuid: row.id,
-    slug: slugifyListingName(row.name),
+    slug: row.slug ?? slugifyListingName(row.name),
     name: row.name,
     breed: row.breed,
     age: row.age,
@@ -71,7 +79,7 @@ export function listingRowToHorse(row: HorseListingRow): Horse {
     country: row.country,
     discipline: row.discipline,
     level: row.level,
-    price: formatListingRowPrice(row),
+    price: formatListingRowPrice(row, options?.priceOnRequestLabel),
     verified: row.verified,
     description: row.description,
     sire: row.sire,
@@ -101,6 +109,9 @@ export function isListingUuid(value: string): boolean {
 }
 
 export function getHorseDetailPath(horse: Horse): string {
+  if (horse.listingUuid && horse.slug) {
+    return getPublicListingPath(horse.slug);
+  }
   return horse.listingUuid ? `/horse/${horse.listingUuid}` : `/horse/${horse.id}`;
 }
 
@@ -142,11 +153,13 @@ export function buildCreateListingInput(
 }
 
 export function mergeMarketplaceHorses(
-  demoHorses: Horse[],
+  _demoHorses: Horse[],
   listingHorses: Horse[]
 ): Horse[] {
-  return [...listingHorses, ...demoHorses];
+  return listingHorses;
 }
+
+export { buildListingSlug };
 
 export function listingRowToFormData(row: HorseListingRow): ListingFormData {
   const hasStoredVideo =

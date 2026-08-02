@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "eyebrow": "Bienvenue sur EquiMaster Pro",
+    "title": {
+      "line1": "Chevaux",
+      "line2": "de Sport",
+      "line3": "Marketplace"
+    },
+    "subtitle": "Achetez, vendez et découvrez des chevaux de jumping d'élite auprès d'éleveurs de confiance à travers l'Europe.",
+    "browseButton": "Parcourir les chevaux",
+    "sellButton": "Vendre un cheval",
+    "imageAlt": "Cheval de sport — image principale",
+    "stats": {
+      "sportHorses": {
+        "value": "15K+",
+        "label": "Chevaux de sport"
+      },
+      "breeders": {
+        "value": "1200+",
+        "label": "Éleveurs"
+      },
+      "countries": {
+        "value": "28",
+        "label": "Pays"
+      }
+    }
+  },
+  "search": {
+    "title": "Trouvez votre cheval idéal",
+    "subtitle": "Recherchez et filtrez les meilleurs chevaux de sport d'Europe.",
+    "queryLabel": "Recherche",
+    "queryPlaceholder": "Rechercher un cheval...",
+    "breed": "Race",
+    "allBreeds": "Toutes les races",
+    "allBreedsPlaceholder": "Toutes les races…",
+    "country": "Pays",
+    "allCountries": "Tous les pays",
+    "allCountriesPlaceholder": "Tous les pays…",
+    "gender": "Sexe",
+    "allGenders": "Tous les sexes",
+    "mare": "Jument",
+    "stallion": "Étalon",
+    "gelding": "Hongre",
+    "discipline": "Discipline",
+    "allDisciplines": "Toutes les disciplines",
+    "allDisciplinesPlaceholder": "Toutes les disciplines…",
+    "verifiedOnly": "Vérifiés uniquement",
+    "minPrice": "Prix min. (€)",
+    "maxPrice": "Prix max. (€)",
+    "minAge": "Âge min.",
+    "maxAge": "Âge max.",
+    "minHeight": "Taille min. (cm)",
+    "maxHeight": "Taille max. (cm)",
+    "yearsPlaceholder": "Années",
+    "cmPlaceholder": "cm",
+    "pricePlaceholderMin": "ex. 30000",
+    "pricePlaceholderMax": "ex. 60000",
+    "sortBy": "Trier par",
+    "sortDefault": "Ordre par défaut",
+    "sortPriceAsc": "Prix : croissant",
+    "sortPriceDesc": "Prix : décroissant",
+    "sortAgeAsc": "Âge : plus jeune d'abord",
+    "sortAgeDesc": "Âge : plus âgé d'abord",
+    "sortHeightAsc": "Taille : petite à grande",
+    "sortHeightDesc": "Taille : grande à petite",
+    "resetFilters": "Réinitialiser les filtres"
+  },
+  "featured": {
+    "eyebrow": "Collection Premium",
+    "title": "Chevaux en vedette",
+    "subtitle": "Découvrez les meilleurs chevaux de jumping d'Europe, sélectionnés par des éleveurs et cavaliers professionnels de confiance.",
+    "emptyIcon": "🐴",
+    "emptyTitle": "Aucun cheval trouvé",
+    "emptyDescription": "Essayez de modifier votre recherche."
+  },
+  "premium": {
+    "eyebrow": "Génétique d'élite",
+    "title": "Étalons Premium",
+    "subtitle": "Découvrez les étalons reproducteurs les plus performants au monde.",
+    "browseDirectory": "Parcourir le répertoire des étalons →",
+    "age": "Âge",
+    "studFee": "Saillie",
+    "viewStallion": "Voir l'étalon",
+    "stallionImageAlt": "{name} — photo de l'étalon"
+  },
+  "horseCard": {
+    "verified": "✔ VÉRIFIÉ",
+    "price": "Prix",
+    "age": "Âge",
+    "ageValue": "{age} ans",
+    "height": "Taille",
+    "heightValue": "{height} cm",
+    "gender": "Sexe",
+    "level": "Niveau",
+    "location": "Localisation",
+    "view": "Voir →",
+    "imageAlt": "{name} — photo de l'annonce",
+    "genderUnknown": "Inconnu"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageAria": "Page {page}"
+  }
+}

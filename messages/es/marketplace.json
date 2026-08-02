@@ -4,7 +4,7 @@
     "title": "Caballos de deporte en venta",
     "subtitle": "Explore anuncios premium con pedigree documentado, material multimedia y contacto directo con el vendedor.",
     "searchLabel": "Buscar",
-    "searchPlaceholder": "Nombre, raza, disciplina, país …",
+    "searchPlaceholder": "Nombre, raza, padre, madre, criador, ubicación …",
     "discipline": "Disciplina",
     "country": "País",
     "breed": "Raza",
@@ -24,13 +24,30 @@
     "next": "Siguiente",
     "sortOptions": {
       "newest": "Más recientes",
+      "oldest": "Más antiguos",
       "price-asc": "Precio: menor a mayor",
       "price-desc": "Precio: mayor a menor",
       "age-asc": "Edad: más jóvenes",
       "age-desc": "Edad: más veteranos",
       "height-asc": "Altura: baja a alta",
-      "height-desc": "Altura: alta a baja"
+      "height-desc": "Altura: alta a baja",
+      "featured": "Destacados"
     },
+    "trainingLevel": "Nivel de entrenamiento",
+    "allTrainingLevels": "Todos los niveles",
+    "studbook": "Libro genealógico",
+    "studbookPlaceholder": "KWPN, BWP, OS …",
+    "availability": "Disponibilidad",
+    "allAvailability": "Todos los anuncios",
+    "availabilityPriced": "Precio publicado",
+    "availabilityOnRequest": "Precio bajo consulta",
+    "openFilters": "Filtros",
+    "closeFilters": "Cerrar",
+    "loadingResults": "Cargando anuncios …",
+    "networkError": "No se pudieron cargar los anuncios. Compruebe su conexión e inténtelo de nuevo.",
+    "emptyResultsTitle": "No se encontraron caballos",
+    "emptyErrorTitle": "Búsqueda no disponible",
+    "emptyErrorDescription": "No se pudieron cargar los anuncios. Inténtelo de nuevo o ajuste los filtros.",
     "color": "Capa",
     "colorPlaceholder": "Bayo, tordo, alazán …",
     "verifiedOnly": "Solo verificados",
@@ -59,7 +76,10 @@
       "verified": "Solo verificados",
       "price": "Precio: {min}–{max}",
       "age": "Edad: {min}–{max}",
-      "height": "Altura: {min}–{max} cm"
+      "height": "Altura: {min}–{max} cm",
+      "level": "Nivel: {value}",
+      "studbook": "Libro genealógico: {value}",
+      "availability": "Disponibilidad: {value}"
     }
   },
   "home": {

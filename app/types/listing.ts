@@ -1,3 +1,5 @@
+import { DEFAULT_DISCIPLINE } from "@/app/lib/constants/disciplines";
+
 export type HorseGender = "Mare" | "Stallion" | "Gelding";
 
 export const DRESSAGE_LEVELS = [
@@ -24,16 +26,9 @@ export const SHOW_JUMPING_LEVELS = [
   "International / Grand Prix",
 ] as const;
 
-export const DISCIPLINES = [
-  "Show Jumping",
-  "Dressage",
-  "Eventing",
-  "Hunter",
-  "Other",
-] as const;
-
 export const DESCRIPTION_MAX_LENGTH = 2000;
 export const MAX_LISTING_IMAGES = 12;
+export const MAX_LISTING_IMAGE_BYTES = 10 * 1024 * 1024;
 
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
@@ -83,7 +78,7 @@ export const initialListingFormData: ListingFormData = {
   color: "",
   height: "",
   country: "",
-  discipline: "Show Jumping",
+  discipline: DEFAULT_DISCIPLINE,
   level: "",
   price: "",
   priceOnRequest: false,

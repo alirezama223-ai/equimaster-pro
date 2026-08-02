@@ -1,0 +1,7 @@
+{
+  "banner": {
+    "eyebrow": "Demo mode active",
+    "description": "You are viewing the EquiMaster Demo Stable with seeded training, health, and analytics data.",
+    "manageDemo": "Manage demo"
+  }
+}

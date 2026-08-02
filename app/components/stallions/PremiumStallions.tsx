@@ -1,5 +1,6 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 const stallions = [
   {
@@ -32,27 +33,29 @@ const stallions = [
   },
 ];
 
-export default function PremiumStallions() {
+export default async function PremiumStallions() {
+  const t = await getTranslations("home");
+
   return (
     <section className="bg-[#081223] py-28">
       <div className="max-w-7xl mx-auto px-6">
 
         <div className="text-center mb-16">
           <p className="uppercase tracking-[6px] text-blue-500 text-xs font-bold">
-            Elite Genetics
+            {t("premium.eyebrow")}
           </p>
 
-          <h2 className="text-5xl font-black text-white mt-4">Premium Stallions</h2>
+          <h2 className="text-5xl font-black text-white mt-4">{t("premium.title")}</h2>
 
           <p className="text-gray-400 mt-5 max-w-2xl mx-auto">
-            Discover the world&apos;s most successful breeding stallions.
+            {t("premium.subtitle")}
           </p>
 
           <Link
             href="/stallions"
             className="inline-flex mt-8 rounded-xl bg-blue-600 hover:bg-blue-500 px-8 py-4 text-white font-semibold transition"
           >
-            Browse Stallion Directory →
+            {t("premium.browseDirectory")}
           </Link>
         </div>
 
@@ -68,7 +71,7 @@ export default function PremiumStallions() {
               <div className="relative h-72">
                 <Image
                   src={stallion.image}
-                  alt={stallion.name}
+                  alt={t("premium.stallionImageAlt", { name: stallion.name })}
                   fill
                   className="object-cover"
                 />
@@ -87,14 +90,14 @@ export default function PremiumStallions() {
                 <div className="flex justify-between mt-6 text-sm text-gray-300">
 
                   <div>
-                    <p>Age</p>
+                    <p>{t("premium.age")}</p>
                     <p className="font-bold text-white">
                       {stallion.age}
                     </p>
                   </div>
 
                   <div>
-                    <p>Stud Fee</p>
+                    <p>{t("premium.studFee")}</p>
                     <p className="font-bold text-blue-400">
                       {stallion.fee}
                     </p>
@@ -103,7 +106,7 @@ export default function PremiumStallions() {
                 </div>
 
                 <button className="mt-6 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">
-                  View Stallion
+                  {t("premium.viewStallion")}
                 </button>
 
               </div>

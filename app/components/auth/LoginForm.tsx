@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
@@ -14,6 +16,7 @@ import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 
 export default function LoginForm() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") || "/account";
@@ -27,9 +30,9 @@ export default function LoginForm() {
   }>({});
   const [formError, setFormError] = useState<string | null>(
     callbackError === "auth_callback_failed"
-      ? "Email confirmation failed. Please try signing in again."
+      ? t("login.callbackFailed")
       : callbackError === "supabase_not_configured"
-        ? "Supabase is not configured yet. Add your environment variables to enable authentication."
+        ? t("login.supabaseNotConfigured")
         : null
   );
   const [isLoading, setIsLoading] = useState(false);
@@ -44,9 +47,7 @@ export default function LoginForm() {
     if (Object.keys(validationErrors).length > 0) return;
 
     if (!getSupabaseEnv().isConfigured) {
-      setFormError(
-        "Authentication is not configured. Check your Supabase environment variables."
-      );
+      setFormError(t("login.authNotConfigured"));
       return;
     }
 
@@ -60,14 +61,14 @@ export default function LoginForm() {
       });
 
       if (error) {
-        setFormError(getAuthErrorMessage(error.message));
+        setFormError(t(`errors.${getAuthErrorMessage(error.message)}`));
         return;
       }
 
       router.push(nextPath);
       router.refresh();
     } catch {
-      setFormError("Unable to sign in right now. Please try again.");
+      setFormError(t("login.genericError"));
     } finally {
       setIsLoading(false);
     }
@@ -75,16 +76,16 @@ export default function LoginForm() {
 
   return (
     <AuthFormShell
-      title="Welcome Back"
-      subtitle="Sign in to manage your account and create premium horse listings."
-      footerText="Don't have an account?"
+      title={t("login.title")}
+      subtitle={t("login.subtitle")}
+      footerText={t("login.footerText")}
       footerHref={`/signup${nextPath !== "/account" ? `?next=${encodeURIComponent(nextPath)}` : ""}`}
-      footerLinkLabel="Create one"
+      footerLinkLabel={t("login.footerLink")}
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email" className={authLabelClassName}>
-            Email
+            {t("login.email")}
           </label>
           <input
             id="email"
@@ -93,16 +94,18 @@ export default function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={authInputClassName}
-            placeholder="you@example.com"
+            placeholder={t("login.emailPlaceholder")}
           />
           {fieldErrors.email ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.email}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.email}`)}
+            </p>
           ) : null}
         </div>
 
         <div>
           <label htmlFor="password" className={authLabelClassName}>
-            Password
+            {t("login.password")}
           </label>
           <input
             id="password"
@@ -111,10 +114,12 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={authInputClassName}
-            placeholder="Enter your password"
+            placeholder={t("login.passwordPlaceholder")}
           />
           {fieldErrors.password ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.password}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.password}`)}
+            </p>
           ) : null}
         </div>
 
@@ -129,7 +134,7 @@ export default function LoginForm() {
           disabled={isLoading}
           className="w-full rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-4 text-white font-semibold transition"
         >
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isLoading ? t("login.submitting") : t("login.submit")}
         </button>
       </form>
     </AuthFormShell>

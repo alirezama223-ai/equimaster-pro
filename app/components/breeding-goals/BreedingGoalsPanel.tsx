@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { getMareBreedingGoals, saveMareBreedingGoals } from "@/app/actions/traits";
 import { getTraitsByCategory } from "@/app/lib/traits/constants";
 import { BreedingGoalEntry, GoalPriority, MareBreedingGoals, TraitKey } from "@/app/types/traits";
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Props) {
+  const t = useTranslations("breeding");
   const [goals, setGoals] = useState<MareBreedingGoals | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -87,7 +89,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
         preserveTraits: goals.preserveTraits,
         avoidReinforcingWeaknesses: goals.avoidReinforcingWeaknesses,
       });
-      setMessage(result.success ? "Breeding goals saved." : result.error ?? "Save failed.");
+      setMessage(result.success ? t("goals.saved") : result.error ?? t("goals.saveFailed"));
     });
   }
 
@@ -95,7 +97,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
     return (
       <div className="rounded-3xl border border-dashed border-emerald-500/30 bg-[#111827] p-6">
         <p className="text-sm text-emerald-100">
-          Select a mare in Step 1 to load or define breeding goals for Goal-Based Match.
+          {t("goals.selectMarePrompt")}
         </p>
       </div>
     );
@@ -104,10 +106,10 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
   return (
     <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 space-y-5">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Breeding Goals</p>
-        <h3 className="mt-2 text-2xl font-bold text-white">Define Mare Breeding Priorities</h3>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("goals.eyebrow")}</p>
+        <h3 className="mt-2 text-2xl font-bold text-white">{t("goals.title")}</h3>
         <p className="mt-2 text-sm text-gray-400">
-          Select traits to improve or preserve. Goals are used for trait alignment analysis only.
+          {t("goals.subtitle")}
         </p>
       </div>
 
@@ -133,7 +135,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
                             : "border border-white/10 text-gray-300"
                         }`}
                       >
-                        Improve · {priority}
+                        {t("goals.improve", { priority })}
                       </button>
                     ))}
                     <button
@@ -143,7 +145,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
                         preserve ? "bg-emerald-600 text-white" : "border border-white/10 text-gray-300"
                       }`}
                     >
-                      Preserve
+                      {t("goals.preserve")}
                     </button>
                   </div>
                 </div>
@@ -165,7 +167,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
           }}
           className="rounded border-white/20 bg-[#08111F]"
         />
-        Avoid reinforcing weaknesses
+        {t("goals.avoidWeaknesses")}
       </label>
 
       <button
@@ -174,7 +176,7 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
         disabled={pending || !goals}
         className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
       >
-        {pending ? "Saving..." : "Save Breeding Goals"}
+        {pending ? t("saving") : t("goals.saveGoals")}
       </button>
 
       {message ? (

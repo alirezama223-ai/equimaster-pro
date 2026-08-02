@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
@@ -13,15 +14,13 @@ type Props = {
 };
 
 export default function DescriptionSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
   const remaining = DESCRIPTION_MAX_LENGTH - data.description.length;
 
   return (
-    <FormSection
-      title="Description"
-      subtitle="Describe temperament, rideability, competition history, and suitability."
-    >
+    <FormSection title={t("description.title")} subtitle={t("description.subtitle")}>
       <FormField
-        label="Seller Description"
+        label={t("description.sellerDescription")}
         htmlFor="description"
         error={errors.description}
         required
@@ -33,10 +32,10 @@ export default function DescriptionSection({ data, errors, onChange }: Props) {
           maxLength={DESCRIPTION_MAX_LENGTH}
           rows={8}
           className={`${sellInputClassName} resize-y min-h-40`}
-          placeholder="Tell buyers what makes this horse special..."
+          placeholder={t("description.placeholder")}
         />
         <div className="mt-2 flex justify-end text-sm text-gray-400">
-          {remaining} characters remaining
+          {t("description.charactersRemaining", { count: remaining })}
         </div>
       </FormField>
     </FormSection>

@@ -1,3 +1,5 @@
+import { DEFAULT_DISCIPLINE } from "@/app/lib/constants/disciplines";
+
 export type StallionStatus = "active" | "draft" | "archived";
 export type StallionAvailability = "available" | "limited" | "booked" | "retired";
 
@@ -148,7 +150,7 @@ export const initialStallionFormData: StallionFormData = {
   color: "",
   height: "",
   country: "",
-  discipline: "Show Jumping",
+  discipline: DEFAULT_DISCIPLINE,
   competitionLevel: "",
   sire: "",
   dam: "",

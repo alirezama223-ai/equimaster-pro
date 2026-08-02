@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
 import {
   runStallionRecommendationSearch,
@@ -9,6 +10,9 @@ import {
 } from "@/app/actions/breeding-recommendations";
 import { runGoalBasedRecommendationSearch } from "@/app/actions/traits";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
+import SearchableSelect from "@/app/components/shared/SearchableSelect";
+import { getCountrySelectOptions } from "@/app/lib/constants/countries";
+import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
 import BreedingGoalsPanel from "@/app/components/breeding-goals/BreedingGoalsPanel";
 import RecommendationResultCard from "@/app/components/breeding-recommendations/RecommendationResultCard";
 import GoalBasedResultCard from "@/app/components/breeding-recommendations/GoalBasedResultCard";
@@ -32,9 +36,13 @@ import {
 } from "@/app/types/breeding-recommendations";
 import { MareBreedingGoals } from "@/app/types/traits";
 
+const countryOptions = getCountrySelectOptions();
+const disciplineOptions = getDisciplineSelectOptions();
+
 type MatchMode = "pedigree" | "goal_based";
 
 export default function StallionMatchClient() {
+  const t = useTranslations("breeding");
   const router = useRouter();
   const [mareQuery, setMareQuery] = useState("");
   const [mareResults, setMareResults] = useState<BreedingCandidate[]>([]);
@@ -129,13 +137,13 @@ export default function StallionMatchClient() {
 
   function handleFindMatches() {
     if (!mare) {
-      setError("Select a mare before finding stallion matches.");
+      setError(t("recommendations.errorSelectMare"));
       return;
     }
 
     if (matchMode === "goal_based") {
       if (!breedingGoals || (breedingGoals.improveGoals.length === 0 && breedingGoals.preserveTraits.length === 0)) {
-        setError("Define at least one breeding goal before running Goal-Based Match.");
+        setError(t("recommendations.errorDefineGoals"));
         return;
       }
     }
@@ -210,12 +218,12 @@ export default function StallionMatchClient() {
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-blue-400">Pedigree-Informed Discovery</p>
-        <h1 className="mt-2 text-4xl sm:text-5xl font-black text-white">Stallion Match</h1>
+        <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("recommendations.eyebrow")}</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl font-black text-white">{t("recommendations.title")}</h1>
         <p className="mt-3 max-w-3xl text-gray-400">
           {matchMode === "pedigree"
-            ? "Find pedigree-informed stallion matches for your mare. Rankings reflect available ancestry data and configured filters — not a prediction or guarantee of breeding outcomes."
-            : "Define mare breeding goals, then rank stallions by trait alignment. Pedigree safety is evaluated separately and always shown alongside goal scores."}
+            ? t("recommendations.subtitlePedigree")
+            : t("recommendations.subtitleGoal")}
         </p>
       </div>
 
@@ -223,7 +231,7 @@ export default function StallionMatchClient() {
         <div
           className="flex flex-wrap gap-3"
           role="tablist"
-          aria-label="Stallion match mode"
+          aria-label={t("recommendations.modeLabel")}
         >
           <button
             type="button"
@@ -236,7 +244,7 @@ export default function StallionMatchClient() {
                 : "border border-white/10 text-gray-300 hover:border-white/20"
             }`}
           >
-            Pedigree Match
+            {t("recommendations.pedigreeMatch")}
           </button>
           <button
             type="button"
@@ -249,30 +257,29 @@ export default function StallionMatchClient() {
                 : "border border-white/10 text-gray-300 hover:border-white/20"
             }`}
           >
-            Goal-Based Match
+            {t("recommendations.goalBasedMatch")}
           </button>
         </div>
 
         {matchMode === "goal_based" ? (
           <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-100">
-            Goal-Based Match is active. Select a mare, define breeding goals below, then run the search.
-            Pedigree safety gates still apply and are never overridden by trait scoring.
+            {t("recommendations.goalBasedActive")}
           </div>
         ) : null}
       </div>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">Step 1</p>
-        <h2 className="mt-2 text-2xl font-bold text-white">Select Mare</h2>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{t("recommendations.step1")}</p>
+        <h2 className="mt-2 text-2xl font-bold text-white">{t("recommendations.selectMare")}</h2>
         <p className="mt-2 text-sm text-gray-400">
-          Search by name, registration number, or studbook. Horses are matched by pedigree UUID.
+          {t("recommendations.selectMareHint")}
         </p>
 
         <input
           type="text"
           value={mareQuery}
           onChange={(event) => handleMareSearch(event.target.value)}
-          placeholder="Search mares..."
+          placeholder={t("recommendations.searchMaresPlaceholder")}
           className="mt-5 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
         />
 
@@ -321,11 +328,11 @@ export default function StallionMatchClient() {
                   })}
                 </p>
                 {mare.registrationNumber ? (
-                  <p className="mt-1 text-xs text-gray-500">Registration: {mare.registrationNumber}</p>
+                  <p className="mt-1 text-xs text-gray-500">{t("recommendations.registration", { number: mare.registrationNumber })}</p>
                 ) : null}
                 {response ? (
                   <p className="mt-2 text-xs text-gray-500">
-                    Pedigree completeness (mare): {response.mareCompletenessPercent}%
+                    {t("recommendations.mareCompleteness", { percent: response.mareCompletenessPercent })}
                   </p>
                 ) : null}
               </div>
@@ -339,14 +346,14 @@ export default function StallionMatchClient() {
                 }}
                 className="text-sm text-gray-400 hover:text-white"
               >
-                Clear
+                {t("clear")}
               </button>
             </div>
             <Link
               href={`/pedigree/${mare.id}`}
               className="mt-3 inline-block text-sm text-blue-400 hover:text-blue-300"
             >
-              View pedigree profile →
+              {t("recommendations.viewPedigreeProfile")}
             </Link>
           </div>
         ) : null}
@@ -355,8 +362,8 @@ export default function StallionMatchClient() {
       {matchMode === "goal_based" ? (
         <div className="space-y-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Step 2</p>
-            <h2 className="mt-2 text-2xl font-bold text-white">Define Breeding Goals</h2>
+            <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">{t("recommendations.step2")}</p>
+            <h2 className="mt-2 text-2xl font-bold text-white">{t("recommendations.defineGoals")}</h2>
           </div>
           <BreedingGoalsPanel
             key={mare?.id ?? "no-mare"}
@@ -368,16 +375,15 @@ export default function StallionMatchClient() {
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
         <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
-          Step {matchMode === "goal_based" ? 3 : 2}
+          {matchMode === "goal_based" ? t("recommendations.step3") : t("recommendations.step2")}
         </p>
-        <h2 className="mt-2 text-2xl font-bold text-white">Preferences & Filters</h2>
+        <h2 className="mt-2 text-2xl font-bold text-white">{t("recommendations.preferencesFilters")}</h2>
         <p className="mt-2 text-sm text-gray-400">
-          Filters apply equally to Pedigree Match and Goal-Based Match. Leave fields blank for no restriction.
-          Mare studbook is never applied automatically.
+          {t("recommendations.filtersHint")}
         </p>
 
         <div className="mt-4 rounded-2xl border border-white/10 bg-[#08111F] p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Active query filters</p>
+          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("recommendations.activeFilters")}</p>
           <ul className="mt-2 space-y-1 text-sm text-gray-300">
             {activeFilterSummary.map((item) => (
               <li key={item}>{item}</li>
@@ -387,37 +393,45 @@ export default function StallionMatchClient() {
 
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <label className="block text-sm text-gray-300">
-            Discipline
-            <input
-              type="text"
-              value={filters.discipline ?? ""}
-              onChange={(event) => setFilters((current) => ({ ...current, discipline: event.target.value }))}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
-              placeholder="e.g. Show Jumping"
-            />
+            {t("recommendations.discipline")}
+            <div className="mt-2">
+              <SearchableSelect
+                value={filters.discipline ?? ""}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, discipline: value || undefined }))
+                }
+                options={disciplineOptions}
+                placeholder={t("recommendations.anyDiscipline")}
+                inputClassName="w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
+              />
+            </div>
           </label>
           <label className="block text-sm text-gray-300">
-            Studbook
+            {t("recommendations.studbook")}
             <input
               type="text"
               value={filters.studbook ?? ""}
               onChange={(event) => setFilters((current) => ({ ...current, studbook: event.target.value }))}
               className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
-              placeholder="Any studbook (optional)"
+              placeholder={t("recommendations.anyStudbook")}
             />
           </label>
           <label className="block text-sm text-gray-300">
-            Country
-            <input
-              type="text"
-              value={filters.country ?? ""}
-              onChange={(event) => setFilters((current) => ({ ...current, country: event.target.value }))}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
-              placeholder="e.g. Netherlands"
-            />
+            {t("recommendations.country")}
+            <div className="mt-2">
+              <SearchableSelect
+                value={filters.country ?? ""}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, country: value || undefined }))
+                }
+                options={countryOptions}
+                placeholder={t("recommendations.anyCountry")}
+                inputClassName="w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
+              />
+            </div>
           </label>
           <label className="block text-sm text-gray-300">
-            Maximum stud fee
+            {t("recommendations.maxStudFee")}
             <input
               type="number"
               min={0}
@@ -429,11 +443,11 @@ export default function StallionMatchClient() {
                 }))
               }
               className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
-              placeholder="Optional"
+              placeholder={t("recommendations.optional")}
             />
           </label>
           <label className="block text-sm text-gray-300">
-            Stud fee currency
+            {t("recommendations.studFeeCurrency")}
             <select
               value={filters.studFeeCurrency ?? "EUR"}
               onChange={(event) =>
@@ -447,7 +461,7 @@ export default function StallionMatchClient() {
             </select>
           </label>
           <label className="block text-sm text-gray-300">
-            Minimum pedigree confidence
+            {t("recommendations.minPedigreeConfidence")}
             <select
               value={filters.minimumPedigreeConfidence ?? "any"}
               onChange={(event) =>
@@ -458,28 +472,28 @@ export default function StallionMatchClient() {
               }
               className="mt-2 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
             >
-              <option value="any">Any</option>
-              <option value="moderate">Moderate+</option>
-              <option value="high">High only</option>
+              <option value="any">{t("recommendations.any")}</option>
+              <option value="moderate">{t("recommendations.moderatePlus")}</option>
+              <option value="high">{t("recommendations.highOnly")}</option>
             </select>
           </label>
         </div>
 
         <div className="mt-5">
-          <p className="text-sm text-gray-300">Breeding method</p>
+          <p className="text-sm text-gray-300">{t("recommendations.breedingMethod")}</p>
           <p className="mt-1 text-xs text-gray-500">
-            Leave all unchecked for any breeding method. Selecting every method is treated as no restriction.
+            {t("recommendations.breedingMethodHint")}
           </p>
           {allBreedingMethodsSelected ? (
             <p className="mt-2 text-xs text-emerald-300">
-              All methods selected in the UI — applied as Any breeding method (no restriction).
+              {t("recommendations.allMethodsSelected")}
             </p>
           ) : hasBreedingMethodUiSelection ? (
             <p className="mt-2 text-xs text-amber-200">
-              Restricting to selected method(s). Stallions without documented breeding methods will be excluded.
+              {t("recommendations.restrictingMethods")}
             </p>
           ) : (
-            <p className="mt-2 text-xs text-gray-500">Any breeding method</p>
+            <p className="mt-2 text-xs text-gray-500">{t("recommendations.anyBreedingMethod")}</p>
           )}
           <div className="mt-3 flex flex-wrap gap-3">
             {BREEDING_METHODS.map((method) => (
@@ -505,20 +519,20 @@ export default function StallionMatchClient() {
             }
             className="rounded border-white/20 bg-[#08111F]"
           />
-          Include unavailable stallions (booked / retired)
+          {t("recommendations.includeUnavailable")}
         </label>
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
         <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
-          Step {matchMode === "goal_based" ? 4 : 3}
+          {matchMode === "goal_based" ? t("recommendations.step4") : t("recommendations.step3")}
         </p>
         <h2 className="mt-2 text-2xl font-bold text-white">
-          {matchMode === "goal_based" ? "Find Goal-Based Matches" : "Find Stallion Matches"}
+          {matchMode === "goal_based" ? t("recommendations.findGoalMatches") : t("recommendations.findStallionMatches")}
         </h2>
         {matchMode === "goal_based" ? (
           <p className="mt-2 text-sm text-gray-400">
-            Requires a selected mare and at least one improve or preserve goal.
+            {t("recommendations.goalMatchRequiresGoals")}
           </p>
         ) : null}
         <button
@@ -533,11 +547,11 @@ export default function StallionMatchClient() {
         >
           {pending
             ? matchMode === "goal_based"
-              ? "Analyzing breeding goal alignment..."
-              : "Analyzing pedigree compatibility..."
+              ? t("recommendations.analyzingGoals")
+              : t("recommendations.analyzingPedigree")
             : matchMode === "goal_based"
-              ? "Find Goal-Based Matches"
-              : "Find Stallion Matches"}
+              ? t("recommendations.findGoalMatches")
+              : t("recommendations.findStallionMatches")}
         </button>
 
         {error ? <p className="mt-4 text-sm text-red-300">{error}</p> : null}
@@ -546,12 +560,12 @@ export default function StallionMatchClient() {
       {goalResponse ? (
         <section className="space-y-5">
           <div>
-            <h2 className="text-3xl font-bold text-white">Goal-Based Recommended Stallions</h2>
+            <h2 className="text-3xl font-bold text-white">{t("recommendations.goalResultsTitle")}</h2>
             <p className="mt-2 text-sm text-gray-400">
-              Ranked by Breeding Goal Match. Pedigree safety is shown separately and never hidden.
+              {t("recommendations.goalResultsSubtitle")}
             </p>
             <p className="mt-2 text-sm text-gray-500">
-              {goalResponse.analyzedCount} eligible stallion{goalResponse.analyzedCount === 1 ? "" : "s"} analyzed
+              {t("recommendations.analyzedCount", { count: goalResponse.analyzedCount })}
               {goalResponse.eligiblePoolCount > goalResponse.analyzedCount
                 ? ` (from ${goalResponse.eligiblePoolCount} matching filters; top ${goalResponse.analyzedCount} evaluated)`
                 : goalResponse.eligiblePoolCount > 0
@@ -561,14 +575,13 @@ export default function StallionMatchClient() {
           </div>
           {goalResponse.results.length === 0 ? (
             <div className="rounded-3xl border border-amber-500/30 bg-amber-950/20 p-8">
-              <p className="text-lg font-semibold text-amber-100">No stallions to rank for Goal-Based Match</p>
+              <p className="text-lg font-semibold text-amber-100">{t("recommendations.noGoalResultsTitle")}</p>
               <p className="mt-2 text-sm text-amber-50/90">
                 {goalResponse.emptyResultsReason ??
                   "No eligible active stallions with pedigree linkage matched the current mare and filters."}
               </p>
               <p className="mt-3 text-xs text-amber-100/80">
-                Missing trait assessments do not remove stallions from this list. When trait evidence is limited,
-                each stallion shows Insufficient Data for goal match scoring instead of a fabricated score.
+                {t("recommendations.noGoalResultsHint")}
               </p>
             </div>
           ) : (
@@ -586,9 +599,9 @@ export default function StallionMatchClient() {
         <section className="space-y-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-white">Recommended Stallions</h2>
+              <h2 className="text-3xl font-bold text-white">{t("recommendations.recommendedTitle")}</h2>
               <p className="mt-2 text-sm text-gray-400">
-                {response.analyzedCount} eligible stallion{response.analyzedCount === 1 ? "" : "s"} analyzed
+                {t("recommendations.analyzedCount", { count: response.analyzedCount })}
                 {response.eligiblePoolCount > response.analyzedCount
                   ? ` (from ${response.eligiblePoolCount} matching filters; top ${response.analyzedCount} evaluated)`
                   : ""}
@@ -597,16 +610,16 @@ export default function StallionMatchClient() {
 
             <div className="flex flex-wrap items-center gap-3">
               <label className="text-sm text-gray-300">
-                Sort
+                {t("recommendations.sort")}
                 <select
                   value={sort}
                   onChange={(event) => setSort(event.target.value as RecommendationSortOption)}
                   className="ml-2 rounded-xl border border-white/10 bg-[#08111F] px-3 py-2 text-white"
                 >
-                  <option value="best_match">Best Match</option>
-                  <option value="highest_confidence">Highest Confidence</option>
-                  {canSortByStudFee ? <option value="lowest_stud_fee">Lowest Stud Fee</option> : null}
-                  <option value="name">Name</option>
+                  <option value="best_match">{t("recommendations.sortBestMatch")}</option>
+                  <option value="highest_confidence">{t("recommendations.sortHighestConfidence")}</option>
+                  {canSortByStudFee ? <option value="lowest_stud_fee">{t("recommendations.sortLowestStudFee")}</option> : null}
+                  <option value="name">{t("recommendations.sortName")}</option>
                 </select>
               </label>
 
@@ -616,7 +629,7 @@ export default function StallionMatchClient() {
                   onClick={handleCompareSelected}
                   className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 transition"
                 >
-                  Compare Selected ({selectedCompareIds.length})
+                  {t("recommendations.compareSelected", { count: selectedCompareIds.length })}
                 </button>
               ) : null}
             </div>
@@ -624,8 +637,8 @@ export default function StallionMatchClient() {
 
           {sortedResults.length === 0 ? (
             <div className="rounded-3xl border border-white/10 bg-[#111827] p-8 text-center">
-              <p className="text-lg font-semibold text-white">No eligible stallions found.</p>
-              <p className="mt-2 text-sm text-gray-400">Try removing some filters.</p>
+              <p className="text-lg font-semibold text-white">{t("recommendations.noEligibleStallions")}</p>
+              <p className="mt-2 text-sm text-gray-400">{t("recommendations.tryRemovingFilters")}</p>
             </div>
           ) : (
             sortedResults.map((result) => (

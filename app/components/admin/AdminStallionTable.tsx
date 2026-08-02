@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { setStallionVerified, type AdminStallionListItem } from "@/app/actions/admin";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import { AdminVerificationActions } from "@/app/components/admin/AdminVerificationControls";
@@ -11,10 +12,12 @@ type Props = {
 };
 
 export default function AdminStallionTable({ stallions }: Props) {
+  const t = useTranslations("admin.stallions");
+
   if (stallions.length === 0) {
     return (
       <div className="rounded-3xl border border-dashed border-white/10 px-6 py-12 text-center text-gray-500">
-        No stallions match this filter.
+        {t("empty")}
       </div>
     );
   }
@@ -24,13 +27,13 @@ export default function AdminStallionTable({ stallions }: Props) {
       <table className="min-w-full divide-y divide-white/10 text-sm">
         <thead className="bg-[#0B1424] text-left text-gray-400 uppercase tracking-wide text-xs">
           <tr>
-            <th className="px-4 py-4">Stallion</th>
-            <th className="px-4 py-4">Stud Farm</th>
-            <th className="px-4 py-4">Owner</th>
-            <th className="px-4 py-4">Breed / Country</th>
-            <th className="px-4 py-4">Created</th>
-            <th className="px-4 py-4">Status</th>
-            <th className="px-4 py-4">Actions</th>
+            <th className="px-4 py-4">{t("stallion")}</th>
+            <th className="px-4 py-4">{t("studFarm")}</th>
+            <th className="px-4 py-4">{t("owner")}</th>
+            <th className="px-4 py-4">{t("breedCountry")}</th>
+            <th className="px-4 py-4">{t("created")}</th>
+            <th className="px-4 py-4">{t("status")}</th>
+            <th className="px-4 py-4">{t("actions")}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/10 bg-[#111827]">
@@ -47,7 +50,7 @@ export default function AdminStallionTable({ stallions }: Props) {
                       href={`/stallions/${stallion.id}`}
                       className="text-blue-400 hover:text-blue-300 text-xs"
                     >
-                      Public profile →
+                      {t("publicProfile")}
                     </Link>
                   </div>
                 </div>
@@ -62,7 +65,7 @@ export default function AdminStallionTable({ stallions }: Props) {
                 {new Date(stallion.createdAt).toLocaleDateString()}
               </td>
               <td className="px-4 py-4">
-                {stallion.verified ? <VerifiedBadge /> : <span className="text-gray-400">Pending</span>}
+                {stallion.verified ? <VerifiedBadge /> : <span className="text-gray-400">{t("pending")}</span>}
               </td>
               <td className="px-4 py-4 min-w-[180px]">
                 <AdminVerificationActions

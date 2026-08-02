@@ -1,0 +1,90 @@
+{
+  "info": {
+    "verified": "Verified",
+    "askingPrice": "Asking price",
+    "breed": "Breed",
+    "age": "Age",
+    "ageValue": "{age} years",
+    "height": "Height",
+    "heightValue": "{height} cm",
+    "country": "Country",
+    "gender": "Gender",
+    "training": "Training",
+    "color": "Color",
+    "discipline": "Discipline",
+    "draftContact": "This listing is not published yet. Publish it from your seller dashboard to enable buyer inquiries.",
+    "contactUnavailable": "Contact is unavailable for this listing.",
+    "viewPedigree": "View full pedigree record"
+  },
+  "description": {
+    "title": "Description",
+    "fallback": "{name} is a premium {breed} sport horse from {country}. A talented {discipline} horse with excellent rideability and outstanding bloodlines."
+  },
+  "pedigree": {
+    "title": "Pedigree",
+    "sire": "Sire",
+    "dam": "Dam",
+    "damSire": "Dam's Sire"
+  },
+  "contact": {
+    "title": "Interested in {name}?",
+    "withSeller": "Contact {seller}{stable} for more information.",
+    "atStable": " at {stable}",
+    "generic": "Contact the seller for more information.",
+    "privateInquiry": "Send a private inquiry through EquiMaster Pro. Your message is shared only with the seller.",
+    "contactSeller": "Contact Seller",
+    "mailSubject": "Inquiry about {name}"
+  },
+  "inquiry": {
+    "modalEyebrow": "Contact Seller",
+    "modalTitle": "Contact seller about {name}",
+    "modalSubtitle": "Send a private inquiry. Your contact details are shared only with the seller.",
+    "successTitle": "Inquiry sent successfully",
+    "successBody": "Your message about {name} has been sent to the seller. They can review it in their account dashboard.",
+    "close": "Close",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "phone": "Phone",
+    "phoneOptional": "(optional)",
+    "phonePlaceholder": "+31 6 12345678",
+    "message": "Message",
+    "messageHint": "You can edit the suggested message.",
+    "cancel": "Cancel",
+    "send": "Send Inquiry",
+    "sending": "Sending Inquiry..."
+  },
+  "gallery": {
+    "photoAlt": "{name} — photo {index}",
+    "photoAltDetailed": "{name}, {discipline} sport horse for sale — photo {index} of {total}",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "showPhoto": "Show photo {index}",
+    "thumbnailAlt": "{name} thumbnail {index}",
+    "thumbnailAltDetailed": "{name} — thumbnail {index} of {total}",
+    "openLightbox": "View full-size photo",
+    "openLightboxHint": "Tap to enlarge",
+    "closeLightbox": "Close gallery",
+    "lightboxLabel": "{name} photo gallery",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "photoCounter": "{index} / {total}",
+    "slideAnnouncement": "Showing photo {index} of {total}",
+    "regionLabel": "{name} photo gallery"
+  },
+  "video": {
+    "title": "Video",
+    "unsupported": "Your browser does not support HTML5 video playback.",
+    "externalLink": "This listing includes an external video link.",
+    "watchVideo": "Watch Video"
+  },
+  "related": {
+    "title": "Similar listings",
+    "browseAll": "Browse all →"
+  },
+  "shareTitle": "{name} on EquiMaster Pro",
+  "breadcrumbs": {
+    "ariaLabel": "Breadcrumb"
+  }
+}

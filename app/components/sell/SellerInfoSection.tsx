@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
@@ -13,14 +14,13 @@ type Props = {
 };
 
 export default function SellerInfoSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
+
   return (
-    <FormSection
-      title="Seller Information"
-      subtitle="Buyers will use these details to contact you about the horse."
-    >
+    <FormSection title={t("sellerInfo.title")} subtitle={t("sellerInfo.subtitle")}>
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField
-          label="Seller Name"
+          label={t("sellerInfo.sellerName")}
           htmlFor="sellerName"
           error={errors.sellerName}
           required
@@ -30,39 +30,39 @@ export default function SellerInfoSection({ data, errors, onChange }: Props) {
             value={data.sellerName}
             onChange={(e) => onChange("sellerName", e.target.value)}
             className={sellInputClassName}
-            placeholder="Your full name"
+            placeholder={t("sellerInfo.sellerNamePlaceholder")}
           />
         </FormField>
 
-        <FormField label="Email" htmlFor="email" error={errors.email} required>
+        <FormField label={t("sellerInfo.email")} htmlFor="email" error={errors.email} required>
           <input
             id="email"
             type="email"
             value={data.email}
             onChange={(e) => onChange("email", e.target.value)}
             className={sellInputClassName}
-            placeholder="seller@example.com"
+            placeholder={t("sellerInfo.emailPlaceholder")}
           />
         </FormField>
 
-        <FormField label="Phone" htmlFor="phone" error={errors.phone} required>
+        <FormField label={t("sellerInfo.phone")} htmlFor="phone" error={errors.phone} required>
           <input
             id="phone"
             type="tel"
             value={data.phone}
             onChange={(e) => onChange("phone", e.target.value)}
             className={sellInputClassName}
-            placeholder="+49 ..."
+            placeholder={t("sellerInfo.phonePlaceholder")}
           />
         </FormField>
 
-        <FormField label="Stable / Company (Optional)" htmlFor="stableName">
+        <FormField label={t("sellerInfo.stable")} htmlFor="stableName">
           <input
             id="stableName"
             value={data.stableName}
             onChange={(e) => onChange("stableName", e.target.value)}
             className={sellInputClassName}
-            placeholder="Stable or company name"
+            placeholder={t("sellerInfo.stablePlaceholder")}
           />
         </FormField>
       </div>

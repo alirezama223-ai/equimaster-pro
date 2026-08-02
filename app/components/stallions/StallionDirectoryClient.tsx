@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import Navbar from "@/app/components/navbar/Navbar";
 import StallionCard from "@/app/components/stallions/StallionCard";
@@ -28,20 +29,8 @@ type Props = {
 };
 
 export default function StallionDirectoryClient({ stallions, loadError }: Props) {
+  const t = useTranslations("stallions");
   const [filters, setFilters] = useState<StallionFilterState>(INITIAL_FILTERS);
-
-  const breeds = useMemo(
-    () => [...new Set(stallions.map((s) => s.breed).filter(Boolean))].sort(),
-    [stallions]
-  );
-  const disciplines = useMemo(
-    () => [...new Set(stallions.map((s) => s.discipline).filter(Boolean))].sort(),
-    [stallions]
-  );
-  const countries = useMemo(
-    () => [...new Set(stallions.map((s) => s.country).filter(Boolean))].sort(),
-    [stallions]
-  );
 
   const filtered = useMemo(
     () => filterStallionCards(stallions, filters),
@@ -66,9 +55,6 @@ export default function StallionDirectoryClient({ stallions, loadError }: Props)
       <main className="min-h-screen bg-[#081223] pt-20">
         <StallionFilters
           filters={filters}
-          breeds={breeds}
-          disciplines={disciplines}
-          countries={countries}
           onChange={onChange}
           onReset={onReset}
           resultCount={filtered.length}
@@ -77,18 +63,18 @@ export default function StallionDirectoryClient({ stallions, loadError }: Props)
         <section className="max-w-7xl mx-auto px-6 pb-24">
           {loadError ? (
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200 mb-8">
-              Unable to load stallions: {loadError}
+              {t("directory.loadError", { error: loadError })}
             </div>
           ) : null}
 
           {filtered.length === 0 ? (
             <FadeUp>
               <div className="rounded-3xl border border-white/10 bg-[#111827] px-8 py-16 text-center">
-                <h3 className="text-2xl font-bold text-white">No stallions found</h3>
+                <h3 className="text-2xl font-bold text-white">{t("directory.emptyTitle")}</h3>
                 <p className="mt-3 text-gray-400 max-w-xl mx-auto">
                   {stallions.length === 0
-                    ? "The stallion directory is ready. Stud farms can add stallions from their account once profiles are created."
-                    : "Try adjusting your filters to discover more breeding stallions."}
+                    ? t("directory.emptyNoData")
+                    : t("directory.emptyFiltered")}
                 </p>
               </div>
             </FadeUp>

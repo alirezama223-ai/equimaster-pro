@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { FULL_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
 
 export default function NavbarDesktopMenu() {
+  const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ export default function NavbarDesktopMenu() {
         onClick={() => setOpen((current) => !current)}
         className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 transition"
       >
-        <span className="sr-only">{open ? "Close navigation menu" : "Open navigation menu"}</span>
+        <span className="sr-only">{open ? t("closeMenu") : t("openMenu")}</span>
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
@@ -59,7 +61,7 @@ export default function NavbarDesktopMenu() {
             </>
           )}
         </svg>
-        Menu
+        {t("menu")}
       </button>
 
       {open ? (
@@ -71,13 +73,13 @@ export default function NavbarDesktopMenu() {
           <nav className="grid gap-1">
             {FULL_NAV_LINKS.map((link) => (
               <Link
-                key={`${link.href}-${link.label}`}
+                key={`${link.href}-${link.labelKey}`}
                 href={link.href}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className={`rounded-xl px-3 py-2.5 text-sm font-medium text-gray-200 ${navLinkClassName(link, "block")}`}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             ))}
           </nav>

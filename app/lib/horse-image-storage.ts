@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isAcceptedImageType } from "@/app/lib/listing-validation";
+import { MAX_LISTING_IMAGE_BYTES } from "@/app/types/listing";
 import { HorseListingImageMeta } from "@/app/types/horse-listing";
 
 export const HORSE_IMAGES_BUCKET = "horse-images";
@@ -91,6 +92,13 @@ export async function uploadListingImagesToStorage(
       };
     }
 
+    if (image.file.size > MAX_LISTING_IMAGE_BYTES) {
+      await removeListingImagesFromStorage(supabase, uploadedPaths);
+      return {
+        error: "One or more images exceed the 10 MB upload size limit.",
+      };
+    }
+
     const storagePath = buildListingImageStoragePath(
       userId,
       listingId,
@@ -176,4 +184,77 @@ export function buildListingImageFields(uploaded: UploadedListingImage[]) {
     cover_image_url: coverImage?.publicUrl ?? null,
     images_meta: uploaded.map((image) => image.meta),
   };
+}
+
+export async function copyListingImagesForDuplicate(
+  supabase: SupabaseClient,
+  userId: string,
+  sourceListing: {
+    images_meta: HorseListingImageMeta[];
+    image_urls: string[];
+    cover_image_url: string | null;
+  },
+  targetListingId: string
+): Promise<{ data?: UploadedListingImage[]; error?: string }> {
+  if (sourceListing.images_meta.length === 0 && sourceListing.image_urls.length === 0) {
+    return { data: [] };
+  }
+
+  const uploaded: UploadedListingImage[] = [];
+  const metas =
+    sourceListing.images_meta.length > 0
+      ? sourceListing.images_meta
+      : sourceListing.image_urls.map((url, index) => ({
+          name: `image-${index + 1}.jpg`,
+          isCover: url === sourceListing.cover_image_url,
+          size: 0,
+          type: "image/jpeg",
+          publicUrl: url,
+          storagePath: extractHorseImageStoragePath(url) ?? undefined,
+        }));
+
+  for (const meta of metas) {
+    const sourcePath =
+      meta.storagePath ??
+      (meta.publicUrl ? extractHorseImageStoragePath(meta.publicUrl) : null);
+
+    if (!sourcePath) {
+      continue;
+    }
+
+    const targetPath = buildListingImageStoragePath(userId, targetListingId, meta.name);
+    const { error: copyError } = await supabase.storage
+      .from(HORSE_IMAGES_BUCKET)
+      .copy(sourcePath, targetPath);
+
+    if (copyError) {
+      console.error("[copyListingImagesForDuplicate] copy failed", copyError);
+      return { error: mapStorageUploadError(copyError.message) };
+    }
+
+    const publicUrl = getHorseImagePublicUrl(supabase, targetPath);
+    uploaded.push({
+      storagePath: targetPath,
+      publicUrl,
+      isCover: meta.isCover,
+      meta: {
+        name: meta.name,
+        isCover: meta.isCover,
+        size: meta.size,
+        type: meta.type,
+        storagePath: targetPath,
+        publicUrl,
+      },
+    });
+  }
+
+  if (uploaded.length === 0) {
+    return { error: "Unable to duplicate listing images." };
+  }
+
+  if (!uploaded.some((image) => image.isCover)) {
+    uploaded[0] = { ...uploaded[0], isCover: true, meta: { ...uploaded[0].meta, isCover: true } };
+  }
+
+  return { data: uploaded };
 }

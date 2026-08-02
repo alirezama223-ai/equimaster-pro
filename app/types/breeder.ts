@@ -47,7 +47,7 @@ export type BreederFormData = {
   website: string;
   email: string;
   phone: string;
-  disciplines: string;
+  disciplines: string[];
 };
 
 export type BreederMediaAction = "keep" | "remove" | "upload";
@@ -88,5 +88,5 @@ export const initialBreederFormData: BreederFormData = {
   website: "",
   email: "",
   phone: "",
-  disciplines: "",
+  disciplines: [],
 };

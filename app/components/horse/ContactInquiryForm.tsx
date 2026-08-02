@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createInquiry } from "@/app/actions/inquiries";
@@ -9,9 +10,8 @@ import {
   InquiryFormData,
   InquiryFormErrors,
 } from "@/app/types/inquiry";
-import {
-  validateInquiryForm,
-} from "@/app/lib/inquiry-validation";
+import { validateInquiryForm } from "@/app/lib/inquiry-validation";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 
 type BuyerPrefill = {
   buyerName: string;
@@ -35,6 +35,7 @@ export default function ContactInquiryForm({
   onSuccess,
   onCancel,
 }: Props) {
+  const t = useTranslations("horse");
   const router = useRouter();
   const [formData, setFormData] = useState<InquiryFormData>(() => ({
     buyerName: buyerPrefill?.buyerName ?? "",
@@ -74,7 +75,7 @@ export default function ContactInquiryForm({
       const result = await createInquiry(listingId, formData);
 
       if (result.unauthenticated) {
-        router.push(`/login?next=${encodeURIComponent(returnPath)}`);
+        router.push(loginRedirectPath(returnPath));
         return;
       }
 
@@ -93,19 +94,17 @@ export default function ContactInquiryForm({
   if (isSuccess) {
     return (
       <div className="text-center py-6">
-        <div className="text-5xl mb-4">✅</div>
-        <h3 className="text-2xl font-bold text-white">Inquiry sent successfully</h3>
+        <div className="text-5xl mb-4" aria-hidden="true">✅</div>
+        <h3 className="text-2xl font-bold text-white">{t("inquiry.successTitle")}</h3>
         <p className="mt-3 text-gray-400 leading-7">
-          Your message about <strong className="text-white">{horseName}</strong>{" "}
-          has been sent to the seller. They can review it in their account
-          dashboard.
+          {t("inquiry.successBody", { name: horseName })}
         </p>
         <button
           type="button"
           onClick={onCancel}
           className="mt-8 px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition"
         >
-          Close
+          {t("inquiry.close")}
         </button>
       </div>
     );
@@ -115,7 +114,7 @@ export default function ContactInquiryForm({
     <form className="space-y-5" onSubmit={handleSubmit}>
       <div>
         <label htmlFor="buyerName" className="block text-sm font-medium text-gray-300 mb-2">
-          Name
+          {t("inquiry.name")}
         </label>
         <input
           id="buyerName"
@@ -123,7 +122,7 @@ export default function ContactInquiryForm({
           value={formData.buyerName}
           onChange={(event) => updateField("buyerName", event.target.value)}
           className="w-full rounded-xl bg-[#08111F] border border-white/10 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
-          placeholder="Your name"
+          placeholder={t("inquiry.namePlaceholder")}
         />
         {errors.buyerName ? (
           <p className="mt-2 text-sm text-red-400">{errors.buyerName}</p>
@@ -132,7 +131,7 @@ export default function ContactInquiryForm({
 
       <div>
         <label htmlFor="buyerEmail" className="block text-sm font-medium text-gray-300 mb-2">
-          Email
+          {t("inquiry.email")}
         </label>
         <input
           id="buyerEmail"
@@ -140,7 +139,7 @@ export default function ContactInquiryForm({
           value={formData.buyerEmail}
           onChange={(event) => updateField("buyerEmail", event.target.value)}
           className="w-full rounded-xl bg-[#08111F] border border-white/10 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
-          placeholder="you@example.com"
+          placeholder={t("inquiry.emailPlaceholder")}
         />
         {errors.buyerEmail ? (
           <p className="mt-2 text-sm text-red-400">{errors.buyerEmail}</p>
@@ -149,7 +148,8 @@ export default function ContactInquiryForm({
 
       <div>
         <label htmlFor="buyerPhone" className="block text-sm font-medium text-gray-300 mb-2">
-          Phone <span className="text-gray-500">(optional)</span>
+          {t("inquiry.phone")}{" "}
+          <span className="text-gray-500">{t("inquiry.phoneOptional")}</span>
         </label>
         <input
           id="buyerPhone"
@@ -157,7 +157,7 @@ export default function ContactInquiryForm({
           value={formData.buyerPhone}
           onChange={(event) => updateField("buyerPhone", event.target.value)}
           className="w-full rounded-xl bg-[#08111F] border border-white/10 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
-          placeholder="+31 6 12345678"
+          placeholder={t("inquiry.phonePlaceholder")}
         />
         {errors.buyerPhone ? (
           <p className="mt-2 text-sm text-red-400">{errors.buyerPhone}</p>
@@ -166,7 +166,7 @@ export default function ContactInquiryForm({
 
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
-          Message
+          {t("inquiry.message")}
         </label>
         <textarea
           id="message"
@@ -177,7 +177,7 @@ export default function ContactInquiryForm({
           className="w-full rounded-xl bg-[#08111F] border border-white/10 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-y"
         />
         <div className="mt-2 flex justify-between text-xs text-gray-500">
-          <span>{errors.message ? null : "You can edit the suggested message."}</span>
+          <span>{errors.message ? null : t("inquiry.messageHint")}</span>
           <span>
             {formData.message.length}/{INQUIRY_MESSAGE_MAX}
           </span>
@@ -200,14 +200,14 @@ export default function ContactInquiryForm({
           disabled={isSubmitting}
           className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition disabled:opacity-60"
         >
-          Cancel
+          {t("inquiry.cancel")}
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
           className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold transition"
         >
-          {isSubmitting ? "Sending Inquiry..." : "Send Inquiry"}
+          {isSubmitting ? t("inquiry.sending") : t("inquiry.send")}
         </button>
       </div>
     </form>

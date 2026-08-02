@@ -1,7 +1,14 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
+import SearchableSelect from "@/app/components/shared/SearchableSelect";
+import { getBreedSelectOptions } from "@/app/lib/breeds";
+import { getCountrySelectOptions } from "@/app/lib/constants/countries";
 import { ListingFormData, HorseGender } from "@/app/types/listing";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
 import FormSection from "@/app/components/sell/FormSection";
+
+const countryOptions = getCountrySelectOptions();
+const breedOptions = getBreedSelectOptions();
 
 type Props = {
   data: ListingFormData;
@@ -13,33 +20,34 @@ type Props = {
 };
 
 export default function BasicInfoSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
+
   return (
-    <FormSection
-      title="Basic Information"
-      subtitle="Core details buyers expect on a premium sport-horse listing."
-    >
+    <FormSection title={t("basicInfo.title")} subtitle={t("basicInfo.subtitle")}>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <FormField label="Horse Name" htmlFor="name" error={errors.name} required>
+        <FormField label={t("basicInfo.horseName")} htmlFor="name" error={errors.name} required>
           <input
             id="name"
             value={data.name}
             onChange={(e) => onChange("name", e.target.value)}
             className={sellInputClassName}
-            placeholder="Emerald Star Z"
+            placeholder={t("basicInfo.horseNamePlaceholder")}
           />
         </FormField>
 
-        <FormField label="Breed" htmlFor="breed" error={errors.breed} required>
-          <input
+        <FormField label={t("basicInfo.breed")} htmlFor="breed" error={errors.breed} required>
+          <SearchableSelect
             id="breed"
             value={data.breed}
-            onChange={(e) => onChange("breed", e.target.value)}
-            className={sellInputClassName}
-            placeholder="Hanoverian"
+            onChange={(value) => onChange("breed", value)}
+            options={breedOptions}
+            placeholder={t("basicInfo.breedPlaceholder")}
+            required
+            inputClassName={sellInputClassName}
           />
         </FormField>
 
-        <FormField label="Age" htmlFor="age" error={errors.age} required>
+        <FormField label={t("basicInfo.age")} htmlFor="age" error={errors.age} required>
           <input
             id="age"
             type="number"
@@ -47,35 +55,35 @@ export default function BasicInfoSection({ data, errors, onChange }: Props) {
             value={data.age}
             onChange={(e) => onChange("age", e.target.value)}
             className={sellInputClassName}
-            placeholder="Years"
+            placeholder={t("basicInfo.agePlaceholder")}
           />
         </FormField>
 
-        <FormField label="Gender" htmlFor="gender" error={errors.gender} required>
+        <FormField label={t("basicInfo.gender")} htmlFor="gender" error={errors.gender} required>
           <select
             id="gender"
             value={data.gender}
             onChange={(e) => onChange("gender", e.target.value as HorseGender | "")}
             className={sellInputClassName}
           >
-            <option value="">Select gender</option>
-            <option value="Mare">Mare</option>
-            <option value="Stallion">Stallion</option>
-            <option value="Gelding">Gelding</option>
+            <option value="">{t("basicInfo.selectGender")}</option>
+            <option value="Mare">{t("basicInfo.mare")}</option>
+            <option value="Stallion">{t("basicInfo.stallion")}</option>
+            <option value="Gelding">{t("basicInfo.gelding")}</option>
           </select>
         </FormField>
 
-        <FormField label="Color" htmlFor="color" error={errors.color} required>
+        <FormField label={t("basicInfo.color")} htmlFor="color" error={errors.color} required>
           <input
             id="color"
             value={data.color}
             onChange={(e) => onChange("color", e.target.value)}
             className={sellInputClassName}
-            placeholder="Bay"
+            placeholder={t("basicInfo.colorPlaceholder")}
           />
         </FormField>
 
-        <FormField label="Height (cm)" htmlFor="height" error={errors.height} required>
+        <FormField label={t("basicInfo.height")} htmlFor="height" error={errors.height} required>
           <input
             id="height"
             type="number"
@@ -83,23 +91,25 @@ export default function BasicInfoSection({ data, errors, onChange }: Props) {
             value={data.height}
             onChange={(e) => onChange("height", e.target.value)}
             className={sellInputClassName}
-            placeholder="167"
+            placeholder={t("basicInfo.heightPlaceholder")}
           />
         </FormField>
 
         <FormField
-          label="Country"
+          label={t("basicInfo.country")}
           htmlFor="country"
           error={errors.country}
           required
           className="sm:col-span-2 lg:col-span-1"
         >
-          <input
+          <SearchableSelect
             id="country"
             value={data.country}
-            onChange={(e) => onChange("country", e.target.value)}
-            className={sellInputClassName}
-            placeholder="Germany"
+            onChange={(value) => onChange("country", value)}
+            options={countryOptions}
+            placeholder={t("basicInfo.countryPlaceholder")}
+            required
+            inputClassName={sellInputClassName}
           />
         </FormField>
       </div>

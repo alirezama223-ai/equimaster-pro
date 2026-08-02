@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 type Props = {
   images: string[];
@@ -11,6 +12,7 @@ type Props = {
 const SWIPE_THRESHOLD_PX = 48;
 
 export default function EntityGallery({ images, altPrefix }: Props) {
+  const t = useTranslations("common.gallery");
   const galleryImages = useMemo(() => {
     const seen = new Set<string>();
     const normalized = images.filter((url) => {
@@ -76,7 +78,7 @@ export default function EntityGallery({ images, altPrefix }: Props) {
       >
         <Image
           src={activeImage}
-          alt={`${altPrefix} — photo ${activeIndex + 1}`}
+          alt={t("photoAlt", { prefix: altPrefix, index: activeIndex + 1 })}
           fill
           priority={activeIndex === 0}
           sizes="(max-width: 1024px) 100vw, 50vw"
@@ -90,7 +92,7 @@ export default function EntityGallery({ images, altPrefix }: Props) {
             <button
               type="button"
               onClick={goToPrevious}
-              aria-label="Previous photo"
+              aria-label={t("previousPhoto")}
               className="absolute left-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition hover:bg-blue-600"
             >
               ←
@@ -99,7 +101,7 @@ export default function EntityGallery({ images, altPrefix }: Props) {
             <button
               type="button"
               onClick={goToNext}
-              aria-label="Next photo"
+              aria-label={t("nextPhoto")}
               className="absolute right-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition hover:bg-blue-600"
             >
               →
@@ -122,7 +124,7 @@ export default function EntityGallery({ images, altPrefix }: Props) {
                 key={`${image}-${index}`}
                 type="button"
                 onClick={() => goToIndex(index)}
-                aria-label={`Show photo ${index + 1}`}
+                aria-label={t("showPhoto", { index: index + 1 })}
                 aria-current={isActive}
                 className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-xl border transition ${
                   isActive
@@ -132,7 +134,7 @@ export default function EntityGallery({ images, altPrefix }: Props) {
               >
                 <Image
                   src={image}
-                  alt={`${altPrefix} thumbnail ${index + 1}`}
+                  alt={t("thumbnailAlt", { prefix: altPrefix, index: index + 1 })}
                   fill
                   sizes="112px"
                   className="object-cover"

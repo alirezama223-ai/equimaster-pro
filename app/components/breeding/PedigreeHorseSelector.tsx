@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { getBreedingCandidateById, searchBreedingCandidates } from "@/app/actions/breeding";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
@@ -22,6 +23,7 @@ export default function PedigreeHorseSelector({
   onSelect,
   initialId,
 }: Props) {
+  const t = useTranslations("breeding");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<BreedingCandidate[]>([]);
   const [pending, startTransition] = useTransition();
@@ -54,18 +56,17 @@ export default function PedigreeHorseSelector({
     <div className="rounded-3xl border border-white/10 bg-[#111827] p-5 sm:p-6 h-full flex flex-col">
       <p className="text-xs uppercase tracking-[0.2em] text-blue-400">{label}</p>
       <h2 className="mt-2 text-2xl font-bold text-white">
-        {sex === "mare" ? "Select Mare" : "Select Stallion"}
+        {sex === "mare" ? t("selector.selectMare") : t("selector.selectStallion")}
       </h2>
       <p className="mt-2 text-sm text-gray-400">
-        Search by name, studbook, or registration. Horses are matched by pedigree UUID, never by
-        name alone.
+        {t("selector.searchHint")}
       </p>
 
       <input
         type="text"
         value={query}
         onChange={(event) => handleSearch(event.target.value)}
-        placeholder={sex === "mare" ? "Search mares..." : "Search stallions..."}
+        placeholder={sex === "mare" ? t("selector.searchMaresPlaceholder") : t("selector.searchStallionsPlaceholder")}
         className="mt-5 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 py-3 text-white"
       />
 
@@ -90,28 +91,28 @@ export default function PedigreeHorseSelector({
               <p className="mt-2 text-xs text-gray-500">
                 {formatPedigreeSexLabel(selected.sex)}
                 {selected.registrationNumber ? ` · ${selected.registrationNumber}` : ""}
-                {!selected.verified ? " · Unverified pedigree record" : ""}
+                {!selected.verified ? ` · ${t("selector.unverifiedRecord")}` : ""}
               </p>
               {selected.source === "stallion_directory" && selected.sourceId ? (
                 <Link
                   href={`/stallions/${selected.sourceId}`}
                   className="mt-3 inline-block text-sm text-blue-400 hover:text-blue-300"
                 >
-                  View Stallion Directory profile →
+                  {t("selector.viewStallionProfile")}
                 </Link>
               ) : selected.source === "listing" && selected.sourceId ? (
                 <Link
                   href={`/horse/${selected.sourceId}`}
                   className="mt-3 inline-block text-sm text-blue-400 hover:text-blue-300"
                 >
-                  View Marketplace listing →
+                  {t("selector.viewListing")}
                 </Link>
               ) : (
                 <Link
                   href={`/pedigree/${selected.id}`}
                   className="mt-3 inline-block text-sm text-blue-400 hover:text-blue-300"
                 >
-                  View pedigree profile →
+                  {t("selector.viewPedigreeProfile")}
                 </Link>
               )}
             </div>
@@ -120,16 +121,16 @@ export default function PedigreeHorseSelector({
               onClick={() => onSelect(null)}
               className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-gray-300 hover:text-white"
             >
-              Clear
+              {t("clear")}
             </button>
           </div>
         </div>
       ) : null}
 
       <div className="mt-4 space-y-3 flex-1 overflow-y-auto max-h-80">
-        {pending ? <p className="text-sm text-gray-500">Searching...</p> : null}
+        {pending ? <p className="text-sm text-gray-500">{t("searching")}</p> : null}
         {!pending && query.trim().length >= 2 && results.length === 0 ? (
-          <p className="text-sm text-gray-500">No matching pedigree records found.</p>
+          <p className="text-sm text-gray-500">{t("selector.noMatchingRecords")}</p>
         ) : null}
         {results.map((candidate) => (
           <button
@@ -158,11 +159,11 @@ export default function PedigreeHorseSelector({
             </p>
             <p className="mt-1 text-xs text-gray-500">
               {candidate.source === "stallion_directory"
-                ? "Stallion Directory · "
+                ? t("selector.sourceStallionDirectory")
                 : candidate.source === "listing"
-                  ? "Marketplace listing · "
+                  ? t("selector.sourceListing")
                   : ""}
-              {candidate.verified ? "Verified record" : "Unverified record"}
+              {candidate.verified ? t("selector.verifiedRecord") : t("selector.unverifiedRecordShort")}
             </p>
           </button>
         ))}

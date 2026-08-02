@@ -4,7 +4,7 @@
     "title": "Sportpferde kaufen",
     "subtitle": "Entdecken Sie Premium-Inserate mit dokumentierter Abstammung, Medien und direktem Kontakt zum Verkäufer.",
     "searchLabel": "Suche",
-    "searchPlaceholder": "Name, Rasse, Disziplin, Land …",
+    "searchPlaceholder": "Name, Rasse, Vater, Mutter, Züchter, Standort …",
     "discipline": "Disziplin",
     "country": "Land",
     "breed": "Rasse",
@@ -24,13 +24,30 @@
     "next": "Weiter",
     "sortOptions": {
       "newest": "Neueste zuerst",
+      "oldest": "Älteste zuerst",
       "price-asc": "Preis: aufsteigend",
       "price-desc": "Preis: absteigend",
       "age-asc": "Alter: jüngste zuerst",
       "age-desc": "Alter: älteste zuerst",
       "height-asc": "Größe: niedrig bis hoch",
-      "height-desc": "Größe: hoch bis niedrig"
+      "height-desc": "Größe: hoch bis niedrig",
+      "featured": "Empfohlen"
     },
+    "trainingLevel": "Ausbildungsstand",
+    "allTrainingLevels": "Alle Niveaus",
+    "studbook": "Studbook",
+    "studbookPlaceholder": "KWPN, BWP, OS …",
+    "availability": "Verfügbarkeit",
+    "allAvailability": "Alle Inserate",
+    "availabilityPriced": "Festpreis",
+    "availabilityOnRequest": "Preis auf Anfrage",
+    "openFilters": "Filter",
+    "closeFilters": "Schließen",
+    "loadingResults": "Inserate werden geladen …",
+    "networkError": "Inserate konnten nicht geladen werden. Verbindung prüfen und erneut versuchen.",
+    "emptyResultsTitle": "Keine Pferde gefunden",
+    "emptyErrorTitle": "Suche nicht verfügbar",
+    "emptyErrorDescription": "Inserate konnten gerade nicht geladen werden. Erneut versuchen oder Filter anpassen.",
     "color": "Farbe",
     "colorPlaceholder": "Fuchs, Schimmel, Brauner …",
     "verifiedOnly": "Nur verifiziert",
@@ -59,7 +76,10 @@
       "verified": "Nur verifiziert",
       "price": "Preis: {min}–{max}",
       "age": "Alter: {min}–{max}",
-      "height": "Größe: {min}–{max} cm"
+      "height": "Größe: {min}–{max} cm",
+      "level": "Niveau: {value}",
+      "studbook": "Studbook: {value}",
+      "availability": "Verfügbarkeit: {value}"
     }
   },
   "home": {

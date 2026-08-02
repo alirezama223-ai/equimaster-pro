@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "eyebrow": "Willkommen bei EquiMaster Pro",
+    "title": {
+      "line1": "Sportpferde",
+      "line2": "Marktplatz",
+      "line3": "Europa"
+    },
+    "subtitle": "Kaufen, verkaufen und entdecken Sie Springpferde der Spitzenklasse von vertrauenswürdigen Züchtern in ganz Europa.",
+    "browseButton": "Pferde durchsuchen",
+    "sellButton": "Pferd verkaufen",
+    "imageAlt": "Sportpferd — Hero-Bild",
+    "stats": {
+      "sportHorses": {
+        "value": "15K+",
+        "label": "Sportpferde"
+      },
+      "breeders": {
+        "value": "1200+",
+        "label": "Züchter"
+      },
+      "countries": {
+        "value": "28",
+        "label": "Länder"
+      }
+    }
+  },
+  "search": {
+    "title": "Finden Sie Ihr ideales Pferd",
+    "subtitle": "Suchen und filtern Sie Europas feinste Sportpferde.",
+    "queryLabel": "Suche",
+    "queryPlaceholder": "Pferd suchen...",
+    "breed": "Rasse",
+    "allBreeds": "Alle Rassen",
+    "allBreedsPlaceholder": "Alle Rassen…",
+    "country": "Land",
+    "allCountries": "Alle Länder",
+    "allCountriesPlaceholder": "Alle Länder…",
+    "gender": "Geschlecht",
+    "allGenders": "Alle Geschlechter",
+    "mare": "Stute",
+    "stallion": "Hengst",
+    "gelding": "Wallach",
+    "discipline": "Disziplin",
+    "allDisciplines": "Alle Disziplinen",
+    "allDisciplinesPlaceholder": "Alle Disziplinen…",
+    "verifiedOnly": "Nur verifiziert",
+    "minPrice": "Mindestpreis (€)",
+    "maxPrice": "Höchstpreis (€)",
+    "minAge": "Mindestalter",
+    "maxAge": "Höchstalter",
+    "minHeight": "Mindestgröße (cm)",
+    "maxHeight": "Höchstgröße (cm)",
+    "yearsPlaceholder": "Jahre",
+    "cmPlaceholder": "cm",
+    "pricePlaceholderMin": "z. B. 30000",
+    "pricePlaceholderMax": "z. B. 60000",
+    "sortBy": "Sortieren nach",
+    "sortDefault": "Standardreihenfolge",
+    "sortPriceAsc": "Preis: aufsteigend",
+    "sortPriceDesc": "Preis: absteigend",
+    "sortAgeAsc": "Alter: jüngste zuerst",
+    "sortAgeDesc": "Alter: älteste zuerst",
+    "sortHeightAsc": "Größe: niedrig bis hoch",
+    "sortHeightDesc": "Größe: hoch bis niedrig",
+    "resetFilters": "Filter zurücksetzen"
+  },
+  "featured": {
+    "eyebrow": "Premium-Kollektion",
+    "title": "Empfohlene Pferde",
+    "subtitle": "Entdecken Sie Europas beste Springpferde — ausgewählt von vertrauenswürdigen Züchtern und Profi-Reitern.",
+    "emptyIcon": "🐴",
+    "emptyTitle": "Keine Pferde gefunden",
+    "emptyDescription": "Passen Sie Ihre Suche an."
+  },
+  "premium": {
+    "eyebrow": "Elite-Genetik",
+    "title": "Premium-Hengste",
+    "subtitle": "Entdecken Sie die weltweit erfolgreichsten Zuchthengste.",
+    "browseDirectory": "Hengstverzeichnis durchsuchen →",
+    "age": "Alter",
+    "studFee": "Decktaxe",
+    "viewStallion": "Hengst ansehen",
+    "stallionImageAlt": "{name} — Hengstfoto"
+  },
+  "horseCard": {
+    "verified": "✔ VERIFIZIERT",
+    "price": "Preis",
+    "age": "Alter",
+    "ageValue": "{age} J.",
+    "height": "Größe",
+    "heightValue": "{height} cm",
+    "gender": "Geschlecht",
+    "level": "Niveau",
+    "location": "Standort",
+    "view": "Ansehen →",
+    "imageAlt": "{name} — Anzeigenfoto",
+    "genderUnknown": "Unbekannt"
+  },
+  "pagination": {
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageAria": "Seite {page}"
+  }
+}

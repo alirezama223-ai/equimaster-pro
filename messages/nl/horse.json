@@ -1,0 +1,90 @@
+{
+  "info": {
+    "verified": "Geverifieerd",
+    "askingPrice": "Vraagprijs",
+    "breed": "Ras",
+    "age": "Leeftijd",
+    "ageValue": "{age} jaar",
+    "height": "Schofthoogte",
+    "heightValue": "{height} cm",
+    "country": "Land",
+    "gender": "Geslacht",
+    "training": "Training",
+    "color": "Kleur",
+    "discipline": "Discipline",
+    "draftContact": "Deze advertentie is nog niet gepubliceerd. Publiceer deze vanuit uw verkopersdashboard om kopersaanvragen te activeren.",
+    "contactUnavailable": "Contact is niet beschikbaar voor deze advertentie.",
+    "viewPedigree": "Volledig stamboek bekijken"
+  },
+  "description": {
+    "title": "Beschrijving",
+    "fallback": "{name} is een premium {breed} sportpaard uit {country}. Een getalenteerd {discipline}-paard met uitstekende rijbaarheid en sterke bloedlijnen."
+  },
+  "pedigree": {
+    "title": "Stamboek",
+    "sire": "Vader",
+    "dam": "Moeder",
+    "damSire": "Moedervader"
+  },
+  "contact": {
+    "title": "Interesse in {name}?",
+    "withSeller": "Neem contact op met {seller}{stable} voor meer informatie.",
+    "atStable": " van {stable}",
+    "generic": "Neem contact op met de verkoper voor meer informatie.",
+    "privateInquiry": "Stuur een privé-aanvraag via EquiMaster Pro. Uw bericht wordt uitsluitend met de verkoper gedeeld.",
+    "contactSeller": "Verkoper contacteren",
+    "mailSubject": "Aanvraag over {name}"
+  },
+  "inquiry": {
+    "modalEyebrow": "Verkoper contacteren",
+    "modalTitle": "Verkoper contacteren over {name}",
+    "modalSubtitle": "Stuur een privé-aanvraag. Uw contactgegevens worden alleen met de verkoper gedeeld.",
+    "successTitle": "Aanvraag succesvol verzonden",
+    "successBody": "Uw bericht over {name} is naar de verkoper gestuurd. Deze kan het bekijken in het accountdashboard.",
+    "close": "Sluiten",
+    "name": "Naam",
+    "namePlaceholder": "Uw naam",
+    "email": "E-mail",
+    "emailPlaceholder": "u@voorbeeld.nl",
+    "phone": "Telefoon",
+    "phoneOptional": "(optioneel)",
+    "phonePlaceholder": "+31 6 12345678",
+    "message": "Bericht",
+    "messageHint": "U kunt het voorgestelde bericht bewerken.",
+    "cancel": "Annuleren",
+    "send": "Aanvraag verzenden",
+    "sending": "Aanvraag wordt verzonden …"
+  },
+  "gallery": {
+    "photoAlt": "{name} — foto {index}",
+    "photoAltDetailed": "{name}, {discipline} sportpaard te koop — foto {index} van {total}",
+    "previousPhoto": "Vorige foto",
+    "nextPhoto": "Volgende foto",
+    "showPhoto": "Foto {index} tonen",
+    "thumbnailAlt": "{name} — miniatuur {index}",
+    "thumbnailAltDetailed": "{name} — miniatuur {index} van {total}",
+    "openLightbox": "Foto op volledig formaat bekijken",
+    "openLightboxHint": "Tik om te vergroten",
+    "closeLightbox": "Galerij sluiten",
+    "lightboxLabel": "Fotogalerij — {name}",
+    "zoomIn": "Inzoomen",
+    "zoomOut": "Uitzoomen",
+    "photoCounter": "{index} / {total}",
+    "slideAnnouncement": "Foto {index} van {total}",
+    "regionLabel": "Fotogalerij — {name}"
+  },
+  "video": {
+    "title": "Video",
+    "unsupported": "Uw browser ondersteunt geen HTML5-videoweergave.",
+    "externalLink": "Deze advertentie bevat een externe videolink.",
+    "watchVideo": "Video bekijken"
+  },
+  "related": {
+    "title": "Vergelijkbare advertenties",
+    "browseAll": "Alles bekijken →"
+  },
+  "shareTitle": "{name} op EquiMaster Pro",
+  "breadcrumbs": {
+    "ariaLabel": "Broodkruimelnavigatie"
+  }
+}

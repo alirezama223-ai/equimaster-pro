@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import FormField from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
@@ -14,9 +15,10 @@ type ImageSlotProps = {
   error?: string;
   onSelect: (file: File, previewUrl: string) => void;
   onRemove: () => void;
+  t: ReturnType<typeof useTranslations<"account.breeder">>;
 };
 
-function ImageSlot({ label, kind, state, error, onSelect, onRemove }: ImageSlotProps) {
+function ImageSlot({ label, kind, state, error, onSelect, onRemove, t }: ImageSlotProps) {
   const displayUrl =
     state.previewUrl ??
     (!state.removed ? state.existingUrl : null);
@@ -42,7 +44,7 @@ function ImageSlot({ label, kind, state, error, onSelect, onRemove }: ImageSlotP
           >
             <Image
               src={displayUrl}
-              alt={`${label} preview`}
+              alt={t("previewAlt", { label })}
               fill
               unoptimized={displayUrl.startsWith("blob:")}
               className={isCover ? "object-cover" : "object-cover p-2"}
@@ -51,7 +53,7 @@ function ImageSlot({ label, kind, state, error, onSelect, onRemove }: ImageSlotP
 
           <div className="flex flex-wrap gap-3">
             <label className="cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition">
-              Replace
+              {t("replace")}
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
@@ -64,7 +66,7 @@ function ImageSlot({ label, kind, state, error, onSelect, onRemove }: ImageSlotP
               onClick={onRemove}
               className="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition"
             >
-              Remove
+              {t("remove")}
             </button>
           </div>
         </div>
@@ -76,11 +78,9 @@ function ImageSlot({ label, kind, state, error, onSelect, onRemove }: ImageSlotP
         >
           <span className="text-3xl">{isCover ? "🖼️" : "🏷️"}</span>
           <span className="text-white font-semibold">
-            {isCover ? "Upload cover image" : "Upload logo"}
+            {isCover ? t("uploadCover") : t("uploadLogo")}
           </span>
-          <span className="text-sm text-gray-400">
-            JPG, PNG, WEBP, or GIF up to 10 MB.
-          </span>
+          <span className="text-sm text-gray-400">{t("imageFormats")}</span>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
@@ -110,6 +110,8 @@ export default function BreederMediaSection({
   onCoverChange,
   onMediaError,
 }: Props) {
+  const t = useTranslations("account.breeder");
+
   useEffect(() => {
     return () => {
       if (logo.previewUrl?.startsWith("blob:")) URL.revokeObjectURL(logo.previewUrl);
@@ -163,26 +165,25 @@ export default function BreederMediaSection({
   }
 
   return (
-    <FormSection
-      title="Logo & Cover Images"
-      subtitle="Upload a square logo and a wide cover image for your public stud farm profile."
-    >
+    <FormSection title={t("logoCoverTitle")} subtitle={t("logoCoverSubtitle")}>
       <div className="grid gap-8 lg:grid-cols-2">
         <ImageSlot
-          label="Logo"
+          label={t("logo")}
           kind="logo"
           state={logo}
           error={mediaError ?? undefined}
           onSelect={(file, previewUrl) => handleSelect("logo", logo, onLogoChange, file, previewUrl)}
           onRemove={() => handleRemove(logo, onLogoChange)}
+          t={t}
         />
 
         <ImageSlot
-          label="Cover Image"
+          label={t("coverImage")}
           kind="cover"
           state={cover}
           onSelect={(file, previewUrl) => handleSelect("cover", cover, onCoverChange, file, previewUrl)}
           onRemove={() => handleRemove(cover, onCoverChange)}
+          t={t}
         />
       </div>
     </FormSection>

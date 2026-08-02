@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
@@ -13,39 +14,38 @@ type Props = {
 };
 
 export default function PedigreeSection({ data, errors, onChange }: Props) {
+  const t = useTranslations("sell");
+
   return (
-    <FormSection
-      title="Pedigree"
-      subtitle="Present the bloodlines that matter to sport-horse buyers."
-    >
+    <FormSection title={t("pedigree.title")} subtitle={t("pedigree.subtitle")}>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <FormField label="Sire" htmlFor="sire" error={errors.sire} required>
+        <FormField label={t("pedigree.sire")} htmlFor="sire" error={errors.sire} required>
           <input
             id="sire"
             value={data.sire}
             onChange={(e) => onChange("sire", e.target.value)}
             className={sellInputClassName}
-            placeholder="Emerald van't Ruytershof"
+            placeholder={t("pedigree.sirePlaceholder")}
           />
         </FormField>
 
-        <FormField label="Dam" htmlFor="dam" error={errors.dam} required>
+        <FormField label={t("pedigree.dam")} htmlFor="dam" error={errors.dam} required>
           <input
             id="dam"
             value={data.dam}
             onChange={(e) => onChange("dam", e.target.value)}
             className={sellInputClassName}
-            placeholder="Baloubet Dream"
+            placeholder={t("pedigree.damPlaceholder")}
           />
         </FormField>
 
-        <FormField label="Dam Sire" htmlFor="damSire" error={errors.damSire} required>
+        <FormField label={t("pedigree.damSire")} htmlFor="damSire" error={errors.damSire} required>
           <input
             id="damSire"
             value={data.damSire}
             onChange={(e) => onChange("damSire", e.target.value)}
             className={sellInputClassName}
-            placeholder="Quidam de Revel"
+            placeholder={t("pedigree.damSirePlaceholder")}
           />
         </FormField>
       </div>

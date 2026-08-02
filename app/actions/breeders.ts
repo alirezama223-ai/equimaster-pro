@@ -5,7 +5,7 @@ import {
   breederRowToCard,
   getBreederCoverUrl,
   getBreederLogoUrl,
-  parseDisciplinesInput,
+  normalizeDisciplines,
   rowToBreeder,
 } from "@/app/lib/breeders";
 import { rowToStallion, stallionRowToCard } from "@/app/lib/stallions";
@@ -96,7 +96,7 @@ function buildBreederPayload(form: BreederFormData) {
     website: form.website.trim() || null,
     email: form.email.trim() || null,
     phone: form.phone.trim() || null,
-    disciplines: parseDisciplinesInput(form.disciplines),
+    disciplines: normalizeDisciplines(form.disciplines),
   };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import GoalTraitExplainList from "@/app/components/breeding-goals/GoalTraitExplainList";
 import { GoalBasedRecommendationResult } from "@/app/lib/breeding-goals/recommendations";
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
+  const t = useTranslations("breeding");
   const [showEvidence, setShowEvidence] = useState(false);
   const breedingLabUrl = `/breeding-lab?mare=${marePedigreeId}&stallion=${result.pedigreeHorseId}`;
   const isHighPedigreeRisk = result.pedigreeRiskLabel === "HIGH CONCERN";
@@ -24,18 +26,22 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
           <p className="mt-1 text-sm text-gray-400">{result.studFeeLabel}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Breeding Goal Match</p>
+          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("recommendations.goalMatch")}</p>
           <p className="text-3xl font-black text-emerald-400">
             {result.goalAnalysis?.goalMatchScoreAvailable
               ? `${result.goalMatchScore}/100`
-              : "Insufficient Data"}
+              : t("insufficientData")}
           </p>
           <p className="text-xs text-gray-500">
-            {(result.goalMatchConfidence ?? "INSUFFICIENT_DATA").replace(/_/g, " ")} confidence
+            {t("recommendations.confidenceSuffix", {
+              level: (result.goalMatchConfidence ?? "INSUFFICIENT_DATA").replace(/_/g, " "),
+            })}
           </p>
           {!result.goalAnalysis?.goalMatchScoreAvailable ? (
             <p className="mt-1 text-xs text-amber-200/90">
-              Limited trait evidence for selected goals ({result.goalAnalysis?.goalCoveragePercent ?? 0}% assessable)
+              {t("recommendations.limitedTraitEvidence", {
+                percent: result.goalAnalysis?.goalCoveragePercent ?? 0,
+              })}
             </p>
           ) : null}
         </div>
@@ -49,10 +55,12 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
               : "border-white/10 text-gray-300"
           }`}
         >
-          Pedigree: {result.pedigreeRiskLabel}
+          {t("recommendations.pedigreeLabel", { label: result.pedigreeRiskLabel })}
         </span>
         <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-gray-300">
-          Pedigree Score: {result.compatibilityScore ?? "Insufficient Data"}
+          {t("recommendations.pedigreeScore", {
+            score: result.compatibilityScore ?? t("insufficientData"),
+          })}
         </span>
       </div>
 
@@ -66,22 +74,21 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
         <div>
-          <p className="font-semibold text-white">Strong complements</p>
+          <p className="font-semibold text-white">{t("recommendations.strongComplements")}</p>
           <p className="mt-1 text-gray-300">
-            {result.goalAnalysis?.strongComplements.join(", ") || "None"}
+            {result.goalAnalysis?.strongComplements.join(", ") || t("combined.none")}
           </p>
         </div>
         <div>
-          <p className="font-semibold text-white">Potential concerns</p>
+          <p className="font-semibold text-white">{t("recommendations.potentialConcerns")}</p>
           <p className="mt-1 text-gray-300">
-            {result.goalAnalysis?.potentialConcerns.join(", ") || "None"}
+            {result.goalAnalysis?.potentialConcerns.join(", ") || t("combined.none")}
           </p>
         </div>
         <div className="sm:col-span-2">
-          <p className="font-semibold text-white">Limited / unknown trait evidence</p>
+          <p className="font-semibold text-white">{t("recommendations.limitedUnknownEvidence")}</p>
           <p className="mt-1 text-gray-300">
-            {result.goalAnalysis?.unknowns.join(", ") ||
-              "No selected goals lacked evidence on this cross."}
+            {result.goalAnalysis?.unknowns.join(", ") || t("recommendations.noUnknownGoals")}
           </p>
         </div>
       </div>
@@ -93,7 +100,7 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
             onClick={() => setShowEvidence((value) => !value)}
             className="text-sm font-semibold text-blue-400 hover:text-blue-300"
           >
-            {showEvidence ? "Hide goal evidence reasoning" : "Show goal evidence reasoning"}
+            {showEvidence ? t("recommendations.hideGoalEvidence") : t("recommendations.showGoalEvidence")}
           </button>
           {showEvidence ? (
             <div className="mt-3">
@@ -105,13 +112,13 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
 
       <div className="mt-5 flex flex-wrap gap-3">
         <Link href={breedingLabUrl} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
-          Analyze Full Cross
+          {t("recommendations.analyzeFullCross")}
         </Link>
         <Link
           href={`/stallions/${result.stallionDirectoryId}`}
           className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-gray-300"
         >
-          View Stallion
+          {t("recommendations.viewStallion")}
         </Link>
       </div>
     </article>

@@ -4,7 +4,7 @@
     "title": "Sportpaarden te koop",
     "subtitle": "Bekijk premium advertenties met gedocumenteerd stamboek, media en direct contact met de verkoper.",
     "searchLabel": "Zoeken",
-    "searchPlaceholder": "Naam, ras, discipline, land …",
+    "searchPlaceholder": "Naam, ras, vader, moeder, fokker, locatie …",
     "discipline": "Discipline",
     "country": "Land",
     "breed": "Ras",
@@ -24,13 +24,30 @@
     "next": "Volgende",
     "sortOptions": {
       "newest": "Nieuwste eerst",
+      "oldest": "Oudste eerst",
       "price-asc": "Prijs: laag naar hoog",
       "price-desc": "Prijs: hoog naar laag",
       "age-asc": "Leeftijd: jongste eerst",
       "age-desc": "Leeftijd: oudste eerst",
       "height-asc": "Schofthoogte: laag naar hoog",
-      "height-desc": "Schofthoogte: hoog naar laag"
+      "height-desc": "Schofthoogte: hoog naar laag",
+      "featured": "Uitgelicht"
     },
+    "trainingLevel": "Trainingsniveau",
+    "allTrainingLevels": "Alle niveaus",
+    "studbook": "Studbook",
+    "studbookPlaceholder": "KWPN, BWP, OS …",
+    "availability": "Beschikbaarheid",
+    "allAvailability": "Alle advertenties",
+    "availabilityPriced": "Vaste prijs",
+    "availabilityOnRequest": "Prijs op aanvraag",
+    "openFilters": "Filters",
+    "closeFilters": "Sluiten",
+    "loadingResults": "Advertenties laden …",
+    "networkError": "Advertenties konden niet worden geladen. Controleer uw verbinding en probeer opnieuw.",
+    "emptyResultsTitle": "Geen paarden gevonden",
+    "emptyErrorTitle": "Zoeken niet beschikbaar",
+    "emptyErrorDescription": "Advertenties konden nu niet worden geladen. Probeer opnieuw of pas filters aan.",
     "color": "Kleur",
     "colorPlaceholder": "Vos, schimmel, vos …",
     "verifiedOnly": "Alleen geverifieerd",
@@ -59,7 +76,10 @@
       "verified": "Alleen geverifieerd",
       "price": "Prijs: {min}–{max}",
       "age": "Leeftijd: {min}–{max}",
-      "height": "Schofthoogte: {min}–{max} cm"
+      "height": "Schofthoogte: {min}–{max} cm",
+      "level": "Niveau: {value}",
+      "studbook": "Studbook: {value}",
+      "availability": "Beschikbaarheid: {value}"
     }
   },
   "home": {

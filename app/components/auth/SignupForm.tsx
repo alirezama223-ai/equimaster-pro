@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
@@ -11,9 +13,11 @@ import {
   validateSignupForm,
 } from "@/app/lib/auth-validation";
 import { createClient } from "@/app/lib/supabase/client";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 
 export default function SignupForm() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") || "/account";
@@ -48,9 +52,7 @@ export default function SignupForm() {
     if (Object.keys(validationErrors).length > 0) return;
 
     if (!getSupabaseEnv().isConfigured) {
-      setFormError(
-        "Authentication is not configured. Check your Supabase environment variables."
-      );
+      setFormError(t("login.authNotConfigured"));
       return;
     }
 
@@ -72,12 +74,12 @@ export default function SignupForm() {
       });
 
       if (error) {
-        setFormError(getAuthErrorMessage(error.message));
+        setFormError(t(`errors.${getAuthErrorMessage(error.message)}`));
         return;
       }
 
       if (data.user && data.user.identities?.length === 0) {
-        setFormError("An account with this email already exists.");
+        setFormError(t("signup.accountExists"));
         return;
       }
 
@@ -87,11 +89,9 @@ export default function SignupForm() {
         return;
       }
 
-      setSuccessMessage(
-        "Account created. Please check your email to confirm your address before signing in."
-      );
+      setSuccessMessage(t("signup.accountCreated"));
     } catch {
-      setFormError("Unable to create your account right now. Please try again.");
+      setFormError(t("signup.genericError"));
     } finally {
       setIsLoading(false);
     }
@@ -99,16 +99,16 @@ export default function SignupForm() {
 
   return (
     <AuthFormShell
-      title="Create Account"
-      subtitle="Join EquiMaster Pro to list sport horses and manage your seller profile."
-      footerText="Already have an account?"
-      footerHref={`/login${nextPath !== "/account" ? `?next=${encodeURIComponent(nextPath)}` : ""}`}
-      footerLinkLabel="Sign in"
+      title={t("signup.title")}
+      subtitle={t("signup.subtitle")}
+      footerText={t("signup.footerText")}
+      footerHref={loginRedirectPath(nextPath !== "/account" ? nextPath : undefined)}
+      footerLinkLabel={t("signup.footerLink")}
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="fullName" className={authLabelClassName}>
-            Full Name
+            {t("signup.fullName")}
           </label>
           <input
             id="fullName"
@@ -117,16 +117,18 @@ export default function SignupForm() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className={authInputClassName}
-            placeholder="Your full name"
+            placeholder={t("signup.fullNamePlaceholder")}
           />
           {fieldErrors.fullName ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.fullName}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.fullName}`)}
+            </p>
           ) : null}
         </div>
 
         <div>
           <label htmlFor="signup-email" className={authLabelClassName}>
-            Email
+            {t("signup.email")}
           </label>
           <input
             id="signup-email"
@@ -135,16 +137,18 @@ export default function SignupForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={authInputClassName}
-            placeholder="you@example.com"
+            placeholder={t("signup.emailPlaceholder")}
           />
           {fieldErrors.email ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.email}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.email}`)}
+            </p>
           ) : null}
         </div>
 
         <div>
           <label htmlFor="signup-password" className={authLabelClassName}>
-            Password
+            {t("signup.password")}
           </label>
           <input
             id="signup-password"
@@ -153,16 +157,18 @@ export default function SignupForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={authInputClassName}
-            placeholder="Minimum 8 characters"
+            placeholder={t("signup.passwordPlaceholder")}
           />
           {fieldErrors.password ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.password}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.password}`)}
+            </p>
           ) : null}
         </div>
 
         <div>
           <label htmlFor="confirmPassword" className={authLabelClassName}>
-            Confirm Password
+            {t("signup.confirmPassword")}
           </label>
           <input
             id="confirmPassword"
@@ -171,10 +177,12 @@ export default function SignupForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className={authInputClassName}
-            placeholder="Re-enter your password"
+            placeholder={t("signup.confirmPasswordPlaceholder")}
           />
           {fieldErrors.confirmPassword ? (
-            <p className="mt-2 text-sm text-red-400">{fieldErrors.confirmPassword}</p>
+            <p className="mt-2 text-sm text-red-400">
+              {t(`validation.${fieldErrors.confirmPassword}`)}
+            </p>
           ) : null}
         </div>
 
@@ -195,7 +203,7 @@ export default function SignupForm() {
           disabled={isLoading}
           className="w-full rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-4 text-white font-semibold transition"
         >
-          {isLoading ? "Creating account..." : "Create Account"}
+          {isLoading ? t("signup.submitting") : t("signup.submit")}
         </button>
       </form>
     </AuthFormShell>

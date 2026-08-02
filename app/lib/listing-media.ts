@@ -2,6 +2,7 @@ import { isAcceptedImageType } from "@/app/lib/listing-validation";
 import {
   ListingImage,
   MAX_LISTING_IMAGES,
+  MAX_LISTING_IMAGE_BYTES,
 } from "@/app/types/listing";
 
 export type ImageSelectionResult =
@@ -32,6 +33,14 @@ export function addListingImages(
     return {
       ok: false,
       error: "Only JPG, PNG, WEBP, and GIF images are allowed.",
+    };
+  }
+
+  const oversized = selected.find((file) => file.size > MAX_LISTING_IMAGE_BYTES);
+  if (oversized) {
+    return {
+      ok: false,
+      error: "Each image must be 10 MB or smaller.",
     };
   }
 
@@ -95,11 +104,4 @@ export function revokeListingImages(images: ListingImage[]) {
       URL.revokeObjectURL(image.previewUrl);
     }
   });
-}
-
-/**
- * Listing images are uploaded server-side via Supabase Storage during submission.
- */
-export async function uploadListingMedia(): Promise<never> {
-  throw new Error("Use createHorseListing FormData submission for image uploads.");
 }

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import {
   buildListingImageFields,
+  copyListingImagesForDuplicate,
   removeAllListingImagesForListing,
   removeListingImagesFromStorage,
   uploadListingImagesToStorage,
@@ -11,14 +12,19 @@ import {
   buildCreateListingInput,
   buildListingFieldUpdates,
 } from "@/app/lib/horse-listings";
+import { buildListingSlug } from "@/app/lib/marketplace/slug";
+import { getPublicListingPath, getListingEditPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
+import { refreshListingPublicSnapshots } from "@/app/lib/marketplace/listing-display";
 import { syncListingPedigreeFromRow } from "@/app/lib/pedigree-sync";
 import {
   removeAllListingVideosForListing,
   removeListingVideoFromStorage,
+  copyListingVideoForDuplicate,
 } from "@/app/lib/horse-video-storage";
 import { createClient } from "@/app/lib/supabase/server";
-import { HorseListingRow } from "@/app/types/horse-listing";
+import { HorseListingRow, type ListingStatus } from "@/app/types/horse-listing";
 import { ListingFormData } from "@/app/types/listing";
+import type { SellerListingStats } from "@/app/types/marketplace";
 
 type ListingImagePayload = {
   isCover: boolean;
@@ -31,6 +37,7 @@ type CreateListingPayload = {
   formData: ListingFormData;
   images: ListingImagePayload[];
   hasVideoFile: boolean;
+  publish?: boolean;
 };
 
 type UpdateImagePayload = {
@@ -65,6 +72,22 @@ function mapDbError(message: string) {
   }
 
   if (
+    normalized.includes("could not find") &&
+    normalized.includes("horse_listings")
+  ) {
+    if (normalized.includes("'slug'")) {
+      return "Database schema is missing the slug column. Run supabase/migrations/034_horse_listings_schema_columns_sync.sql in Supabase.";
+    }
+    if (normalized.includes("'published_at'")) {
+      return "Database schema is missing the published_at column. Run supabase/migrations/034_horse_listings_schema_columns_sync.sql in Supabase.";
+    }
+    if (normalized.includes("'view_count'")) {
+      return "Database schema is missing the view_count column. Run supabase/migrations/034_horse_listings_schema_columns_sync.sql in Supabase.";
+    }
+    return "Database schema is out of date. Run supabase/migrations/034_horse_listings_schema_columns_sync.sql in Supabase.";
+  }
+
+  if (
     normalized.includes("permission denied for table") ||
     normalized.includes("permission denied")
   ) {
@@ -76,6 +99,69 @@ function mapDbError(message: string) {
   }
 
   return "Unable to save your listing right now. Please try again.";
+}
+
+function revalidateListingPaths(listingOrId?: Pick<HorseListingRow, "id" | "slug"> | string) {
+  const listing =
+    typeof listingOrId === "string" ? { id: listingOrId, slug: undefined } : listingOrId;
+
+  revalidatePath("/");
+  revalidatePath("/horses");
+  revalidatePath("/marketplace");
+  revalidatePath(MARKETPLACE_PATHS.sellerDashboard);
+  revalidatePath("/account");
+
+  if (listing?.id) {
+    revalidatePath(`/horse/${listing.id}`);
+    revalidatePath(`/horse/${listing.id}/edit`);
+    revalidatePath(`/dashboard/seller/listings/${listing.id}/edit`);
+    revalidatePath(`/dashboard/seller/listings/${listing.id}/preview`);
+  }
+
+  if (listing?.slug) {
+    revalidatePath(getPublicListingPath(listing.slug));
+  }
+}
+
+async function assignListingSlug(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  listingId: string,
+  name: string
+) {
+  const slug = buildListingSlug(name, listingId);
+  const { error } = await supabase
+    .from("horse_listings")
+    .update({ slug })
+    .eq("id", listingId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return slug;
+}
+
+async function fetchOwnerListing(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  listingId: string,
+  userId: string
+) {
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("id", listingId)
+    .eq("user_id", userId)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as HorseListingRow;
+}
+
+function listingHasRequiredMedia(listing: HorseListingRow): boolean {
+  return listing.image_urls.length > 0 || Boolean(listing.cover_image_url);
 }
 
 function withDevError(
@@ -205,11 +291,14 @@ export async function createHorseListing(formData: FormData) {
     pendingVideoUpload: payload.hasVideoFile,
   });
 
+  const shouldPublish = payload.publish === true;
+
   const insertPayload = {
     user_id: user.id,
     ...input,
     verified: false,
-    status: "active" as const,
+    status: (shouldPublish ? "active" : "draft") as ListingStatus,
+    published_at: shouldPublish ? new Date().toISOString() : null,
   };
 
   const { data: listing, error } = await supabase
@@ -236,6 +325,18 @@ export async function createHorseListing(formData: FormData) {
   }
 
   const listingId = listing.id as string;
+
+  try {
+    await assignListingSlug(supabase, listingId, input.name);
+  } catch (slugError) {
+    await rollbackCreatedListing(supabase, listingId, user.id, []);
+    console.error("[createHorseListing] slug assignment failed", slugError);
+    return {
+      error: withDevError(mapDbError(String(slugError)), {
+        message: String(slugError),
+      }),
+    };
+  }
 
   const uploadInputs = payload.images.map((image, index) => ({
     file: imageFiles[index],
@@ -290,12 +391,56 @@ export async function createHorseListing(formData: FormData) {
     };
   }
 
-  revalidatePath("/");
-  revalidatePath("/account");
+  let listingRow =
+    (await fetchOwnerListing(supabase, listingId, user.id)) ??
+    (updatedListing as HorseListingRow);
 
-  await syncListingPedigreeFromRow(supabase, user.id, updatedListing as HorseListingRow);
+  await syncListingPedigreeFromRow(supabase, user.id, listingRow);
 
-  return { data: updatedListing as HorseListingRow };
+  listingRow =
+    (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
+
+  let published = shouldPublish;
+
+  if (shouldPublish) {
+    if (!listingHasRequiredMedia(listingRow)) {
+      published = false;
+      await supabase
+        .from("horse_listings")
+        .update({ status: "draft", published_at: null })
+        .eq("id", listingId)
+        .eq("user_id", user.id);
+      listingRow =
+        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
+    } else if (!listingRow.pedigree_horse_id) {
+      published = false;
+      await supabase
+        .from("horse_listings")
+        .update({ status: "draft", published_at: null })
+        .eq("id", listingId)
+        .eq("user_id", user.id);
+      listingRow =
+        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
+    } else {
+      await refreshListingPublicSnapshots(supabase, user.id, listingRow);
+      listingRow =
+        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
+    }
+  }
+
+  revalidateListingPaths(listingRow);
+
+  return {
+    data: listingRow,
+    published,
+    publicUrl: published && listingRow.slug
+      ? getPublicListingPath(listingRow.slug)
+      : undefined,
+    error:
+      shouldPublish && !published
+        ? "Listing saved as draft. Pedigree linkage is required before publishing."
+        : undefined,
+  };
 }
 
 export async function rollbackHorseListing(listingId: string) {
@@ -357,9 +502,7 @@ export async function updateHorseListingVideo(
     };
   }
 
-  revalidatePath("/");
-  revalidatePath("/account");
-  revalidatePath(`/horse/${listingId}`);
+  revalidateListingPaths(listingId);
 
   return { data: data as HorseListingRow };
 }
@@ -568,24 +711,39 @@ export async function updateHorseListing(formData: FormData) {
     await removeListingVideoFromStorage(supabase, payload.deleteVideoPath);
   }
 
-  revalidatePath("/");
-  revalidatePath("/account");
-  revalidatePath(`/horse/${payload.listingId}`);
-  revalidatePath(`/horse/${payload.listingId}/edit`);
+  let listingRow = updatedListing as HorseListingRow;
 
-  await syncListingPedigreeFromRow(supabase, user.id, updatedListing as HorseListingRow);
+  await syncListingPedigreeFromRow(supabase, user.id, listingRow);
 
-  return { data: updatedListing as HorseListingRow };
+  listingRow =
+    (await fetchOwnerListing(supabase, payload.listingId, user.id)) ?? listingRow;
+
+  if (listingRow.status === "active") {
+    await refreshListingPublicSnapshots(supabase, user.id, listingRow);
+    listingRow =
+      (await fetchOwnerListing(supabase, payload.listingId, user.id)) ?? listingRow;
+  }
+
+  revalidateListingPaths(listingRow);
+
+  return { data: listingRow };
 }
 
-export async function getActiveHorseListings() {
+export async function getActiveHorseListings(limit?: number) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("horse_listings")
     .select("*")
     .eq("status", "active")
+    .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
+
+  if (limit != null && limit > 0) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return { data: [] as HorseListingRow[], error: error.message };
@@ -641,7 +799,7 @@ export async function deleteHorseListing(id: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "You must be signed in to delete a listing." };
+    return { errorKey: "notAuthenticated" };
   }
 
   await removeAllListingVideosForListing(supabase, user.id, id);
@@ -654,11 +812,422 @@ export async function deleteHorseListing(id: string) {
     .eq("user_id", user.id);
 
   if (error) {
-    return { error: mapDbError(error.message) };
+    return { errorKey: "deleteFailed" };
   }
 
-  revalidatePath("/");
-  revalidatePath("/account");
+  revalidateListingPaths(id);
 
   return { success: true };
+}
+
+export async function getHorseListingForPublicView(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: activeListing, error: activeError } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("id", id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (activeError) {
+    return { data: null, error: activeError.message };
+  }
+
+  if (activeListing) {
+    return {
+      data: activeListing as HorseListingRow,
+      isOwnerPreview: false,
+    };
+  }
+
+  if (!user) {
+    return { data: null };
+  }
+
+  const { data: ownerListing, error: ownerError } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (ownerError) {
+    return { data: null, error: ownerError.message };
+  }
+
+  if (!ownerListing) {
+    return { data: null };
+  }
+
+  return {
+    data: ownerListing as HorseListingRow,
+    isOwnerPreview: ownerListing.status !== "active",
+  };
+}
+
+export async function publishHorseListing(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data: listing, error: fetchError } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (fetchError || !listing) {
+    return { errorKey: "publishNotFound" };
+  }
+
+  const row = listing as HorseListingRow;
+
+  if (!listingHasRequiredMedia(row)) {
+    return { errorKey: "publishNoPhotos" };
+  }
+
+  if (!row.pedigree_horse_id) {
+    return { errorKey: "publishNoHorseRecord" };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .update({
+      status: "active",
+      published_at: row.published_at ?? new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return { errorKey: "publishFailed" };
+  }
+
+  const publishedListing = data as HorseListingRow;
+  await refreshListingPublicSnapshots(supabase, user.id, publishedListing);
+
+  revalidateListingPaths(publishedListing);
+
+  return { data: publishedListing, publicUrl: getPublicListingPath(publishedListing.slug) };
+}
+
+export async function archiveHorseListing(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .update({ status: "archived" })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return { errorKey: "archiveFailed" };
+  }
+
+  revalidateListingPaths(data as HorseListingRow);
+
+  return { data: data as HorseListingRow };
+}
+
+export async function restoreHorseListing(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .update({ status: "draft" })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .eq("status", "archived")
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return { errorKey: "restoreNotFound" };
+  }
+
+  revalidateListingPaths(data as HorseListingRow);
+
+  return { data: data as HorseListingRow };
+}
+
+export async function duplicateHorseListing(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data: source, error: fetchError } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (fetchError || !source) {
+    return { errorKey: "duplicateNotFound" };
+  }
+
+  const row = source as HorseListingRow;
+
+  const { data: created, error: insertError } = await supabase
+    .from("horse_listings")
+    .insert({
+      user_id: user.id,
+      name: row.name,
+      breed: row.breed,
+      gender: row.gender,
+      age: row.age,
+      height: row.height,
+      color: row.color,
+      country: row.country,
+      discipline: row.discipline,
+      level: row.level,
+      price: row.price,
+      price_on_request: row.price_on_request,
+      sire: row.sire,
+      dam: row.dam,
+      dam_sire: row.dam_sire,
+      description: row.description,
+      image_urls: [],
+      cover_image_url: null,
+      images_meta: [],
+      video_url: null,
+      video_file_name: null,
+      seller_name: row.seller_name,
+      seller_email: row.seller_email,
+      seller_phone: row.seller_phone,
+      stable_name: row.stable_name,
+      verified: false,
+      status: "draft",
+      pedigree_horse_id: row.pedigree_horse_id,
+      published_at: null,
+      public_training_summary: null,
+      public_health_summary: null,
+    })
+    .select("*")
+    .single();
+
+  if (insertError || !created) {
+    return { errorKey: "duplicateFailed" };
+  }
+
+  const newListingId = created.id as string;
+
+  try {
+    await assignListingSlug(supabase, newListingId, row.name);
+  } catch {
+    await supabase.from("horse_listings").delete().eq("id", newListingId).eq("user_id", user.id);
+    return { errorKey: "duplicateFailed" };
+  }
+
+  const imageCopy = await copyListingImagesForDuplicate(
+    supabase,
+    user.id,
+    row,
+    newListingId
+  );
+
+  if (imageCopy.error || !imageCopy.data?.length) {
+    await removeAllListingImagesForListing(supabase, user.id, newListingId);
+    await supabase.from("horse_listings").delete().eq("id", newListingId).eq("user_id", user.id);
+    return {
+      errorKey: "duplicatePhotosFailed",
+    };
+  }
+
+  const videoCopy = await copyListingVideoForDuplicate(
+    supabase,
+    user.id,
+    row,
+    newListingId
+  );
+
+  const { data: duplicated, error: updateError } = await supabase
+    .from("horse_listings")
+    .update({
+      ...buildListingImageFields(imageCopy.data),
+      video_url: videoCopy.video_url,
+      video_file_name: videoCopy.video_file_name,
+    })
+    .eq("id", newListingId)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (updateError || !duplicated) {
+    await removeAllListingImagesForListing(supabase, user.id, newListingId);
+    await removeAllListingVideosForListing(supabase, user.id, newListingId);
+    await supabase.from("horse_listings").delete().eq("id", newListingId).eq("user_id", user.id);
+    return { errorKey: "duplicateFinalizeFailed" };
+  }
+
+  revalidateListingPaths(duplicated as HorseListingRow);
+
+  return {
+    data: duplicated as HorseListingRow,
+    editUrl: getListingEditPath(newListingId),
+  };
+}
+
+export async function getHorseListingBySlug(slug: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("slug", slug)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  return { data: (data as HorseListingRow | null) ?? null };
+}
+
+export async function incrementListingViewCount(slug: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("increment_horse_listing_view_count", {
+    p_slug: slug,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function unpublishHorseListing(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .update({ status: "draft" })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return { errorKey: "unpublishFailed" };
+  }
+
+  revalidateListingPaths(id);
+
+  return { data: data as HorseListingRow };
+}
+
+export async function markHorseListingSold(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { errorKey: "notAuthenticated" };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .update({ status: "sold" })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return { errorKey: "markSoldFailed" };
+  }
+
+  revalidateListingPaths(id);
+
+  return { data: data as HorseListingRow };
+}
+
+export async function getSellerListingStats(): Promise<{
+  stats: SellerListingStats;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      stats: { total: 0, active: 0, draft: 0, sold: 0, archived: 0 },
+      error: "Not authenticated.",
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("status")
+    .eq("user_id", user.id);
+
+  if (error) {
+    return {
+      stats: { total: 0, active: 0, draft: 0, sold: 0, archived: 0 },
+      error: error.message,
+    };
+  }
+
+  const stats: SellerListingStats = {
+    total: data?.length ?? 0,
+    active: 0,
+    draft: 0,
+    sold: 0,
+    archived: 0,
+  };
+
+  for (const row of data ?? []) {
+    const status = row.status as ListingStatus;
+    if (status === "active") stats.active += 1;
+    else if (status === "draft") stats.draft += 1;
+    else if (status === "sold") stats.sold += 1;
+    else if (status === "archived") stats.archived += 1;
+  }
+
+  return { stats };
 }

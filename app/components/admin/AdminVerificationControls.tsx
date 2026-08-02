@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useState, useTransition } from "react";
 import type { AdminVerificationFilter } from "@/app/lib/admin";
 
@@ -10,13 +10,15 @@ type Props = {
   currentFilter: AdminVerificationFilter;
 };
 
-const filters: Array<{ value: AdminVerificationFilter; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "pending", label: "Pending / Unverified" },
-  { value: "verified", label: "Verified" },
+const filters: Array<{ value: AdminVerificationFilter; key: "all" | "pendingUnverified" | "verified" }> = [
+  { value: "all", key: "all" },
+  { value: "pending", key: "pendingUnverified" },
+  { value: "verified", key: "verified" },
 ];
 
 export default function AdminVerificationFilters({ basePath, currentFilter }: Props) {
+  const t = useTranslations("admin.verification");
+
   return (
     <div className="flex flex-wrap gap-3">
       {filters.map((filter) => {
@@ -34,7 +36,7 @@ export default function AdminVerificationFilters({ basePath, currentFilter }: Pr
                 : "border border-white/10 text-gray-300 hover:border-blue-500/40 hover:text-white"
             }`}
           >
-            {filter.label}
+            {t(filter.key)}
           </Link>
         );
       })}
@@ -55,6 +57,7 @@ export function AdminVerificationActions({
   onVerify,
   onUnverify,
 }: ActionProps) {
+  const t = useTranslations("admin.verification");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
@@ -84,19 +87,19 @@ export function AdminVerificationActions({
           <button
             type="button"
             disabled={pending}
-            onClick={() => run(onUnverify, `${entityLabel} marked as unverified.`)}
+            onClick={() => run(onUnverify, t("unverifiedSuccess", { name: entityLabel }))}
             className="rounded-xl border border-amber-500/40 px-4 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-500/10 disabled:opacity-60"
           >
-            Unverify
+            {t("unverify")}
           </button>
         ) : (
           <button
             type="button"
             disabled={pending}
-            onClick={() => run(onVerify, `${entityLabel} verified successfully.`)}
+            onClick={() => run(onVerify, t("verifiedSuccess", { name: entityLabel }))}
             className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
           >
-            Verify
+            {t("verify")}
           </button>
         )}
       </div>

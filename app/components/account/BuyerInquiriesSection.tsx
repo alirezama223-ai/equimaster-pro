@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import InquiryConversation from "@/app/components/inquiries/InquiryConversation";
 import {
@@ -16,13 +17,6 @@ type Props = {
   loadError?: string;
 };
 
-const STATUS_LABELS: Record<InquiryStatus, string> = {
-  new: "New",
-  read: "Read",
-  replied: "Replied",
-  archived: "Archived",
-};
-
 const STATUS_STYLES: Record<InquiryStatus, string> = {
   new: "bg-blue-500/20 text-blue-300 border-blue-500/30",
   read: "bg-white/10 text-gray-300 border-white/10",
@@ -30,8 +24,8 @@ const STATUS_STYLES: Record<InquiryStatus, string> = {
   archived: "bg-gray-500/20 text-gray-400 border-gray-500/30",
 };
 
-function formatInquiryDate(value: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatInquiryDate(value: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
@@ -42,8 +36,18 @@ export default function BuyerInquiriesSection({
   currentUserId,
   loadError,
 }: Props) {
+  const t = useTranslations("account.buyerInquiries");
+  const tInquiries = useTranslations("account.inquiries");
+  const locale = useLocale();
   const [inquiries, setInquiries] = useState(initialInquiries);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const statusLabels: Record<InquiryStatus, string> = {
+    new: tInquiries("statusNew"),
+    read: tInquiries("statusRead"),
+    replied: tInquiries("statusReplied"),
+    archived: tInquiries("statusArchived"),
+  };
 
   function handleReplySent(
     inquiryId: string,
@@ -66,11 +70,8 @@ export default function BuyerInquiriesSection({
   return (
     <section className="rounded-3xl bg-[#111827] border border-white/10 p-6 sm:p-8">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-white">My Inquiries</h2>
-        <p className="mt-2 text-gray-400">
-          Conversations you started with sellers about horses you are interested
-          in.
-        </p>
+        <h2 className="text-xl font-bold text-white">{t("title")}</h2>
+        <p className="mt-2 text-gray-400">{t("subtitle")}</p>
       </div>
 
       {loadError ? (
@@ -81,16 +82,13 @@ export default function BuyerInquiriesSection({
 
       {inquiries.length === 0 ? (
         <div className="rounded-2xl bg-[#08111F] border border-white/5 px-6 py-10 text-center">
-          <p className="text-white font-semibold">No inquiries yet</p>
-          <p className="mt-2 text-gray-400">
-            Contact a seller from a horse listing and your messages will appear
-            here.
-          </p>
+          <p className="text-white font-semibold">{t("emptyTitle")}</p>
+          <p className="mt-2 text-gray-400">{t("emptySubtitle")}</p>
           <Link
             href="/"
             className="inline-block mt-6 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition"
           >
-            Browse Marketplace
+            {t("browseMarketplace")}
           </Link>
         </div>
       ) : (
@@ -126,7 +124,9 @@ export default function BuyerInquiriesSection({
                           {inquiry.horse_name}
                         </Link>
                         <p className="text-sm text-gray-500 mt-1">
-                          Started {formatInquiryDate(inquiry.created_at)}
+                          {t("started", {
+                            date: formatInquiryDate(inquiry.created_at, locale),
+                          })}
                         </p>
                       </div>
 
@@ -134,8 +134,8 @@ export default function BuyerInquiriesSection({
                         className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide ${STATUS_STYLES[inquiry.status]}`}
                       >
                         {inquiry.status === "replied" || hasSellerReply
-                          ? "Seller replied"
-                          : STATUS_LABELS[inquiry.status]}
+                          ? t("sellerReplied")
+                          : statusLabels[inquiry.status]}
                       </span>
                     </div>
 
@@ -154,7 +154,7 @@ export default function BuyerInquiriesSection({
                       }
                       className="rounded-xl border border-white/20 px-4 py-2 text-sm text-white hover:bg-white/10 transition"
                     >
-                      {isExpanded ? "Hide Conversation" : "View Conversation"}
+                      {isExpanded ? t("hideConversation") : t("viewConversation")}
                     </button>
 
                     {isExpanded ? (

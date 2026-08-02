@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "eyebrow": "Welkom bij EquiMaster Pro",
+    "title": {
+      "line1": "Sportpaarden",
+      "line2": "Marktplaats",
+      "line3": "Europa"
+    },
+    "subtitle": "Koop, verkoop en ontdek elite springpaarden van betrouwbare fokkers door heel Europa.",
+    "browseButton": "Paarden bekijken",
+    "sellButton": "Paard verkopen",
+    "imageAlt": "Sportpaard — hero-afbeelding",
+    "stats": {
+      "sportHorses": {
+        "value": "15K+",
+        "label": "Sportpaarden"
+      },
+      "breeders": {
+        "value": "1200+",
+        "label": "Fokkers"
+      },
+      "countries": {
+        "value": "28",
+        "label": "Landen"
+      }
+    }
+  },
+  "search": {
+    "title": "Vind uw perfecte paard",
+    "subtitle": "Zoek en filter de beste sportpaarden van Europa.",
+    "queryLabel": "Zoeken",
+    "queryPlaceholder": "Paard zoeken...",
+    "breed": "Ras",
+    "allBreeds": "Alle rassen",
+    "allBreedsPlaceholder": "Alle rassen…",
+    "country": "Land",
+    "allCountries": "Alle landen",
+    "allCountriesPlaceholder": "Alle landen…",
+    "gender": "Geslacht",
+    "allGenders": "Alle geslachten",
+    "mare": "Merrie",
+    "stallion": "Hengst",
+    "gelding": "Ruin",
+    "discipline": "Discipline",
+    "allDisciplines": "Alle disciplines",
+    "allDisciplinesPlaceholder": "Alle disciplines…",
+    "verifiedOnly": "Alleen geverifieerd",
+    "minPrice": "Min. prijs (€)",
+    "maxPrice": "Max. prijs (€)",
+    "minAge": "Min. leeftijd",
+    "maxAge": "Max. leeftijd",
+    "minHeight": "Min. hoogte (cm)",
+    "maxHeight": "Max. hoogte (cm)",
+    "yearsPlaceholder": "Jaren",
+    "cmPlaceholder": "cm",
+    "pricePlaceholderMin": "bijv. 30000",
+    "pricePlaceholderMax": "bijv. 60000",
+    "sortBy": "Sorteren op",
+    "sortDefault": "Standaardvolgorde",
+    "sortPriceAsc": "Prijs: laag naar hoog",
+    "sortPriceDesc": "Prijs: hoog naar laag",
+    "sortAgeAsc": "Leeftijd: jongste eerst",
+    "sortAgeDesc": "Leeftijd: oudste eerst",
+    "sortHeightAsc": "Hoogte: laag naar hoog",
+    "sortHeightDesc": "Hoogte: hoog naar laag",
+    "resetFilters": "Filters resetten"
+  },
+  "featured": {
+    "eyebrow": "Premiumcollectie",
+    "title": "Uitgelichte paarden",
+    "subtitle": "Ontdek de beste springpaarden van Europa, geselecteerd door betrouwbare fokkers en professionele ruiters.",
+    "emptyIcon": "🐴",
+    "emptyTitle": "Geen paarden gevonden",
+    "emptyDescription": "Pas uw zoekopdracht aan."
+  },
+  "premium": {
+    "eyebrow": "Elite genetica",
+    "title": "Premium Hengsten",
+    "subtitle": "Ontdek 's werelds meest succesvolle fokhengsten.",
+    "browseDirectory": "Hengstenoverzicht bekijken →",
+    "age": "Leeftijd",
+    "studFee": "Dekgeld",
+    "viewStallion": "Hengst bekijken",
+    "stallionImageAlt": "{name} — hengstenfoto"
+  },
+  "horseCard": {
+    "verified": "✔ GEVERIFIEERD",
+    "price": "Prijs",
+    "age": "Leeftijd",
+    "ageValue": "{age} jr",
+    "height": "Hoogte",
+    "heightValue": "{height} cm",
+    "gender": "Geslacht",
+    "level": "Niveau",
+    "location": "Locatie",
+    "view": "Bekijken →",
+    "imageAlt": "{name} — advertentiefoto",
+    "genderUnknown": "Onbekend"
+  },
+  "pagination": {
+    "previous": "Vorige",
+    "next": "Volgende",
+    "pageAria": "Pagina {page}"
+  }
+}
