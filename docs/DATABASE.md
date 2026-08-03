@@ -2,7 +2,7 @@
 
 PostgreSQL schema managed via manual migrations in `supabase/migrations/`. Apply in numeric order in the Supabase SQL Editor.
 
-**Current head: 027**
+**Current head: 035**
 
 ## Migration index
 
@@ -30,12 +30,25 @@ PostgreSQL schema managed via manual migrations in `supabase/migrations/`. Apply
 | 020 | `020_daily_training_foundation.sql` | Exercises, plans, sessions, RLS gate |
 | 021 | `021_training_plan_structure.sql` | Plan weeks/days/exercises |
 | 022 | `022_training_plan_persistence.sql` | Plan editor persistence |
-| 022a | `022a_can_manage_training_plan.sql` | Plan ownership function |
+| 022a | `022a_can_manage_training_plan.sql` | Plan ownership function (duplicate of 021) |
 | 023 | `023_training_plan_assignments.sql` | Horse ↔ plan assignments |
 | 024 | `024_session_tracking.sql` | Session exercise status, reflection fields |
 | 025 | `025_horse_training_summary.sql` | Analytics view |
 | 026 | `026_horse_health_module.sql` | Health & wellness tables |
 | 027 | `027_horse_events.sql` | Central event bus |
+| 028 | `028_demo_infrastructure.sql` | Demo orgs and user state |
+| 029 | `029_marketplace_core.sql` | Slug, search_vector, marketplace indexes |
+| 030 | `030_marketplace_mvp.sql` | View count, public summaries |
+| 031–034 | *(repair only)* | Schema sync rollups — **skip on greenfield** after 029+030 |
+| 035 | `035_security_hardening_before_beta.sql` | Verified listing protection, RPC hardening, search_vector repair |
+
+### Canonical greenfield apply order
+
+```
+001 → 002 → … → 028 → 029 → 030 → 035
+```
+
+Skip **031–034** on fresh installs (repair-only for drifted environments). Run `node scripts/verify-migrations.mjs` to audit local files.
 
 ## Entity relationship (core)
 
@@ -154,6 +167,9 @@ All user-data tables follow:
 | `can_manage_training_plan(uuid)` | 022a | Plan edit access |
 | `can_use_exercise_in_training(uuid)` | 020 | Exercise catalog access |
 | `is_admin()` | 014 | Admin role check |
+| `protect_horse_listing_verified()` | 035 | Blocks non-admin verified tampering on listings |
+| `backfill_listing_pedigree_horse(uuid)` | 017, 035 | Pedigree link (authenticated + owner/admin only after 035) |
+| `increment_horse_listing_view_count(text)` | 030 | Public view counter (anon + authenticated) |
 
 ## RC1 migration checklist
 
