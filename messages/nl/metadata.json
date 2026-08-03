@@ -1,1 +1,171 @@
-{}
+{
+  "site": {
+    "name": "EquiMaster Pro",
+    "title": "EquiMaster Pro",
+    "description": "Premium paardenmarktplaats voor sportpaarden met gestructureerde advertenties, stamboekgegevens en professionele verkopers-tools in heel Europa.",
+    "keywords": "sportpaarden, springpaarden, paardenmarktplaats, paarden te koop, paardenadvertenties, stamboom, fokkers, hengsten",
+    "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+    "openGraphDescription": "Ontdek, koop en verkoop top sportpaarden met geverifieerde advertenties, stamboekinzichten en professionele tools.",
+    "twitterTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+    "twitterDescription": "Ontdek, koop en verkoop top sportpaarden met geverifieerde advertenties en stamboekgegevens."
+  },
+  "pages": {
+    "home": {
+      "title": "Sportpaarden marktplaats",
+      "description": "Koop, verkoop en ontdek elite spring- en dressuurpaarden van betrouwbare fokkers in heel Europa.",
+      "keywords": "sportpaarden te koop, paardenmarktplaats, springpaarden, paardenadvertenties europa",
+      "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+      "openGraphDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers in Europa.",
+      "twitterTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+      "twitterDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers in Europa."
+    },
+    "marketplace": {
+      "title": "EquiMaster Marktplaats",
+      "description": "Ontdek premium sportpaarden te koop. Zoek op discipline, ras, land, prijs, leeftijd en maat.",
+      "keywords": "paardenmarktplaats, sportpaarden kopen, paarden online kopen, paardenadvertenties",
+      "openGraphTitle": "EquiMaster Marktplaats | EquiMaster Pro",
+      "openGraphDescription": "Professionele paardenmarktplaats met gestructureerde advertenties, stamboekgegevens en direct contact met verkopers.",
+      "twitterTitle": "EquiMaster Marktplaats | EquiMaster Pro",
+      "twitterDescription": "Professionele paardenmarktplaats met gestructureerde advertenties, stamboekgegevens en direct contact met verkopers."
+    },
+    "horses": {
+      "title": "Sportpaarden bekijken",
+      "description": "Zoek en filter sportpaarden-advertenties op EquiMaster Pro op ras, discipline, prijs, leeftijd en locatie.",
+      "keywords": "paarden zoeken, sportpaarden filter, paardenadvertenties europa, paarden kopen",
+      "openGraphTitle": "Sportpaarden bekijken | EquiMaster Pro",
+      "openGraphDescription": "Zoek en filter sportpaarden-advertenties op ras, discipline, prijs en locatie.",
+      "twitterTitle": "Sportpaarden bekijken | EquiMaster Pro",
+      "twitterDescription": "Zoek en filter sportpaarden-advertenties op ras, discipline, prijs en locatie."
+    },
+    "stallions": {
+      "title": "Premium hengstenoverzicht",
+      "description": "Ontdek geverifieerde hengsten voor sportpaardenfokkerij. Vergelijk stamboom, dekprijs en beschikbaarheid in Europa.",
+      "keywords": "hengsten, dekhengsten, sportpaarden hengsten, hengstenoverzicht",
+      "openGraphTitle": "Premium hengstenoverzicht | EquiMaster Pro",
+      "openGraphDescription": "Ontdek geverifieerde hengsten voor fokkerij met stamboek- en dekprijsdetails.",
+      "twitterTitle": "Premium hengstenoverzicht | EquiMaster Pro",
+      "twitterDescription": "Ontdek geverifieerde hengsten voor fokkerij met stamboek- en dekprijsdetails."
+    },
+    "breeders": {
+      "title": "Sportpaarden fokkersoverzicht",
+      "description": "Vind betrouwbare sportpaardenfokkers in Europa. Bekijk stoeterijen, disciplines en beschikbare paarden.",
+      "keywords": "paardenfokkers, stoeterijen, sportpaarden fokkers europa, fokkersoverzicht",
+      "openGraphTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
+      "openGraphDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen in heel Europa.",
+      "twitterTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
+      "twitterDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen in heel Europa."
+    },
+    "bloodlines": {
+      "title": "Stamboom & bloedlijnen zoeken",
+      "description": "Zoek sportpaarden-stambomen en bloedlijnen. Verken vaderlijnen, moederlijnen en fokgeschiedenis.",
+      "keywords": "paardenstamboom, bloedlijnen, vaderlijnen, stamboek paarden",
+      "openGraphTitle": "Stamboom & bloedlijnen | EquiMaster Pro",
+      "openGraphDescription": "Zoek sportpaarden-stambomen, vaderlijnen en fokbloedlijnen.",
+      "twitterTitle": "Stamboom & bloedlijnen | EquiMaster Pro",
+      "twitterDescription": "Zoek sportpaarden-stambomen, vaderlijnen en fokbloedlijnen."
+    },
+    "breedingLab": {
+      "title": "Foklab",
+      "description": "Vergelijk stambomen en analyseer fokkombinaties met professionele sportpaarden-foktools.",
+      "keywords": "foktools, stamboom vergelijken, fokanalyse, sportpaarden fokkerij",
+      "openGraphTitle": "Foklab | EquiMaster Pro",
+      "openGraphDescription": "Vergelijk stambomen en analyseer fokkombinaties voor sportpaarden.",
+      "twitterTitle": "Foklab | EquiMaster Pro",
+      "twitterDescription": "Vergelijk stambomen en analyseer fokkombinaties voor sportpaarden."
+    },
+    "breedingRecommendations": {
+      "title": "Hengstenmatch & fokadvies",
+      "description": "Ontvang datagedreven hengstenaanbevelingen afgestemd op het stamboek en fokdoelen van uw merrie.",
+      "keywords": "hengstenmatch, fokadvies, merrie hengst koppeling, sportpaarden fokkerij",
+      "openGraphTitle": "Hengstenmatch | EquiMaster Pro",
+      "openGraphDescription": "Datagedreven hengstenaanbevelingen voor uw merrie en fokdoelen.",
+      "twitterTitle": "Hengstenmatch | EquiMaster Pro",
+      "twitterDescription": "Datagedreven hengstenaanbevelingen voor uw merrie en fokdoelen."
+    },
+    "login": {
+      "title": "Inloggen",
+      "description": "Log in op uw EquiMaster Pro-account om advertenties, favorieten en verkopers-tools te beheren.",
+      "keywords": "equimaster inloggen, paardenmarktplaats account",
+      "openGraphTitle": "Inloggen | EquiMaster Pro",
+      "openGraphDescription": "Log in op uw EquiMaster Pro-account.",
+      "twitterTitle": "Inloggen | EquiMaster Pro",
+      "twitterDescription": "Log in op uw EquiMaster Pro-account."
+    },
+    "signup": {
+      "title": "Account aanmaken",
+      "description": "Maak uw EquiMaster Pro-account aan om paarden te adverteren, favorieten op te slaan en foktools te gebruiken.",
+      "keywords": "equimaster registreren, account aanmaken paardenmarktplaats",
+      "openGraphTitle": "Account aanmaken | EquiMaster Pro",
+      "openGraphDescription": "Maak uw EquiMaster Pro-account aan.",
+      "twitterTitle": "Account aanmaken | EquiMaster Pro",
+      "twitterDescription": "Maak uw EquiMaster Pro-account aan."
+    },
+    "account": {
+      "title": "Mijn account",
+      "description": "Beheer uw EquiMaster Pro-profiel, advertenties, hengsten en fokkerinformatie.",
+      "keywords": "equimaster account, verkopersdashboard, advertenties beheren",
+      "openGraphTitle": "Mijn account | EquiMaster Pro",
+      "openGraphDescription": "Beheer uw EquiMaster Pro-profiel en advertenties.",
+      "twitterTitle": "Mijn account | EquiMaster Pro",
+      "twitterDescription": "Beheer uw EquiMaster Pro-profiel en advertenties."
+    },
+    "sell": {
+      "title": "Paard verkopen",
+      "description": "Plaats uw sportpaard te koop op EquiMaster Pro met foto's, stamboom en gestructureerde advertentietools.",
+      "keywords": "paard verkopen, paard adverteren, verkoopformulier, sportpaarden verkoper",
+      "openGraphTitle": "Paard verkopen | EquiMaster Pro",
+      "openGraphDescription": "Plaats uw sportpaard te koop met foto's, stamboom en verkopers-tools.",
+      "twitterTitle": "Paard verkopen | EquiMaster Pro",
+      "twitterDescription": "Plaats uw sportpaard te koop met foto's, stamboom en verkopers-tools."
+    },
+    "favorites": {
+      "title": "Opgeslagen paarden",
+      "description": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties op EquiMaster Pro.",
+      "keywords": "opgeslagen paarden, paarden favorieten, verlanglijst paarden",
+      "openGraphTitle": "Opgeslagen paarden | EquiMaster Pro",
+      "openGraphDescription": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties.",
+      "twitterTitle": "Opgeslagen paarden | EquiMaster Pro",
+      "twitterDescription": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties."
+    },
+    "notifications": {
+      "title": "Meldingen",
+      "description": "Bekijk waarschuwingen en updates voor uw paarden, advertenties en EquiMaster Pro-activiteit.",
+      "keywords": "equimaster meldingen, paarden alerts, advertentie updates",
+      "openGraphTitle": "Meldingen | EquiMaster Pro",
+      "openGraphDescription": "Waarschuwingen en updates voor uw EquiMaster Pro-activiteit.",
+      "twitterTitle": "Meldingen | EquiMaster Pro",
+      "twitterDescription": "Waarschuwingen en updates voor uw EquiMaster Pro-activiteit."
+    },
+    "training": {
+      "title": "Training dashboard",
+      "description": "Volg trainingssessies, plannen en paardenprestaties met EquiMaster Pro training-tools.",
+      "keywords": "training dashboard paarden, trainingsplannen, sessie tracking",
+      "openGraphTitle": "Training dashboard | EquiMaster Pro",
+      "openGraphDescription": "Volg trainingssessies, plannen en paardenprestaties.",
+      "twitterTitle": "Training dashboard | EquiMaster Pro",
+      "twitterDescription": "Volg trainingssessies, plannen en paardenprestaties."
+    },
+    "admin": {
+      "title": "Administratie",
+      "description": "EquiMaster Pro administratiepaneel voor verificatie, stamboom en platformbeheer.",
+      "keywords": "equimaster admin, platform administratie",
+      "openGraphTitle": "Administratie | EquiMaster Pro",
+      "openGraphDescription": "EquiMaster Pro administratiepaneel.",
+      "twitterTitle": "Administratie | EquiMaster Pro",
+      "twitterDescription": "EquiMaster Pro administratiepaneel."
+    },
+    "sellerDashboard": {
+      "title": "Verkopersdashboard",
+      "description": "Beheer uw paardenadvertenties, previews en verkopersactiviteit op EquiMaster Pro.",
+      "keywords": "verkopersdashboard, advertenties beheren, paarden verkoper tools",
+      "openGraphTitle": "Verkopersdashboard | EquiMaster Pro",
+      "openGraphDescription": "Beheer uw paardenadvertenties en verkopersactiviteit.",
+      "twitterTitle": "Verkopersdashboard | EquiMaster Pro",
+      "twitterDescription": "Beheer uw paardenadvertenties en verkopersactiviteit."
+    }
+  },
+  "listing": {
+    "siteName": "EquiMaster Pro",
+    "imageAlt": "{name} — {discipline} sportpaard te koop"
+  }
+}

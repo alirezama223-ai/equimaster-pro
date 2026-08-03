@@ -2,14 +2,14 @@ import { getActiveHorseListings } from "@/app/actions/horse-listings";
 import { getMarketplaceFilterOptions } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import MarketplaceHomeClient from "@/app/components/marketplace/MarketplaceHomeClient";
-import { buildMarketplaceMetadata } from "@/app/lib/marketplace/seo";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata() {
-  return buildMarketplaceMetadata();
+export async function generateMetadata() {
+  return createPageMetadata("marketplace", "/marketplace");
 }
 
 export default async function MarketplacePage() {

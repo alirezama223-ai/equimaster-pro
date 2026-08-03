@@ -2,6 +2,11 @@ import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
 import SellListingForm from "@/app/components/sell/SellListingForm";
 import FadeUp from "@/app/components/animations/FadeUp";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("sell", "/sell");
+}
 
 export default async function SellPage() {
   const t = await getTranslations("sell");

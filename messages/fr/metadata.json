@@ -1,1 +1,171 @@
-{}
+{
+  "site": {
+    "name": "EquiMaster Pro",
+    "title": "EquiMaster Pro",
+    "description": "Place de marché premium pour chevaux de sport avec annonces structurées, données généalogiques et outils professionnels pour vendeurs en Europe.",
+    "keywords": "chevaux de sport, chevaux de saut, marketplace équestre, chevaux à vendre, annonces équestres, pedigree, éleveurs, étalons",
+    "openGraphTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
+    "openGraphDescription": "Découvrez, achetez et vendez des chevaux de sport d'exception avec des annonces vérifiées, des données généalogiques et des outils professionnels.",
+    "twitterTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
+    "twitterDescription": "Découvrez, achetez et vendez des chevaux de sport d'exception avec des annonces vérifiées et des données généalogiques."
+  },
+  "pages": {
+    "home": {
+      "title": "Marketplace de chevaux de sport",
+      "description": "Achetez, vendez et découvrez des chevaux de CSO et de dressage d'exception auprès d'éleveurs de confiance en Europe.",
+      "keywords": "chevaux de sport à vendre, marketplace équestre, chevaux de saut, annonces équestres europe",
+      "openGraphTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
+      "openGraphDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs de confiance en Europe.",
+      "twitterTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
+      "twitterDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs de confiance en Europe."
+    },
+    "marketplace": {
+      "title": "Marketplace EquiMaster",
+      "description": "Découvrez des chevaux de sport premium à vendre. Recherchez par discipline, race, pays, prix, âge et taille.",
+      "keywords": "marketplace équestre, chevaux de sport à vendre, acheter cheval en ligne, annonces équestres",
+      "openGraphTitle": "Marketplace EquiMaster | EquiMaster Pro",
+      "openGraphDescription": "Marketplace professionnelle avec annonces structurées, données généalogiques et contact direct vendeur.",
+      "twitterTitle": "Marketplace EquiMaster | EquiMaster Pro",
+      "twitterDescription": "Marketplace professionnelle avec annonces structurées, données généalogiques et contact direct vendeur."
+    },
+    "horses": {
+      "title": "Parcourir les chevaux de sport à vendre",
+      "description": "Recherchez et filtrez les annonces de chevaux de sport sur EquiMaster Pro par race, discipline, prix, âge et localisation.",
+      "keywords": "parcourir chevaux, recherche chevaux de sport, filtrer annonces, chevaux à vendre europe",
+      "openGraphTitle": "Parcourir les chevaux de sport | EquiMaster Pro",
+      "openGraphDescription": "Recherchez et filtrez les annonces par race, discipline, prix et localisation.",
+      "twitterTitle": "Parcourir les chevaux de sport | EquiMaster Pro",
+      "twitterDescription": "Recherchez et filtrez les annonces par race, discipline, prix et localisation."
+    },
+    "stallions": {
+      "title": "Répertoire d'étalons premium",
+      "description": "Explorez des étalons vérifiés pour l'élevage de chevaux de sport. Comparez pedigree, saillie et disponibilité en Europe.",
+      "keywords": "étalons, étalons reproducteurs, étalons sport, répertoire étalons",
+      "openGraphTitle": "Répertoire d'étalons premium | EquiMaster Pro",
+      "openGraphDescription": "Explorez des étalons vérifiés pour l'élevage avec détails pedigree et saillie.",
+      "twitterTitle": "Répertoire d'étalons premium | EquiMaster Pro",
+      "twitterDescription": "Explorez des étalons vérifiés pour l'élevage avec détails pedigree et saillie."
+    },
+    "breeders": {
+      "title": "Répertoire d'éleveurs de chevaux de sport",
+      "description": "Trouvez des éleveurs de chevaux de sport de confiance en Europe. Parcourez haras, disciplines et chevaux disponibles.",
+      "keywords": "éleveurs chevaux, haras, éleveurs sport europe, répertoire éleveurs",
+      "openGraphTitle": "Répertoire d'éleveurs | EquiMaster Pro",
+      "openGraphDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance en Europe.",
+      "twitterTitle": "Répertoire d'éleveurs | EquiMaster Pro",
+      "twitterDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance en Europe."
+    },
+    "bloodlines": {
+      "title": "Recherche pedigree & lignées",
+      "description": "Recherchez pedigrees et lignées de chevaux de sport. Explorez lignées paternelles, maternelles et historique d'élevage.",
+      "keywords": "pedigree cheval, lignées, lignées paternelles, généalogie équine",
+      "openGraphTitle": "Recherche pedigree & lignées | EquiMaster Pro",
+      "openGraphDescription": "Recherchez pedigrees, lignées paternelles et historique d'élevage.",
+      "twitterTitle": "Recherche pedigree & lignées | EquiMaster Pro",
+      "twitterDescription": "Recherchez pedigrees, lignées paternelles et historique d'élevage."
+    },
+    "breedingLab": {
+      "title": "Laboratoire d'élevage",
+      "description": "Comparez pedigrees et analysez combinaisons d'élevage avec des outils professionnels pour chevaux de sport.",
+      "keywords": "outils élevage, comparaison pedigree, analyse élevage, élevage sport",
+      "openGraphTitle": "Laboratoire d'élevage | EquiMaster Pro",
+      "openGraphDescription": "Comparez pedigrees et analysez combinaisons d'élevage pour chevaux de sport.",
+      "twitterTitle": "Laboratoire d'élevage | EquiMaster Pro",
+      "twitterDescription": "Comparez pedigrees et analysez combinaisons d'élevage pour chevaux de sport."
+    },
+    "breedingRecommendations": {
+      "title": "Match étalon & recommandations d'élevage",
+      "description": "Obtenez des recommandations d'étalons basées sur les données, adaptées au pedigree et aux objectifs d'élevage de votre jument.",
+      "keywords": "match étalon, recommandations élevage, accouplement jument étalon, élevage sport",
+      "openGraphTitle": "Match étalon | EquiMaster Pro",
+      "openGraphDescription": "Recommandations d'étalons basées sur les données pour votre jument et vos objectifs.",
+      "twitterTitle": "Match étalon | EquiMaster Pro",
+      "twitterDescription": "Recommandations d'étalons basées sur les données pour votre jument et vos objectifs."
+    },
+    "login": {
+      "title": "Connexion",
+      "description": "Connectez-vous à votre compte EquiMaster Pro pour gérer annonces, favoris et outils vendeur.",
+      "keywords": "connexion equimaster, compte marketplace équestre",
+      "openGraphTitle": "Connexion | EquiMaster Pro",
+      "openGraphDescription": "Connectez-vous à votre compte EquiMaster Pro.",
+      "twitterTitle": "Connexion | EquiMaster Pro",
+      "twitterDescription": "Connectez-vous à votre compte EquiMaster Pro."
+    },
+    "signup": {
+      "title": "Créer un compte",
+      "description": "Créez votre compte EquiMaster Pro pour publier des annonces, enregistrer des favoris et accéder aux outils d'élevage.",
+      "keywords": "inscription equimaster, créer compte marketplace équestre",
+      "openGraphTitle": "Créer un compte | EquiMaster Pro",
+      "openGraphDescription": "Créez votre compte EquiMaster Pro.",
+      "twitterTitle": "Créer un compte | EquiMaster Pro",
+      "twitterDescription": "Créez votre compte EquiMaster Pro."
+    },
+    "account": {
+      "title": "Mon compte",
+      "description": "Gérez votre profil EquiMaster Pro, annonces, étalons et informations d'éleveur.",
+      "keywords": "compte equimaster, tableau de bord vendeur, gérer annonces",
+      "openGraphTitle": "Mon compte | EquiMaster Pro",
+      "openGraphDescription": "Gérez votre profil et vos annonces EquiMaster Pro.",
+      "twitterTitle": "Mon compte | EquiMaster Pro",
+      "twitterDescription": "Gérez votre profil et vos annonces EquiMaster Pro."
+    },
+    "sell": {
+      "title": "Vendre un cheval",
+      "description": "Publiez votre cheval de sport sur EquiMaster Pro avec photos, pedigree et outils d'annonce structurés.",
+      "keywords": "vendre cheval, publier annonce, formulaire vente, vendeur cheval sport",
+      "openGraphTitle": "Vendre un cheval | EquiMaster Pro",
+      "openGraphDescription": "Publiez votre cheval de sport avec photos, pedigree et outils vendeur.",
+      "twitterTitle": "Vendre un cheval | EquiMaster Pro",
+      "twitterDescription": "Publiez votre cheval de sport avec photos, pedigree et outils vendeur."
+    },
+    "favorites": {
+      "title": "Chevaux enregistrés",
+      "description": "Consultez et gérez vos annonces de chevaux de sport enregistrées sur EquiMaster Pro.",
+      "keywords": "chevaux enregistrés, favoris chevaux, liste de souhaits",
+      "openGraphTitle": "Chevaux enregistrés | EquiMaster Pro",
+      "openGraphDescription": "Consultez et gérez vos annonces enregistrées.",
+      "twitterTitle": "Chevaux enregistrés | EquiMaster Pro",
+      "twitterDescription": "Consultez et gérez vos annonces enregistrées."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Consultez alertes et mises à jour pour vos chevaux, annonces et activité EquiMaster Pro.",
+      "keywords": "notifications equimaster, alertes chevaux, mises à jour annonces",
+      "openGraphTitle": "Notifications | EquiMaster Pro",
+      "openGraphDescription": "Alertes et mises à jour de votre activité EquiMaster Pro.",
+      "twitterTitle": "Notifications | EquiMaster Pro",
+      "twitterDescription": "Alertes et mises à jour de votre activité EquiMaster Pro."
+    },
+    "training": {
+      "title": "Tableau de bord entraînement",
+      "description": "Suivez séances, plans et performances avec les outils d'entraînement EquiMaster Pro.",
+      "keywords": "tableau de bord entraînement, plans entraînement, suivi séances",
+      "openGraphTitle": "Tableau de bord entraînement | EquiMaster Pro",
+      "openGraphDescription": "Suivez séances, plans et performances équestres.",
+      "twitterTitle": "Tableau de bord entraînement | EquiMaster Pro",
+      "twitterDescription": "Suivez séances, plans et performances équestres."
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "Panneau d'administration EquiMaster Pro pour vérification, pedigree et gestion de la plateforme.",
+      "keywords": "admin equimaster, administration plateforme",
+      "openGraphTitle": "Administration | EquiMaster Pro",
+      "openGraphDescription": "Panneau d'administration EquiMaster Pro.",
+      "twitterTitle": "Administration | EquiMaster Pro",
+      "twitterDescription": "Panneau d'administration EquiMaster Pro."
+    },
+    "sellerDashboard": {
+      "title": "Tableau de bord vendeur",
+      "description": "Gérez vos annonces, aperçus et activité vendeur sur EquiMaster Pro.",
+      "keywords": "tableau de bord vendeur, gérer annonces, outils vendeur",
+      "openGraphTitle": "Tableau de bord vendeur | EquiMaster Pro",
+      "openGraphDescription": "Gérez vos annonces et activité vendeur.",
+      "twitterTitle": "Tableau de bord vendeur | EquiMaster Pro",
+      "twitterDescription": "Gérez vos annonces et activité vendeur."
+    }
+  },
+  "listing": {
+    "siteName": "EquiMaster Pro",
+    "imageAlt": "{name} — cheval de {discipline} à vendre"
+  }
+}

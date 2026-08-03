@@ -4,6 +4,7 @@ import Navbar from "@/app/components/navbar/Navbar";
 import AccountDashboard from "@/app/components/account/AccountDashboard";
 import FadeUp from "@/app/components/animations/FadeUp";
 import { getMyHorseListings, getSellerListingStats } from "@/app/actions/horse-listings";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import {
   getBuyerInquiries,
   getSellerInquiries,
@@ -15,6 +16,10 @@ import { fetchDemoEnvironmentSnapshot } from "@/app/lib/demo/queries";
 import { createClient } from "@/app/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return createPageMetadata("account", "/account");
+}
 
 export default async function AccountPage() {
   const supabase = await createClient();

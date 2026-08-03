@@ -2,8 +2,13 @@ import Navbar from "@/app/components/navbar/Navbar";
 import BreedingLabClient from "@/app/components/breeding/BreedingLabClient";
 import { getSavedBreedingAnalyses, resolveBreedingLabPrefill } from "@/app/actions/breeding";
 import { createClient } from "@/app/lib/supabase/server";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return createPageMetadata("breedingLab", "/breeding-lab");
+}
 
 type Props = {
   searchParams: Promise<{ mare?: string; stallion?: string; compare?: string; stallionDirectory?: string }>;

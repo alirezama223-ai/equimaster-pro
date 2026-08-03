@@ -37,6 +37,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const t = await getTranslations("marketplace");
+  const tMeta = await getTranslations("metadata");
   const supabase = await createClient();
   const result = await buildPublicListingProfileBySlug(supabase, slug);
 
@@ -51,7 +52,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (locale as AppLocale)
     : routing.defaultLocale;
 
-  return buildHorseListingMetadata(result.profile.listing, resolvedLocale);
+  return buildHorseListingMetadata(result.profile.listing, resolvedLocale, {
+    siteName: tMeta("listing.siteName"),
+    imageAltTemplate: tMeta("listing.imageAlt"),
+  });
 }
 
 export default async function PublicHorseListingPage({ params }: Props) {

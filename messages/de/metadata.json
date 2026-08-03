@@ -1,1 +1,171 @@
-{}
+{
+  "site": {
+    "name": "EquiMaster Pro",
+    "title": "EquiMaster Pro",
+    "description": "Premium-Pferdemarktplatz für Sportpferde mit strukturierten Inseraten, Pedigree-Daten und professionellen Verkäufer-Tools in ganz Europa.",
+    "keywords": "Sportpferde, Springpferde, Pferdemarktplatz, Pferde kaufen, Pferde verkaufen, Pedigree, Züchter, Hengste",
+    "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+    "openGraphDescription": "Entdecken, kaufen und verkaufen Sie Spitzen-Sportpferde mit verifizierten Inseraten, Pedigree-Einblicken und professionellen Tools.",
+    "twitterTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+    "twitterDescription": "Entdecken, kaufen und verkaufen Sie Spitzen-Sportpferde mit verifizierten Inseraten und Pedigree-Daten."
+  },
+  "pages": {
+    "home": {
+      "title": "Sportpferde-Marktplatz",
+      "description": "Kaufen, verkaufen und entdecken Sie elite Spring- und Dressurpferde von vertrauenswürdigen Züchtern in ganz Europa.",
+      "keywords": "Sportpferde kaufen, Pferdemarktplatz, Springpferde, Pferdeinserate Europa",
+      "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+      "openGraphDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern in Europa.",
+      "twitterTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+      "twitterDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern in Europa."
+    },
+    "marketplace": {
+      "title": "EquiMaster Marktplatz",
+      "description": "Entdecken Sie Premium-Sportpferde zum Verkauf. Suchen Sie nach Disziplin, Rasse, Land, Preis, Alter und Stockmaß.",
+      "keywords": "Pferdemarktplatz, Sportpferde kaufen, Pferde online kaufen, Pferdeinserate",
+      "openGraphTitle": "EquiMaster Marktplatz | EquiMaster Pro",
+      "openGraphDescription": "Professioneller Pferdemarktplatz mit strukturierten Inseraten, Pedigree-Daten und direktem Verkäuferkontakt.",
+      "twitterTitle": "EquiMaster Marktplatz | EquiMaster Pro",
+      "twitterDescription": "Professioneller Pferdemarktplatz mit strukturierten Inseraten, Pedigree-Daten und direktem Verkäuferkontakt."
+    },
+    "horses": {
+      "title": "Sportpferde durchsuchen",
+      "description": "Suchen und filtern Sie Sportpferde-Inserate auf EquiMaster Pro nach Rasse, Disziplin, Preis, Alter und Standort.",
+      "keywords": "Pferde suchen, Sportpferde Filter, Pferdeinserate Europa, Pferde kaufen",
+      "openGraphTitle": "Sportpferde durchsuchen | EquiMaster Pro",
+      "openGraphDescription": "Suchen und filtern Sie Sportpferde-Inserate nach Rasse, Disziplin, Preis und Standort.",
+      "twitterTitle": "Sportpferde durchsuchen | EquiMaster Pro",
+      "twitterDescription": "Suchen und filtern Sie Sportpferde-Inserate nach Rasse, Disziplin, Preis und Standort."
+    },
+    "stallions": {
+      "title": "Premium-Hengstverzeichnis",
+      "description": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht. Vergleichen Sie Pedigree, Decktaxe und Verfügbarkeit in Europa.",
+      "keywords": "Hengste, Deckhengste, Sportpferde Hengste, Hengstverzeichnis",
+      "openGraphTitle": "Premium-Hengstverzeichnis | EquiMaster Pro",
+      "openGraphDescription": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht mit Pedigree- und Decktaxe-Details.",
+      "twitterTitle": "Premium-Hengstverzeichnis | EquiMaster Pro",
+      "twitterDescription": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht mit Pedigree- und Decktaxe-Details."
+    },
+    "breeders": {
+      "title": "Sportpferde-Züchterverzeichnis",
+      "description": "Finden Sie vertrauenswürdige Sportpferdezüchter in Europa. Durchsuchen Sie Gestüte, Disziplinen und verfügbare Pferde.",
+      "keywords": "Pferdezüchter, Gestüte, Sportpferdezüchter Europa, Züchterverzeichnis",
+      "openGraphTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
+      "openGraphDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte in ganz Europa.",
+      "twitterTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
+      "twitterDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte in ganz Europa."
+    },
+    "bloodlines": {
+      "title": "Pedigree & Blutlinien-Suche",
+      "description": "Suchen Sie Sportpferde-Pedigrees und Blutlinien. Erkunden Sie Vater- und Mutterlinien sowie Zuchthistorie.",
+      "keywords": "Pferdepedigree, Blutlinien, Vaterlinien, Mutterlinien, Pferdestammbaum",
+      "openGraphTitle": "Pedigree & Blutlinien-Suche | EquiMaster Pro",
+      "openGraphDescription": "Suchen Sie Sportpferde-Pedigrees, Vaterlinien und Zucht-Blutlinien.",
+      "twitterTitle": "Pedigree & Blutlinien-Suche | EquiMaster Pro",
+      "twitterDescription": "Suchen Sie Sportpferde-Pedigrees, Vaterlinien und Zucht-Blutlinien."
+    },
+    "breedingLab": {
+      "title": "Zucht-Labor",
+      "description": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen mit professionellen Sportpferde-Zuchttools.",
+      "keywords": "Pferdezucht Tools, Pedigree-Vergleich, Zuchtanalyse, Sportpferdezucht",
+      "openGraphTitle": "Zucht-Labor | EquiMaster Pro",
+      "openGraphDescription": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen für Sportpferde.",
+      "twitterTitle": "Zucht-Labor | EquiMaster Pro",
+      "twitterDescription": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen für Sportpferde."
+    },
+    "breedingRecommendations": {
+      "title": "Hengst-Match & Zuchtempfehlungen",
+      "description": "Erhalten Sie datenbasierte Hengstempfehlungen abgestimmt auf das Pedigree und die Zuchtziele Ihrer Stute.",
+      "keywords": "Hengst-Match, Zuchtempfehlungen, Stute Hengst Paarung, Sportpferdezucht",
+      "openGraphTitle": "Hengst-Match | EquiMaster Pro",
+      "openGraphDescription": "Datenbasierte Hengstempfehlungen abgestimmt auf Ihre Stute und Zuchtziele.",
+      "twitterTitle": "Hengst-Match | EquiMaster Pro",
+      "twitterDescription": "Datenbasierte Hengstempfehlungen abgestimmt auf Ihre Stute und Zuchtziele."
+    },
+    "login": {
+      "title": "Anmelden",
+      "description": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an, um Inserate, Favoriten und Verkäufer-Tools zu verwalten.",
+      "keywords": "EquiMaster Anmeldung, Pferdemarktplatz Konto Login",
+      "openGraphTitle": "Anmelden | EquiMaster Pro",
+      "openGraphDescription": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an.",
+      "twitterTitle": "Anmelden | EquiMaster Pro",
+      "twitterDescription": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an."
+    },
+    "signup": {
+      "title": "Konto erstellen",
+      "description": "Erstellen Sie Ihr EquiMaster Pro-Konto, um Pferde zu inserieren, Favoriten zu speichern und Zuchttools zu nutzen.",
+      "keywords": "EquiMaster Registrierung, Pferdemarktplatz Anmeldung, Konto erstellen",
+      "openGraphTitle": "Konto erstellen | EquiMaster Pro",
+      "openGraphDescription": "Erstellen Sie Ihr EquiMaster Pro-Konto.",
+      "twitterTitle": "Konto erstellen | EquiMaster Pro",
+      "twitterDescription": "Erstellen Sie Ihr EquiMaster Pro-Konto."
+    },
+    "account": {
+      "title": "Mein Konto",
+      "description": "Verwalten Sie Ihr EquiMaster Pro-Profil, Inserate, Hengste und Züchterinformationen.",
+      "keywords": "EquiMaster Konto, Verkäufer-Dashboard, Pferdeinserate verwalten",
+      "openGraphTitle": "Mein Konto | EquiMaster Pro",
+      "openGraphDescription": "Verwalten Sie Ihr EquiMaster Pro-Profil und Ihre Inserate.",
+      "twitterTitle": "Mein Konto | EquiMaster Pro",
+      "twitterDescription": "Verwalten Sie Ihr EquiMaster Pro-Profil und Ihre Inserate."
+    },
+    "sell": {
+      "title": "Pferd verkaufen",
+      "description": "Inserieren Sie Ihr Sportpferd auf EquiMaster Pro mit Fotos, Pedigree und strukturierten Listing-Tools.",
+      "keywords": "Pferd verkaufen, Pferd inserieren, Verkaufsinserat, Sportpferde Verkäufer",
+      "openGraphTitle": "Pferd verkaufen | EquiMaster Pro",
+      "openGraphDescription": "Inserieren Sie Ihr Sportpferd mit Fotos, Pedigree und Verkäufer-Tools.",
+      "twitterTitle": "Pferd verkaufen | EquiMaster Pro",
+      "twitterDescription": "Inserieren Sie Ihr Sportpferd mit Fotos, Pedigree und Verkäufer-Tools."
+    },
+    "favorites": {
+      "title": "Gespeicherte Pferde",
+      "description": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate auf EquiMaster Pro.",
+      "keywords": "gespeicherte Pferde, Pferde Favoriten, Merkliste Pferde",
+      "openGraphTitle": "Gespeicherte Pferde | EquiMaster Pro",
+      "openGraphDescription": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate.",
+      "twitterTitle": "Gespeicherte Pferde | EquiMaster Pro",
+      "twitterDescription": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate."
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "description": "Sehen Sie Warnungen und Updates zu Ihren Pferden, Inseraten und EquiMaster Pro-Aktivitäten.",
+      "keywords": "EquiMaster Benachrichtigungen, Pferde Alerts, Inserat Updates",
+      "openGraphTitle": "Benachrichtigungen | EquiMaster Pro",
+      "openGraphDescription": "Warnungen und Updates zu Ihrer EquiMaster Pro-Aktivität.",
+      "twitterTitle": "Benachrichtigungen | EquiMaster Pro",
+      "twitterDescription": "Warnungen und Updates zu Ihrer EquiMaster Pro-Aktivität."
+    },
+    "training": {
+      "title": "Training-Dashboard",
+      "description": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung mit EquiMaster Pro Training-Tools.",
+      "keywords": "Pferdetraining Dashboard, Trainingspläne, Trainingseinheiten Tracking",
+      "openGraphTitle": "Training-Dashboard | EquiMaster Pro",
+      "openGraphDescription": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung.",
+      "twitterTitle": "Training-Dashboard | EquiMaster Pro",
+      "twitterDescription": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung."
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "EquiMaster Pro Administrationsbereich für Verifizierung, Pedigree und Plattformverwaltung.",
+      "keywords": "EquiMaster Admin, Plattform Administration",
+      "openGraphTitle": "Administration | EquiMaster Pro",
+      "openGraphDescription": "EquiMaster Pro Administrationsbereich.",
+      "twitterTitle": "Administration | EquiMaster Pro",
+      "twitterDescription": "EquiMaster Pro Administrationsbereich."
+    },
+    "sellerDashboard": {
+      "title": "Verkäufer-Dashboard",
+      "description": "Verwalten Sie Ihre Pferdeinserate, Vorschauen und Verkäuferaktivität auf EquiMaster Pro.",
+      "keywords": "Verkäufer Dashboard, Inserate verwalten, Pferde Verkäufer Tools",
+      "openGraphTitle": "Verkäufer-Dashboard | EquiMaster Pro",
+      "openGraphDescription": "Verwalten Sie Ihre Pferdeinserate und Verkäuferaktivität.",
+      "twitterTitle": "Verkäufer-Dashboard | EquiMaster Pro",
+      "twitterDescription": "Verwalten Sie Ihre Pferdeinserate und Verkäuferaktivität."
+    }
+  },
+  "listing": {
+    "siteName": "EquiMaster Pro",
+    "imageAlt": "{name} — {discipline} Sportpferd zum Verkauf"
+  }
+}

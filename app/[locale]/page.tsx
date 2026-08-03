@@ -3,9 +3,14 @@ import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import HomeClient from "@/app/components/home/HomeClient";
 import PremiumStallions from "@/app/components/stallions/PremiumStallions";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return createPageMetadata("home", "/");
+}
 
 export default async function Home() {
   const tCommon = await getTranslations("common");

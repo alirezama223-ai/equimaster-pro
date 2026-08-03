@@ -1,7 +1,12 @@
 import Navbar from "@/app/components/navbar/Navbar";
 import StallionMatchClient from "@/app/components/breeding-recommendations/StallionMatchClient";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return createPageMetadata("breedingRecommendations", "/breeding-recommendations");
+}
 
 export default function BreedingRecommendationsPage() {
   return (

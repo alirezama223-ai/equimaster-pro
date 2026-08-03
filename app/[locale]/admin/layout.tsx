@@ -2,6 +2,11 @@ import { redirect } from "next/navigation";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { createClient } from "@/app/lib/supabase/server";
 import { isCurrentUserAdmin } from "@/app/lib/admin";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("admin", "/admin");
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();

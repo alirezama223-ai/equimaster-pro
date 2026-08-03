@@ -5,6 +5,11 @@ import { Suspense } from "react";
 import Navbar from "@/app/components/navbar/Navbar";
 import NotificationCenterClient from "@/app/components/events/NotificationCenterClient";
 import { createClient } from "@/app/lib/supabase/server";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("notifications", "/notifications");
+}
 
 export default async function NotificationsPage() {
   const t = await getTranslations("notifications");

@@ -1,15 +1,15 @@
 import { searchMarketplaceListings, getMarketplaceFilterOptions } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import MarketplaceBrowseClient from "@/app/components/marketplace/MarketplaceBrowseClient";
-import { buildHorsesBrowseMetadata } from "@/app/lib/marketplace/seo";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { parseMarketplaceSearchParams } from "@/app/lib/marketplace/search";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata() {
-  return buildHorsesBrowseMetadata();
+export async function generateMetadata() {
+  return createPageMetadata("horses", "/horses");
 }
 
 type Props = {

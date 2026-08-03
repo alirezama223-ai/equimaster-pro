@@ -2,8 +2,13 @@ import Navbar from "@/app/components/navbar/Navbar";
 import BloodlinesSearchClient from "@/app/components/pedigree/BloodlinesSearchClient";
 import { searchBloodlines } from "@/app/actions/pedigree";
 import { getTranslations } from "next-intl/server";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return createPageMetadata("bloodlines", "/bloodlines");
+}
 
 type Props = {
   searchParams: Promise<{ q?: string; studbook?: string; ueln?: string }>;

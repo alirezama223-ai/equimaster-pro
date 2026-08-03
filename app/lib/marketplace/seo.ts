@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
 import { getListingCoverImageUrl, formatListingRowPrice } from "@/app/lib/horse-listings";
+import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
 import { localizePath } from "@/i18n/path";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getPublicListingPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 
-const SITE_NAME = "EquiMaster Pro";
-
-function getSiteBaseUrl(): string {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (configured) {
-    return configured.replace(/\/$/, "");
-  }
-
-  return "https://equimaster.pro";
-}
+export type HorseListingSeoConfig = {
+  siteName: string;
+  imageAltTemplate: string;
+};
 
 function toAbsoluteUrl(url: string, baseUrl: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -45,8 +40,15 @@ export type HorseListingSeoLabels = {
 
 export function buildHorseListingMetadata(
   listing: HorseListingRow,
-  locale: AppLocale = routing.defaultLocale
+  locale: AppLocale = routing.defaultLocale,
+  seoConfig?: HorseListingSeoConfig
 ): Metadata {
+  const siteName = seoConfig?.siteName ?? "EquiMaster Pro";
+  const imageAltTemplate =
+    seoConfig?.imageAltTemplate ?? "{name} — {discipline} sport horse for sale";
+  const imageAlt = imageAltTemplate
+    .replace("{name}", listing.name)
+    .replace("{discipline}", listing.discipline);
   const canonicalPath = getPublicListingPath(listing.slug);
   const { baseUrl, languages } = buildLocaleAlternates(canonicalPath);
   const canonicalUrl = `${baseUrl}${localizePath(canonicalPath, locale)}`;
@@ -71,21 +73,21 @@ export function buildHorseListingMetadata(
       languages,
     },
     openGraph: {
-      title: `${listing.name} | ${SITE_NAME}`,
+      title: `${listing.name} | ${siteName}`,
       description: openGraphDescription,
       type: "website",
       url: canonicalUrl,
-      siteName: SITE_NAME,
+      siteName,
       locale,
       alternateLocale: alternateLocales,
       images: imageUrls.map((url) => ({
         url,
-        alt: `${listing.name} — ${listing.discipline} sport horse for sale`,
+        alt: imageAlt,
       })),
     },
     twitter: {
       card: "summary_large_image",
-      title: `${listing.name} | ${SITE_NAME}`,
+      title: `${listing.name} | ${siteName}`,
       description: openGraphDescription,
       images: imageUrls.length > 0 ? [imageUrls[0]] : undefined,
     },
@@ -187,34 +189,5 @@ export function buildHorseListingStructuredData(
   return {
     "@context": "https://schema.org",
     "@graph": [buildHorseListingJsonLd(listing), buildHorseListingBreadcrumbJsonLd(listing, labels)],
-  };
-}
-
-export function buildMarketplaceMetadata(): Metadata {
-  return {
-    title: "EquiMaster Marketplace",
-    description:
-      "Discover premium sport horses for sale on EquiMaster Pro. Search by discipline, breed, country, price, age, and height.",
-    alternates: {
-      canonical: "/marketplace",
-    },
-    openGraph: {
-      title: `EquiMaster Marketplace | ${SITE_NAME}`,
-      description:
-        "Professional horse marketplace with structured listings, pedigree data, and seller contact.",
-      url: "/marketplace",
-      siteName: SITE_NAME,
-      type: "website",
-    },
-  };
-}
-
-export function buildHorsesBrowseMetadata(): Metadata {
-  return {
-    title: "Browse Sport Horses for Sale",
-    description: "Search and filter sport horse listings on EquiMaster Pro.",
-    alternates: {
-      canonical: "/horses",
-    },
   };
 }

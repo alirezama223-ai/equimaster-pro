@@ -6,6 +6,11 @@ import Navbar from "@/app/components/navbar/Navbar";
 import DemoModeBanner from "@/app/components/demo/DemoModeBanner";
 import TrainingDashboardClient from "@/app/components/training/TrainingDashboardClient";
 import { createClient } from "@/app/lib/supabase/server";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("training", "/training");
+}
 
 export default async function TrainingPage() {
   const t = await getTranslations("training");

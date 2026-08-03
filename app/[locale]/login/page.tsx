@@ -3,6 +3,11 @@ import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
 import LoginForm from "@/app/components/auth/LoginForm";
 import FadeUp from "@/app/components/animations/FadeUp";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("login", "/login");
+}
 
 export default async function LoginPage() {
   const t = await getTranslations("auth.login");

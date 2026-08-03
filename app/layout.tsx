@@ -16,12 +16,6 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://equimaster.pro"),
-  title: {
-    default: "EquiMaster Pro",
-    template: "%s | EquiMaster Pro",
-  },
-  description:
-    "Premium sport horse marketplace with structured listings, pedigree data, and seller tools.",
 };
 
 export default async function RootLayout({

@@ -6,6 +6,11 @@ import FadeUp from "@/app/components/animations/FadeUp";
 import SellerDashboardClient from "@/app/components/marketplace/SellerDashboardClient";
 import { getSellerDashboardData } from "@/app/actions/marketplace-dashboard";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
+import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return createPageMetadata("sellerDashboard", MARKETPLACE_PATHS.sellerDashboard);
+}
 import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
