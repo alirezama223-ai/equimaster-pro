@@ -164,6 +164,35 @@
       "twitterDescription": "Beheer uw paardenadvertenties en verkopersactiviteit."
     }
   },
+  "entities": {
+    "horse": {
+      "title": "{name} · {discipline} · {level} | {siteName}",
+      "description": "{breed} {gender}, {age} jaar, {price}. Aangeboden door {breeder} in {country}. {descriptionSnippet}",
+      "keywords": "{name}, {breed}, {discipline}, {gender}, paard te koop, {country}",
+      "openGraphTitle": "{name} — {breed} {gender} te koop | {siteName}",
+      "openGraphDescription": "{breed} {gender}, {age} jaar, {price}. {descriptionSnippet}",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} {gender} te koop — {price}. {descriptionSnippet}"
+    },
+    "stallion": {
+      "title": "{name} · {breed} Hengst | {siteName}",
+      "description": "{name}, {breed}-hengst in {country}. Dekgeld: {studFee}. Fokkerij: {breeding}.",
+      "keywords": "{name}, {breed}, hengst, fokkerij, {discipline}, {country}",
+      "openGraphTitle": "{name} — {breed} Hengst | {siteName}",
+      "openGraphDescription": "Premium {breed}-hengst voor sportpaardenfokkerij. Dekgeld {studFee}. {breeding}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed}-hengst — {studFee}. Fokkerij: {breeding}."
+    },
+    "breeder": {
+      "title": "{name} · {location} | {siteName}",
+      "description": "{name}, sportpaardenfokker in {location}. Gespecialiseerd in {disciplines}.",
+      "keywords": "{name}, paardenfokker, {country}, {disciplines}, sportpaarden",
+      "openGraphTitle": "{name} — Sportpaardenfokker | {siteName}",
+      "openGraphDescription": "Ontdek paarden en hengsten van {name} in {location}. {disciplines}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Sportpaardenfokker in {location}. {disciplines}."
+    }
+  },
   "listing": {
     "siteName": "EquiMaster Pro",
     "imageAlt": "{name} — {discipline} sportpaard te koop"

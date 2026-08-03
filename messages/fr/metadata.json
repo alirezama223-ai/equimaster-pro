@@ -164,6 +164,35 @@
       "twitterDescription": "Gérez vos annonces et activité vendeur."
     }
   },
+  "entities": {
+    "horse": {
+      "title": "{name} · {discipline} · {level} | {siteName}",
+      "description": "{breed} {gender}, {age} ans, {price}. Proposé par {breeder} en {country}. {descriptionSnippet}",
+      "keywords": "{name}, {breed}, {discipline}, {gender}, cheval à vendre, {country}",
+      "openGraphTitle": "{name} — {breed} {gender} à vendre | {siteName}",
+      "openGraphDescription": "{breed} {gender}, {age} ans, {price}. {descriptionSnippet}",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} {gender} à vendre — {price}. {descriptionSnippet}"
+    },
+    "stallion": {
+      "title": "{name} · Étalon {breed} | {siteName}",
+      "description": "{name}, étalon {breed} en {country}. Tarif de saillie : {studFee}. Reproduction : {breeding}.",
+      "keywords": "{name}, {breed}, étalon, reproduction, {discipline}, {country}",
+      "openGraphTitle": "{name} — Étalon {breed} | {siteName}",
+      "openGraphDescription": "Étalon {breed} premium pour la reproduction de chevaux de sport. Saillie {studFee}. {breeding}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Étalon {breed} — {studFee}. Reproduction : {breeding}."
+    },
+    "breeder": {
+      "title": "{name} · {location} | {siteName}",
+      "description": "{name}, éleveur de chevaux de sport à {location}. Spécialisé en {disciplines}.",
+      "keywords": "{name}, éleveur, {country}, {disciplines}, chevaux de sport",
+      "openGraphTitle": "{name} — Éleveur de chevaux de sport | {siteName}",
+      "openGraphDescription": "Découvrez les chevaux et étalons de {name} à {location}. {disciplines}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Éleveur de chevaux de sport à {location}. {disciplines}."
+    }
+  },
   "listing": {
     "siteName": "EquiMaster Pro",
     "imageAlt": "{name} — cheval de {discipline} à vendre"

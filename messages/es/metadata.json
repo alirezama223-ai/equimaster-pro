@@ -164,6 +164,35 @@
       "twitterDescription": "Gestione sus anuncios y actividad de vendedor."
     }
   },
+  "entities": {
+    "horse": {
+      "title": "{name} · {discipline} · {level} | {siteName}",
+      "description": "{breed} {gender}, {age} años, {price}. Publicado por {breeder} en {country}. {descriptionSnippet}",
+      "keywords": "{name}, {breed}, {discipline}, {gender}, caballo en venta, {country}",
+      "openGraphTitle": "{name} — {breed} {gender} en venta | {siteName}",
+      "openGraphDescription": "{breed} {gender}, {age} años, {price}. {descriptionSnippet}",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} {gender} en venta — {price}. {descriptionSnippet}"
+    },
+    "stallion": {
+      "title": "{name} · Semental {breed} | {siteName}",
+      "description": "{name}, semental {breed} en {country}. Tarifa de cubrición: {studFee}. Cría: {breeding}.",
+      "keywords": "{name}, {breed}, semental, cría, {discipline}, {country}",
+      "openGraphTitle": "{name} — Semental {breed} | {siteName}",
+      "openGraphDescription": "Semental {breed} premium para cría de caballos de deporte. Tarifa {studFee}. {breeding}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Semental {breed} — {studFee}. Cría: {breeding}."
+    },
+    "breeder": {
+      "title": "{name} · {location} | {siteName}",
+      "description": "{name}, criador de caballos de deporte en {location}. Especializado en {disciplines}.",
+      "keywords": "{name}, criador, {country}, {disciplines}, caballos de deporte",
+      "openGraphTitle": "{name} — Criador de caballos de deporte | {siteName}",
+      "openGraphDescription": "Descubre caballos y sementales de {name} en {location}. {disciplines}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Criador de caballos de deporte en {location}. {disciplines}."
+    }
+  },
   "listing": {
     "siteName": "EquiMaster Pro",
     "imageAlt": "{name} — caballo de {discipline} en venta"

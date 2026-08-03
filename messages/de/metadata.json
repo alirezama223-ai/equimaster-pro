@@ -164,6 +164,35 @@
       "twitterDescription": "Verwalten Sie Ihre Pferdeinserate und Verkäuferaktivität."
     }
   },
+  "entities": {
+    "horse": {
+      "title": "{name} · {discipline} · {level} | {siteName}",
+      "description": "{breed} {gender}, {age} Jahre, {price}. Angeboten von {breeder} in {country}. {descriptionSnippet}",
+      "keywords": "{name}, {breed}, {discipline}, {gender}, Pferd kaufen, {country}",
+      "openGraphTitle": "{name} — {breed} {gender} zu verkaufen | {siteName}",
+      "openGraphDescription": "{breed} {gender}, {age} Jahre, {price}. {descriptionSnippet}",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} {gender} zu verkaufen — {price}. {descriptionSnippet}"
+    },
+    "stallion": {
+      "title": "{name} · {breed} Hengst | {siteName}",
+      "description": "{name}, {breed}-Hengst in {country}. Decktaxe: {studFee}. Zucht: {breeding}.",
+      "keywords": "{name}, {breed}, Hengst, Zucht, {discipline}, {country}",
+      "openGraphTitle": "{name} — {breed} Hengst | {siteName}",
+      "openGraphDescription": "Premium {breed}-Hengst für Sportpferdezucht. Decktaxe {studFee}. {breeding}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed}-Hengst — {studFee}. Zucht: {breeding}."
+    },
+    "breeder": {
+      "title": "{name} · {location} | {siteName}",
+      "description": "{name}, Sportpferdezüchter in {location}. Spezialisiert auf {disciplines}.",
+      "keywords": "{name}, Pferdezüchter, {country}, {disciplines}, Sportpferde",
+      "openGraphTitle": "{name} — Sportpferdezüchter | {siteName}",
+      "openGraphDescription": "Entdecken Sie Pferde und Hengste von {name} in {location}. {disciplines}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Sportpferdezüchter in {location}. {disciplines}."
+    }
+  },
   "listing": {
     "siteName": "EquiMaster Pro",
     "imageAlt": "{name} — {discipline} Sportpferd zum Verkauf"

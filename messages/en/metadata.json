@@ -164,6 +164,35 @@
       "twitterDescription": "Manage your horse listings and seller activity."
     }
   },
+  "entities": {
+    "horse": {
+      "title": "{name} · {discipline} · {level} | {siteName}",
+      "description": "{breed} {gender}, {age} years, {price}. Listed by {breeder} in {country}. {descriptionSnippet}",
+      "keywords": "{name}, {breed}, {discipline}, {gender}, horse for sale, {country}",
+      "openGraphTitle": "{name} — {breed} {gender} for sale | {siteName}",
+      "openGraphDescription": "{breed} {gender}, {age} years old, {price}. {descriptionSnippet}",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} {gender} for sale — {price}. {descriptionSnippet}"
+    },
+    "stallion": {
+      "title": "{name} · {breed} Stallion | {siteName}",
+      "description": "{name}, {breed} stallion in {country}. Stud fee: {studFee}. Breeding: {breeding}.",
+      "keywords": "{name}, {breed}, stallion, breeding, {discipline}, {country}",
+      "openGraphTitle": "{name} — {breed} Stallion | {siteName}",
+      "openGraphDescription": "Premium {breed} stallion for sport horse breeding. Stud fee {studFee}. {breeding}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "{breed} stallion — {studFee}. Breeding: {breeding}."
+    },
+    "breeder": {
+      "title": "{name} · {location} | {siteName}",
+      "description": "{name}, sport horse breeder in {location}. Specializing in {disciplines}.",
+      "keywords": "{name}, horse breeder, {country}, {disciplines}, sport horses",
+      "openGraphTitle": "{name} — Sport Horse Breeder | {siteName}",
+      "openGraphDescription": "Discover horses and stallions from {name} in {location}. {disciplines}.",
+      "twitterTitle": "{name} | {siteName}",
+      "twitterDescription": "Sport horse breeder in {location}. {disciplines}."
+    }
+  },
   "listing": {
     "siteName": "EquiMaster Pro",
     "imageAlt": "{name} — {discipline} sport horse for sale"

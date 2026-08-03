@@ -19,6 +19,7 @@ import {
   buildHorseListingMetadata,
   buildHorseListingStructuredData,
 } from "@/app/lib/marketplace/seo";
+import { loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getPedigreeSectionForListing } from "@/app/actions/pedigree";
@@ -55,6 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildHorseListingMetadata(result.profile.listing, resolvedLocale, {
     siteName: tMeta("listing.siteName"),
     imageAltTemplate: tMeta("listing.imageAlt"),
+    templates: loadEntitySeoTemplates(tMeta, "horse"),
   });
 }
 

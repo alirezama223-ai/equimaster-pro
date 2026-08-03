@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { getListingCoverImageUrl, formatListingRowPrice } from "@/app/lib/horse-listings";
 import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
-import { localizePath } from "@/i18n/path";
+import {
+  buildEntityMetadata,
+  fillSeoTemplate,
+  type EntitySeoTemplates,
+} from "@/app/lib/seo/entity-metadata";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getPublicListingPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
@@ -10,6 +14,7 @@ import type { HorseListingRow } from "@/app/types/horse-listing";
 export type HorseListingSeoConfig = {
   siteName: string;
   imageAltTemplate: string;
+  templates?: EntitySeoTemplates;
 };
 
 function toAbsoluteUrl(url: string, baseUrl: string): string {
@@ -18,19 +23,6 @@ function toAbsoluteUrl(url: string, baseUrl: string): string {
   }
 
   return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
-}
-
-function buildLocaleAlternates(pathname: string) {
-  const baseUrl = getSiteBaseUrl();
-  const languages: Record<string, string> = {};
-
-  for (const locale of routing.locales) {
-    languages[locale] = `${baseUrl}${localizePath(pathname, locale)}`;
-  }
-
-  languages["x-default"] = `${baseUrl}${localizePath(pathname, routing.defaultLocale)}`;
-
-  return { baseUrl, languages };
 }
 
 export type HorseListingSeoLabels = {
@@ -50,52 +42,73 @@ export function buildHorseListingMetadata(
     .replace("{name}", listing.name)
     .replace("{discipline}", listing.discipline);
   const canonicalPath = getPublicListingPath(listing.slug);
-  const { baseUrl, languages } = buildLocaleAlternates(canonicalPath);
-  const canonicalUrl = `${baseUrl}${localizePath(canonicalPath, locale)}`;
-  const title = `${listing.name} · ${listing.discipline} · ${listing.level}`;
+  const baseUrl = getSiteBaseUrl();
   const priceLabel = formatListingRowPrice(listing);
   const descriptionText = listing.description.trim();
-  const description = `${listing.breed} ${listing.gender.toLowerCase()} for sale in ${listing.country}. ${priceLabel}. ${descriptionText.slice(0, 160)}`;
-  const openGraphDescription =
-    descriptionText.length > 0 ? descriptionText.slice(0, 200) : description;
+  const breeder = listing.stable_name ?? listing.seller_name;
+  const vars: Record<string, string> = {
+    name: listing.name,
+    breed: listing.breed,
+    gender: listing.gender.toLowerCase(),
+    discipline: listing.discipline,
+    level: listing.level,
+    age: String(listing.age),
+    price: priceLabel,
+    country: listing.country,
+    breeder,
+    descriptionSnippet: descriptionText.slice(0, 160),
+    siteName,
+  };
+
+  const templates = seoConfig?.templates;
+  const title = templates
+    ? fillSeoTemplate(templates.title, vars)
+    : `${listing.name} · ${listing.discipline} · ${listing.level}`;
+  const description = templates
+    ? fillSeoTemplate(templates.description, vars)
+    : `${listing.breed} ${listing.gender.toLowerCase()} for sale in ${listing.country}. ${priceLabel}. ${descriptionText.slice(0, 160)}`;
+  const keywords = templates
+    ? fillSeoTemplate(templates.keywords, vars)
+    : `${listing.name}, ${listing.breed}, ${listing.discipline}, horse for sale`;
+  const openGraphDescription = templates
+    ? fillSeoTemplate(templates.openGraphDescription, vars)
+    : descriptionText.length > 0
+      ? descriptionText.slice(0, 200)
+      : description;
+  const openGraphTitle = templates
+    ? fillSeoTemplate(templates.openGraphTitle, vars)
+    : `${listing.name} | ${siteName}`;
+  const twitterTitle = templates
+    ? fillSeoTemplate(templates.twitterTitle, vars)
+    : `${listing.name} | ${siteName}`;
+  const twitterDescription = templates
+    ? fillSeoTemplate(templates.twitterDescription, vars)
+    : openGraphDescription;
+
   const coverImage = getListingCoverImageUrl(listing);
   const galleryImages = listing.image_urls.filter(Boolean);
   const imageUrls = (galleryImages.length > 0 ? galleryImages : coverImage ? [coverImage] : []).map(
     (url) => toAbsoluteUrl(url, baseUrl)
   );
-  const alternateLocales = routing.locales.filter((entry) => entry !== locale);
 
-  return {
+  return buildEntityMetadata({
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-      languages,
-    },
-    openGraph: {
-      title: `${listing.name} | ${siteName}`,
-      description: openGraphDescription,
-      type: "website",
-      url: canonicalUrl,
-      siteName,
-      locale,
-      alternateLocale: alternateLocales,
-      images: imageUrls.map((url) => ({
-        url,
-        alt: imageAlt,
-      })),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${listing.name} | ${siteName}`,
-      description: openGraphDescription,
-      images: imageUrls.length > 0 ? [imageUrls[0]] : undefined,
-    },
+    keywords,
+    openGraphTitle,
+    openGraphDescription,
+    twitterTitle,
+    twitterDescription,
+    pathname: canonicalPath,
+    locale,
+    siteName,
+    images: imageUrls.length > 0 ? imageUrls : undefined,
+    imageAlt,
     robots: {
       index: listing.status === "active",
       follow: true,
     },
-  };
+  });
 }
 
 export function buildHorseListingJsonLd(listing: HorseListingRow) {

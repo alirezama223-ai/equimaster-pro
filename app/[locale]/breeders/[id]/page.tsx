@@ -1,5 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import StallionCard from "@/app/components/stallions/StallionCard";
@@ -7,14 +9,46 @@ import HorseCard from "@/app/components/featured/HorseCard";
 import { getBreederById } from "@/app/actions/breeders";
 import { isBreederUuid } from "@/app/lib/breeders";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
+import {
+  buildBreederMetadata,
+  buildBreederOrganizationJsonLd,
+  loadEntitySeoTemplates,
+} from "@/app/lib/seo/entity-metadata";
+import { type AppLocale, routing } from "@/i18n/routing";
 import { HorseListingRow } from "@/app/types/horse-listing";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id, locale } = await params;
+
+  if (!isBreederUuid(id)) {
+    return { robots: { index: false, follow: false } };
+  }
+
+  const result = await getBreederById(id);
+
+  if (!result.breeder) {
+    return { robots: { index: false, follow: false } };
+  }
+
+  const tMeta = await getTranslations("metadata");
+  const resolvedLocale = routing.locales.includes(locale as AppLocale)
+    ? (locale as AppLocale)
+    : routing.defaultLocale;
+
+  return buildBreederMetadata(
+    result.breeder,
+    resolvedLocale,
+    tMeta("listing.siteName"),
+    loadEntitySeoTemplates(tMeta, "breeder")
+  );
+}
 
 export default async function BreederDetailPage({ params }: Props) {
   const { id } = await params;
@@ -37,9 +71,14 @@ export default async function BreederDetailPage({ params }: Props) {
   const hasEmail = Boolean(breeder.email?.trim());
   const hasPhone = Boolean(breeder.phone?.trim());
   const hasWebsite = Boolean(breeder.website?.trim());
+  const organizationJsonLd = buildBreederOrganizationJsonLd(breeder);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       <Navbar />
 
       <main className="min-h-screen bg-[#081223] text-white pt-20 pb-24">

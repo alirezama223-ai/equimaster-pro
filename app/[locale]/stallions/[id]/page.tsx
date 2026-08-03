@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import Navbar from "@/app/components/navbar/Navbar";
@@ -11,13 +13,41 @@ import { getStallionById } from "@/app/actions/stallions";
 import { getPedigreeSectionForStallion } from "@/app/actions/pedigree";
 import { getHorseTraitProfile } from "@/app/actions/traits";
 import { availabilityBadgeClass, getStallionAge, isStallionUuid } from "@/app/lib/stallions";
+import { buildStallionMetadata, loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
+import { type AppLocale, routing } from "@/i18n/routing";
 import { STALLION_AVAILABILITY_LABELS } from "@/app/types/stallion";
 
 export const dynamic = "force-dynamic";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id, locale } = await params;
+
+  if (!isStallionUuid(id)) {
+    return { robots: { index: false, follow: false } };
+  }
+
+  const { stallion } = await getStallionById(id);
+
+  if (!stallion) {
+    return { robots: { index: false, follow: false } };
+  }
+
+  const tMeta = await getTranslations("metadata");
+  const resolvedLocale = routing.locales.includes(locale as AppLocale)
+    ? (locale as AppLocale)
+    : routing.defaultLocale;
+
+  return buildStallionMetadata(
+    stallion,
+    resolvedLocale,
+    tMeta("listing.siteName"),
+    loadEntitySeoTemplates(tMeta, "stallion")
+  );
+}
 
 export default async function StallionDetailPage({ params }: Props) {
   const { id } = await params;
