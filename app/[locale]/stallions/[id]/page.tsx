@@ -9,13 +9,12 @@ import EntityGallery from "@/app/components/shared/EntityGallery";
 import PedigreeSection from "@/app/components/pedigree/PedigreeSection";
 import TraitProfileSection from "@/app/components/traits/TraitProfileSection";
 import StallionContact from "@/app/components/stallions/StallionContact";
-import { getStallionById } from "@/app/actions/stallions";
 import { getPedigreeSectionForStallion } from "@/app/actions/pedigree";
 import { getHorseTraitProfile } from "@/app/actions/traits";
+import { getCachedStallionById } from "@/app/lib/entity-profile-cache";
 import { availabilityBadgeClass, getStallionAge, isStallionUuid } from "@/app/lib/stallions";
 import { buildStallionMetadata, loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
 import { type AppLocale, routing } from "@/i18n/routing";
-import { STALLION_AVAILABILITY_LABELS } from "@/app/types/stallion";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { robots: { index: false, follow: false } };
   }
 
-  const { stallion } = await getStallionById(id);
+  const { stallion } = await getCachedStallionById(id);
 
   if (!stallion) {
     return { robots: { index: false, follow: false } };
@@ -51,18 +50,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StallionDetailPage({ params }: Props) {
   const { id } = await params;
+  const t = await getTranslations("stallions");
 
   if (!isStallionUuid(id)) {
     notFound();
   }
 
-  const { stallion, pedigreeHorseId } = await getStallionById(id);
+  const { stallion, pedigreeHorseId } = await getCachedStallionById(id);
 
   if (!stallion) {
     notFound();
   }
 
   const age = getStallionAge(stallion.birthYear);
+  const emptyValue = t("detail.emptyValue");
   const pedigreeSection = await getPedigreeSectionForStallion({
     pedigree_horse_id: pedigreeHorseId,
     name: stallion.name,
@@ -80,14 +81,14 @@ export default async function StallionDetailPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-8">
             <Link href="/stallions" className="text-gray-400 hover:text-white transition">
-              ← Back to Stallion Directory
+              {t("detail.backToDirectory")}
             </Link>
           </div>
 
           <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10">
             <Image
               src={stallion.coverImageUrl}
-              alt={`${stallion.name} cover`}
+              alt={t("detail.coverAlt", { name: stallion.name })}
               fill
               priority
               className="object-cover"
@@ -104,7 +105,7 @@ export default async function StallionDetailPage({ params }: Props) {
                 <span
                   className={`rounded-full border px-3 py-1 text-xs font-semibold ${availabilityBadgeClass(stallion.availability)}`}
                 >
-                  {STALLION_AVAILABILITY_LABELS[stallion.availability]}
+                  {t(`availability.${stallion.availability}`)}
                 </span>
               </div>
 
@@ -115,14 +116,28 @@ export default async function StallionDetailPage({ params }: Props) {
               </p>
 
               <div className="mt-8 grid grid-cols-2 gap-4">
-                <DetailItem label="Birth Year" value={stallion.birthYear?.toString() ?? "—"} />
-                <DetailItem label="Age" value={age !== null ? `${age} years` : "—"} />
-                <DetailItem label="Color" value={stallion.color || "—"} />
-                <DetailItem label="Height" value={stallion.height ? `${stallion.height} cm` : "—"} />
-                <DetailItem label="Country" value={stallion.country} />
-                <DetailItem label="Discipline" value={stallion.discipline} />
-                <DetailItem label="Competition Level" value={stallion.competitionLevel || "—"} />
-                <DetailItem label="Stud Fee" value={stallion.studFeeLabel} />
+                <DetailItem
+                  label={t("detail.birthYear")}
+                  value={stallion.birthYear?.toString() ?? emptyValue}
+                />
+                <DetailItem
+                  label={t("detail.age")}
+                  value={age !== null ? t("detail.ageValue", { age }) : emptyValue}
+                />
+                <DetailItem label={t("detail.color")} value={stallion.color || emptyValue} />
+                <DetailItem
+                  label={t("detail.height")}
+                  value={
+                    stallion.height ? t("detail.heightValue", { height: stallion.height }) : emptyValue
+                  }
+                />
+                <DetailItem label={t("detail.country")} value={stallion.country} />
+                <DetailItem label={t("detail.discipline")} value={stallion.discipline} />
+                <DetailItem
+                  label={t("detail.competitionLevel")}
+                  value={stallion.competitionLevel || emptyValue}
+                />
+                <DetailItem label={t("detail.studFee")} value={stallion.studFeeLabel} />
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -131,14 +146,14 @@ export default async function StallionDetailPage({ params }: Props) {
                     href={`/breeding-lab?stallion=${pedigreeHorseId}`}
                     className="rounded-xl bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 transition"
                   >
-                    Use in Breeding Lab →
+                    {t("detail.useInBreedingLab")}
                   </Link>
                 ) : (
                   <Link
                     href={`/breeding-lab?stallionDirectory=${id}`}
                     className="rounded-xl bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 transition"
                   >
-                    Use in Breeding Lab →
+                    {t("detail.useInBreedingLab")}
                   </Link>
                 )}
                 {pedigreeHorseId ? (
@@ -146,13 +161,13 @@ export default async function StallionDetailPage({ params }: Props) {
                     href={`/pedigree/${pedigreeHorseId}`}
                     className="rounded-xl border border-white/15 px-5 py-3 font-semibold hover:border-blue-500 transition"
                   >
-                    View Full Pedigree →
+                    {t("detail.viewFullPedigree")}
                   </Link>
                 ) : null}
               </div>
 
               <div className="mt-8 rounded-2xl border border-white/10 bg-[#111827] p-6">
-                <p className="text-xs uppercase tracking-wide text-gray-500">Stud Farm</p>
+                <p className="text-xs uppercase tracking-wide text-gray-500">{t("detail.studFarm")}</p>
                 <Link
                   href={`/breeders/${stallion.breeder.id}`}
                   className="mt-2 inline-block text-xl font-bold text-blue-400 hover:text-blue-300"
@@ -168,7 +183,7 @@ export default async function StallionDetailPage({ params }: Props) {
               {stallion.breedingMethods.length > 0 ? (
                 <div className="mt-6">
                   <p className="text-xs uppercase tracking-wide text-gray-500 mb-3">
-                    Breeding Methods
+                    {t("detail.breedingMethods")}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {stallion.breedingMethods.map((method) => (
@@ -196,9 +211,7 @@ export default async function StallionDetailPage({ params }: Props) {
           {traitResult?.profile ? (
             <div className="mt-16">
               <TraitProfileSection profile={traitResult.profile} compact />
-              <p className="mt-3 text-xs text-gray-500">
-                Public summary only. Aggregated from available structured evidence with confidence weighting.
-              </p>
+              <p className="mt-3 text-xs text-gray-500">{t("detail.traitSummaryNote")}</p>
             </div>
           ) : null}
 
@@ -208,14 +221,14 @@ export default async function StallionDetailPage({ params }: Props) {
                 href={`/pedigree/${pedigreeHorseId}/traits`}
                 className="inline-flex rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-gray-200 hover:border-blue-500"
               >
-                Manage Trait Evidence →
+                {t("detail.manageTraitEvidence")}
               </Link>
             </div>
           ) : null}
 
           {stallion.description ? (
             <div className="mt-20">
-              <h2 className="text-3xl font-bold mb-6">About</h2>
+              <h2 className="text-3xl font-bold mb-6">{t("detail.about")}</h2>
               <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8 text-gray-300 leading-8 whitespace-pre-wrap">
                 {stallion.description}
               </div>
@@ -224,7 +237,7 @@ export default async function StallionDetailPage({ params }: Props) {
 
           {stallion.performance ? (
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-6">Competition & Performance</h2>
+              <h2 className="text-3xl font-bold mb-6">{t("detail.competitionPerformance")}</h2>
               <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8 text-gray-300 leading-8 whitespace-pre-wrap">
                 {stallion.performance}
               </div>
@@ -233,7 +246,7 @@ export default async function StallionDetailPage({ params }: Props) {
 
           {stallion.breedingHighlights ? (
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-6">Breeding Highlights</h2>
+              <h2 className="text-3xl font-bold mb-6">{t("detail.breedingHighlights")}</h2>
               <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8 text-gray-300 leading-8 whitespace-pre-wrap">
                 {stallion.breedingHighlights}
               </div>

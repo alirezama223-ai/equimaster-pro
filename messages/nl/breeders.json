@@ -1,25 +1,38 @@
 {
   "directory": {
-    "title": "Breeder & Stud Farm Directory",
-    "subtitle": "Discover professional breeders and stud farms across Europe.",
-    "searchLabel": "Search",
-    "searchPlaceholder": "Stud farm name, location...",
-    "countryLabel": "Country",
-    "allCountries": "All Countries",
-    "allCountriesPlaceholder": "All countries…",
+    "title": "Fokkerij- & stoeterijoverzicht",
+    "subtitle": "Ontdek professionele fokkerijen en stoeterijen in heel Europa.",
+    "searchLabel": "Zoeken",
+    "searchPlaceholder": "Stoeterijnaam, locatie …",
+    "countryLabel": "Land",
+    "allCountries": "Alle landen",
+    "allCountriesPlaceholder": "Alle landen …",
     "disciplineLabel": "Discipline",
-    "allDisciplines": "All Disciplines",
-    "allDisciplinesPlaceholder": "All disciplines…",
-    "showingCount": "Showing {count, plural, =1 {1 stud farm} other {# stud farms}}",
-    "loadError": "Unable to load breeders: {error}",
-    "emptyTitle": "No stud farms found",
-    "emptyNoData": "The breeder directory is ready. Create your stud farm profile from your account to get started.",
-    "emptyFiltered": "Try adjusting your search to find more breeders."
+    "allDisciplines": "Alle disciplines",
+    "allDisciplinesPlaceholder": "Alle disciplines …",
+    "showingCount": "{count, plural, =1 {1 stoeterij} other {# stoeterijen}}",
+    "loadError": "Fokkerijen konden niet worden geladen: {error}",
+    "emptyTitle": "Geen stoeterijen gevonden",
+    "emptyNoData": "Het fokkerijoverzicht is klaar. Maak uw stoeterijprofiel aan via uw account.",
+    "emptyFiltered": "Pas uw zoekopdracht aan om meer fokkerijen te vinden."
   },
   "card": {
-    "coverAlt": "{name} cover",
+    "coverAlt": "{name} omslag",
     "logoAlt": "{name} logo",
-    "stallions": "Stallions",
-    "view": "View →"
+    "stallions": "Hengsten",
+    "view": "Bekijken →"
+  },
+  "detail": {
+    "backToDirectory": "← Terug naar fokkerijoverzicht",
+    "coverAlt": "{name} omslag",
+    "logoAlt": "{name} logo",
+    "about": "Over",
+    "stallions": "Hengsten",
+    "noStallions": "Nog geen actieve hengsten vermeld.",
+    "horsesForSale": "Paarden te koop",
+    "contact": "Contact",
+    "contactDescription": "Neem contact op met {name} voor fok- of verkoopvragen.",
+    "website": "Website",
+    "noContactDetails": "Nog geen openbare contactgegevens gepubliceerd."
   }
 }

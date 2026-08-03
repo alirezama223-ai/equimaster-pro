@@ -15,6 +15,7 @@ import ListingTrainingSummarySection from "@/app/components/marketplace/ListingT
 import ListingHealthSummarySection from "@/app/components/marketplace/ListingHealthSummarySection";
 import ShareListingButton from "@/app/components/marketplace/ShareListingButton";
 import { buildPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-display";
+import { getCachedPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-profile-cache";
 import {
   buildHorseListingMetadata,
   buildHorseListingStructuredData,
@@ -39,8 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const t = await getTranslations("marketplace");
   const tMeta = await getTranslations("metadata");
-  const supabase = await createClient();
-  const result = await buildPublicListingProfileBySlug(supabase, slug);
+  const result = await getCachedPublicListingProfileBySlug(slug);
 
   if (!result.profile || result.profile.listing.status !== "active") {
     return {
@@ -71,9 +71,13 @@ export default async function PublicHorseListingPage({ params }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const result = await buildPublicListingProfileBySlug(supabase, slug, {
-    ownerUserId: user?.id,
-  });
+  let result = await getCachedPublicListingProfileBySlug(slug);
+
+  if (!result.profile && user?.id) {
+    result = await buildPublicListingProfileBySlug(supabase, slug, {
+      ownerUserId: user.id,
+    });
+  }
 
   if (!result.profile) {
     notFound();

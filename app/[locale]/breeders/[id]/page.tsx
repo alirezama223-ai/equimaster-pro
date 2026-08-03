@@ -6,8 +6,8 @@ import Navbar from "@/app/components/navbar/Navbar";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import StallionCard from "@/app/components/stallions/StallionCard";
 import HorseCard from "@/app/components/featured/HorseCard";
-import { getBreederById } from "@/app/actions/breeders";
 import { isBreederUuid } from "@/app/lib/breeders";
+import { getCachedBreederById } from "@/app/lib/entity-profile-cache";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import {
   buildBreederMetadata,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { robots: { index: false, follow: false } };
   }
 
-  const result = await getBreederById(id);
+  const result = await getCachedBreederById(id);
 
   if (!result.breeder) {
     return { robots: { index: false, follow: false } };
@@ -52,12 +52,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BreederDetailPage({ params }: Props) {
   const { id } = await params;
+  const t = await getTranslations("breeders");
 
   if (!isBreederUuid(id)) {
     notFound();
   }
 
-  const result = await getBreederById(id);
+  const result = await getCachedBreederById(id);
 
   if (!result.breeder) {
     notFound();
@@ -85,7 +86,7 @@ export default async function BreederDetailPage({ params }: Props) {
         <div className="relative h-56 sm:h-72 overflow-hidden">
           <Image
             src={breeder.coverImageUrl}
-            alt={`${breeder.name} cover`}
+            alt={t("detail.coverAlt", { name: breeder.name })}
             fill
             priority
             className="object-cover"
@@ -96,7 +97,12 @@ export default async function BreederDetailPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-6 -mt-16 relative">
           <div className="flex flex-col sm:flex-row gap-6 items-start">
             <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-3xl border-4 border-[#081223] bg-[#111827]">
-              <Image src={breeder.logoUrl} alt={`${breeder.name} logo`} fill className="object-cover" />
+              <Image
+                src={breeder.logoUrl}
+                alt={t("detail.logoAlt", { name: breeder.name })}
+                fill
+                className="object-cover"
+              />
             </div>
 
             <div className="flex-1">
@@ -126,7 +132,7 @@ export default async function BreederDetailPage({ params }: Props) {
 
           {breeder.description ? (
             <section className="mt-12">
-              <h2 className="text-3xl font-bold mb-6">About</h2>
+              <h2 className="text-3xl font-bold mb-6">{t("detail.about")}</h2>
               <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8 text-gray-300 leading-8 whitespace-pre-wrap">
                 {breeder.description}
               </div>
@@ -134,10 +140,10 @@ export default async function BreederDetailPage({ params }: Props) {
           ) : null}
 
           <section className="mt-16">
-            <h2 className="text-3xl font-bold mb-8">Stallions</h2>
+            <h2 className="text-3xl font-bold mb-8">{t("detail.stallions")}</h2>
             {stallions.length === 0 ? (
               <div className="rounded-3xl border border-white/10 bg-[#111827] px-8 py-12 text-center text-gray-400">
-                No active stallions listed yet.
+                {t("detail.noStallions")}
               </div>
             ) : (
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -150,7 +156,7 @@ export default async function BreederDetailPage({ params }: Props) {
 
           {listingHorses.length > 0 ? (
             <section className="mt-16">
-              <h2 className="text-3xl font-bold mb-8">Horses For Sale</h2>
+              <h2 className="text-3xl font-bold mb-8">{t("detail.horsesForSale")}</h2>
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {listingHorses.map((horse) => (
                   <HorseCard key={horse.listingUuid ?? horse.id} horse={horse} />
@@ -160,9 +166,9 @@ export default async function BreederDetailPage({ params }: Props) {
           ) : null}
 
           <section className="mt-16 rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
-            <h2 className="text-2xl font-bold">Contact</h2>
+            <h2 className="text-2xl font-bold">{t("detail.contact")}</h2>
             <p className="mt-3 text-gray-400">
-              Get in touch with {breeder.name} for breeding or sales inquiries.
+              {t("detail.contactDescription", { name: breeder.name })}
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-4">
@@ -195,19 +201,19 @@ export default async function BreederDetailPage({ params }: Props) {
                   rel="noopener noreferrer"
                   className="inline-flex justify-center rounded-xl border border-white/15 px-6 py-4 text-white font-semibold hover:border-blue-500 transition"
                 >
-                  Website
+                  {t("detail.website")}
                 </a>
               ) : null}
 
               {!hasEmail && !hasPhone && !hasWebsite ? (
-                <p className="text-gray-500">No public contact details published yet.</p>
+                <p className="text-gray-500">{t("detail.noContactDetails")}</p>
               ) : null}
             </div>
           </section>
 
           <div className="mt-8">
             <Link href="/breeders" className="text-gray-400 hover:text-white transition">
-              ← Back to Breeder Directory
+              {t("detail.backToDirectory")}
             </Link>
           </div>
         </div>

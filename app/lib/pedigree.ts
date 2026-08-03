@@ -264,21 +264,58 @@ export async function loadPedigreeTree(
   maxGenerations = MAX_PEDIGREE_GENERATIONS,
   cache = new Map<string, PedigreeHorseRow>()
 ): Promise<PedigreeTreeNode | null> {
-  async function loadRow(id: string): Promise<PedigreeHorseRow | null> {
-    if (cache.has(id)) {
-      return cache.get(id) ?? null;
+  const rowsMap = new Map<string, PedigreeHorseRow>(cache);
+
+  let frontier = [rootId];
+  const loaded = new Set<string>();
+
+  for (let depth = 0; depth <= maxGenerations && frontier.length > 0; depth += 1) {
+    const toFetch = frontier.filter((id) => !loaded.has(id) && !rowsMap.has(id));
+
+    if (toFetch.length > 0) {
+      const { data } = await supabase.from("pedigree_horses").select("*").in("id", toFetch);
+
+      for (const row of data ?? []) {
+        const pedigreeRow = row as PedigreeHorseRow;
+        rowsMap.set(pedigreeRow.id, pedigreeRow);
+        cache.set(pedigreeRow.id, pedigreeRow);
+      }
     }
 
-    const { data } = await supabase.from("pedigree_horses").select("*").eq("id", id).maybeSingle();
-    if (!data) return null;
+    for (const id of frontier) {
+      loaded.add(id);
+    }
 
-    const row = data as PedigreeHorseRow;
-    cache.set(id, row);
-    return row;
+    if (depth >= maxGenerations) {
+      break;
+    }
+
+    const nextFrontier: string[] = [];
+
+    for (const id of frontier) {
+      const row = rowsMap.get(id);
+      if (!row) continue;
+
+      const horse = rowToPedigreeHorse(row as Record<string, unknown>);
+
+      if (horse.sireId && !loaded.has(horse.sireId)) {
+        nextFrontier.push(horse.sireId);
+      }
+
+      if (horse.damId && !loaded.has(horse.damId)) {
+        nextFrontier.push(horse.damId);
+      }
+    }
+
+    frontier = [...new Set(nextFrontier)];
   }
 
-  async function buildNode(id: string, depth: number): Promise<PedigreeTreeNode> {
-    const row = await loadRow(id);
+  if (!rowsMap.has(rootId)) {
+    return null;
+  }
+
+  function buildNode(id: string, depth: number): PedigreeTreeNode {
+    const row = rowsMap.get(id);
     if (!row) {
       return createUnknownPedigreeNode();
     }
@@ -290,13 +327,8 @@ export async function loadPedigreeTree(
       return node;
     }
 
-    const [sire, dam] = await Promise.all([
-      horse.sireId ? buildNode(horse.sireId, depth + 1) : Promise.resolve(null),
-      horse.damId ? buildNode(horse.damId, depth + 1) : Promise.resolve(null),
-    ]);
-
-    node.sire = sire;
-    node.dam = dam;
+    node.sire = horse.sireId ? buildNode(horse.sireId, depth + 1) : null;
+    node.dam = horse.damId ? buildNode(horse.damId, depth + 1) : null;
     return node;
   }
 

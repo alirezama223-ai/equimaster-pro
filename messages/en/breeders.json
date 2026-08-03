@@ -21,5 +21,18 @@
     "logoAlt": "{name} logo",
     "stallions": "Stallions",
     "view": "View →"
+  },
+  "detail": {
+    "backToDirectory": "← Back to Breeder Directory",
+    "coverAlt": "{name} cover",
+    "logoAlt": "{name} logo",
+    "about": "About",
+    "stallions": "Stallions",
+    "noStallions": "No active stallions listed yet.",
+    "horsesForSale": "Horses For Sale",
+    "contact": "Contact",
+    "contactDescription": "Get in touch with {name} for breeding or sales inquiries.",
+    "website": "Website",
+    "noContactDetails": "No public contact details published yet."
   }
 }

@@ -4,7 +4,15 @@ import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import { getPathnameWithoutLocale } from "@/i18n/path";
 
-const protectedRoutes = ["/account", "/sell", "/admin", "/dashboard/seller"];
+const protectedRoutes = [
+  "/account",
+  "/sell",
+  "/admin",
+  "/dashboard/seller",
+  "/favorites",
+  "/training",
+  "/notifications",
+];
 
 function isProtectedPath(pathname: string) {
   return protectedRoutes.some(

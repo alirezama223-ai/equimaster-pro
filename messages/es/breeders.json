@@ -1,25 +1,38 @@
 {
   "directory": {
-    "title": "Breeder & Stud Farm Directory",
-    "subtitle": "Discover professional breeders and stud farms across Europe.",
-    "searchLabel": "Search",
-    "searchPlaceholder": "Stud farm name, location...",
-    "countryLabel": "Country",
-    "allCountries": "All Countries",
-    "allCountriesPlaceholder": "All countries…",
-    "disciplineLabel": "Discipline",
-    "allDisciplines": "All Disciplines",
-    "allDisciplinesPlaceholder": "All disciplines…",
-    "showingCount": "Showing {count, plural, =1 {1 stud farm} other {# stud farms}}",
-    "loadError": "Unable to load breeders: {error}",
-    "emptyTitle": "No stud farms found",
-    "emptyNoData": "The breeder directory is ready. Create your stud farm profile from your account to get started.",
-    "emptyFiltered": "Try adjusting your search to find more breeders."
+    "title": "Directorio de criadores y yeguadas",
+    "subtitle": "Descubra criadores profesionales y yeguadas en toda Europa.",
+    "searchLabel": "Buscar",
+    "searchPlaceholder": "Nombre de yeguada, ubicación …",
+    "countryLabel": "País",
+    "allCountries": "Todos los países",
+    "allCountriesPlaceholder": "Todos los países …",
+    "disciplineLabel": "Disciplina",
+    "allDisciplines": "Todas las disciplinas",
+    "allDisciplinesPlaceholder": "Todas las disciplinas …",
+    "showingCount": "{count, plural, =1 {1 yeguada} other {# yeguadas}}",
+    "loadError": "No se pudieron cargar los criadores: {error}",
+    "emptyTitle": "No se encontraron yeguadas",
+    "emptyNoData": "El directorio de criadores está listo. Cree su perfil de yeguada desde su cuenta.",
+    "emptyFiltered": "Ajuste su búsqueda para encontrar más criadores."
   },
   "card": {
-    "coverAlt": "{name} cover",
-    "logoAlt": "{name} logo",
-    "stallions": "Stallions",
-    "view": "View →"
+    "coverAlt": "Portada de {name}",
+    "logoAlt": "Logo de {name}",
+    "stallions": "Sementales",
+    "view": "Ver →"
+  },
+  "detail": {
+    "backToDirectory": "← Volver al directorio de criadores",
+    "coverAlt": "Portada de {name}",
+    "logoAlt": "Logo de {name}",
+    "about": "Acerca de",
+    "stallions": "Sementales",
+    "noStallions": "Aún no hay sementales activos registrados.",
+    "horsesForSale": "Caballos en venta",
+    "contact": "Contacto",
+    "contactDescription": "Contacte con {name} para consultas de cría o venta.",
+    "website": "Sitio web",
+    "noContactDetails": "Aún no se han publicado datos de contacto públicos."
   }
 }

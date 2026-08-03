@@ -74,5 +74,29 @@
     "dam": "Dam",
     "damSire": "Dam's Sire",
     "futureRelease": "Extended pedigree charts will be available in a future release."
+  },
+  "detail": {
+    "backToDirectory": "← Back to Stallion Directory",
+    "coverAlt": "{name} cover",
+    "birthYear": "Birth Year",
+    "age": "Age",
+    "ageValue": "{age} years",
+    "color": "Color",
+    "height": "Height",
+    "heightValue": "{height} cm",
+    "country": "Country",
+    "discipline": "Discipline",
+    "competitionLevel": "Competition Level",
+    "studFee": "Stud Fee",
+    "useInBreedingLab": "Use in Breeding Lab →",
+    "viewFullPedigree": "View Full Pedigree →",
+    "studFarm": "Stud Farm",
+    "breedingMethods": "Breeding Methods",
+    "about": "About",
+    "competitionPerformance": "Competition & Performance",
+    "breedingHighlights": "Breeding Highlights",
+    "traitSummaryNote": "Public summary only. Aggregated from available structured evidence with confidence weighting.",
+    "manageTraitEvidence": "Manage Trait Evidence →",
+    "emptyValue": "—"
   }
 }
