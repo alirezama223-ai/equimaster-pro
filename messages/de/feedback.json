@@ -1,0 +1,44 @@
+{
+  "floatingButton": "Feedback",
+  "floatingButtonAria": "Feedback-Formular öffnen",
+  "modal": {
+    "eyebrow": "Beta-Feedback",
+    "title": "Feedback senden",
+    "subtitle": "Helfen Sie uns, EquiMaster Pro während der Beta zu verbessern. Ihr Bericht enthält automatisch die aktuelle Seite und Umgebungsdetails.",
+    "category": "Kategorie",
+    "severity": "Schweregrad",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreiben Sie, was passiert ist, was Sie erwartet haben oder was verbessert werden soll…",
+    "page": "Aktuelle Seite",
+    "browser": "Browser",
+    "os": "Betriebssystem",
+    "language": "Sprache",
+    "screenshot": "Screenshot (optional)",
+    "screenshotHint": "Fügen Sie einen Screenshot hinzu, um uns bei der Reproduktion zu helfen. JPEG, PNG oder WebP bis 5 MB.",
+    "screenshotPreviewAlt": "Screenshot-Vorschau",
+    "removeScreenshot": "Screenshot entfernen",
+    "submit": "Bericht senden",
+    "submitting": "Wird gesendet…",
+    "close": "Schließen",
+    "done": "Fertig",
+    "successTitle": "Feedback erhalten",
+    "successMessage": "Vielen Dank — Ihr Bericht wurde an das EquiMaster Pro Team gesendet."
+  },
+  "categories": {
+    "bug": "Fehler",
+    "suggestion": "Vorschlag",
+    "feature_request": "Feature-Anfrage"
+  },
+  "severities": {
+    "low": "Niedrig",
+    "medium": "Mittel",
+    "high": "Hoch",
+    "critical": "Kritisch"
+  },
+  "statuses": {
+    "open": "Offen",
+    "in_progress": "In Bearbeitung",
+    "resolved": "Gelöst",
+    "closed": "Geschlossen"
+  }
+}

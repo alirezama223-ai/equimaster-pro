@@ -9,6 +9,7 @@ const links = [
   { href: "/admin/stallions", key: "stallions" as const },
   { href: "/admin/pedigree", key: "pedigree" as const },
   { href: "/admin/traits", key: "traits" as const },
+  { href: "/admin/feedback", key: "feedback" as const },
 ];
 
 export default function AdminNav() {
@@ -19,7 +20,6 @@ export default function AdminNav() {
     <nav className="flex flex-wrap gap-3">
       {links.map((link) => {
         const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
-
         return (
           <Link
             key={link.href}

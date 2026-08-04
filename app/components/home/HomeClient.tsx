@@ -9,6 +9,7 @@ import AdvancedSearch from "@/app/components/search/AdvancedSearch";
 import FeaturedHorses from "@/app/components/featured/FeaturedHorses";
 import FadeUp from "@/app/components/animations/FadeUp";
 
+import type { HeroStats } from "@/app/actions/home-stats";
 import { Horse } from "@/app/data/horses";
 import {
   DEFAULT_SORT,
@@ -21,12 +22,14 @@ const HORSES_PER_PAGE = 6;
 type Props = {
   marketplaceHorses: Horse[];
   favoriteListingIds?: string[];
+  heroStats: HeroStats;
   premiumStallions: React.ReactNode;
 };
 
 export default function HomeClient({
   marketplaceHorses,
   favoriteListingIds = [],
+  heroStats,
   premiumStallions,
 }: Props) {
   const t = useTranslations("home");
@@ -179,7 +182,7 @@ export default function HomeClient({
       <Navbar />
 
       <FadeUp>
-        <HeroSection />
+        <HeroSection stats={heroStats} />
       </FadeUp>
 
       <FadeUp>

@@ -16,7 +16,8 @@
     "breeders": "Breeders",
     "stallions": "Stallions",
     "pedigree": "Pedigree",
-    "traits": "Traits"
+    "traits": "Traits",
+    "feedback": "Feedback"
   },
   "stats": {
     "activeListings": "Active Horse Listings",
@@ -132,5 +133,29 @@
     "verifiedSuccess": "{name} verified successfully.",
     "unverifiedSuccess": "{name} marked as unverified.",
     "badge": "✓ Verified"
+  },
+  "feedback": {
+    "title": "Beta Feedback",
+    "subtitle": "Review bug reports, suggestions, and feature requests submitted during the beta.",
+    "empty": "No feedback reports match your filters.",
+    "search": "Search",
+    "searchPlaceholder": "Search description, page, reporter, browser…",
+    "statusFilter": "Status",
+    "categoryFilter": "Category",
+    "allStatuses": "All statuses",
+    "allCategories": "All categories",
+    "reporter": "Reporter",
+    "page": "Page",
+    "environment": "Environment",
+    "submitted": "Submitted",
+    "updateStatus": "Status",
+    "viewDetails": "View details",
+    "hideDetails": "Hide details",
+    "adminNotes": "Admin notes",
+    "adminNotesPlaceholder": "Internal notes about triage, resolution, or follow-up…",
+    "saveNotes": "Save notes",
+    "screenshot": "Screenshot",
+    "screenshotAlt": "Feedback screenshot",
+    "noScreenshot": "No screenshot attached"
   }
 }

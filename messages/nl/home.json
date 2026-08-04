@@ -12,16 +12,13 @@
     "imageAlt": "Sportpaard — hero-afbeelding",
     "stats": {
       "sportHorses": {
-        "value": "15K+",
-        "label": "Sportpaarden"
+        "label": "Actieve advertenties"
       },
       "breeders": {
-        "value": "1200+",
-        "label": "Fokkers"
+        "label": "Actieve hengsten"
       },
       "countries": {
-        "value": "28",
-        "label": "Landen"
+        "label": "Geregistreerde fokkers"
       }
     }
   },

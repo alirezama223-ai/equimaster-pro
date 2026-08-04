@@ -1,10 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import type { HeroStats } from "@/app/actions/home-stats";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 
-export default function HeroSection() {
+type Props = {
+  stats: HeroStats;
+};
+
+function formatStatCount(value: number, locale: string) {
+  return value.toLocaleString(locale);
+}
+
+export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
+  const locale = useLocale();
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
@@ -49,21 +59,21 @@ export default function HeroSection() {
             <div className="mt-16 flex flex-wrap gap-8 sm:gap-12">
               <div>
                 <h3 className="text-3xl font-bold sm:text-4xl">
-                  {t("hero.stats.sportHorses.value")}
+                  {formatStatCount(stats.activeListings, locale)}
                 </h3>
                 <p className="text-gray-400">{t("hero.stats.sportHorses.label")}</p>
               </div>
 
               <div>
                 <h3 className="text-3xl font-bold sm:text-4xl">
-                  {t("hero.stats.breeders.value")}
+                  {formatStatCount(stats.activeStallions, locale)}
                 </h3>
                 <p className="text-gray-400">{t("hero.stats.breeders.label")}</p>
               </div>
 
               <div>
                 <h3 className="text-3xl font-bold sm:text-4xl">
-                  {t("hero.stats.countries.value")}
+                  {formatStatCount(stats.registeredBreeders, locale)}
                 </h3>
                 <p className="text-gray-400">{t("hero.stats.countries.label")}</p>
               </div>

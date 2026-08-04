@@ -1,4 +1,5 @@
 import { getActiveHorseListings } from "@/app/actions/horse-listings";
+import { getHeroStats } from "@/app/actions/home-stats";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import HomeClient from "@/app/components/home/HomeClient";
 import PremiumStallions from "@/app/components/stallions/PremiumStallions";
@@ -14,9 +15,10 @@ export async function generateMetadata() {
 
 export default async function Home() {
   const tCommon = await getTranslations("common");
-  const [{ data: listingRows }, favoriteListingIds] = await Promise.all([
+  const [{ data: listingRows }, favoriteListingIds, heroStats] = await Promise.all([
     getActiveHorseListings(100),
     getUserFavoriteListingIds(),
+    getHeroStats(),
   ]);
   const marketplaceHorses = listingRows.map((row) =>
     listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
@@ -26,6 +28,7 @@ export default async function Home() {
     <HomeClient
       marketplaceHorses={marketplaceHorses}
       favoriteListingIds={favoriteListingIds}
+      heroStats={heroStats}
       premiumStallions={<PremiumStallions />}
     />
   );

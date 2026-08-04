@@ -1,0 +1,44 @@
+{
+  "floatingButton": "Feedback",
+  "floatingButtonAria": "Open feedback form",
+  "modal": {
+    "eyebrow": "Beta Feedback",
+    "title": "Send Feedback",
+    "subtitle": "Help us improve EquiMaster Pro during the beta. Your report includes the current page and environment details automatically.",
+    "category": "Category",
+    "severity": "Severity",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe what happened, what you expected, or what you'd like to see improved…",
+    "page": "Current page",
+    "browser": "Browser",
+    "os": "Operating system",
+    "language": "Language",
+    "screenshot": "Screenshot (optional)",
+    "screenshotHint": "Attach a screenshot to help us reproduce the issue. JPEG, PNG, or WebP up to 5 MB.",
+    "screenshotPreviewAlt": "Screenshot preview",
+    "removeScreenshot": "Remove screenshot",
+    "submit": "Submit Report",
+    "submitting": "Submitting…",
+    "close": "Close",
+    "done": "Done",
+    "successTitle": "Feedback received",
+    "successMessage": "Thank you — your report has been sent to the EquiMaster Pro team."
+  },
+  "categories": {
+    "bug": "Bug",
+    "suggestion": "Suggestion",
+    "feature_request": "Feature Request"
+  },
+  "severities": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
+  },
+  "statuses": {
+    "open": "Open",
+    "in_progress": "In Progress",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  }
+}

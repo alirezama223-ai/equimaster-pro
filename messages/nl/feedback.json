@@ -1,0 +1,44 @@
+{
+  "floatingButton": "Feedback",
+  "floatingButtonAria": "Feedbackformulier openen",
+  "modal": {
+    "eyebrow": "Beta-feedback",
+    "title": "Feedback versturen",
+    "subtitle": "Help ons EquiMaster Pro tijdens de beta te verbeteren. Uw rapport bevat automatisch de huidige pagina en omgevingsdetails.",
+    "category": "Categorie",
+    "severity": "Ernst",
+    "description": "Beschrijving",
+    "descriptionPlaceholder": "Beschrijf wat er gebeurde, wat u verwachtte of wat u wilt verbeteren…",
+    "page": "Huidige pagina",
+    "browser": "Browser",
+    "os": "Besturingssysteem",
+    "language": "Taal",
+    "screenshot": "Screenshot (optioneel)",
+    "screenshotHint": "Voeg een screenshot toe om het probleem te reproduceren. JPEG, PNG of WebP tot 5 MB.",
+    "screenshotPreviewAlt": "Screenshot-voorbeeld",
+    "removeScreenshot": "Screenshot verwijderen",
+    "submit": "Rapport versturen",
+    "submitting": "Verzenden…",
+    "close": "Sluiten",
+    "done": "Klaar",
+    "successTitle": "Feedback ontvangen",
+    "successMessage": "Bedankt — uw rapport is verzonden naar het EquiMaster Pro-team."
+  },
+  "categories": {
+    "bug": "Bug",
+    "suggestion": "Suggestie",
+    "feature_request": "Featureverzoek"
+  },
+  "severities": {
+    "low": "Laag",
+    "medium": "Gemiddeld",
+    "high": "Hoog",
+    "critical": "Kritiek"
+  },
+  "statuses": {
+    "open": "Open",
+    "in_progress": "In behandeling",
+    "resolved": "Opgelost",
+    "closed": "Gesloten"
+  }
+}

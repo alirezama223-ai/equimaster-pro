@@ -12,16 +12,13 @@
     "imageAlt": "Cheval de sport — image principale",
     "stats": {
       "sportHorses": {
-        "value": "15K+",
-        "label": "Chevaux de sport"
+        "label": "Annonces actives"
       },
       "breeders": {
-        "value": "1200+",
-        "label": "Éleveurs"
+        "label": "Étalons actifs"
       },
       "countries": {
-        "value": "28",
-        "label": "Pays"
+        "label": "Éleveurs inscrits"
       }
     }
   },

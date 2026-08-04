@@ -11,7 +11,8 @@
     "db:apply-021": "node scripts/apply-and-validate-021.mjs",
     "db:apply-021-stepwise": "node scripts/apply-021-stepwise.mjs",
     "i18n:sync": "node scripts/sync-locale-messages.mjs",
-    "i18n:audit": "node scripts/audit-i18n-keys.mjs"
+    "i18n:audit": "node scripts/audit-i18n-keys.mjs",
+    "clear-storage": "node scripts/clear-storage.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

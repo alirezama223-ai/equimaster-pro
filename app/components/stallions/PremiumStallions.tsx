@@ -1,40 +1,17 @@
+import { getActiveStallions } from "@/app/actions/stallions";
+import { getStallionAge } from "@/app/lib/stallions";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
-const stallions = [
-  {
-    name: "Emerald van't Ruytershof",
-    breed: "BWP",
-    age: 16,
-    fee: "€2,500",
-    image: "/emi.jpg",
-  },
-  {
-    name: "Ermitage Kalone",
-    breed: "SBS",
-    age: 11,
-    fee: "€2,000",
-    image: "/emi.jpg",
-  },
-  {
-    name: "Chacco Blue",
-    breed: "OS",
-    age: 19,
-    fee: "€3,500",
-    image: "/emi.jpg",
-  },
-  {
-    name: "Comme il Faut",
-    breed: "Westfalian",
-    age: 20,
-    fee: "€2,200",
-    image: "/emi.jpg",
-  },
-];
-
 export default async function PremiumStallions() {
   const t = await getTranslations("home");
+  const { stallions } = await getActiveStallions();
+  const featured = (stallions ?? []).slice(0, 4);
+
+  if (featured.length === 0) {
+    return null;
+  }
 
   return (
     <section className="bg-[#081223] py-28">
@@ -61,59 +38,64 @@ export default async function PremiumStallions() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-          {stallions.map((stallion) => (
+          {featured.map((stallion) => {
+            const age = getStallionAge(stallion.birthYear);
 
-            <div
-              key={stallion.name}
-              className="bg-[#111d33] rounded-3xl overflow-hidden border border-white/10 hover:border-blue-500 transition duration-300"
-            >
+            return (
+              <div
+                key={stallion.id}
+                className="bg-[#111d33] rounded-3xl overflow-hidden border border-white/10 hover:border-blue-500 transition duration-300"
+              >
 
-              <div className="relative h-72">
-                <Image
-                  src={stallion.image}
-                  alt={t("premium.stallionImageAlt", { name: stallion.name })}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+                <div className="relative h-72">
+                  <Image
+                    src={stallion.coverImageUrl}
+                    alt={t("premium.stallionImageAlt", { name: stallion.name })}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
 
-              <div className="p-6">
+                <div className="p-6">
 
-                <h3 className="text-white font-bold text-xl">
-                  {stallion.name}
-                </h3>
+                  <h3 className="text-white font-bold text-xl">
+                    {stallion.name}
+                  </h3>
 
-                <p className="text-gray-400 mt-2">
-                  {stallion.breed}
-                </p>
+                  <p className="text-gray-400 mt-2">
+                    {stallion.breed}
+                  </p>
 
-                <div className="flex justify-between mt-6 text-sm text-gray-300">
+                  <div className="flex justify-between mt-6 text-sm text-gray-300">
 
-                  <div>
-                    <p>{t("premium.age")}</p>
-                    <p className="font-bold text-white">
-                      {stallion.age}
-                    </p>
+                    <div>
+                      <p>{t("premium.age")}</p>
+                      <p className="font-bold text-white">
+                        {age ?? "—"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p>{t("premium.studFee")}</p>
+                      <p className="font-bold text-blue-400">
+                        {stallion.studFeeLabel}
+                      </p>
+                    </div>
+
                   </div>
 
-                  <div>
-                    <p>{t("premium.studFee")}</p>
-                    <p className="font-bold text-blue-400">
-                      {stallion.fee}
-                    </p>
-                  </div>
+                  <Link
+                    href={`/stallions/${stallion.id}`}
+                    className="mt-6 block w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition text-center"
+                  >
+                    {t("premium.viewStallion")}
+                  </Link>
 
                 </div>
 
-                <button className="mt-6 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">
-                  {t("premium.viewStallion")}
-                </button>
-
               </div>
-
-            </div>
-
-          ))}
+            );
+          })}
 
         </div>
 

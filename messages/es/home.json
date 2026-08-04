@@ -12,16 +12,13 @@
     "imageAlt": "Caballo deportivo — imagen principal",
     "stats": {
       "sportHorses": {
-        "value": "15K+",
-        "label": "Caballos deportivos"
+        "label": "Anuncios activos"
       },
       "breeders": {
-        "value": "1200+",
-        "label": "Criadores"
+        "label": "Sementales activos"
       },
       "countries": {
-        "value": "28",
-        "label": "Países"
+        "label": "Criadores registrados"
       }
     }
   },

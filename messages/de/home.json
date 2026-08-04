@@ -12,16 +12,13 @@
     "imageAlt": "Sportpferd — Hero-Bild",
     "stats": {
       "sportHorses": {
-        "value": "15K+",
-        "label": "Sportpferde"
+        "label": "Aktive Inserate"
       },
       "breeders": {
-        "value": "1200+",
-        "label": "Züchter"
+        "label": "Aktive Hengste"
       },
       "countries": {
-        "value": "28",
-        "label": "Länder"
+        "label": "Registrierte Züchter"
       }
     }
   },

@@ -12,16 +12,13 @@
     "imageAlt": "Sport horse hero image",
     "stats": {
       "sportHorses": {
-        "value": "15K+",
-        "label": "Sport Horses"
+        "label": "Active Listings"
       },
       "breeders": {
-        "value": "1200+",
-        "label": "Breeders"
+        "label": "Active Stallions"
       },
       "countries": {
-        "value": "28",
-        "label": "Countries"
+        "label": "Registered Breeders"
       }
     }
   },
