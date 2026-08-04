@@ -25,6 +25,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { BreederRow } from "@/app/types/breeder";
 import {
   CreateStallionPayload,
+  StallionCardData,
   StallionFormData,
   UpdateStallionPayload,
 } from "@/app/types/stallion";
@@ -197,7 +198,14 @@ async function assembleStallionImages(
   return { assembled, newlyUploadedPaths };
 }
 
-export async function getActiveStallions() {
+function isStallionCardData(stallion: StallionCardData | null): stallion is StallionCardData {
+  return stallion !== null;
+}
+
+export async function getActiveStallions(): Promise<{
+  stallions: StallionCardData[];
+  error?: string;
+}> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("stallions")
@@ -247,7 +255,7 @@ export async function getActiveStallions() {
           if (!breeder) return null;
           return stallionRowToCard(stallion, breeder);
         })
-        .filter(Boolean),
+        .filter(isStallionCardData),
     };
   }
 
@@ -258,7 +266,7 @@ export async function getActiveStallions() {
       if (!breeder || breeder.status !== "active") return null;
       return stallionRowToCard(stallion, breeder);
     })
-    .filter(Boolean);
+    .filter(isStallionCardData);
 
   return { stallions };
 }
