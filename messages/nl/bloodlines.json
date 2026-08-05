@@ -2,18 +2,18 @@
   "page": {
     "eyebrow": "EquiMaster Pro",
     "title": "Bloodlines",
-    "subtitle": "Search structured pedigree records by horse name, studbook, or registration number."
+    "subtitle": "Doorzoek gestructureerde stamboekgegevens op paardennaam, studbook of registratienummer."
   },
   "search": {
-    "horseNameLabel": "Horse / ancestor name",
+    "horseNameLabel": "Paard / vooroudernaam",
     "horseNamePlaceholder": "Chacco-Blue",
     "studbookLabel": "Studbook",
     "studbookPlaceholder": "KWPN, BWP, OS...",
-    "registrationLabel": "Registration / UELN",
+    "registrationLabel": "Registratie / UELN",
     "registrationPlaceholder": "752002910123456",
-    "searching": "Searching...",
-    "submit": "Search Bloodlines",
-    "emptyWithQuery": "No pedigree records matched your search.",
-    "emptyInitial": "Search by horse name, studbook, or registration number."
+    "searching": "Zoeken...",
+    "submit": "Bloodlines zoeken",
+    "emptyWithQuery": "Geen stamboekgegevens gevonden voor uw zoekopdracht.",
+    "emptyInitial": "Zoek op paardennaam, studbook of registratienummer."
   }
 }
