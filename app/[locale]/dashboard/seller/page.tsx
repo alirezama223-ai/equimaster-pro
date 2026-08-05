@@ -2,33 +2,47 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import Navbar from "@/app/components/navbar/Navbar";
-import FadeUp from "@/app/components/animations/FadeUp";
 import SellerDashboardClient from "@/app/components/marketplace/SellerDashboardClient";
 import { getSellerDashboardData } from "@/app/actions/marketplace-dashboard";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+import { createClient } from "@/app/lib/supabase/server";
 
 export async function generateMetadata() {
   return createPageMetadata("sellerDashboard", MARKETPLACE_PATHS.sellerDashboard);
 }
-import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function SellerDashboardPage() {
   const t = await getTranslations("marketplace");
-  const result = await getSellerDashboardData();
+  const tAccount = await getTranslations("account.dashboard");
+  const [result, supabase] = await Promise.all([
+    getSellerDashboardData(),
+    createClient(),
+  ]);
 
   if (result.unauthenticated) {
     redirect(loginRedirectPath(MARKETPLACE_PATHS.sellerDashboard));
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const sellerName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    result.dashboard?.listings[0]?.seller_name?.trim() ||
+    tAccount("defaultName");
+
   if (!result.dashboard) {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen bg-[#08111F] pt-28 pb-24 px-6">
-          <p className="text-red-300">{result.error ?? t("sellerDashboard.loadError")}</p>
+        <main className="min-h-screen overflow-x-hidden bg-[#081223] pt-28 pb-24 px-4 sm:px-5">
+          <div className="mx-auto max-w-[1440px]">
+            <p className="text-red-300">{result.error ?? t("sellerDashboard.loadError")}</p>
+          </div>
         </main>
       </>
     );
@@ -37,29 +51,9 @@ export default async function SellerDashboardPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <FadeUp>
-            <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
-                  {t("sellerDashboard.eyebrow")}
-                </p>
-                <h1 className="text-4xl font-black text-white mt-3">{t("sellerDashboard.title")}</h1>
-                <p className="mt-3 text-gray-400">{t("sellerDashboard.subtitle")}</p>
-              </div>
-              <Link
-                href={MARKETPLACE_PATHS.createListing}
-                className="inline-flex justify-center rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white transition"
-              >
-                {t("sellerDashboard.createListing")}
-              </Link>
-            </div>
-          </FadeUp>
-
-          <FadeUp>
-            <SellerDashboardClient dashboard={result.dashboard} />
-          </FadeUp>
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] pt-28 pb-[calc(5rem+env(safe-area-inset-bottom))] text-white lg:pb-24">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-5 lg:px-6">
+          <SellerDashboardClient dashboard={result.dashboard} sellerName={sellerName} />
         </div>
       </main>
     </>

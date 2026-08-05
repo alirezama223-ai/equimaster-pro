@@ -2,9 +2,8 @@
 
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { memo, useMemo, useState, useTransition } from "react";
 import {
   archiveHorseListing,
   deleteHorseListing,
@@ -14,18 +13,26 @@ import {
   restoreHorseListing,
   unpublishHorseListing,
 } from "@/app/actions/horse-listings";
-import ListingCardActions from "@/app/components/marketplace/ListingCardActions";
 import ListingPreview from "@/app/components/sell/ListingPreview";
+import FadeUp from "@/app/components/animations/FadeUp";
+import SellerDashboardAnalytics from "@/app/components/seller-dashboard/SellerDashboardAnalytics";
+import SellerDashboardListingsTable from "@/app/components/seller-dashboard/SellerDashboardListingsTable";
+import SellerDashboardMessages from "@/app/components/seller-dashboard/SellerDashboardMessages";
+import SellerDashboardMetricCard from "@/app/components/seller-dashboard/SellerDashboardMetricCard";
+import SellerDashboardQuickActions from "@/app/components/seller-dashboard/SellerDashboardQuickActions";
+import SellerDashboardTasks from "@/app/components/seller-dashboard/SellerDashboardTasks";
 import {
-  formatListingRowPrice,
-  getListingCoverImageUrl,
-  listingRowToFormData,
-  listingImagesFromRow,
-} from "@/app/lib/horse-listings";
+  buildAnalyticsSeries,
+  buildOverviewMetrics,
+  buildSellerTasks,
+  computeProfileScore,
+  countUnreadInquiries,
+  getGreetingPrefix,
+} from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import { listingRowToFormData, listingImagesFromRow } from "@/app/lib/horse-listings";
 import type { ListingActionKey } from "@/app/lib/marketplace/listing-actions-config";
-import { resolveListingStatus } from "@/app/lib/marketplace/listing-actions-config";
 import { resolveListingActionError } from "@/app/lib/marketplace/listing-action-errors";
-import { getListingEditPath, getPublicListingPath } from "@/app/lib/marketplace/paths";
+import { getPublicListingPath, getListingEditPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
 import type { SellerInquiry } from "@/app/types/inquiry";
@@ -46,23 +53,38 @@ type Props = {
     metricsByListingId: Record<string, SellerDashboardListingMetrics>;
     recentInquiries: SellerInquiry[];
   };
+  sellerName: string;
 };
 
-const STATUS_STYLES: Record<string, string> = {
-  active: "text-emerald-300 bg-emerald-500/10 border-emerald-500/30",
-  draft: "text-amber-200 bg-amber-500/10 border-amber-500/30",
-  sold: "text-blue-200 bg-blue-500/10 border-blue-500/30",
-  archived: "text-gray-300 bg-white/5 border-white/10",
-};
-
-type SectionKey = "drafts" | "published" | "sold" | "archived";
-
-export default function SellerDashboardClient({ dashboard }: Props) {
+function SellerDashboardClient({ dashboard, sellerName }: Props) {
   const t = useTranslations("marketplace");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const profileScore = useMemo(
+    () => computeProfileScore(dashboard.listings),
+    [dashboard.listings]
+  );
+  const unreadMessages = useMemo(
+    () => countUnreadInquiries(dashboard.recentInquiries),
+    [dashboard.recentInquiries]
+  );
+  const overviewMetrics = useMemo(
+    () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages),
+    [dashboard.stats, profileScore, unreadMessages]
+  );
+  const analyticsSeries = useMemo(
+    () =>
+      buildAnalyticsSeries(
+        dashboard.listings,
+        dashboard.metricsByListingId,
+        dashboard.recentInquiries
+      ),
+    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries]
+  );
+  const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
 
   function runListingAction(
     listing: HorseListingRow,
@@ -120,32 +142,42 @@ export default function SellerDashboardClient({ dashboard }: Props) {
     }
   }
 
-  const drafts = dashboard.listings.filter((listing) => resolveListingStatus(listing) === "draft");
-  const published = dashboard.listings.filter((listing) => resolveListingStatus(listing) === "active");
-  const sold = dashboard.listings.filter((listing) => resolveListingStatus(listing) === "sold");
-  const archived = dashboard.listings.filter((listing) => resolveListingStatus(listing) === "archived");
-
-  const sections: { key: SectionKey; listings: HorseListingRow[] }[] = [
-    { key: "drafts", listings: drafts },
-    { key: "published", listings: published },
-    { key: "sold", listings: sold },
-    { key: "archived", listings: archived },
-  ];
-
   return (
-    <div className="space-y-8">
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label={t("sellerDashboard.statsPublished")} value={dashboard.stats.active} />
-        <StatCard label={t("sellerDashboard.statsDrafts")} value={dashboard.stats.draft} />
-        <StatCard label={t("sellerDashboard.statsViews")} value={dashboard.stats.totalViews} />
-        <StatCard label={t("sellerDashboard.statsInquiries")} value={dashboard.stats.totalInquiries} />
-      </section>
+    <div className="space-y-8 lg:space-y-10">
+      <FadeUp immediate>
+        <header className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-[#132038] via-[#0d1628] to-[#081223] p-6 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-400">
+                {t("sellerDashboard.eyebrow")}
+              </p>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+                {getGreetingPrefix()}, {sellerName}
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
+                {t("sellerDashboard.subtitle")}
+              </p>
+            </div>
+            <Link
+              href={MARKETPLACE_PATHS.createListing}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+            >
+              {t("sellerDashboard.createListing")}
+            </Link>
+          </div>
+        </header>
+      </FadeUp>
 
-      <section className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label={t("sellerDashboard.statsFavorites")} value={dashboard.stats.totalFavorites} accent />
-        <StatCard label={t("sellerDashboard.statsSold")} value={dashboard.stats.sold} accent />
-        <StatCard label={t("sellerDashboard.statsArchived")} value={dashboard.stats.archived} accent />
-      </section>
+      <FadeUp>
+        <section aria-label="Overview metrics">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
+            {overviewMetrics.map((metric) => (
+              <SellerDashboardMetricCard key={metric.key} metric={metric} />
+            ))}
+          </div>
+        </section>
+      </FadeUp>
 
       {error ? (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -153,170 +185,41 @@ export default function SellerDashboardClient({ dashboard }: Props) {
         </div>
       ) : null}
 
-      {sections.map(({ key, listings }) => (
-        <ListingGroup
-          key={key}
-          title={t(`sellerDashboard.sections.${key}.title`)}
-          description={t(`sellerDashboard.sections.${key}.description`)}
-          listings={listings}
-          metricsByListingId={dashboard.metricsByListingId}
-          pendingId={pendingId}
-          isPending={isPending}
-          onAction={handleListingAction}
-        />
-      ))}
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-10">
+        <div className="min-w-0 space-y-8">
+          <FadeUp>
+            <SellerDashboardAnalytics series={analyticsSeries} />
+          </FadeUp>
 
-      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <h2 className="text-xl font-bold">{t("sellerDashboard.recentInquiries")}</h2>
-        {dashboard.recentInquiries.length === 0 ? (
-          <p className="mt-4 text-gray-400">{t("sellerDashboard.noInquiries")}</p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {dashboard.recentInquiries.map((inquiry) => (
-              <li
-                key={inquiry.id}
-                className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
-              >
-                <p className="font-semibold text-white">{inquiry.horse_name}</p>
-                <p className="text-sm text-gray-400 mt-1">{inquiry.buyer_name}</p>
-                <p className="text-sm text-gray-300 mt-2 line-clamp-2">{inquiry.message}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </div>
-  );
-}
+          <FadeUp>
+            <SellerDashboardListingsTable
+              listings={dashboard.listings}
+              metricsByListingId={dashboard.metricsByListingId}
+              pendingId={pendingId}
+              isPending={isPending}
+              onAction={handleListingAction}
+            />
+          </FadeUp>
 
-function ListingGroup({
-  title,
-  description,
-  listings,
-  metricsByListingId,
-  pendingId,
-  isPending,
-  onAction,
-}: {
-  title: string;
-  description: string;
-  listings: HorseListingRow[];
-  metricsByListingId: Record<string, SellerDashboardListingMetrics>;
-  pendingId: string | null;
-  isPending: boolean;
-  onAction: (key: ListingActionKey, listing: HorseListingRow) => void;
-}) {
-  const t = useTranslations("marketplace");
-  const tCommon = useTranslations("common");
-
-  return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold">{title}</h2>
-          <p className="mt-1 text-sm text-gray-400">{description}</p>
+          <FadeUp>
+            <SellerDashboardMessages inquiries={dashboard.recentInquiries} />
+          </FadeUp>
         </div>
-        <p className="text-sm text-gray-500">
-          {t("sellerDashboard.listingCount", { count: listings.length })}
-        </p>
+
+        <aside className="min-w-0 space-y-8">
+          <FadeUp>
+            <SellerDashboardTasks tasks={tasks} />
+          </FadeUp>
+          <FadeUp>
+            <SellerDashboardQuickActions />
+          </FadeUp>
+        </aside>
       </div>
-
-      {listings.length === 0 ? (
-        <p className="mt-4 text-gray-400">{t("sellerDashboard.noListingsInSection")}</p>
-      ) : (
-        <div className="mt-5 space-y-4">
-          {listings.map((listing) => {
-            const metrics = metricsByListingId[listing.id];
-            const busy = isPending && pendingId === listing.id;
-            const resolvedStatus = resolveListingStatus(listing);
-            const statusClass = STATUS_STYLES[resolvedStatus] ?? STATUS_STYLES.archived;
-
-            return (
-              <article
-                key={listing.id}
-                className="min-w-0 rounded-2xl border border-white/10 bg-[#08111F] p-4 sm:p-5"
-              >
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="flex min-w-0 flex-1 gap-4">
-                    <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-xl border border-white/10">
-                      <Image
-                        src={getListingCoverImageUrl(listing)}
-                        alt={listing.name}
-                        fill
-                        className="object-cover"
-                        sizes="128px"
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-lg font-semibold text-white">{listing.name}</h3>
-                        <span
-                          className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-wide ${statusClass}`}
-                        >
-                          {t(`sellerDashboard.statusLabels.${resolvedStatus}`)}
-                        </span>
-                      </div>
-
-                      <p className="text-gray-400 mt-1">
-                        {listing.breed} · {listing.discipline} ·{" "}
-                        {formatListingRowPrice(listing, tCommon("priceOnRequest"))}
-                      </p>
-
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t("sellerDashboard.metrics", {
-                          views: metrics?.viewCount ?? 0,
-                          favorites: metrics?.favoriteCount ?? 0,
-                          inquiries: metrics?.inquiryCount ?? 0,
-                        })}
-                      </p>
-
-                      {resolvedStatus === "active" && listing.slug ? (
-                        <Link
-                          href={getPublicListingPath(listing.slug)}
-                          className="inline-block mt-2 max-w-full truncate text-xs text-emerald-300 hover:text-emerald-200 transition"
-                        >
-                          {t("sellerDashboard.preview.viewPublic")}
-                        </Link>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  <ListingCardActions
-                    listing={listing}
-                    busy={busy}
-                    onAction={onAction}
-                  />
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border p-5 ${
-        accent ? "border-blue-500/20 bg-blue-500/5" : "border-white/10 bg-white/5"
-      }`}
-    >
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-2 text-3xl font-black text-white">{value}</p>
     </div>
   );
 }
+
+export default memo(SellerDashboardClient);
 
 export function ListingPreviewActions({
   listing,
@@ -360,10 +263,10 @@ export function ListingPreviewActions({
         </div>
       ) : null}
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Link
           href={getListingEditPath(listing.id)}
-          className="px-8 py-4 rounded-xl border border-white/20 text-white hover:bg-white/10 font-semibold transition text-center"
+          className="rounded-xl border border-white/20 px-8 py-4 text-center font-semibold text-white transition hover:bg-white/10"
         >
           {t("sellerDashboard.preview.backToEdit")}
         </Link>
@@ -372,14 +275,14 @@ export function ListingPreviewActions({
             type="button"
             onClick={handlePublish}
             disabled={isPending}
-            className="px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition disabled:opacity-60"
+            className="rounded-xl bg-emerald-600 px-8 py-4 font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-60"
           >
             {isPending ? t("sellerDashboard.preview.publishing") : t("sellerDashboard.preview.publish")}
           </button>
         ) : (
           <Link
             href={getPublicListingPath(listing.slug)}
-            className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition text-center"
+            className="rounded-xl bg-blue-600 px-8 py-4 text-center font-semibold text-white transition hover:bg-blue-500"
           >
             {t("sellerDashboard.preview.viewPublic")}
           </Link>
