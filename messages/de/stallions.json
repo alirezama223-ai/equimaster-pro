@@ -1,18 +1,18 @@
 {
   "directory": {
     "title": "Hengstverzeichnis",
-    "subtitle": "Finden Sie elite Zuchthengste nach Abstammung, Disziplin und Decktaxe.",
+    "subtitle": "Suchen Sie elite Zuchthengste nach Stammbaum, Disziplin und Decktaxe.",
     "searchLabel": "Suche",
-    "searchPlaceholder": "Hengstname, Vater, Muttervater …",
+    "searchPlaceholder": "Hengstname, Vater, Muttervater...",
     "breedLabel": "Rasse",
     "allBreeds": "Alle Rassen",
-    "allBreedsPlaceholder": "Alle Rassen …",
+    "allBreedsPlaceholder": "Alle Rassen…",
     "disciplineLabel": "Disziplin",
     "allDisciplines": "Alle Disziplinen",
-    "allDisciplinesPlaceholder": "Alle Disziplinen …",
+    "allDisciplinesPlaceholder": "Alle Disziplinen…",
     "countryLabel": "Land",
     "allCountries": "Alle Länder",
-    "allCountriesPlaceholder": "Alle Länder …",
+    "allCountriesPlaceholder": "Alle Länder…",
     "availabilityLabel": "Verfügbarkeit",
     "allStatuses": "Alle Status",
     "sireLabel": "Vater",
@@ -27,18 +27,18 @@
     "birthYearToLabel": "Geburtsjahr bis",
     "birthYearExampleOld": "z. B. 2005",
     "birthYearExampleYoung": "z. B. 2018",
-    "showingCount": "{count, plural, =1 {1 Hengst} other {# Hengste}}",
+    "showingCount": "{count, plural, =1 {1 Hengst} other {# Hengste}} angezeigt",
     "resetFilters": "Filter zurücksetzen",
     "loadError": "Hengste konnten nicht geladen werden: {error}",
     "emptyTitle": "Keine Hengste gefunden",
-    "emptyNoData": "Das Hengstverzeichnis ist bereit. Gestüte können Hengste über ihr Konto hinzufügen, sobald Profile erstellt sind.",
+    "emptyNoData": "Das Hengstverzeichnis ist bereit. Gestüte können Hengste aus ihrem Konto hinzufügen, sobald Profile erstellt sind.",
     "emptyFiltered": "Passen Sie Ihre Filter an, um weitere Zuchthengste zu entdecken."
   },
   "availability": {
     "available": "Verfügbar",
     "limited": "Begrenzt",
-    "booked": "Ausgebucht",
-    "retired": "Im Ruhestand"
+    "booked": "Vollständig gebucht",
+    "retired": "Pensioniert"
   },
   "card": {
     "studFee": "Decktaxe",
@@ -69,11 +69,11 @@
     "noContactDetails": "Öffentliche Kontaktdaten für dieses Gestüt sind noch nicht veröffentlicht."
   },
   "pedigree": {
-    "title": "Abstammung",
+    "title": "Stammbaum",
     "sire": "Vater",
     "dam": "Mutter",
     "damSire": "Muttervater",
-    "futureRelease": "Erweiterte Abstammungstabellen werden in einer zukünftigen Version verfügbar sein."
+    "futureRelease": "Erweiterte Stammbaumdiagramme werden in einer zukünftigen Version verfügbar sein."
   },
   "detail": {
     "backToDirectory": "← Zurück zum Hengstverzeichnis",
@@ -88,15 +88,21 @@
     "discipline": "Disziplin",
     "competitionLevel": "Wettkampfniveau",
     "studFee": "Decktaxe",
-    "useInBreedingLab": "Im Zuchtlabor verwenden →",
-    "viewFullPedigree": "Vollständige Abstammung ansehen →",
+    "useInBreedingLab": "Im Zucht-Labor verwenden →",
+    "viewFullPedigree": "Vollständigen Stammbaum ansehen →",
     "studFarm": "Gestüt",
     "breedingMethods": "Zuchtmethoden",
     "about": "Über",
     "competitionPerformance": "Wettkampf & Leistung",
-    "breedingHighlights": "Zuchthöhepunkte",
-    "traitSummaryNote": "Nur öffentliche Zusammenfassung. Aggregiert aus verfügbaren strukturierten Nachweisen mit Konfidenzgewichtung.",
-    "manageTraitEvidence": "Merkmalsnachweise verwalten →",
+    "breedingHighlights": "Zucht-Highlights",
+    "traitSummaryNote": "Nur öffentliche Zusammenfassung. Aggregiert aus verfügbaren strukturierten Belegen mit Vertrauensgewichtung.",
+    "manageTraitEvidence": "Merkmalsbelege verwalten →",
     "emptyValue": "—"
+  },
+  "breedingMethods": {
+    "freshSemen": "Frischsperma",
+    "chilledSemen": "Gekühltes Sperma",
+    "frozenSemen": "Gefrorenes Sperma",
+    "naturalCovering": "Natürliche Deckung"
   }
 }

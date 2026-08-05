@@ -1,18 +1,18 @@
 {
   "directory": {
-    "title": "Répertoire des étalons",
-    "subtitle": "Recherchez des étalons de reproduction d'élite par pedigree, discipline et tarif de saillie.",
+    "title": "Répertoire d'étalons",
+    "subtitle": "Recherchez des étalons reproducteurs d'élite par pedigree, discipline et saillie.",
     "searchLabel": "Recherche",
-    "searchPlaceholder": "Nom d'étalon, père, père de mère …",
+    "searchPlaceholder": "Nom d'étalon, père, père de mère...",
     "breedLabel": "Race",
     "allBreeds": "Toutes les races",
-    "allBreedsPlaceholder": "Toutes les races …",
+    "allBreedsPlaceholder": "Toutes les races…",
     "disciplineLabel": "Discipline",
     "allDisciplines": "Toutes les disciplines",
-    "allDisciplinesPlaceholder": "Toutes les disciplines …",
+    "allDisciplinesPlaceholder": "Toutes les disciplines…",
     "countryLabel": "Pays",
     "allCountries": "Tous les pays",
-    "allCountriesPlaceholder": "Tous les pays …",
+    "allCountriesPlaceholder": "Tous les pays…",
     "availabilityLabel": "Disponibilité",
     "allStatuses": "Tous les statuts",
     "sireLabel": "Père",
@@ -21,18 +21,18 @@
     "damSirePlaceholder": "Nom du père de mère",
     "minStudFeeLabel": "Saillie min.",
     "maxStudFeeLabel": "Saillie max.",
-    "studFeeExampleLow": "ex. 1000",
-    "studFeeExampleHigh": "ex. 5000",
+    "studFeeExampleLow": "p. ex. 1000",
+    "studFeeExampleHigh": "p. ex. 5000",
     "birthYearFromLabel": "Année de naissance de",
     "birthYearToLabel": "Année de naissance à",
-    "birthYearExampleOld": "ex. 2005",
-    "birthYearExampleYoung": "ex. 2018",
-    "showingCount": "{count, plural, =1 {1 étalon} other {# étalons}}",
+    "birthYearExampleOld": "p. ex. 2005",
+    "birthYearExampleYoung": "p. ex. 2018",
+    "showingCount": "Affichage de {count, plural, =1 {1 étalon} other {# étalons}}",
     "resetFilters": "Réinitialiser les filtres",
     "loadError": "Impossible de charger les étalons : {error}",
     "emptyTitle": "Aucun étalon trouvé",
-    "emptyNoData": "Le répertoire des étalons est prêt. Les haras peuvent ajouter des étalons depuis leur compte une fois les profils créés.",
-    "emptyFiltered": "Ajustez vos filtres pour découvrir plus d'étalons reproducteurs."
+    "emptyNoData": "Le répertoire d'étalons est prêt. Les haras peuvent ajouter des étalons depuis leur compte une fois les profils créés.",
+    "emptyFiltered": "Essayez d'ajuster vos filtres pour découvrir plus d'étalons reproducteurs."
   },
   "availability": {
     "available": "Disponible",
@@ -41,7 +41,7 @@
     "retired": "Retraité"
   },
   "card": {
-    "studFee": "Tarif de saillie",
+    "studFee": "Saillie",
     "born": "Né",
     "discipline": "Discipline",
     "level": "Niveau",
@@ -53,9 +53,9 @@
     "eyebrow": "Génétique d'élite",
     "title": "Étalons premium",
     "subtitle": "Découvrez les étalons reproducteurs les plus performants au monde.",
-    "browseDirectory": "Parcourir le répertoire des étalons →",
+    "browseDirectory": "Parcourir le répertoire d'étalons →",
     "age": "Âge",
-    "studFee": "Tarif de saillie",
+    "studFee": "Saillie",
     "viewStallion": "Voir l'étalon"
   },
   "contact": {
@@ -66,17 +66,17 @@
     "emailButton": "Envoyer un e-mail au haras",
     "callButton": "Appeler {phone}",
     "websiteButton": "Visiter le site web",
-    "noContactDetails": "Les coordonnées publiques de ce haras ne sont pas encore publiées."
+    "noContactDetails": "Les coordonnées publiques ne sont pas encore publiées pour ce haras."
   },
   "pedigree": {
     "title": "Pedigree",
     "sire": "Père",
     "dam": "Mère",
     "damSire": "Père de mère",
-    "futureRelease": "Des tableaux de pedigree étendus seront disponibles dans une prochaine version."
+    "futureRelease": "Des tableaux généalogiques étendus seront disponibles dans une future version."
   },
   "detail": {
-    "backToDirectory": "← Retour au répertoire des étalons",
+    "backToDirectory": "← Retour au répertoire d'étalons",
     "coverAlt": "Couverture de {name}",
     "birthYear": "Année de naissance",
     "age": "Âge",
@@ -87,16 +87,22 @@
     "country": "Pays",
     "discipline": "Discipline",
     "competitionLevel": "Niveau de compétition",
-    "studFee": "Tarif de saillie",
-    "useInBreedingLab": "Utiliser dans le laboratoire de reproduction →",
+    "studFee": "Saillie",
+    "useInBreedingLab": "Utiliser dans le laboratoire d'élevage →",
     "viewFullPedigree": "Voir le pedigree complet →",
     "studFarm": "Haras",
     "breedingMethods": "Méthodes de reproduction",
     "about": "À propos",
-    "competitionPerformance": "Compétition & performance",
-    "breedingHighlights": "Points forts en reproduction",
+    "competitionPerformance": "Compétition et performance",
+    "breedingHighlights": "Points forts de l'élevage",
     "traitSummaryNote": "Résumé public uniquement. Agrégé à partir des preuves structurées disponibles avec pondération de confiance.",
     "manageTraitEvidence": "Gérer les preuves de traits →",
     "emptyValue": "—"
+  },
+  "breedingMethods": {
+    "freshSemen": "Semence fraîche",
+    "chilledSemen": "Semence réfrigérée",
+    "frozenSemen": "Semence congelée",
+    "naturalCovering": "Saillie naturelle"
   }
 }

@@ -3,41 +3,41 @@
     "title": "Directorio de sementales",
     "subtitle": "Busque sementales de cría de élite por pedigree, disciplina y tarifa de cubrición.",
     "searchLabel": "Buscar",
-    "searchPlaceholder": "Nombre del semental, padre, abuelo materno …",
+    "searchPlaceholder": "Nombre del semental, padre, abuelo materno...",
     "breedLabel": "Raza",
     "allBreeds": "Todas las razas",
-    "allBreedsPlaceholder": "Todas las razas …",
+    "allBreedsPlaceholder": "Todas las razas…",
     "disciplineLabel": "Disciplina",
     "allDisciplines": "Todas las disciplinas",
-    "allDisciplinesPlaceholder": "Todas las disciplinas …",
+    "allDisciplinesPlaceholder": "Todas las disciplinas…",
     "countryLabel": "País",
     "allCountries": "Todos los países",
-    "allCountriesPlaceholder": "Todos los países …",
+    "allCountriesPlaceholder": "Todos los países…",
     "availabilityLabel": "Disponibilidad",
     "allStatuses": "Todos los estados",
     "sireLabel": "Padre",
     "sirePlaceholder": "Nombre del padre",
     "damSireLabel": "Abuelo materno",
     "damSirePlaceholder": "Nombre del abuelo materno",
-    "minStudFeeLabel": "Tarifa mín.",
-    "maxStudFeeLabel": "Tarifa máx.",
-    "studFeeExampleLow": "ej. 1000",
-    "studFeeExampleHigh": "ej. 5000",
+    "minStudFeeLabel": "Tarifa mínima",
+    "maxStudFeeLabel": "Tarifa máxima",
+    "studFeeExampleLow": "p. ej. 1000",
+    "studFeeExampleHigh": "p. ej. 5000",
     "birthYearFromLabel": "Año de nacimiento desde",
     "birthYearToLabel": "Año de nacimiento hasta",
-    "birthYearExampleOld": "ej. 2005",
-    "birthYearExampleYoung": "ej. 2018",
-    "showingCount": "{count, plural, =1 {1 semental} other {# sementales}}",
+    "birthYearExampleOld": "p. ej. 2005",
+    "birthYearExampleYoung": "p. ej. 2018",
+    "showingCount": "Mostrando {count, plural, =1 {1 semental} other {# sementales}}",
     "resetFilters": "Restablecer filtros",
     "loadError": "No se pudieron cargar los sementales: {error}",
     "emptyTitle": "No se encontraron sementales",
     "emptyNoData": "El directorio de sementales está listo. Las yeguadas pueden añadir sementales desde su cuenta una vez creados los perfiles.",
-    "emptyFiltered": "Ajuste sus filtros para descubrir más sementales reproductores."
+    "emptyFiltered": "Intente ajustar sus filtros para descubrir más sementales de cría."
   },
   "availability": {
     "available": "Disponible",
     "limited": "Limitado",
-    "booked": "Completo",
+    "booked": "Completamente reservado",
     "retired": "Retirado"
   },
   "card": {
@@ -52,7 +52,7 @@
   "premium": {
     "eyebrow": "Genética de élite",
     "title": "Sementales premium",
-    "subtitle": "Descubra los sementales reproductores más exitosos del mundo.",
+    "subtitle": "Descubra los sementales de cría más exitosos del mundo.",
     "browseDirectory": "Explorar directorio de sementales →",
     "age": "Edad",
     "studFee": "Tarifa de cubrición",
@@ -66,14 +66,14 @@
     "emailButton": "Enviar correo a la yeguada",
     "callButton": "Llamar a {phone}",
     "websiteButton": "Visitar sitio web",
-    "noContactDetails": "Los datos de contacto públicos de esta yeguada aún no están publicados."
+    "noContactDetails": "Los datos de contacto públicos aún no están publicados para esta yeguada."
   },
   "pedigree": {
     "title": "Pedigree",
     "sire": "Padre",
     "dam": "Madre",
     "damSire": "Abuelo materno",
-    "futureRelease": "Los cuadros de pedigree ampliados estarán disponibles en una versión futura."
+    "futureRelease": "Los diagramas de pedigree ampliados estarán disponibles en una versión futura."
   },
   "detail": {
     "backToDirectory": "← Volver al directorio de sementales",
@@ -95,8 +95,14 @@
     "about": "Acerca de",
     "competitionPerformance": "Competición y rendimiento",
     "breedingHighlights": "Destacados de cría",
-    "traitSummaryNote": "Solo resumen público. Agregado a partir de evidencia estructurada disponible con ponderación de confianza.",
+    "traitSummaryNote": "Solo resumen público. Agregado de evidencia estructurada disponible con ponderación de confianza.",
     "manageTraitEvidence": "Gestionar evidencia de rasgos →",
     "emptyValue": "—"
+  },
+  "breedingMethods": {
+    "freshSemen": "Semen fresco",
+    "chilledSemen": "Semen refrigerado",
+    "frozenSemen": "Semen congelado",
+    "naturalCovering": "Monta natural"
   }
 }
