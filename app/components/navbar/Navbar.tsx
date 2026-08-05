@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import NavbarAuthControls from "@/app/components/navbar/NavbarAuthControls";
 import NavbarDesktopMenu from "@/app/components/navbar/NavbarDesktopMenu";
+import NavbarMobileMenu from "@/app/components/navbar/NavbarMobileMenu";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
+import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
 import {
   DESKTOP_INLINE_NAV_LINKS,
   navLinkClassName,
@@ -14,10 +16,22 @@ import {
 export default function Navbar() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
+  const { brandShort } = useNavbarBrandLabels();
 
   return (
     <header className="glass-surface fixed top-0 left-0 z-50 w-full border-b border-white/10">
-      <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-3 px-3 md:hidden">
+        <Link
+          href="/"
+          className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-base font-black text-white transition hover:text-blue-400"
+        >
+          {brandShort}
+        </Link>
+
+        <NavbarMobileMenu />
+      </div>
+
+      <div className="mx-auto hidden h-16 min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 md:flex lg:px-8">
         <Link
           href="/"
           className="inline-flex min-h-11 min-w-0 max-w-[9.5rem] items-center truncate text-base font-black text-white transition hover:text-blue-400 sm:max-w-none sm:shrink-0 sm:text-lg 2xl:text-2xl"

@@ -2,15 +2,24 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FeedbackModal from "@/app/components/feedback/FeedbackModal";
 import { detectBrowserName, detectOperatingSystem } from "@/app/lib/feedback/client-env";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
-import { SAFE_AREA_PADDING_STYLE } from "@/app/lib/browser-compat";
 
 type Props = {
   isAuthenticated: boolean;
 };
+
+let mobileFeedbackOpenHandler: (() => void) | null = null;
+
+export function openMobileFeedbackMenu() {
+  mobileFeedbackOpenHandler?.();
+}
+
+function registerMobileFeedbackOpenHandler(handler: (() => void) | null) {
+  mobileFeedbackOpenHandler = handler;
+}
 
 export default function FeedbackWidget({ isAuthenticated }: Props) {
   const t = useTranslations("feedback");
@@ -32,14 +41,19 @@ export default function FeedbackWidget({ isAuthenticated }: Props) {
     };
   }, [isOpen]);
 
-  function handleOpen() {
+  const handleOpen = useCallback(() => {
     if (!isAuthenticated) {
       router.push(loginRedirectPath(pathname));
       return;
     }
 
     setIsOpen(true);
-  }
+  }, [isAuthenticated, pathname, router]);
+
+  useEffect(() => {
+    registerMobileFeedbackOpenHandler(handleOpen);
+    return () => registerMobileFeedbackOpenHandler(null);
+  }, [handleOpen]);
 
   return (
     <>
@@ -47,13 +61,12 @@ export default function FeedbackWidget({ isAuthenticated }: Props) {
         type="button"
         onClick={handleOpen}
         aria-label={t("floatingButtonAria")}
-        style={SAFE_AREA_PADDING_STYLE}
-        className="glass-surface fixed bottom-4 right-4 z-40 inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-blue-500/40 px-3 text-sm font-semibold text-white shadow-xl shadow-blue-900/30 transition hover:border-blue-400 hover:bg-blue-600 sm:bottom-6 sm:right-6 sm:px-5 sm:py-3.5"
+        className="glass-surface fixed z-40 hidden h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-blue-500/40 px-5 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-900/30 transition hover:border-blue-400 hover:bg-blue-600 md:inline-flex md:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] md:right-[max(1.5rem,env(safe-area-inset-right,0px))]"
       >
         <span aria-hidden className="text-base">
           💬
         </span>
-        <span className="hidden min-[360px]:inline">{t("floatingButton")}</span>
+        <span>{t("floatingButton")}</span>
       </button>
 
       {isOpen ? (
