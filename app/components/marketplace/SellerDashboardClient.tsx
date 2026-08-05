@@ -21,6 +21,8 @@ import SellerDashboardMessages from "@/app/components/seller-dashboard/SellerDas
 import SellerDashboardMetricCard from "@/app/components/seller-dashboard/SellerDashboardMetricCard";
 import SellerDashboardQuickActions from "@/app/components/seller-dashboard/SellerDashboardQuickActions";
 import SellerDashboardTasks from "@/app/components/seller-dashboard/SellerDashboardTasks";
+import SellerCrmHub from "@/app/components/seller-dashboard/crm/SellerCrmHub";
+import { buildSellerCrmData } from "@/app/components/seller-dashboard/crm/seller-crm-demo-data";
 import {
   buildAnalyticsSeries,
   buildOverviewMetrics,
@@ -58,7 +60,9 @@ type Props = {
 
 function SellerDashboardClient({ dashboard, sellerName }: Props) {
   const t = useTranslations("marketplace");
+  const tCommon = useTranslations("common");
   const router = useRouter();
+  const [activeView, setActiveView] = useState<"overview" | "crm">("crm");
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -85,6 +89,17 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries]
   );
   const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
+  const crmData = useMemo(
+    () =>
+      buildSellerCrmData({
+        listings: dashboard.listings,
+        metricsByListingId: dashboard.metricsByListingId,
+        recentInquiries: dashboard.recentInquiries,
+        stats: dashboard.stats,
+        priceOnRequestLabel: tCommon("priceOnRequest"),
+      }),
+    [dashboard, tCommon]
+  );
 
   function runListingAction(
     listing: HorseListingRow,
@@ -156,15 +171,40 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
                 {getGreetingPrefix()}, {sellerName}
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
-                {t("sellerDashboard.subtitle")}
+                {activeView === "crm"
+                  ? "Manage buyers, pipeline deals, visits, and performance from one premium CRM workspace."
+                  : t("sellerDashboard.subtitle")}
               </p>
             </div>
-            <Link
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="inline-flex rounded-xl border border-white/10 bg-[#08111F]/80 p-1">
+                {(
+                  [
+                    { key: "crm", label: "CRM Hub" },
+                    { key: "overview", label: "Overview" },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setActiveView(tab.key)}
+                    className={`min-h-11 rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                      activeView === tab.key
+                        ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.35)]"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <Link
               href={MARKETPLACE_PATHS.createListing}
               className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
             >
               {t("sellerDashboard.createListing")}
             </Link>
+            </div>
           </div>
         </header>
       </FadeUp>
@@ -185,36 +225,40 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
         </div>
       ) : null}
 
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-10">
-        <div className="min-w-0 space-y-8">
-          <FadeUp>
-            <SellerDashboardAnalytics series={analyticsSeries} />
-          </FadeUp>
+      {activeView === "crm" ? (
+        <SellerCrmHub crm={crmData} />
+      ) : (
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-10">
+          <div className="min-w-0 space-y-8">
+            <FadeUp>
+              <SellerDashboardAnalytics series={analyticsSeries} />
+            </FadeUp>
 
-          <FadeUp>
-            <SellerDashboardListingsTable
-              listings={dashboard.listings}
-              metricsByListingId={dashboard.metricsByListingId}
-              pendingId={pendingId}
-              isPending={isPending}
-              onAction={handleListingAction}
-            />
-          </FadeUp>
+            <FadeUp>
+              <SellerDashboardListingsTable
+                listings={dashboard.listings}
+                metricsByListingId={dashboard.metricsByListingId}
+                pendingId={pendingId}
+                isPending={isPending}
+                onAction={handleListingAction}
+              />
+            </FadeUp>
 
-          <FadeUp>
-            <SellerDashboardMessages inquiries={dashboard.recentInquiries} />
-          </FadeUp>
+            <FadeUp>
+              <SellerDashboardMessages inquiries={dashboard.recentInquiries} />
+            </FadeUp>
+          </div>
+
+          <aside className="min-w-0 space-y-8">
+            <FadeUp>
+              <SellerDashboardTasks tasks={tasks} />
+            </FadeUp>
+            <FadeUp>
+              <SellerDashboardQuickActions />
+            </FadeUp>
+          </aside>
         </div>
-
-        <aside className="min-w-0 space-y-8">
-          <FadeUp>
-            <SellerDashboardTasks tasks={tasks} />
-          </FadeUp>
-          <FadeUp>
-            <SellerDashboardQuickActions />
-          </FadeUp>
-        </aside>
-      </div>
+      )}
     </div>
   );
 }

@@ -21,10 +21,10 @@ export function SellerDashboardPageSkeleton() {
           <div className="h-80 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
           <div className="h-[420px] animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
           <div className="h-72 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
+          <div className="h-64 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
         </div>
         <div className="space-y-6">
-          <div className="h-72 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
-          <div className="h-80 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
+          <div className="h-96 animate-pulse rounded-3xl border border-white/[0.04] bg-[#111827]" />
         </div>
       </div>
     </div>
