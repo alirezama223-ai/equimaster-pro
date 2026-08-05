@@ -76,16 +76,15 @@ export default function NavbarMobileMenu() {
         role="dialog"
         aria-modal="true"
         aria-label={t("menu")}
-        className="fixed inset-0 z-[200] flex h-[100dvh] w-screen flex-col overflow-hidden md:hidden"
-        style={{ background: "var(--background)" }}
+        className="fixed inset-0 z-[200] flex h-[100dvh] w-screen flex-col overflow-hidden bg-slate-950 text-white md:hidden"
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
           <span className="text-base font-black text-white">{brandShort}</span>
           <button
             type="button"
             aria-label={t("closeMenu")}
             onClick={closeMenu}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-white transition hover:bg-slate-800"
           >
             <svg
               aria-hidden="true"
@@ -108,7 +107,7 @@ export default function NavbarMobileMenu() {
                 href={link.href}
                 role="menuitem"
                 onClick={closeMenu}
-                className={`min-h-11 px-3 py-2.5 text-sm font-medium text-gray-200 ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
+                className={`min-h-11 px-3 py-2.5 text-sm font-medium text-white ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
               >
                 {t(link.labelKey)}
               </Link>
@@ -116,17 +115,17 @@ export default function NavbarMobileMenu() {
           </nav>
 
           <div
-            className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3"
+            className="mt-3 rounded-xl border border-slate-800 bg-[#08111F] p-3"
             role="group"
             aria-label={tCommon("language")}
           >
             <p className="mb-2 text-sm font-medium text-white">{tCommon("language")}</p>
-            <div className="[&_label]:w-full [&_select]:w-full">
+            <div className="[&_label]:w-full [&_label]:text-slate-300 [&_select]:w-full [&_select]:rounded-lg [&_select]:border [&_select]:border-white/15 [&_select]:bg-[#08111F] [&_select]:px-2 [&_select]:py-1.5 [&_select]:text-sm [&_select]:text-white [&_select]:outline-none [&_select]:focus:border-blue-500">
               <LocaleSwitcher />
             </div>
           </div>
 
-          <div className="my-3 border-t border-white/10" aria-hidden="true" />
+          <div className="my-3 border-t border-slate-800" aria-hidden="true" />
 
           <div className="grid gap-2">
             <Link
@@ -145,7 +144,7 @@ export default function NavbarMobileMenu() {
             </Link>
 
             {isLoading ? (
-              <div className="h-11 animate-pulse rounded-xl bg-white/10" aria-hidden="true" />
+              <div className="h-11 animate-pulse rounded-xl bg-slate-800" aria-hidden="true" />
             ) : null}
 
             {!isLoading && !user ? (
@@ -154,7 +153,7 @@ export default function NavbarMobileMenu() {
                   href="/login"
                   role="menuitem"
                   onClick={closeMenu}
-                  className={`${actionLinkClass} bg-white/10 hover:bg-white/20`}
+                  className={`${actionLinkClass} bg-slate-900 hover:bg-slate-800`}
                 >
                   {t("login")}
                 </Link>
@@ -162,7 +161,7 @@ export default function NavbarMobileMenu() {
                   href="/signup"
                   role="menuitem"
                   onClick={closeMenu}
-                  className={`${actionLinkClass} border border-white/20 hover:bg-white hover:text-black`}
+                  className={`${actionLinkClass} border border-slate-800 hover:bg-slate-900`}
                 >
                   {t("signup")}
                 </Link>
@@ -185,11 +184,11 @@ export default function NavbarMobileMenu() {
                   href="/account"
                   role="menuitem"
                   onClick={closeMenu}
-                  className={`${actionLinkClass} border border-white/20 hover:bg-white/10`}
+                  className={`${actionLinkClass} border border-slate-800 hover:bg-slate-900`}
                 >
                   {t("account")}
                 </Link>
-                <div className="overflow-hidden rounded-xl border border-white/10">
+                <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
                   <LogoutButton variant="menu" />
                 </div>
               </>
@@ -211,7 +210,7 @@ export default function NavbarMobileMenu() {
             </button>
 
             <div className="flex min-h-11 items-center justify-between gap-3 rounded-xl px-3 py-2">
-              <span className="text-sm text-gray-400">{t("notifications")}</span>
+              <span className="text-sm text-slate-300">{t("notifications")}</span>
               <NotificationBell />
             </div>
           </div>
