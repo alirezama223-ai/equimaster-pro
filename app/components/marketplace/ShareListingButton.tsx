@@ -1,5 +1,6 @@
 "use client";
 
+import { copyTextToClipboard } from "@/app/lib/browser-compat";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -24,9 +25,11 @@ export default function ShareListingButton({ url, title }: Props) {
       }
     }
 
-    await navigator.clipboard.writeText(absoluteUrl);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    const copied = await copyTextToClipboard(absoluteUrl);
+    if (copied) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    }
   }
 
   return (

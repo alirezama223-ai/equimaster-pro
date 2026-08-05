@@ -3,12 +3,14 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
+import FloatingPortal from "@/app/components/shared/FloatingPortal";
 import type { ListingActionDef, ListingActionKey } from "@/app/lib/marketplace/listing-actions-config";
 import {
   getListingMenuActions,
   getListingViewAction,
 } from "@/app/lib/marketplace/listing-actions-config";
 import type { HorseListingRow } from "@/app/types/horse-listing";
+import { isFloatingOverlayNode } from "@/app/lib/floating-position";
 
 type Props = {
   listing: HorseListingRow;
@@ -22,6 +24,7 @@ export default function ListingCardActions({ listing, busy = false, onAction }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const viewAction = getListingViewAction(listing);
   const menuActions = getListingMenuActions(listing);
@@ -31,9 +34,10 @@ export default function ListingCardActions({ listing, busy = false, onAction }: 
     if (!menuOpen) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
+      const target = event.target as Node;
+      if (menuRef.current?.contains(target)) return;
+      if (isFloatingOverlayNode(target)) return;
+      setMenuOpen(false);
     }
 
     function handleEscape(event: KeyboardEvent) {
@@ -118,6 +122,7 @@ export default function ListingCardActions({ listing, busy = false, onAction }: 
         {showMenuTrigger ? (
           <div className="relative shrink-0" ref={menuRef}>
             <button
+              ref={triggerRef}
               type="button"
               aria-haspopup="menu"
               aria-expanded={menuOpen || sheetOpen}
@@ -131,21 +136,29 @@ export default function ListingCardActions({ listing, busy = false, onAction }: 
             </button>
 
             {menuOpen ? (
-              <div
-                id={menuId}
-                role="menu"
-                className="absolute right-0 z-20 mt-2 block min-w-[11rem] overflow-hidden rounded-xl border border-white/10 bg-[#0f172a] py-1 shadow-2xl shadow-black/40"
+              <FloatingPortal
+                anchorRef={triggerRef}
+                open={menuOpen}
+                placement="bottom-end"
+                matchWidth={false}
+                floatingWidth={176}
               >
-                {menuActions.map((action) => (
-                  <CompactMenuItem
-                    key={action.key}
-                    action={action}
-                    listing={listing}
-                    label={getActionLabel(action)}
-                    onSelect={handleSelect}
-                  />
-                ))}
-              </div>
+                <div
+                  id={menuId}
+                  role="menu"
+                  className="min-w-[11rem] overflow-hidden rounded-xl border border-white/10 bg-[#0f172a] py-1 shadow-2xl shadow-black/40"
+                >
+                  {menuActions.map((action) => (
+                    <CompactMenuItem
+                      key={action.key}
+                      action={action}
+                      listing={listing}
+                      label={getActionLabel(action)}
+                      onSelect={handleSelect}
+                    />
+                  ))}
+                </div>
+              </FloatingPortal>
             ) : null}
           </div>
         ) : null}

@@ -48,7 +48,7 @@ export default function BreederDirectoryClient({ breeders, loadError }: Props) {
 
       <main className="min-h-screen bg-[#081223] pt-20">
         <section className="bg-[#08111F] py-14">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="rounded-3xl bg-[#111C2E] border border-gray-800 shadow-2xl p-6 sm:p-8">
               <div className="text-center mb-10">
                 <h1 className="text-3xl sm:text-4xl font-bold text-white">
@@ -109,7 +109,7 @@ export default function BreederDirectoryClient({ breeders, loadError }: Props) {
           </div>
         </section>
 
-        <section className="max-w-7xl mx-auto px-6 pb-24">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
           {loadError ? (
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200 mb-8">
               {t("directory.loadError", { error: loadError })}

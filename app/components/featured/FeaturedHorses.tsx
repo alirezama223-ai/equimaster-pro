@@ -14,15 +14,15 @@ export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Prop
   const t = useTranslations("home.featured");
 
   return (
-    <section className="bg-[#08111F] py-32">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-[#08111F] py-20 sm:py-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <FadeUp>
-          <div className="text-center mb-16">
-            <p className="uppercase tracking-[6px] text-blue-500 text-sm font-semibold">
+          <div className="text-center mb-12 sm:mb-16">
+            <p className="uppercase tracking-[0.2em] text-blue-500 text-sm font-semibold sm:tracking-[6px]">
               {t("eyebrow")}
             </p>
 
-            <h2 className="mt-4 text-6xl font-black text-white">{t("title")}</h2>
+            <h2 className="mt-4 text-3xl font-black text-white sm:text-5xl lg:text-6xl">{t("title")}</h2>
 
             <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-400">{t("subtitle")}</p>
           </div>
@@ -39,10 +39,11 @@ export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Prop
             <p className="text-gray-400 mt-4">{t("emptyDescription")}</p>
           </div>
         ) : (
-          <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
-            {horses.map((horse) => (
-              <FadeUp key={horse.listingUuid ?? horse.id}>
+          <FadeUp>
+            <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+              {horses.map((horse) => (
                 <HorseCard
+                  key={horse.listingUuid ?? horse.id}
                   horse={horse}
                   labelsScope="home"
                   isFavorited={
@@ -51,9 +52,9 @@ export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Prop
                       : false
                   }
                 />
-              </FadeUp>
-            ))}
-          </div>
+              ))}
+            </div>
+          </FadeUp>
         )}
       </div>
     </section>

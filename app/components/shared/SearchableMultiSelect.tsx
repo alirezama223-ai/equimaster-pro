@@ -9,7 +9,10 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { useTranslations } from "next-intl";
+import FloatingPortal from "@/app/components/shared/FloatingPortal";
 import type { SearchableSelectOption } from "@/app/components/shared/SearchableSelect";
+import { isFloatingOverlayNode } from "@/app/lib/floating-position";
 
 type Props = {
   id?: string;
@@ -27,15 +30,17 @@ export default function SearchableMultiSelect({
   values,
   onChange,
   options,
-  placeholder = "Search and add…",
+  placeholder,
   disabled = false,
   className,
   inputClassName,
 }: Props) {
+  const tCommon = useTranslations("common");
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const listboxId = `${inputId}-listbox`;
   const containerRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [open, setOpen] = useState(false);
@@ -84,9 +89,10 @@ export default function SearchableMultiSelect({
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        close();
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (isFloatingOverlayNode(target)) return;
+      close();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -131,7 +137,7 @@ export default function SearchableMultiSelect({
 
   return (
     <div ref={containerRef} className={className ?? "space-y-3"}>
-      <div className="relative">
+      <div ref={fieldRef} className="relative">
         <input
           ref={inputRef}
           id={inputId}
@@ -143,7 +149,7 @@ export default function SearchableMultiSelect({
           autoComplete="off"
           disabled={disabled}
           value={query}
-          placeholder={placeholder}
+          placeholder={placeholder ?? tCommon("searchAndAddPlaceholder")}
           className={inputClassName}
           onFocus={() => {
             if (!disabled) {
@@ -165,35 +171,41 @@ export default function SearchableMultiSelect({
         />
 
         {open && filteredOptions.length > 0 ? (
-          <ul
-            id={listboxId}
-            role="listbox"
-            className="absolute z-50 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-gray-700 bg-[#0B1526] py-2 shadow-2xl"
-          >
-            {filteredOptions.map((option, index) => (
-              <li key={option.value} role="option" aria-selected={false}>
-                <button
-                  type="button"
-                  className={`block w-full px-4 py-2.5 text-left text-sm transition ${
-                    index === highlightIndex
-                      ? "bg-blue-600/20 text-white"
-                      : "text-gray-200 hover:bg-white/5"
-                  }`}
-                  onMouseDown={(event) => event.preventDefault()}
-                  onMouseEnter={() => setHighlightIndex(index)}
-                  onClick={() => addValue(option.value)}
-                >
-                  {option.label}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <FloatingPortal anchorRef={fieldRef} open={open} matchWidth>
+            <ul
+              id={listboxId}
+              role="listbox"
+              className="max-h-full w-full overflow-y-auto rounded-xl border border-gray-700 bg-[#0B1526] py-2 shadow-2xl"
+            >
+              {filteredOptions.map((option, index) => (
+                <li key={option.value} role="option" aria-selected={false}>
+                  <button
+                    type="button"
+                    className={`block w-full px-4 py-2.5 text-left text-sm transition ${
+                      index === highlightIndex
+                        ? "bg-blue-600/20 text-white"
+                        : "text-gray-200 hover:bg-white/5"
+                    }`}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onMouseEnter={() => setHighlightIndex(index)}
+                    onClick={() => addValue(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </FloatingPortal>
         ) : null}
 
         {open && filteredOptions.length === 0 ? (
-          <div className="absolute z-50 mt-2 w-full rounded-xl border border-gray-700 bg-[#0B1526] px-4 py-3 text-sm text-gray-400 shadow-2xl">
-            {availableOptions.length === 0 ? "All disciplines selected." : "No matches found."}
-          </div>
+          <FloatingPortal anchorRef={fieldRef} open={open} matchWidth>
+            <div className="w-full rounded-xl border border-gray-700 bg-[#0B1526] px-4 py-3 text-sm text-gray-400 shadow-2xl">
+              {availableOptions.length === 0
+                ? tCommon("allOptionsSelected")
+                : tCommon("noResults")}
+            </div>
+          </FloatingPortal>
         ) : null}
       </div>
 

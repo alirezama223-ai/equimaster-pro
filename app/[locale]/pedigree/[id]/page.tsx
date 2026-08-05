@@ -35,7 +35,7 @@ export default async function PedigreeProfilePage({ params }: Props) {
       <Navbar />
 
       <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-6 space-y-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
           <div>
             <Link href="/bloodlines" className="text-gray-400 hover:text-white transition">
               {t("profile.backToBloodlines")}

@@ -12,12 +12,13 @@
     "db:apply-021-stepwise": "node scripts/apply-021-stepwise.mjs",
     "i18n:sync": "node scripts/sync-locale-messages.mjs",
     "i18n:audit": "node scripts/audit-i18n-keys.mjs",
+    "perf:audit": "node scripts/performance-audit.mjs",
+    "security:audit": "node scripts/security-audit.mjs",
     "clear-storage": "node scripts/clear-storage.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
-    "framer-motion": "^12.42.2",
     "next": "16.2.10",
     "next-intl": "^4.13.4",
     "react": "19.2.4",

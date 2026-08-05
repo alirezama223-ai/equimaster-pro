@@ -17,7 +17,7 @@ export default async function SignupPage() {
       <Navbar />
 
       <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
-        <div className="max-w-xl mx-auto px-6">
+        <div className="max-w-xl mx-auto px-4 sm:px-6">
           <FadeUp>
             <Suspense
               fallback={

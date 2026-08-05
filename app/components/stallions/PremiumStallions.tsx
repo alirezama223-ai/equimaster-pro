@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 
 export default async function PremiumStallions() {
   const t = await getTranslations("home");
+  const tCommon = await getTranslations("common");
   const { stallions } = await getActiveStallions();
   const featured = (stallions ?? []).slice(0, 4);
 
@@ -14,15 +15,15 @@ export default async function PremiumStallions() {
   }
 
   return (
-    <section className="bg-[#081223] py-28">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-[#081223] py-20 sm:py-28">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        <div className="text-center mb-16">
-          <p className="uppercase tracking-[6px] text-blue-500 text-xs font-bold">
+        <div className="text-center mb-12 sm:mb-16">
+          <p className="uppercase tracking-[0.2em] text-blue-500 text-xs font-bold sm:tracking-[6px]">
             {t("premium.eyebrow")}
           </p>
 
-          <h2 className="text-5xl font-black text-white mt-4">{t("premium.title")}</h2>
+          <h2 className="text-3xl font-black text-white mt-4 sm:text-5xl">{t("premium.title")}</h2>
 
           <p className="text-gray-400 mt-5 max-w-2xl mx-auto">
             {t("premium.subtitle")}
@@ -52,6 +53,8 @@ export default async function PremiumStallions() {
                     src={stallion.coverImageUrl}
                     alt={t("premium.stallionImageAlt", { name: stallion.name })}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    loading="lazy"
                     className="object-cover"
                   />
                 </div>
@@ -71,7 +74,7 @@ export default async function PremiumStallions() {
                     <div>
                       <p>{t("premium.age")}</p>
                       <p className="font-bold text-white">
-                        {age ?? "—"}
+                        {age ?? tCommon("notApplicable")}
                       </p>
                     </div>
 

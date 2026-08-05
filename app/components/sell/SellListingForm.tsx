@@ -460,7 +460,7 @@ export default function SellListingForm({
           <p className="uppercase tracking-[6px] text-blue-500 text-sm font-semibold">
             {isEditMode ? t("form.reviewChanges") : t("form.reviewListing")}
           </p>
-          <h2 className="text-4xl font-black text-white mt-3">
+          <h2 className="text-3xl font-black text-white mt-3 sm:text-4xl">
             {isEditMode ? t("form.previewBeforeSaving") : t("form.previewBeforeSubmission")}
           </h2>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">

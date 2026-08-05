@@ -9,6 +9,9 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { useTranslations } from "next-intl";
+import FloatingPortal from "@/app/components/shared/FloatingPortal";
+import { isFloatingOverlayNode } from "@/app/lib/floating-position";
 
 export type SearchableSelectOption = {
   value: string;
@@ -42,7 +45,7 @@ export default function SearchableSelect({
   value,
   onChange,
   options,
-  placeholder = "Search…",
+  placeholder,
   emptyOption,
   disabled = false,
   required = false,
@@ -50,6 +53,7 @@ export default function SearchableSelect({
   inputClassName = defaultInputClassName,
   "aria-label": ariaLabel,
 }: Props) {
+  const tCommon = useTranslations("common");
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const listboxId = `${inputId}-listbox`;
@@ -98,9 +102,10 @@ export default function SearchableSelect({
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        close();
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (isFloatingOverlayNode(target)) return;
+      close();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -160,6 +165,7 @@ export default function SearchableSelect({
   }
 
   const inputValue = open ? query : selectedOption?.label ?? value;
+  const resolvedPlaceholder = placeholder ?? tCommon("searchPlaceholder");
 
   return (
     <div ref={containerRef} className={className ?? "relative"}>
@@ -176,7 +182,7 @@ export default function SearchableSelect({
         disabled={disabled}
         required={required}
         value={inputValue}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         className={inputClassName}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -189,37 +195,41 @@ export default function SearchableSelect({
       />
 
       {open && displayOptions.length > 0 ? (
-        <ul
-          id={listboxId}
-          role="listbox"
-          className="absolute z-50 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-gray-700 bg-[#0B1526] py-2 shadow-2xl"
-        >
-          {displayOptions.map((option, index) => (
-            <li key={`${option.value}-${option.label}`} role="option" aria-selected={value === option.value}>
-              <button
-                type="button"
-                className={`block w-full px-4 py-2.5 text-left text-sm transition ${
-                  index === highlightIndex
-                    ? "bg-blue-600/20 text-white"
-                    : value === option.value
-                      ? "text-blue-300"
-                      : "text-gray-200 hover:bg-white/5"
-                }`}
-                onMouseDown={(event) => event.preventDefault()}
-                onMouseEnter={() => setHighlightIndex(index)}
-                onClick={() => selectValue(option.value)}
-              >
-                {option.label}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <FloatingPortal anchorRef={containerRef} open={open} matchWidth>
+          <ul
+            id={listboxId}
+            role="listbox"
+            className="max-h-full w-full overflow-y-auto rounded-xl border border-gray-700 bg-[#0B1526] py-2 shadow-2xl"
+          >
+            {displayOptions.map((option, index) => (
+              <li key={`${option.value}-${option.label}`} role="option" aria-selected={value === option.value}>
+                <button
+                  type="button"
+                  className={`block w-full px-4 py-2.5 text-left text-sm transition ${
+                    index === highlightIndex
+                      ? "bg-blue-600/20 text-white"
+                      : value === option.value
+                        ? "text-blue-300"
+                        : "text-gray-200 hover:bg-white/5"
+                  }`}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setHighlightIndex(index)}
+                  onClick={() => selectValue(option.value)}
+                >
+                  {option.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </FloatingPortal>
       ) : null}
 
       {open && displayOptions.length === 0 ? (
-        <div className="absolute z-50 mt-2 w-full rounded-xl border border-gray-700 bg-[#0B1526] px-4 py-3 text-sm text-gray-400 shadow-2xl">
-          No matches found.
-        </div>
+        <FloatingPortal anchorRef={containerRef} open={open} matchWidth>
+          <div className="w-full rounded-xl border border-gray-700 bg-[#0B1526] px-4 py-3 text-sm text-gray-400 shadow-2xl">
+            {tCommon("noResults")}
+          </div>
+        </FloatingPortal>
       ) : null}
     </div>
   );

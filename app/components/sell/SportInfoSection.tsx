@@ -3,6 +3,7 @@ import FormField, { sellInputClassName } from "@/app/components/sell/FormField";
 import FormSection from "@/app/components/sell/FormSection";
 import SearchableSelect from "@/app/components/shared/SearchableSelect";
 import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
+import { GENERAL_LEVELS, LEVEL_I18N_KEY } from "@/app/lib/sell/level-i18n";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
 import {
   DRESSAGE_LEVELS,
@@ -23,12 +24,18 @@ type Props = {
 
 export default function SportInfoSection({ data, errors, onChange }: Props) {
   const t = useTranslations("sell");
+  const tLevels = useTranslations("sell.sportInfo.levels");
   const levels =
     data.discipline === "Show Jumping"
       ? SHOW_JUMPING_LEVELS
       : data.discipline === "Dressage"
         ? DRESSAGE_LEVELS
-        : ["Training", "Competition Ready", "Advanced", "Professional"];
+        : GENERAL_LEVELS;
+
+  function levelLabel(level: string) {
+    const key = LEVEL_I18N_KEY[level];
+    return key ? tLevels(key) : level;
+  }
 
   return (
     <FormSection title={t("sportInfo.title")} subtitle={t("sportInfo.subtitle")}>
@@ -68,7 +75,7 @@ export default function SportInfoSection({ data, errors, onChange }: Props) {
             <option value="">{t("sportInfo.selectLevel")}</option>
             {levels.map((level) => (
               <option key={level} value={level}>
-                {level}
+                {levelLabel(level)}
               </option>
             ))}
           </select>

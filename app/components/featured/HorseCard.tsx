@@ -50,6 +50,8 @@ export default function HorseCard({
             alt={t("horseCard.imageAlt", { name: horse.name })}
             width={600}
             height={420}
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 400px"
+            loading="lazy"
             className="w-full h-72 object-cover group-hover:scale-110 transition duration-700"
           />
 
@@ -100,13 +102,13 @@ export default function HorseCard({
             <InfoCard icon="🏆" label={t("horseCard.level")} value={horse.level} />
           </div>
 
-          <div className="flex justify-between items-center border-t border-white/10 pt-5">
-            <div>
+          <div className="flex flex-col gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
               <p className="text-xs uppercase text-gray-500">{t("horseCard.location")}</p>
-              <p className="text-white font-medium">📍 {horse.country}</p>
+              <p className="truncate text-white font-medium">📍 {horse.country}</p>
             </div>
 
-            <div className="bg-blue-600 px-5 py-3 rounded-xl text-white font-semibold group-hover:bg-blue-500 transition">
+            <div className="inline-flex min-h-11 shrink-0 items-center self-start rounded-xl bg-blue-600 px-5 py-3 text-white font-semibold transition group-hover:bg-blue-500 sm:self-auto">
               {t("horseCard.view")}
             </div>
           </div>

@@ -16,6 +16,34 @@ function getSupabaseImageHostname(): string | undefined {
 
 const supabaseHostname = getSupabaseImageHostname();
 
+const imageConfig: NonNullable<NextConfig["images"]> = {
+  formats: ["image/avif", "image/webp"],
+  deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+  imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  minimumCacheTTL: 60 * 60 * 24 * 30,
+  ...(supabaseHostname
+    ? {
+        remotePatterns: [
+          {
+            protocol: "https" as const,
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/horse-images/**",
+          },
+          {
+            protocol: "https" as const,
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/stallion-images/**",
+          },
+          {
+            protocol: "https" as const,
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/breeder-images/**",
+          },
+        ],
+      }
+    : {}),
+};
+
 const nextConfig: NextConfig = {
   experimental: {
     // Default is 1 MB — too small for real horse photo uploads in FormData.
@@ -25,27 +53,7 @@ const nextConfig: NextConfig = {
     // Proxy reads the request body before server actions; default is 10 MB.
     proxyClientMaxBodySize: "128mb",
   },
-  images: supabaseHostname
-    ? {
-        remotePatterns: [
-          {
-            protocol: "https",
-            hostname: supabaseHostname,
-            pathname: "/storage/v1/object/public/horse-images/**",
-          },
-          {
-            protocol: "https",
-            hostname: supabaseHostname,
-            pathname: "/storage/v1/object/public/stallion-images/**",
-          },
-          {
-            protocol: "https",
-            hostname: supabaseHostname,
-            pathname: "/storage/v1/object/public/breeder-images/**",
-          },
-        ],
-      }
-    : undefined,
+  images: imageConfig,
 };
 
 export default withNextIntl(nextConfig);

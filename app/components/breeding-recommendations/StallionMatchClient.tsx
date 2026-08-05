@@ -28,6 +28,7 @@ import {
 } from "@/app/lib/breeding-recommendations/filters";
 import { BreedingCandidate } from "@/app/types/breeding";
 import { BREEDING_METHODS } from "@/app/types/stallion";
+import { BREEDING_METHOD_I18N_KEY } from "@/app/lib/stallions/breeding-method-i18n";
 import {
   MinimumPedigreeConfidenceFilter,
   RecommendationSortOption,
@@ -43,6 +44,7 @@ type MatchMode = "pedigree" | "goal_based";
 
 export default function StallionMatchClient() {
   const t = useTranslations("breeding");
+  const tMethods = useTranslations("stallions.breedingMethods");
   const router = useRouter();
   const [mareQuery, setMareQuery] = useState("");
   const [mareResults, setMareResults] = useState<BreedingCandidate[]>([]);
@@ -504,7 +506,7 @@ export default function StallionMatchClient() {
                   onChange={() => toggleBreedingMethod(method)}
                   className="rounded border-white/20 bg-[#08111F]"
                 />
-                {method}
+                {tMethods(BREEDING_METHOD_I18N_KEY[method])}
               </label>
             ))}
           </div>

@@ -69,7 +69,7 @@ export default function NotificationCenterClient() {
     <div className="space-y-8">
       <header className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
         <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("center.eyebrow")}</p>
-        <h1 className="mt-2 text-4xl font-black text-white">{t("center.title")}</h1>
+        <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">{t("center.title")}</h1>
         <p className="mt-3 max-w-2xl text-gray-400">{t("center.description")}</p>
         {!loading ? (
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">

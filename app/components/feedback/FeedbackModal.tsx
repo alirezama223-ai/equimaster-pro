@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { submitFeedbackReport } from "@/app/actions/feedback";
 import { useFocusTrap } from "@/app/hooks/useFocusTrap";
+import { validateFeedbackScreenshot } from "@/app/lib/feedback/validation";
 import {
   FEEDBACK_CATEGORIES,
   FEEDBACK_SEVERITIES,
@@ -66,6 +67,17 @@ export default function FeedbackModal({ pagePath, browser, os, locale, onClose }
 
   function handleScreenshotChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
+
+    if (file) {
+      const validationError = validateFeedbackScreenshot(file);
+      if (validationError) {
+        setError(validationError);
+        event.target.value = "";
+        setScreenshotFile(null);
+        return;
+      }
+    }
+
     setScreenshotFile(file);
     setError(null);
   }

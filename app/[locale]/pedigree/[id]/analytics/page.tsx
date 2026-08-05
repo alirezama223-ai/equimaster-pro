@@ -43,7 +43,7 @@ export default async function PedigreeAnalyticsPage({ params }: Props) {
     <>
       <Navbar />
       <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-6 space-y-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
           <Link href={`/pedigree/${id}`} className="text-gray-400 hover:text-white transition">
             ← Back to {profile.horse.name}
           </Link>

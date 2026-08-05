@@ -1,12 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 
 import Navbar from "@/app/components/navbar/Navbar";
 import HeroSection from "@/app/components/hero/HeroSection";
-import AdvancedSearch from "@/app/components/search/AdvancedSearch";
-import FeaturedHorses from "@/app/components/featured/FeaturedHorses";
 import FadeUp from "@/app/components/animations/FadeUp";
 
 import type { HeroStats } from "@/app/actions/home-stats";
@@ -16,6 +15,26 @@ import {
   filterAndSortHorses,
   SortOption,
 } from "@/app/lib/horse-filters";
+
+const AdvancedSearch = dynamic(() => import("@/app/components/search/AdvancedSearch"), {
+  loading: () => (
+    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6" aria-hidden="true">
+      <div className="h-48 animate-pulse rounded-3xl bg-white/5" />
+    </div>
+  ),
+});
+
+const FeaturedHorses = dynamic(() => import("@/app/components/featured/FeaturedHorses"), {
+  loading: () => (
+    <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6" aria-hidden="true">
+      <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index} className="h-96 animate-pulse rounded-3xl bg-white/5" />
+        ))}
+      </div>
+    </div>
+  ),
+});
 
 const HORSES_PER_PAGE = 6;
 
@@ -181,9 +200,7 @@ export default function HomeClient({
     <>
       <Navbar />
 
-      <FadeUp>
-        <HeroSection stats={heroStats} />
-      </FadeUp>
+      <HeroSection stats={heroStats} />
 
       <FadeUp>
         <AdvancedSearch
@@ -217,12 +234,10 @@ export default function HomeClient({
         />
       </FadeUp>
 
-      <FadeUp>
-        <FeaturedHorses
-          horses={displayedHorses}
-          favoriteListingIds={favoriteListingIds}
-        />
-      </FadeUp>
+      <FeaturedHorses
+        horses={displayedHorses}
+        favoriteListingIds={favoriteListingIds}
+      />
 
       {totalPages > 1 && (
         <section className="bg-[#08111F] pb-24">

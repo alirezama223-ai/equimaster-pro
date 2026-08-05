@@ -56,7 +56,7 @@ export default async function AccountPage() {
       <Navbar />
 
       <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <FadeUp>
             <AccountDashboard
               user={user}

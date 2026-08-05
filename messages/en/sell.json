@@ -60,7 +60,27 @@
     "discipline": "Discipline",
     "disciplinePlaceholder": "Search disciplines…",
     "level": "Competition / Training Level",
-    "selectLevel": "Select level"
+    "selectLevel": "Select level",
+    "levels": {
+      "youngHorseUnbroken": "Young Horse / Unbroken",
+      "training": "Training",
+      "introductory": "Introductory",
+      "novice": "Novice",
+      "elementary": "Elementary",
+      "medium": "Medium",
+      "advanced": "Advanced",
+      "grandPrix": "Grand Prix",
+      "jump100": "1.00 m",
+      "jump110": "1.10 m",
+      "jump120": "1.20 m",
+      "jump130": "1.30 m",
+      "jump140": "1.40 m",
+      "jump145": "1.45 m",
+      "jump150Plus": "1.50 m+",
+      "internationalGrandPrix": "International / Grand Prix",
+      "competitionReady": "Competition Ready",
+      "professional": "Professional"
+    }
   },
   "price": {
     "title": "Price",

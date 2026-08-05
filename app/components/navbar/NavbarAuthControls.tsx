@@ -68,13 +68,13 @@ export default function NavbarAuthControls() {
       <>
         <Link
           href="/signup"
-          className="hidden rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white hover:text-black sm:inline-flex lg:px-4 lg:py-2"
+          className="hidden min-h-11 items-center rounded-xl border border-white/20 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-black sm:inline-flex lg:px-4 lg:py-2.5"
         >
           {t("signup")}
         </Link>
         <Link
           href="/login"
-          className="inline-flex rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/20 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3"
+          className="inline-flex min-h-11 items-center rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3"
         >
           {t("login")}
         </Link>
@@ -87,14 +87,14 @@ export default function NavbarAuthControls() {
       {isAdmin ? (
         <Link
           href="/admin"
-          className="hidden rounded-xl border border-blue-500/40 px-3 py-1.5 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10 sm:inline-flex lg:px-4 lg:py-2"
+          className="hidden min-h-11 items-center rounded-xl border border-blue-500/40 px-3 py-2 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10 sm:inline-flex lg:px-4 lg:py-2.5"
         >
           {t("admin")}
         </Link>
       ) : null}
       <Link
         href="/account"
-        className="hidden rounded-xl border border-white/20 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:inline-flex lg:px-4 lg:py-2"
+        className="hidden min-h-11 items-center rounded-xl border border-white/20 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:inline-flex lg:px-4 lg:py-2.5"
       >
         {t("account")}
       </Link>

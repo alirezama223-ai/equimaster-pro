@@ -16,11 +16,11 @@ export default async function AdminFeedbackPage() {
       <Navbar />
 
       <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-6 space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("adminEyebrow")}</p>
-              <h1 className="mt-2 text-4xl font-black text-white">{t("feedback.title")}</h1>
+              <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">{t("feedback.title")}</h1>
               <p className="mt-3 text-gray-400 max-w-2xl">{t("feedback.subtitle")}</p>
             </div>
             <Link

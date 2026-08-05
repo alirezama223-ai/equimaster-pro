@@ -33,11 +33,11 @@ export default function MarketplaceHomeClient({
       <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <FadeUp>
-            <section className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111827] to-[#081223] p-8 sm:p-12 mb-12">
-              <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
+            <section className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111827] to-[#081223] p-5 sm:p-12 mb-12">
+              <p className="uppercase tracking-[0.2em] text-blue-500 text-xs font-semibold sm:tracking-[6px]">
                 {t("home.eyebrow")}
               </p>
-              <h1 className="text-4xl sm:text-6xl font-black mt-4 max-w-4xl">
+              <h1 className="text-3xl sm:text-6xl font-black mt-4 max-w-4xl">
                 {t("home.title")}
               </h1>
               <p className="mt-5 max-w-2xl text-gray-400 text-lg">{t("home.subtitle")}</p>
@@ -55,7 +55,7 @@ export default function MarketplaceHomeClient({
                 />
                 <button
                   type="submit"
-                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-4 font-semibold transition"
+                  className="min-h-11 rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-4 font-semibold transition"
                 >
                   {t("home.searchHorses")}
                 </button>

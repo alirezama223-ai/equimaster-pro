@@ -89,7 +89,7 @@ export default function AdvancedSearch({
 
   return (
     <section className="bg-[#08111F] py-14">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="rounded-3xl bg-[#111C2E] border border-gray-800 shadow-2xl p-6 sm:p-8">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-white">

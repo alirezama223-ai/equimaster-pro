@@ -78,7 +78,7 @@ export default async function StallionDetailPage({ params }: Props) {
       <Navbar />
 
       <main className="bg-[#081223] min-h-screen text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="mb-8">
             <Link href="/stallions" className="text-gray-400 hover:text-white transition">
               {t("detail.backToDirectory")}

@@ -22,6 +22,9 @@ import {
   copyListingVideoForDuplicate,
 } from "@/app/lib/horse-video-storage";
 import { createClient } from "@/app/lib/supabase/server";
+import { isValidListingSlug } from "@/app/lib/security/path-validation";
+import { getClientIp } from "@/app/lib/security/request-context";
+import { checkRateLimit } from "@/app/lib/security/rate-limit";
 import { HorseListingRow, type ListingStatus } from "@/app/types/horse-listing";
 import { ListingFormData } from "@/app/types/listing";
 import type { SellerListingStats } from "@/app/types/marketplace";
@@ -1119,9 +1122,19 @@ export async function getHorseListingBySlug(slug: string) {
 }
 
 export async function incrementListingViewCount(slug: string) {
+  if (!isValidListingSlug(slug)) {
+    return { error: "Invalid listing slug." };
+  }
+
+  const clientIp = await getClientIp();
+  const rateLimit = checkRateLimit(`view:${clientIp}:${slug}`, 3, 60 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    return { success: true };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.rpc("increment_horse_listing_view_count", {
-    p_slug: slug,
+    p_slug: slug.trim(),
   });
 
   if (error) {

@@ -1,0 +1,347 @@
+{
+  "scannedFiles": 395,
+  "translatorFiles": 171,
+  "locales": [
+    "en",
+    "de",
+    "fr",
+    "nl",
+    "es"
+  ],
+  "missingKeyCount": 0,
+  "missingOccurrenceCount": 0,
+  "dynamicUsageCount": 55,
+  "missing": [],
+  "dynamicUsages": [
+    {
+      "file": "app\\[locale]\\stallions\\[id]\\page.tsx",
+      "baseNamespace": "stallions",
+      "varName": "t",
+      "expression": "t(`availability.${stallion.availability}`"
+    },
+    {
+      "file": "app\\components\\account\\MyStallionsSection.tsx",
+      "baseNamespace": "stallions",
+      "varName": "tStallions",
+      "expression": "tStallions(`availability.${key}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`statuses.${status}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`categories.${category}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`statuses.${report.status}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`categories.${report.category}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`severities.${report.severity}`"
+    },
+    {
+      "file": "app\\components\\admin\\AdminFeedbackClient.tsx",
+      "baseNamespace": "feedback",
+      "varName": "tFeedback",
+      "expression": "tFeedback(`statuses.${status}`"
+    },
+    {
+      "file": "app\\components\\auth\\LoginForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`errors.${getAuthErrorMessage(error.message)}`"
+    },
+    {
+      "file": "app\\components\\auth\\LoginForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.email}`"
+    },
+    {
+      "file": "app\\components\\auth\\LoginForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.password}`"
+    },
+    {
+      "file": "app\\components\\auth\\SignupForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`errors.${getAuthErrorMessage(error.message)}`"
+    },
+    {
+      "file": "app\\components\\auth\\SignupForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.fullName}`"
+    },
+    {
+      "file": "app\\components\\auth\\SignupForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.email}`"
+    },
+    {
+      "file": "app\\components\\auth\\SignupForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.password}`"
+    },
+    {
+      "file": "app\\components\\auth\\SignupForm.tsx",
+      "baseNamespace": "auth",
+      "varName": "t",
+      "expression": "t(`validation.${fieldErrors.confirmPassword}`"
+    },
+    {
+      "file": "app\\components\\events\\HorseEventCard.tsx",
+      "baseNamespace": "events",
+      "varName": "t",
+      "expression": "t(`eventCard.severity.${event.severity}`"
+    },
+    {
+      "file": "app\\components\\events\\HorseEventCard.tsx",
+      "baseNamespace": "events",
+      "varName": "t",
+      "expression": "t(`eventCard.sourceModule.${event.sourceModule}`"
+    },
+    {
+      "file": "app\\components\\feedback\\FeedbackModal.tsx",
+      "baseNamespace": "feedback",
+      "varName": "t",
+      "expression": "t(`categories.${value}`"
+    },
+    {
+      "file": "app\\components\\feedback\\FeedbackModal.tsx",
+      "baseNamespace": "feedback",
+      "varName": "t",
+      "expression": "t(`severities.${value}`"
+    },
+    {
+      "file": "app\\components\\health\\DailyHealthCheckForm.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`form.options.appetite.${option}`"
+    },
+    {
+      "file": "app\\components\\health\\DailyHealthCheckForm.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`form.options.hydration.${option}`"
+    },
+    {
+      "file": "app\\components\\health\\DailyHealthCheckForm.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`form.options.attitude.${option}`"
+    },
+    {
+      "file": "app\\components\\health\\DailyHealthCheckForm.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`form.options.manure.${option}`"
+    },
+    {
+      "file": "app\\components\\health\\HorseHealthAlertsPanel.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`alerts.severity.${severity}`"
+    },
+    {
+      "file": "app\\components\\health\\HorseHealthAlertsPanel.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`alerts.ruleLabels.${ruleId}`"
+    },
+    {
+      "file": "app\\components\\health\\HorseHealthRecordsPanel.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`records.${ADD_LABEL_KEYS[formKey]}`"
+    },
+    {
+      "file": "app\\components\\health\\HorseHealthRecordsPanel.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`records.severity.${injury.severity}`"
+    },
+    {
+      "file": "app\\components\\health\\HorseHealthRecordsPanel.tsx",
+      "baseNamespace": "health",
+      "varName": "t",
+      "expression": "t(`records.injuryStatus.${injury.status}`"
+    },
+    {
+      "file": "app\\components\\marketplace\\ListingCardActions.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`actions.${action.key}`"
+    },
+    {
+      "file": "app\\components\\marketplace\\ListingCardActions.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`actions.${confirmKey}`"
+    },
+    {
+      "file": "app\\components\\marketplace\\MarketplaceBrowseClient.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`browse.sortOptions.${option}`"
+    },
+    {
+      "file": "app\\components\\marketplace\\SellerDashboardClient.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`sellerDashboard.sections.${key}.title`"
+    },
+    {
+      "file": "app\\components\\marketplace\\SellerDashboardClient.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`sellerDashboard.sections.${key}.description`"
+    },
+    {
+      "file": "app\\components\\marketplace\\SellerDashboardClient.tsx",
+      "baseNamespace": "marketplace",
+      "varName": "t",
+      "expression": "t(`sellerDashboard.statusLabels.${resolvedStatus}`"
+    },
+    {
+      "file": "app\\components\\stallions\\StallionCard.tsx",
+      "baseNamespace": "stallions",
+      "varName": "t",
+      "expression": "t(`availability.${stallion.availability}`"
+    },
+    {
+      "file": "app\\components\\stallions\\StallionFilters.tsx",
+      "baseNamespace": "stallions",
+      "varName": "t",
+      "expression": "t(`availability.${key}`"
+    },
+    {
+      "file": "app\\components\\training\\analytics\\HorseRuleInsightsPanel.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`analytics.ruleLabels.${ruleId}`"
+    },
+    {
+      "file": "app\\components\\training\\analytics\\HorseRuleInsightsPanel.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`analytics.severity.${severity}`"
+    },
+    {
+      "file": "app\\components\\training\\plans\\PlanCard.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`planStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\plans\\TrainingPlanHeader.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`planStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingCalendar.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`sessionStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingCalendar.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`sessionStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingCalendar.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`calendar.weekdays.${weekday}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingExerciseExecutionCard.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`sessionStatus.${exerciseStatus}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingRecentSessions.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`sessionStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingSessionClient.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`sessionStatus.${status}`"
+    },
+    {
+      "file": "app\\components\\training\\TrainingSessionReflectionForm.tsx",
+      "baseNamespace": "training",
+      "varName": "t",
+      "expression": "t(`reflection.feelings.${option}`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.title`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.description`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.keywords`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.openGraphTitle`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.openGraphDescription`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.twitterTitle`"
+    },
+    {
+      "file": "app\\lib\\seo\\page-metadata.ts",
+      "baseNamespace": "metadata",
+      "varName": "t",
+      "expression": "t(`${prefix}.twitterDescription`"
+    }
+  ]
+}

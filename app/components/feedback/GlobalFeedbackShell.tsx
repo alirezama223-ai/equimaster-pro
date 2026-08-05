@@ -1,5 +1,5 @@
 import { createClient } from "@/app/lib/supabase/server";
-import FeedbackWidget from "@/app/components/feedback/FeedbackWidget";
+import LazyFeedbackWidget from "@/app/components/feedback/LazyFeedbackWidget";
 
 export default async function GlobalFeedbackShell() {
   const supabase = await createClient();
@@ -7,5 +7,5 @@ export default async function GlobalFeedbackShell() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <FeedbackWidget isAuthenticated={Boolean(user)} />;
+  return <LazyFeedbackWidget isAuthenticated={Boolean(user)} />;
 }

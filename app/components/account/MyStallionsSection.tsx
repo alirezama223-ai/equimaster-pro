@@ -14,6 +14,7 @@ import { getCountrySelectOptions } from "@/app/lib/constants/countries";
 import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
 import { revokeListingImages } from "@/app/lib/listing-media";
 import { formatStudFee, getStallionCoverUrl, stallionImagesFromRow } from "@/app/lib/stallions";
+import { BREEDING_METHOD_I18N_KEY } from "@/app/lib/stallions/breeding-method-i18n";
 import { ListingImage } from "@/app/types/listing";
 import {
   BREEDING_METHODS,
@@ -21,7 +22,6 @@ import {
   StallionAvailability,
   StallionFormData,
   StallionRow,
-  STALLION_AVAILABILITY_LABELS,
 } from "@/app/types/stallion";
 
 const countryOptions = getCountrySelectOptions();
@@ -65,6 +65,8 @@ export default function MyStallionsSection({
 }: Props) {
   const t = useTranslations("account.stallions");
   const tCommon = useTranslations("common");
+  const tMethods = useTranslations("stallions.breedingMethods");
+  const tStallions = useTranslations("stallions");
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -435,10 +437,10 @@ export default function MyStallionsSection({
                   }
                   className={sellInputClassName}
                 >
-                  {(Object.keys(STALLION_AVAILABILITY_LABELS) as StallionAvailability[]).map(
+                  {(["available", "limited", "booked", "retired"] as StallionAvailability[]).map(
                     (key) => (
                       <option key={key} value={key}>
-                        {STALLION_AVAILABILITY_LABELS[key]}
+                        {tStallions(`availability.${key}`)}
                       </option>
                     )
                   )}
@@ -458,7 +460,9 @@ export default function MyStallionsSection({
                         checked={form.breedingMethods.includes(method)}
                         onChange={() => toggleBreedingMethod(method)}
                       />
-                      <span className="text-sm text-gray-200">{method}</span>
+                      <span className="text-sm text-gray-200">
+                        {tMethods(BREEDING_METHOD_I18N_KEY[method as keyof typeof BREEDING_METHOD_I18N_KEY])}
+                      </span>
                     </label>
                   ))}
                 </div>

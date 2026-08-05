@@ -61,7 +61,7 @@ export default async function TrainingSessionPage({ params }: Props) {
       <Navbar />
 
       <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <TrainingSessionClient
             key={result.session.id}
             session={result.session}

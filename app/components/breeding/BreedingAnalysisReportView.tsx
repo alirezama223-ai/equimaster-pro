@@ -1,14 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import PedigreeTree from "@/app/components/pedigree/PedigreeTree";
-import {
-  BREEDING_DISCLAIMER,
-  BREEDING_MAX_GENERATIONS,
-  GENERATION_NUMBERING_EXPLANATION,
-} from "@/app/lib/breeding/constants";
-import { CLOSE_RELATIONSHIP_ADVISORY } from "@/app/lib/breeding/close-relationships";
+import { BREEDING_MAX_GENERATIONS } from "@/app/lib/breeding/constants";
 import { BreedingAnalysisReport } from "@/app/types/breeding";
 
 type Props = {
@@ -16,54 +12,65 @@ type Props = {
 };
 
 export default function BreedingAnalysisReportView({ report }: Props) {
+  const t = useTranslations("breeding");
+  const tCommon = useTranslations("common");
   const { structureIndicators, dataConfidence } = report;
+  const hypotheticalFoalName = t("report.hypotheticalFoalTitle");
 
   return (
     <div className="space-y-8">
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">A. Selected Cross</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.selectedCrossEyebrow")}
+        </p>
         <h2 className="mt-3 text-3xl sm:text-4xl font-black text-white">
           {report.mare.name} × {report.stallion.name}
         </h2>
         <p className="mt-3 text-gray-400">
-          Pedigree-based breeding decision support · {report.analyzedGenerations} generations analyzed
+          {t("report.selectedCrossSubtitle", { generations: report.analyzedGenerations })}
         </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <IndicatorCard label="Common ancestors" value={String(structureIndicators.commonAncestorCount)} />
           <IndicatorCard
-            label="Closest shared ancestor"
+            label={t("report.commonAncestors")}
+            value={String(structureIndicators.commonAncestorCount)}
+          />
+          <IndicatorCard
+            label={t("report.closestSharedAncestor")}
             value={
               structureIndicators.closestCommonAncestorName
-                ? `${structureIndicators.closestCommonAncestorName} (depth ${structureIndicators.closestCommonAncestorDepth})`
-                : "None detected"
+                ? t("report.closestSharedAncestorValue", {
+                    name: structureIndicators.closestCommonAncestorName,
+                    depth: structureIndicators.closestCommonAncestorDepth ?? 0,
+                  })
+                : t("noneDetected")
             }
           />
           <IndicatorCard
-            label="Linebreeding patterns"
+            label={t("report.linebreedingPatterns")}
             value={String(structureIndicators.linebreedingPatternCount)}
           />
           <IndicatorCard
-            label="Repeated bloodlines"
+            label={t("report.repeatedBloodlines")}
             value={String(structureIndicators.repeatedBloodlineCount)}
           />
           <IndicatorCard
-            label="Close relationship flag"
-            value={structureIndicators.closeRelationshipDetected ? "Yes" : "No"}
+            label={t("report.closeRelationshipFlag")}
+            value={structureIndicators.closeRelationshipDetected ? t("yes") : t("no")}
           />
-          <IndicatorCard label="Data confidence" value={dataConfidence.label} />
+          <IndicatorCard label={t("report.dataConfidenceTitle")} value={dataConfidence.label} />
         </div>
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#08111F] p-4 sm:p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">B. Hypothetical Foal Pedigree</p>
-        <h3 className="mt-2 text-2xl font-bold text-white">Hypothetical Foal</h3>
-        <p className="mt-2 text-sm text-gray-400">
-          Virtual pedigree simulation only. This foal does not exist as a database record.
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.hypotheticalFoalEyebrow")}
         </p>
+        <h3 className="mt-2 text-2xl font-bold text-white">{hypotheticalFoalName}</h3>
+        <p className="mt-2 text-sm text-gray-400">{t("report.hypotheticalFoalSubtitle")}</p>
         <div className="mt-6">
           <PedigreeTree
-            subjectName="Hypothetical Foal"
-            subjectLabel="Hypothetical Foal"
+            subjectName={hypotheticalFoalName}
+            subjectLabel={hypotheticalFoalName}
             tree={report.hypotheticalFoalTree}
             maxGenerations={BREEDING_MAX_GENERATIONS}
           />
@@ -71,24 +78,40 @@ export default function BreedingAnalysisReportView({ report }: Props) {
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">C. Pedigree Completeness</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.completenessEyebrow")}
+        </p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           <CompletenessCard
-            title="Mare"
+            title={t("report.mare")}
             percent={dataConfidence.mareCompleteness.completenessPercent}
             known={dataConfidence.mareCompleteness.knownAncestorSlots}
             expected={dataConfidence.mareCompleteness.expectedAncestorSlots}
             verified={dataConfidence.mareCompleteness.verifiedAncestorCount}
+            completenessTitle={t("report.completenessTitle", { role: t("report.mare") })}
+            completenessDetail={t("report.completenessDetail", {
+              known: dataConfidence.mareCompleteness.knownAncestorSlots,
+              expected: dataConfidence.mareCompleteness.expectedAncestorSlots,
+              verified: dataConfidence.mareCompleteness.verifiedAncestorCount,
+            })}
           />
           <CompletenessCard
-            title="Stallion"
+            title={t("report.stallion")}
             percent={dataConfidence.stallionCompleteness.completenessPercent}
             known={dataConfidence.stallionCompleteness.knownAncestorSlots}
             expected={dataConfidence.stallionCompleteness.expectedAncestorSlots}
             verified={dataConfidence.stallionCompleteness.verifiedAncestorCount}
+            completenessTitle={t("report.completenessTitle", { role: t("report.stallion") })}
+            completenessDetail={t("report.completenessDetail", {
+              known: dataConfidence.stallionCompleteness.knownAncestorSlots,
+              expected: dataConfidence.stallionCompleteness.expectedAncestorSlots,
+              verified: dataConfidence.stallionCompleteness.verifiedAncestorCount,
+            })}
           />
           <div className="rounded-2xl border border-white/10 bg-[#08111F] p-5">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Data Confidence</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">
+              {t("report.dataConfidenceTitle")}
+            </p>
             <p className="mt-2 text-3xl font-black text-white">{dataConfidence.label}</p>
             <p className="mt-3 text-sm text-gray-400 leading-6">{dataConfidence.explanation}</p>
           </div>
@@ -96,9 +119,11 @@ export default function BreedingAnalysisReportView({ report }: Props) {
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">D. Common Ancestors</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.commonAncestorsEyebrow")}
+        </p>
         {report.commonAncestors.length === 0 ? (
-          <p className="mt-4 text-gray-400">No shared ancestors detected within the analyzed depth.</p>
+          <p className="mt-4 text-gray-400">{t("report.noCommonAncestors")}</p>
         ) : (
           <div className="mt-4 space-y-4">
             {report.commonAncestors.map((ancestor) => (
@@ -110,22 +135,40 @@ export default function BreedingAnalysisReportView({ report }: Props) {
                   {ancestor.verified ? <VerifiedBadge /> : null}
                   {ancestor.isRepeated ? (
                     <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs text-amber-200">
-                      Repeated ancestor
+                      {t("report.repeatedAncestor")}
                     </span>
                   ) : null}
                 </div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <SideBlock
-                    title="Stallion side"
+                    title={t("report.stallionSide")}
                     closest={ancestor.stallionSide.closestGeneration}
                     count={ancestor.stallionSide.occurrenceCount}
                     generations={ancestor.stallionSide.generations}
+                    closestLabel={t("report.closestGeneration", {
+                      value: ancestor.stallionSide.closestGeneration || tCommon("notApplicable"),
+                    })}
+                    occurrencesLabel={t("report.occurrences", {
+                      count: ancestor.stallionSide.occurrenceCount,
+                    })}
+                    generationsLabel={t("report.generations", {
+                      list: ancestor.stallionSide.generations.join(", ") || tCommon("notApplicable"),
+                    })}
                   />
                   <SideBlock
-                    title="Mare side"
+                    title={t("report.mareSide")}
                     closest={ancestor.mareSide.closestGeneration}
                     count={ancestor.mareSide.occurrenceCount}
                     generations={ancestor.mareSide.generations}
+                    closestLabel={t("report.closestGeneration", {
+                      value: ancestor.mareSide.closestGeneration || tCommon("notApplicable"),
+                    })}
+                    occurrencesLabel={t("report.occurrences", {
+                      count: ancestor.mareSide.occurrenceCount,
+                    })}
+                    generationsLabel={t("report.generations", {
+                      list: ancestor.mareSide.generations.join(", ") || tCommon("notApplicable"),
+                    })}
                   />
                 </div>
               </div>
@@ -135,20 +178,22 @@ export default function BreedingAnalysisReportView({ report }: Props) {
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">E. Linebreeding Patterns</p>
-        <p className="mt-2 text-sm text-gray-400">{GENERATION_NUMBERING_EXPLANATION}</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.linebreedingEyebrow")}
+        </p>
+        <p className="mt-2 text-sm text-gray-400">{t("generationNumberingExplanation")}</p>
         {report.linebreedingPatterns.length === 0 ? (
-          <p className="mt-4 text-gray-400">No linebreeding patterns detected.</p>
+          <p className="mt-4 text-gray-400">{t("report.noLinebreeding")}</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-left text-gray-500">
-                  <th className="py-2 pr-4">Ancestor</th>
-                  <th className="py-2 pr-4">Notation</th>
-                  <th className="py-2 pr-4">Stallion Gen</th>
-                  <th className="py-2 pr-4">Mare Gen</th>
-                  <th className="py-2">Severity</th>
+                  <th className="py-2 pr-4">{t("report.ancestor")}</th>
+                  <th className="py-2 pr-4">{t("report.notation")}</th>
+                  <th className="py-2 pr-4">{t("report.stallionGen")}</th>
+                  <th className="py-2 pr-4">{t("report.mareGen")}</th>
+                  <th className="py-2">{t("report.severity")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,11 +219,11 @@ export default function BreedingAnalysisReportView({ report }: Props) {
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">F. Close Relationship Warnings</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.warningsEyebrow")}
+        </p>
         {report.closeRelationshipWarnings.length === 0 ? (
-          <p className="mt-4 text-gray-400">
-            No obvious close pedigree relationships detected within the analyzed data.
-          </p>
+          <p className="mt-4 text-gray-400">{t("report.noCloseRelationships")}</p>
         ) : (
           <div className="mt-4 space-y-4">
             {report.closeRelationshipWarnings.map((warning) => (
@@ -194,15 +239,17 @@ export default function BreedingAnalysisReportView({ report }: Props) {
                 <p className="mt-2 text-sm text-gray-300 leading-6">{warning.explanation}</p>
               </div>
             ))}
-            <p className="text-sm text-gray-400 leading-6">{CLOSE_RELATIONSHIP_ADVISORY}</p>
+            <p className="text-sm text-gray-400 leading-6">{t("closeRelationshipAdvisory")}</p>
           </div>
         )}
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">G. Bloodline Reinforcement</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-blue-400">
+          {t("report.reinforcementEyebrow")}
+        </p>
         {report.bloodlineReinforcements.length === 0 ? (
-          <p className="mt-4 text-gray-400">No repeated bloodlines detected in this cross.</p>
+          <p className="mt-4 text-gray-400">{t("report.noReinforcement")}</p>
         ) : (
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {report.bloodlineReinforcements.map((item) => (
@@ -215,8 +262,8 @@ export default function BreedingAnalysisReportView({ report }: Props) {
                 </div>
                 <p className="mt-2 text-blue-300 font-semibold">{item.notation}</p>
                 <p className="mt-2 text-sm text-gray-400">
-                  Stallion gen {item.stallionGeneration} · Mare gen {item.mareGeneration} ·{" "}
-                  {item.severityLabel}
+                  {t("report.stallionGenShort", { gen: item.stallionGeneration })} ·{" "}
+                  {t("report.mareGenShort", { gen: item.mareGeneration })} · {item.severityLabel}
                 </p>
               </div>
             ))}
@@ -225,13 +272,15 @@ export default function BreedingAnalysisReportView({ report }: Props) {
       </section>
 
       <section className="rounded-3xl border border-dashed border-white/15 bg-[#08111F] p-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">H. Data Limitations / Disclaimer</p>
-        <p className="mt-3 text-sm text-gray-300 leading-7">{BREEDING_DISCLAIMER}</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+          {t("report.disclaimerEyebrow")}
+        </p>
+        <p className="mt-3 text-sm text-gray-300 leading-7">{t("disclaimer")}</p>
         <ul className="mt-4 space-y-2 text-sm text-gray-400 list-disc pl-5">
-          <li>Analysis is deterministic and based only on structured pedigree records available at runtime.</li>
-          <li>Verified badges indicate admin-reviewed pedigree identity, not genetic or veterinary approval.</li>
-          <li>Same-name horses with different UUIDs are treated as distinct ancestors.</li>
-          <li>Incomplete pedigrees reduce data confidence and may omit common ancestors.</li>
+          <li>{t("report.disclaimerBullet1")}</li>
+          <li>{t("report.disclaimerBullet2")}</li>
+          <li>{t("report.disclaimerBullet3")}</li>
+          <li>{t("report.disclaimerBullet4")}</li>
         </ul>
       </section>
     </div>
@@ -250,44 +299,46 @@ function IndicatorCard({ label, value }: { label: string; value: string }) {
 function CompletenessCard({
   title,
   percent,
-  known,
-  expected,
-  verified,
+  completenessTitle,
+  completenessDetail,
 }: {
   title: string;
   percent: number;
   known: number;
   expected: number;
   verified: number;
+  completenessTitle: string;
+  completenessDetail: string;
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#08111F] p-5">
-      <p className="text-xs uppercase tracking-wide text-gray-500">{title} pedigree completeness</p>
+      <p className="text-xs uppercase tracking-wide text-gray-500">{completenessTitle}</p>
       <p className="mt-2 text-3xl font-black text-white">{percent}%</p>
-      <p className="mt-2 text-sm text-gray-400">
-        {known} / {expected} ancestor slots known · {verified} verified ancestors
-      </p>
+      <p className="mt-2 text-sm text-gray-400">{completenessDetail}</p>
     </div>
   );
 }
 
 function SideBlock({
   title,
-  closest,
-  count,
-  generations,
+  closestLabel,
+  occurrencesLabel,
+  generationsLabel,
 }: {
   title: string;
   closest: number;
   count: number;
   generations: number[];
+  closestLabel: string;
+  occurrencesLabel: string;
+  generationsLabel: string;
 }) {
   return (
     <div className="rounded-xl border border-white/10 p-4">
       <p className="text-xs uppercase tracking-wide text-gray-500">{title}</p>
-      <p className="mt-2 text-white">Closest generation: {closest || "—"}</p>
-      <p className="mt-1 text-sm text-gray-400">Occurrences: {count}</p>
-      <p className="mt-1 text-sm text-gray-500">Generations: {generations.join(", ") || "—"}</p>
+      <p className="mt-2 text-white">{closestLabel}</p>
+      <p className="mt-1 text-sm text-gray-400">{occurrencesLabel}</p>
+      <p className="mt-1 text-sm text-gray-500">{generationsLabel}</p>
     </div>
   );
 }

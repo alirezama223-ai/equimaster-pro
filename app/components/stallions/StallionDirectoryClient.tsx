@@ -60,7 +60,7 @@ export default function StallionDirectoryClient({ stallions, loadError }: Props)
           resultCount={filtered.length}
         />
 
-        <section className="max-w-7xl mx-auto px-6 pb-24">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
           {loadError ? (
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200 mb-8">
               {t("directory.loadError", { error: loadError })}

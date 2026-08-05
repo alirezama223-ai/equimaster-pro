@@ -324,7 +324,7 @@ export default function MarketplaceBrowseClient({
               <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
                 {t("browse.eyebrow")}
               </p>
-              <h1 className="text-4xl sm:text-5xl font-black mt-4">{t("browse.title")}</h1>
+              <h1 className="text-3xl font-black mt-4 sm:text-5xl">{t("browse.title")}</h1>
               <p className="mt-4 max-w-3xl text-gray-400 text-lg">{t("browse.subtitle")}</p>
             </section>
           </FadeUp>
@@ -338,7 +338,7 @@ export default function MarketplaceBrowseClient({
             <button
               type="button"
               onClick={() => setMobileFiltersOpen(true)}
-              className="rounded-xl border border-blue-500/40 bg-blue-600/10 px-4 py-2 text-sm font-semibold text-blue-300"
+              className="inline-flex min-h-11 items-center rounded-xl border border-blue-500/40 bg-blue-600/10 px-4 py-2.5 text-sm font-semibold text-blue-300"
             >
               {t("browse.openFilters")}
               {activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -346,7 +346,7 @@ export default function MarketplaceBrowseClient({
           </div>
 
           <div className="lg:grid lg:grid-cols-[minmax(280px,340px)_1fr] lg:gap-8 lg:items-start">
-            <aside className="hidden lg:block lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+            <aside className="scroll-touch hidden lg:block lg:sticky lg:top-28 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto">
               <section className="rounded-3xl border border-white/10 bg-[#111827] p-5 sm:p-6">
                 <FilterPanel {...filterPanelProps} layout="desktop" />
               </section>

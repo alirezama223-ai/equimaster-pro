@@ -8,7 +8,10 @@ import {
   isFeedbackSeverity,
   isFeedbackStatus,
   validateFeedbackDescription,
+  validateFeedbackScreenshot,
 } from "@/app/lib/feedback/validation";
+import { sanitizeAppPath } from "@/app/lib/security/path-validation";
+import { checkRateLimit, rateLimitError } from "@/app/lib/security/rate-limit";
 import { createClient } from "@/app/lib/supabase/server";
 import type {
   AdminFeedbackFilter,
@@ -60,13 +63,18 @@ export async function submitFeedbackReport(formData: FormData): Promise<{ error?
     return { error: auth.error };
   }
 
+  const rateLimit = checkRateLimit(`feedback:${auth.user.id}`, 10, 60 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    return { error: rateLimitError(rateLimit.retryAfterMs) };
+  }
+
   const category = String(formData.get("category") ?? "");
   const severity = String(formData.get("severity") ?? "");
   const description = String(formData.get("description") ?? "");
-  const pagePath = String(formData.get("pagePath") ?? "").trim();
-  const browser = String(formData.get("browser") ?? "").trim();
-  const os = String(formData.get("os") ?? "").trim();
-  const locale = String(formData.get("locale") ?? "en").trim() || "en";
+  const pagePathRaw = String(formData.get("pagePath") ?? "").trim();
+  const browser = String(formData.get("browser") ?? "").trim().slice(0, 120);
+  const os = String(formData.get("os") ?? "").trim().slice(0, 120);
+  const locale = String(formData.get("locale") ?? "en").trim().slice(0, 10) || "en";
   const screenshot = formData.get("screenshot");
 
   if (!isFeedbackCategory(category)) {
@@ -82,8 +90,20 @@ export async function submitFeedbackReport(formData: FormData): Promise<{ error?
     return { error: descriptionError };
   }
 
-  if (!pagePath) {
+  if (!pagePathRaw) {
     return { error: "Current page could not be detected." };
+  }
+
+  const pagePath = sanitizeAppPath(pagePathRaw);
+  if (!pagePath) {
+    return { error: "Invalid page path." };
+  }
+
+  if (screenshot instanceof File && screenshot.size > 0) {
+    const screenshotError = validateFeedbackScreenshot(screenshot);
+    if (screenshotError) {
+      return { error: screenshotError };
+    }
   }
 
   const { data: inserted, error: insertError } = await auth.supabase

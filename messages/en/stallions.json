@@ -98,5 +98,11 @@
     "traitSummaryNote": "Public summary only. Aggregated from available structured evidence with confidence weighting.",
     "manageTraitEvidence": "Manage Trait Evidence →",
     "emptyValue": "—"
+  },
+  "breedingMethods": {
+    "freshSemen": "Fresh semen",
+    "chilledSemen": "Chilled semen",
+    "frozenSemen": "Frozen semen",
+    "naturalCovering": "Natural covering"
   }
 }

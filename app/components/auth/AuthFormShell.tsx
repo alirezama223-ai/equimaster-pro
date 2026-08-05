@@ -36,7 +36,7 @@ export default function AuthFormShell({
 
       <p className="mt-8 text-center text-gray-400">
         {footerText}{" "}
-        <Link href={footerHref} className="text-blue-400 hover:text-blue-300 font-semibold">
+        <Link href={footerHref} className="inline-flex min-h-11 items-center text-blue-400 hover:text-blue-300 font-semibold">
           {footerLinkLabel}
         </Link>
       </p>
