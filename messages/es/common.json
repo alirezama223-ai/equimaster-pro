@@ -1,5 +1,6 @@
 {
   "brand": "EquiMaster Pro",
+  "brandShort": "EquiMaster",
   "loading": "Cargando...",
   "save": "Guardar",
   "cancel": "Cancelar",
@@ -23,6 +24,11 @@
   "required": "Obligatorio",
   "error": "Algo salió mal. Inténtelo de nuevo.",
   "noResults": "No se encontraron resultados.",
+  "searchPlaceholder": "Buscar…",
+  "searchAndAddPlaceholder": "Buscar y añadir…",
+  "allOptionsSelected": "Todas las opciones seleccionadas.",
+  "unknownHorse": "Caballo desconocido",
+  "notApplicable": "—",
   "comingSoon": "Próximamente",
   "about": "Acerca de",
   "verified": "Verificado",

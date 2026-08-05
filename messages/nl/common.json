@@ -1,5 +1,6 @@
 {
   "brand": "EquiMaster Pro",
+  "brandShort": "EquiMaster",
   "loading": "Laden...",
   "save": "Opslaan",
   "cancel": "Annuleren",
@@ -23,6 +24,11 @@
   "required": "Verplicht",
   "error": "Er is iets misgegaan. Probeer het opnieuw.",
   "noResults": "Geen resultaten gevonden.",
+  "searchPlaceholder": "Zoeken…",
+  "searchAndAddPlaceholder": "Zoeken en toevoegen…",
+  "allOptionsSelected": "Alle opties geselecteerd.",
+  "unknownHorse": "Onbekend paard",
+  "notApplicable": "—",
   "comingSoon": "Binnenkort beschikbaar",
   "about": "Over ons",
   "verified": "Geverifieerd",
