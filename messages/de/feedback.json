@@ -14,7 +14,7 @@
     "os": "Betriebssystem",
     "language": "Sprache",
     "screenshot": "Screenshot (optional)",
-    "screenshotHint": "Fügen Sie einen Screenshot hinzu, um uns bei der Reproduktion zu helfen. JPEG, PNG oder WebP bis 5 MB.",
+    "screenshotHint": "Fügen Sie einen Screenshot bei, um uns bei der Reproduktion zu helfen. JPEG, PNG oder WebP bis 5 MB.",
     "screenshotPreviewAlt": "Screenshot-Vorschau",
     "removeScreenshot": "Screenshot entfernen",
     "submit": "Bericht senden",
@@ -22,7 +22,7 @@
     "close": "Schließen",
     "done": "Fertig",
     "successTitle": "Feedback erhalten",
-    "successMessage": "Vielen Dank — Ihr Bericht wurde an das EquiMaster Pro Team gesendet."
+    "successMessage": "Vielen Dank — Ihr Bericht wurde an das EquiMaster Pro-Team gesendet."
   },
   "categories": {
     "bug": "Fehler",

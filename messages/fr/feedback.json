@@ -1,14 +1,14 @@
 {
-  "floatingButton": "Feedback",
-  "floatingButtonAria": "Ouvrir le formulaire de feedback",
+  "floatingButton": "Commentaires",
+  "floatingButtonAria": "Ouvrir le formulaire de commentaires",
   "modal": {
-    "eyebrow": "Feedback Bêta",
-    "title": "Envoyer un feedback",
+    "eyebrow": "Commentaires bêta",
+    "title": "Envoyer un commentaire",
     "subtitle": "Aidez-nous à améliorer EquiMaster Pro pendant la bêta. Votre rapport inclut automatiquement la page actuelle et les détails de l'environnement.",
     "category": "Catégorie",
     "severity": "Gravité",
     "description": "Description",
-    "descriptionPlaceholder": "Décrivez ce qui s'est passé, ce que vous attendiez ou ce que vous aimeriez améliorer…",
+    "descriptionPlaceholder": "Décrivez ce qui s'est passé, ce que vous attendiez ou ce que vous aimeriez voir amélioré…",
     "page": "Page actuelle",
     "browser": "Navigateur",
     "os": "Système d'exploitation",
@@ -16,12 +16,12 @@
     "screenshot": "Capture d'écran (optionnel)",
     "screenshotHint": "Joignez une capture d'écran pour nous aider à reproduire le problème. JPEG, PNG ou WebP jusqu'à 5 Mo.",
     "screenshotPreviewAlt": "Aperçu de la capture d'écran",
-    "removeScreenshot": "Supprimer la capture",
+    "removeScreenshot": "Supprimer la capture d'écran",
     "submit": "Envoyer le rapport",
     "submitting": "Envoi en cours…",
     "close": "Fermer",
     "done": "Terminé",
-    "successTitle": "Feedback reçu",
+    "successTitle": "Commentaire reçu",
     "successMessage": "Merci — votre rapport a été envoyé à l'équipe EquiMaster Pro."
   },
   "categories": {
@@ -31,8 +31,8 @@
   },
   "severities": {
     "low": "Faible",
-    "medium": "Moyenne",
-    "high": "Élevée",
+    "medium": "Moyen",
+    "high": "Élevé",
     "critical": "Critique"
   },
   "statuses": {

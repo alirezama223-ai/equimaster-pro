@@ -3,21 +3,21 @@
   "floatingButtonAria": "Feedbackformulier openen",
   "modal": {
     "eyebrow": "Beta-feedback",
-    "title": "Feedback versturen",
-    "subtitle": "Help ons EquiMaster Pro tijdens de beta te verbeteren. Uw rapport bevat automatisch de huidige pagina en omgevingsdetails.",
+    "title": "Feedback verzenden",
+    "subtitle": "Help ons EquiMaster Pro tijdens de bèta te verbeteren. Uw rapport bevat automatisch de huidige pagina en omgevingsdetails.",
     "category": "Categorie",
     "severity": "Ernst",
     "description": "Beschrijving",
-    "descriptionPlaceholder": "Beschrijf wat er gebeurde, wat u verwachtte of wat u wilt verbeteren…",
+    "descriptionPlaceholder": "Beschrijf wat er gebeurde, wat u verwachtte of wat u verbeterd zou willen zien…",
     "page": "Huidige pagina",
     "browser": "Browser",
     "os": "Besturingssysteem",
     "language": "Taal",
     "screenshot": "Screenshot (optioneel)",
-    "screenshotHint": "Voeg een screenshot toe om het probleem te reproduceren. JPEG, PNG of WebP tot 5 MB.",
+    "screenshotHint": "Voeg een screenshot toe om ons te helpen het probleem te reproduceren. JPEG, PNG of WebP tot 5 MB.",
     "screenshotPreviewAlt": "Screenshot-voorbeeld",
     "removeScreenshot": "Screenshot verwijderen",
-    "submit": "Rapport versturen",
+    "submit": "Rapport verzenden",
     "submitting": "Verzenden…",
     "close": "Sluiten",
     "done": "Klaar",
@@ -27,7 +27,7 @@
   "categories": {
     "bug": "Bug",
     "suggestion": "Suggestie",
-    "feature_request": "Featureverzoek"
+    "feature_request": "Functieverzoek"
   },
   "severities": {
     "low": "Laag",
