@@ -1,28 +1,65 @@
+import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
-import VerifiedBadge from "@/app/components/admin/VerifiedBadge";
 import StallionCard from "@/app/components/stallions/StallionCard";
-import HorseCard from "@/app/components/featured/HorseCard";
+import SellerProfileHeader, {
+  SellerProfileSection,
+} from "@/app/components/breeders/profile/SellerProfileHeader";
+import SellerTrustCards from "@/app/components/breeders/profile/SellerTrustCards";
+import SellerProfileGallery from "@/app/components/breeders/profile/SellerProfileGallery";
+import SellerListingsGrid from "@/app/components/breeders/profile/SellerListingsGrid";
+import SellerContactSidebar, {
+  StickyMobileSellerContactBar,
+} from "@/app/components/breeders/profile/SellerContactSidebar";
+import SellerLocationSection from "@/app/components/breeders/profile/SellerLocationSection";
+import HorseSectionEmpty from "@/app/components/horse/HorseSectionEmpty";
 import { isBreederUuid } from "@/app/lib/breeders";
 import { getCachedBreederById } from "@/app/lib/entity-profile-cache";
-import { listingRowToHorse } from "@/app/lib/horse-listings";
+import { listingRowToHorse, getListingCoverImageUrl } from "@/app/lib/horse-listings";
 import {
   buildBreederMetadata,
   buildBreederOrganizationJsonLd,
   loadEntitySeoTemplates,
 } from "@/app/lib/seo/entity-metadata";
+import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import { type AppLocale, routing } from "@/i18n/routing";
-import { HorseListingRow } from "@/app/types/horse-listing";
-import { notFound } from "next/navigation";
+import type { HorseListingRow } from "@/app/types/horse-listing";
+import type { StallionCardData } from "@/app/types/stallion";
 
 export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ id: string; locale: string }>;
 };
+
+function formatMemberSince(isoDates: string[]): string | null {
+  const timestamps = isoDates
+    .map((value) => new Date(value).getTime())
+    .filter((value) => !Number.isNaN(value));
+
+  if (timestamps.length === 0) return null;
+
+  const oldest = new Date(Math.min(...timestamps));
+  return `Member since ${oldest.toLocaleDateString(undefined, { month: "long", year: "numeric" })}`;
+}
+
+function buildGalleryImages(
+  logoUrl: string,
+  coverImageUrl: string,
+  stallions: StallionCardData[],
+  listings: HorseListingRow[]
+): string[] {
+  const images = [
+    coverImageUrl,
+    logoUrl,
+    ...stallions.map((stallion) => stallion.coverImageUrl),
+    ...listings.map((row) => getListingCoverImageUrl(row)),
+  ];
+
+  return [...new Set(images.filter((url) => url?.trim()))];
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, locale } = await params;
@@ -53,26 +90,70 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BreederDetailPage({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations("breeders");
+  const tCommon = await getTranslations("common");
+  const tMarketplace = await getTranslations("marketplace");
 
   if (!isBreederUuid(id)) {
     notFound();
   }
 
-  const result = await getCachedBreederById(id);
+  const [result, favoriteListingIds] = await Promise.all([
+    getCachedBreederById(id),
+    getUserFavoriteListingIds(),
+  ]);
 
   if (!result.breeder) {
     notFound();
   }
 
   const { breeder, stallions, listings } = result;
-  const listingHorses = (listings ?? []).map((row) =>
-    listingRowToHorse(row as HorseListingRow)
+  const listingRows = (listings ?? []) as HorseListingRow[];
+  const listingHorses = listingRows.map((row) =>
+    listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
+  );
+  const profilePath = `/breeders/${id}`;
+  const memberSinceLabel = formatMemberSince(listingRows.map((row) => row.created_at));
+  const galleryImages = buildGalleryImages(
+    breeder.logoUrl,
+    breeder.coverImageUrl,
+    stallions,
+    listingRows
   );
 
-  const hasEmail = Boolean(breeder.email?.trim());
-  const hasPhone = Boolean(breeder.phone?.trim());
-  const hasWebsite = Boolean(breeder.website?.trim());
+  const trustMetrics = [
+    listingHorses.length > 0
+      ? {
+          key: "listings",
+          label: t("detail.horsesForSale"),
+          value: String(listingHorses.length),
+          accent: "blue" as const,
+        }
+      : null,
+    stallions.length > 0
+      ? {
+          key: "stallions",
+          label: t("detail.stallions"),
+          value: String(stallions.length),
+          accent: "violet" as const,
+        }
+      : null,
+    breeder.verified
+      ? {
+          key: "verified",
+          label: tMarketplace("horseCard.verified"),
+          value: "✓",
+          accent: "emerald" as const,
+        }
+      : null,
+  ].filter(Boolean) as {
+    key: string;
+    label: string;
+    value: string;
+    accent?: "blue" | "emerald" | "violet" | "amber";
+  }[];
+
   const organizationJsonLd = buildBreederOrganizationJsonLd(breeder);
+  const hasContact = Boolean(breeder.email?.trim() || breeder.phone?.trim() || breeder.website?.trim());
 
   return (
     <>
@@ -82,142 +163,123 @@ export default async function BreederDetailPage({ params }: Props) {
       />
       <Navbar />
 
-      <main className="min-h-screen bg-[#081223] text-white pt-20 pb-24">
-        <div className="relative h-56 sm:h-72 overflow-hidden">
-          <Image
-            src={breeder.coverImageUrl}
-            alt={t("detail.coverAlt", { name: breeder.name })}
-            fill
-            priority
-            className="object-cover"
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-[calc(10rem+env(safe-area-inset-bottom))] lg:pb-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <SellerProfileHeader
+            breeder={breeder}
+            memberSinceLabel={memberSinceLabel}
+            sellerTypeLabel="Breeder / Stud Farm"
+            coverAlt={t("detail.coverAlt", { name: breeder.name })}
+            logoAlt={t("detail.logoAlt", { name: breeder.name })}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#081223] via-black/40 to-black/20" />
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-16 relative">
-          <div className="flex flex-col sm:flex-row gap-6 items-start">
-            <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-3xl border-4 border-[#081223] bg-[#111827]">
-              <Image
-                src={breeder.logoUrl}
-                alt={t("detail.logoAlt", { name: breeder.name })}
-                fill
-                className="object-cover"
-              />
+          {trustMetrics.length > 0 ? (
+            <div className="mt-8">
+              <SellerTrustCards metrics={trustMetrics} />
             </div>
+          ) : null}
 
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3">
-                {breeder.verified ? <VerifiedBadge /> : null}
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-black mt-2">{breeder.name}</h1>
-              <p className="mt-2 text-gray-400 text-lg">
-                📍 {breeder.city ? `${breeder.city}, ` : ""}
-                {breeder.country}
-              </p>
+          <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-12 xl:gap-16">
+            <div className="min-w-0 space-y-8 lg:space-y-10">
+              {breeder.description ? (
+                <SellerProfileSection id="about" title={t("detail.about")}>
+                  <div className="max-w-3xl text-base leading-[1.85] text-gray-300 sm:text-lg sm:leading-[1.9] whitespace-pre-wrap">
+                    {breeder.description}
+                  </div>
+                </SellerProfileSection>
+              ) : null}
+
+              {listingHorses.length > 0 ? (
+                <SellerProfileSection id="horses" title={t("detail.horsesForSale")}>
+                  <SellerListingsGrid
+                    horses={listingHorses}
+                    favoriteListingIds={favoriteListingIds}
+                  />
+                </SellerProfileSection>
+              ) : null}
+
+              {stallions.length > 0 ? (
+                <SellerProfileSection id="stallions" title={t("detail.stallions")}>
+                  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    {stallions.map((stallion) => (
+                      <StallionCard key={stallion.id} stallion={stallion} />
+                    ))}
+                  </div>
+                </SellerProfileSection>
+              ) : null}
 
               {breeder.disciplines.length > 0 ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {breeder.disciplines.map((discipline) => (
+                <SellerProfileSection
+                  id="breeding"
+                  title="Breeding Program"
+                  subtitle={t("detail.contactDescription", { name: breeder.name })}
+                >
+                  <div className="flex items-start gap-4 rounded-xl border border-white/[0.06] bg-gradient-to-br from-[#132038]/80 to-[#0a1220] p-5 sm:p-6">
                     <span
-                      key={discipline}
-                      className="rounded-full border border-white/10 bg-[#111827] px-4 py-2 text-sm"
+                      aria-hidden="true"
+                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-500/25 bg-violet-600/10 text-2xl"
                     >
-                      {discipline}
+                      🧬
                     </span>
-                  ))}
-                </div>
+                    <div className="min-w-0">
+                      <p className="text-lg font-semibold text-white">{breeder.name}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                        {breeder.disciplines.join(" · ")}
+                      </p>
+                    </div>
+                  </div>
+                </SellerProfileSection>
               ) : null}
+
+              {galleryImages.length > 2 ? (
+                <SellerProfileSection id="gallery" title="Gallery">
+                  <SellerProfileGallery images={galleryImages} sellerName={breeder.name} />
+                </SellerProfileSection>
+              ) : null}
+
+              <SellerLocationSection breeder={breeder} title={t("directory.countryLabel")} />
+
+              <SellerProfileSection id="reviews" title="Reviews">
+                <HorseSectionEmpty message="Reviews have not been published for this seller yet." />
+              </SellerProfileSection>
             </div>
+
+            <SellerContactSidebar
+              breederId={id}
+              breederName={breeder.name}
+              profilePath={profilePath}
+              email={breeder.email}
+              phone={breeder.phone}
+              website={breeder.website}
+              contactTitle={t("detail.contact")}
+              contactDescription={t("detail.contactDescription", { name: breeder.name })}
+              viewListingsLabel={t("detail.horsesForSale")}
+              shareLabel={tMarketplace("share.label")}
+              shareCopiedLabel={tMarketplace("share.copied")}
+              websiteLabel={t("detail.website")}
+              noContactLabel={t("detail.noContactDetails")}
+            />
           </div>
 
-          {breeder.description ? (
-            <section className="mt-12">
-              <h2 className="text-3xl font-bold mb-6">{t("detail.about")}</h2>
-              <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8 text-gray-300 leading-8 whitespace-pre-wrap">
-                {breeder.description}
-              </div>
-            </section>
-          ) : null}
-
-          <section className="mt-16">
-            <h2 className="text-3xl font-bold mb-8">{t("detail.stallions")}</h2>
-            {stallions.length === 0 ? (
-              <div className="rounded-3xl border border-white/10 bg-[#111827] px-8 py-12 text-center text-gray-400">
-                {t("detail.noStallions")}
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {stallions.map((stallion) => (
-                  <StallionCard key={stallion.id} stallion={stallion} />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {listingHorses.length > 0 ? (
-            <section className="mt-16">
-              <h2 className="text-3xl font-bold mb-8">{t("detail.horsesForSale")}</h2>
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {listingHorses.map((horse) => (
-                  <HorseCard key={horse.listingUuid ?? horse.id} horse={horse} />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          <section className="mt-16 rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
-            <h2 className="text-2xl font-bold">{t("detail.contact")}</h2>
-            <p className="mt-3 text-gray-400">
-              {t("detail.contactDescription", { name: breeder.name })}
-            </p>
-
-            <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-4">
-              {hasEmail ? (
-                <a
-                  href={`mailto:${breeder.email}`}
-                  className="inline-flex justify-center rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-4 text-white font-semibold transition"
-                >
-                  {breeder.email}
-                </a>
-              ) : null}
-
-              {hasPhone ? (
-                <a
-                  href={`tel:${breeder.phone}`}
-                  className="inline-flex justify-center rounded-xl border border-white/15 px-6 py-4 text-white font-semibold hover:border-blue-500 transition"
-                >
-                  {breeder.phone}
-                </a>
-              ) : null}
-
-              {hasWebsite ? (
-                <a
-                  href={
-                    breeder.website!.startsWith("http")
-                      ? breeder.website!
-                      : `https://${breeder.website}`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex justify-center rounded-xl border border-white/15 px-6 py-4 text-white font-semibold hover:border-blue-500 transition"
-                >
-                  {t("detail.website")}
-                </a>
-              ) : null}
-
-              {!hasEmail && !hasPhone && !hasWebsite ? (
-                <p className="text-gray-500">{t("detail.noContactDetails")}</p>
-              ) : null}
-            </div>
-          </section>
-
-          <div className="mt-8">
-            <Link href="/breeders" className="text-gray-400 hover:text-white transition">
+          <div className="mt-10">
+            <Link href="/breeders" className="text-sm text-gray-400 transition hover:text-white">
               {t("detail.backToDirectory")}
             </Link>
           </div>
         </div>
       </main>
+
+      {hasContact || listingHorses.length > 0 ? (
+        <StickyMobileSellerContactBar
+          breederId={id}
+          breederName={breeder.name}
+          profilePath={profilePath}
+          email={breeder.email}
+          contactTitle={t("detail.contact")}
+          viewListingsLabel={t("detail.horsesForSale")}
+          shareLabel={tMarketplace("share.label")}
+        />
+      ) : null}
     </>
   );
 }
