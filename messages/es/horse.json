@@ -1,7 +1,7 @@
 {
   "info": {
     "verified": "Verificado",
-    "askingPrice": "Precio de venta",
+    "askingPrice": "Precio solicitado",
     "breed": "Raza",
     "age": "Edad",
     "ageValue": "{age} años",
@@ -10,15 +10,15 @@
     "country": "País",
     "gender": "Sexo",
     "training": "Entrenamiento",
-    "color": "Capa",
+    "color": "Color",
     "discipline": "Disciplina",
-    "draftContact": "Este anuncio aún no está publicado. Publíquelo desde su panel de vendedor para activar consultas de compradores.",
+    "draftContact": "Este anuncio aún no está publicado. Publíquelo desde su panel de vendedor para habilitar consultas de compradores.",
     "contactUnavailable": "El contacto no está disponible para este anuncio.",
-    "viewPedigree": "Ver pedigree completo"
+    "viewPedigree": "Ver registro genealógico completo"
   },
   "description": {
     "title": "Descripción",
-    "fallback": "{name} es un caballo de deporte {breed} de primer nivel procedente de {country}. Un talento en {discipline} con excelente montabilidad y líneas sanguíneas destacadas."
+    "fallback": "{name} es un caballo de deporte {breed} premium de {country}. Un talentoso caballo de {discipline} con excelente montabilidad y líneas de sangre destacadas."
   },
   "pedigree": {
     "title": "Pedigree",
@@ -29,49 +29,49 @@
   "contact": {
     "title": "¿Interesado en {name}?",
     "withSeller": "Contacte con {seller}{stable} para más información.",
-    "atStable": " de {stable}",
+    "atStable": " en {stable}",
     "generic": "Contacte con el vendedor para más información.",
-    "privateInquiry": "Envíe una consulta privada a través de EquiMaster Pro. Su mensaje se comparte únicamente con el vendedor.",
+    "privateInquiry": "Envíe una consulta privada a través de EquiMaster Pro. Su mensaje se comparte solo con el vendedor.",
     "contactSeller": "Contactar vendedor",
     "mailSubject": "Consulta sobre {name}"
   },
   "inquiry": {
     "modalEyebrow": "Contactar vendedor",
-    "modalTitle": "Contactar al vendedor sobre {name}",
+    "modalTitle": "Contactar vendedor sobre {name}",
     "modalSubtitle": "Envíe una consulta privada. Sus datos de contacto se comparten solo con el vendedor.",
     "successTitle": "Consulta enviada correctamente",
-    "successBody": "Su mensaje sobre {name} ha sido enviado al vendedor. Podrá revisarlo en su panel de cuenta.",
+    "successBody": "Su mensaje sobre {name} ha sido enviado al vendedor. Puede revisarlo en su panel de cuenta.",
     "close": "Cerrar",
     "name": "Nombre",
     "namePlaceholder": "Su nombre",
     "email": "Correo electrónico",
-    "emailPlaceholder": "usted@ejemplo.es",
+    "emailPlaceholder": "you@example.com",
     "phone": "Teléfono",
     "phoneOptional": "(opcional)",
-    "phonePlaceholder": "+34 612 345 678",
+    "phonePlaceholder": "+31 6 12345678",
     "message": "Mensaje",
     "messageHint": "Puede editar el mensaje sugerido.",
     "cancel": "Cancelar",
     "send": "Enviar consulta",
-    "sending": "Enviando consulta …"
+    "sending": "Enviando consulta..."
   },
   "gallery": {
     "photoAlt": "{name} — foto {index}",
-    "photoAltDetailed": "{name}, caballo de deporte de {discipline} en venta — foto {index} de {total}",
+    "photoAltDetailed": "{name}, caballo de deporte {discipline} en venta — foto {index} de {total}",
     "previousPhoto": "Foto anterior",
     "nextPhoto": "Foto siguiente",
     "showPhoto": "Mostrar foto {index}",
-    "thumbnailAlt": "{name} — miniatura {index}",
+    "thumbnailAlt": "Miniatura de {name} {index}",
     "thumbnailAltDetailed": "{name} — miniatura {index} de {total}",
     "openLightbox": "Ver foto a tamaño completo",
-    "openLightboxHint": "Pulse para ampliar",
+    "openLightboxHint": "Toque para ampliar",
     "closeLightbox": "Cerrar galería",
-    "lightboxLabel": "Galería de fotos — {name}",
-    "zoomIn": "Ampliar",
-    "zoomOut": "Reducir",
+    "lightboxLabel": "Galería de fotos de {name}",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
     "photoCounter": "{index} / {total}",
     "slideAnnouncement": "Mostrando foto {index} de {total}",
-    "regionLabel": "Galería de fotos — {name}"
+    "regionLabel": "Galería de fotos de {name}"
   },
   "video": {
     "title": "Vídeo",
@@ -85,6 +85,6 @@
   },
   "shareTitle": "{name} en EquiMaster Pro",
   "breadcrumbs": {
-    "ariaLabel": "Ruta de navegación"
+    "ariaLabel": "Migas de pan"
   }
 }

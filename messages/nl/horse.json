@@ -5,55 +5,55 @@
     "breed": "Ras",
     "age": "Leeftijd",
     "ageValue": "{age} jaar",
-    "height": "Schofthoogte",
+    "height": "Hoogte",
     "heightValue": "{height} cm",
     "country": "Land",
     "gender": "Geslacht",
     "training": "Training",
     "color": "Kleur",
     "discipline": "Discipline",
-    "draftContact": "Deze advertentie is nog niet gepubliceerd. Publiceer deze vanuit uw verkopersdashboard om kopersaanvragen te activeren.",
+    "draftContact": "Deze advertentie is nog niet gepubliceerd. Publiceer deze vanuit uw verkopersdashboard om kopersvragen in te schakelen.",
     "contactUnavailable": "Contact is niet beschikbaar voor deze advertentie.",
-    "viewPedigree": "Volledig stamboek bekijken"
+    "viewPedigree": "Volledig stamboomrecord bekijken"
   },
   "description": {
     "title": "Beschrijving",
-    "fallback": "{name} is een premium {breed} sportpaard uit {country}. Een getalenteerd {discipline}-paard met uitstekende rijbaarheid en sterke bloedlijnen."
+    "fallback": "{name} is een premium {breed} sportpaard uit {country}. Een getalenteerd {discipline}-paard met uitstekende rijbaarheid en opmerkelijke bloedlijnen."
   },
   "pedigree": {
-    "title": "Stamboek",
+    "title": "Stamboom",
     "sire": "Vader",
     "dam": "Moeder",
     "damSire": "Moedervader"
   },
   "contact": {
-    "title": "Interesse in {name}?",
+    "title": "Geïnteresseerd in {name}?",
     "withSeller": "Neem contact op met {seller}{stable} voor meer informatie.",
-    "atStable": " van {stable}",
+    "atStable": " bij {stable}",
     "generic": "Neem contact op met de verkoper voor meer informatie.",
-    "privateInquiry": "Stuur een privé-aanvraag via EquiMaster Pro. Uw bericht wordt uitsluitend met de verkoper gedeeld.",
-    "contactSeller": "Verkoper contacteren",
-    "mailSubject": "Aanvraag over {name}"
+    "privateInquiry": "Stuur een privévraag via EquiMaster Pro. Uw bericht wordt alleen gedeeld met de verkoper.",
+    "contactSeller": "Verkoper contacten",
+    "mailSubject": "Vraag over {name}"
   },
   "inquiry": {
-    "modalEyebrow": "Verkoper contacteren",
-    "modalTitle": "Verkoper contacteren over {name}",
-    "modalSubtitle": "Stuur een privé-aanvraag. Uw contactgegevens worden alleen met de verkoper gedeeld.",
-    "successTitle": "Aanvraag succesvol verzonden",
+    "modalEyebrow": "Verkoper contacten",
+    "modalTitle": "Verkoper contacten over {name}",
+    "modalSubtitle": "Stuur een privévraag. Uw contactgegevens worden alleen gedeeld met de verkoper.",
+    "successTitle": "Vraag succesvol verzonden",
     "successBody": "Uw bericht over {name} is naar de verkoper gestuurd. Deze kan het bekijken in het accountdashboard.",
     "close": "Sluiten",
     "name": "Naam",
     "namePlaceholder": "Uw naam",
     "email": "E-mail",
-    "emailPlaceholder": "u@voorbeeld.nl",
+    "emailPlaceholder": "you@example.com",
     "phone": "Telefoon",
     "phoneOptional": "(optioneel)",
     "phonePlaceholder": "+31 6 12345678",
     "message": "Bericht",
     "messageHint": "U kunt het voorgestelde bericht bewerken.",
     "cancel": "Annuleren",
-    "send": "Aanvraag verzenden",
-    "sending": "Aanvraag wordt verzonden …"
+    "send": "Vraag verzenden",
+    "sending": "Vraag wordt verzonden..."
   },
   "gallery": {
     "photoAlt": "{name} — foto {index}",
@@ -61,17 +61,17 @@
     "previousPhoto": "Vorige foto",
     "nextPhoto": "Volgende foto",
     "showPhoto": "Foto {index} tonen",
-    "thumbnailAlt": "{name} — miniatuur {index}",
+    "thumbnailAlt": "{name} miniatuur {index}",
     "thumbnailAltDetailed": "{name} — miniatuur {index} van {total}",
-    "openLightbox": "Foto op volledig formaat bekijken",
+    "openLightbox": "Foto op volledige grootte bekijken",
     "openLightboxHint": "Tik om te vergroten",
     "closeLightbox": "Galerij sluiten",
-    "lightboxLabel": "Fotogalerij — {name}",
+    "lightboxLabel": "{name} fotogalerij",
     "zoomIn": "Inzoomen",
     "zoomOut": "Uitzoomen",
     "photoCounter": "{index} / {total}",
-    "slideAnnouncement": "Foto {index} van {total}",
-    "regionLabel": "Fotogalerij — {name}"
+    "slideAnnouncement": "Foto {index} van {total} wordt getoond",
+    "regionLabel": "{name} fotogalerij"
   },
   "video": {
     "title": "Video",

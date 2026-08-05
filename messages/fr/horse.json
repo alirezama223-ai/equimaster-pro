@@ -12,13 +12,13 @@
     "training": "Entraînement",
     "color": "Robe",
     "discipline": "Discipline",
-    "draftContact": "Cette annonce n'est pas encore publiée. Publiez-la depuis votre espace vendeur pour activer les demandes d'acheteurs.",
+    "draftContact": "Cette annonce n'est pas encore publiée. Publiez-la depuis votre tableau de bord vendeur pour activer les demandes des acheteurs.",
     "contactUnavailable": "Le contact n'est pas disponible pour cette annonce.",
-    "viewPedigree": "Voir le pedigree complet"
+    "viewPedigree": "Voir l'enregistrement généalogique complet"
   },
   "description": {
     "title": "Description",
-    "fallback": "{name} est un cheval de sport {breed} d'exception originaire de {country}. Un talent confirmé en {discipline}, avec une excellente montabilité et des lignées remarquables."
+    "fallback": "{name} est un cheval de sport {breed} premium originaire de {country}. Un talentueux cheval de {discipline} avec une excellente montabilité et des lignées remarquables."
   },
   "pedigree": {
     "title": "Pedigree",
@@ -29,31 +29,31 @@
   "contact": {
     "title": "Intéressé par {name} ?",
     "withSeller": "Contactez {seller}{stable} pour plus d'informations.",
-    "atStable": " du {stable}",
+    "atStable": " chez {stable}",
     "generic": "Contactez le vendeur pour plus d'informations.",
-    "privateInquiry": "Envoyez une demande privée via EquiMaster Pro. Votre message est transmis uniquement au vendeur.",
+    "privateInquiry": "Envoyez une demande privée via EquiMaster Pro. Votre message est partagé uniquement avec le vendeur.",
     "contactSeller": "Contacter le vendeur",
     "mailSubject": "Demande concernant {name}"
   },
   "inquiry": {
     "modalEyebrow": "Contacter le vendeur",
-    "modalTitle": "Contacter le vendeur au sujet de {name}",
-    "modalSubtitle": "Envoyez une demande privée. Vos coordonnées ne sont partagées qu'avec le vendeur.",
+    "modalTitle": "Contacter le vendeur à propos de {name}",
+    "modalSubtitle": "Envoyez une demande privée. Vos coordonnées sont partagées uniquement avec le vendeur.",
     "successTitle": "Demande envoyée avec succès",
-    "successBody": "Votre message concernant {name} a été envoyé au vendeur. Il pourra le consulter dans son espace compte.",
+    "successBody": "Votre message concernant {name} a été envoyé au vendeur. Il peut le consulter dans son tableau de bord.",
     "close": "Fermer",
     "name": "Nom",
     "namePlaceholder": "Votre nom",
     "email": "E-mail",
-    "emailPlaceholder": "vous@exemple.fr",
+    "emailPlaceholder": "you@example.com",
     "phone": "Téléphone",
-    "phoneOptional": "(facultatif)",
-    "phonePlaceholder": "+33 6 12 34 56 78",
+    "phoneOptional": "(optionnel)",
+    "phonePlaceholder": "+31 6 12345678",
     "message": "Message",
     "messageHint": "Vous pouvez modifier le message suggéré.",
     "cancel": "Annuler",
     "send": "Envoyer la demande",
-    "sending": "Envoi en cours …"
+    "sending": "Envoi de la demande..."
   },
   "gallery": {
     "photoAlt": "{name} — photo {index}",
@@ -61,23 +61,23 @@
     "previousPhoto": "Photo précédente",
     "nextPhoto": "Photo suivante",
     "showPhoto": "Afficher la photo {index}",
-    "thumbnailAlt": "{name} — vignette {index}",
+    "thumbnailAlt": "Vignette {name} {index}",
     "thumbnailAltDetailed": "{name} — vignette {index} sur {total}",
-    "openLightbox": "Voir la photo en grand",
-    "openLightboxHint": "Appuyer pour agrandir",
+    "openLightbox": "Voir la photo en taille réelle",
+    "openLightboxHint": "Appuyez pour agrandir",
     "closeLightbox": "Fermer la galerie",
-    "lightboxLabel": "Galerie photo — {name}",
+    "lightboxLabel": "Galerie photo de {name}",
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arrière",
     "photoCounter": "{index} / {total}",
-    "slideAnnouncement": "Photo {index} sur {total}",
-    "regionLabel": "Galerie photo — {name}"
+    "slideAnnouncement": "Affichage de la photo {index} sur {total}",
+    "regionLabel": "Galerie photo de {name}"
   },
   "video": {
     "title": "Vidéo",
     "unsupported": "Votre navigateur ne prend pas en charge la lecture vidéo HTML5.",
     "externalLink": "Cette annonce inclut un lien vidéo externe.",
-    "watchVideo": "Voir la vidéo"
+    "watchVideo": "Regarder la vidéo"
   },
   "related": {
     "title": "Annonces similaires",
