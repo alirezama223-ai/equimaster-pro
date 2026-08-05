@@ -45,7 +45,7 @@ export default function LogoutButton({ variant = "button" }: Props) {
       type="button"
       onClick={handleLogout}
       disabled={isLoading}
-      className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-60 lg:px-4 lg:py-2.5"
+      className="inline-flex min-h-11 shrink-0 items-center rounded-xl border border-white/20 px-2.5 py-2.5 text-xs font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-60 max-[429px]:px-2 max-[429px]:text-[0.6875rem] sm:px-3 sm:text-sm lg:px-4 lg:py-2.5"
     >
       {isLoading ? t("loading") : t("label")}
     </button>

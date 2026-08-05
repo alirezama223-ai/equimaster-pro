@@ -2,58 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
 import LogoutButton from "@/app/components/auth/LogoutButton";
-import { checkIsCurrentUserAdmin } from "@/app/actions/admin";
-import { createClient } from "@/app/lib/supabase/client";
-import { getSupabaseEnv } from "@/app/lib/supabase/env";
-
-function useAuthUser() {
-  const isConfigured = getSupabaseEnv().isConfigured;
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(isConfigured);
-
-  useEffect(() => {
-    if (!isConfigured) {
-      return;
-    }
-
-    const supabase = createClient();
-
-    async function syncUser(nextUser: User | null) {
-      setUser(nextUser);
-      if (!nextUser) {
-        setIsAdmin(false);
-        setIsLoading(false);
-        return;
-      }
-
-      const admin = await checkIsCurrentUserAdmin();
-      setIsAdmin(admin);
-      setIsLoading(false);
-    }
-
-    supabase.auth.getUser().then(({ data }) => {
-      void syncUser(data.user);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      void syncUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [isConfigured]);
-
-  return { user, isAdmin, isLoading };
-}
+import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
 
 export default function NavbarAuthControls() {
   const t = useTranslations("nav");
-  const { user, isAdmin, isLoading } = useAuthUser();
+  const { user, isAdmin, isLoading } = useNavbarAuthUser();
 
   if (isLoading) {
     return (
@@ -99,42 +53,6 @@ export default function NavbarAuthControls() {
         {t("account")}
       </Link>
       <LogoutButton />
-    </>
-  );
-}
-
-export function NavbarMobileAuth() {
-  const t = useTranslations("nav");
-  const { user, isAdmin, isLoading } = useAuthUser();
-
-  if (isLoading) return null;
-
-  if (!user) {
-    return (
-      <>
-        <Link href="/login" className="whitespace-nowrap hover:text-white transition md:hidden">
-          {t("login")}
-        </Link>
-        <Link href="/signup" className="whitespace-nowrap hover:text-white transition sm:hidden">
-          {t("signup")}
-        </Link>
-      </>
-    );
-  }
-
-  return (
-    <>
-      {isAdmin ? (
-        <Link href="/admin" className="whitespace-nowrap hover:text-blue-400 transition md:hidden">
-          {t("admin")}
-        </Link>
-      ) : null}
-      <Link href="/account" className="whitespace-nowrap hover:text-blue-400 transition md:hidden">
-        {t("account")}
-      </Link>
-      <span className="whitespace-nowrap md:hidden">
-        <LogoutButton />
-      </span>
     </>
   );
 }
