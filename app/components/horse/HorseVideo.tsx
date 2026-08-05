@@ -15,9 +15,9 @@ export default async function HorseVideo({ horse }: Props) {
 
   if (isDirectPlayableVideoUrl(horse.videoUrl)) {
     return (
-      <section className="mt-20">
-        <h2 className="text-3xl font-bold mb-6">{t("video.title")}</h2>
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#111827]">
+      <section className="mt-12 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111827] lg:mt-0">
+        <h2 className="px-5 pt-6 text-2xl font-bold sm:px-6 sm:text-3xl">{t("video.title")}</h2>
+        <div className="mt-4 overflow-hidden sm:mt-6">
           <video
             src={horse.videoUrl}
             controls
@@ -33,9 +33,9 @@ export default async function HorseVideo({ horse }: Props) {
   }
 
   return (
-    <section className="mt-20">
-      <h2 className="text-3xl font-bold mb-6">{t("video.title")}</h2>
-      <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
+    <section className="mt-12 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111827] lg:mt-0">
+      <h2 className="px-5 pt-6 text-2xl font-bold sm:px-6 sm:text-3xl">{t("video.title")}</h2>
+      <div className="mt-4 p-5 sm:p-6">
         <p className="text-gray-400 mb-4">{t("video.externalLink")}</p>
         <a
           href={horse.videoUrl}

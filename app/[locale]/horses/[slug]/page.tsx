@@ -3,17 +3,19 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
 import HorseGallery from "@/app/components/horse/HorseGallery";
-import HorseInfo from "@/app/components/horse/HorseInfo";
-import PedigreeSection from "@/app/components/pedigree/PedigreeSection";
+import HorseListingHeader from "@/app/components/horse/HorseListingHeader";
+import HorseQuickFacts from "@/app/components/horse/HorseQuickFacts";
+import HorseBloodlineVisual from "@/app/components/horse/HorseBloodlineVisual";
 import HorseDescription from "@/app/components/horse/HorseDescription";
 import HorseVideo from "@/app/components/horse/HorseVideo";
-import ContactSeller from "@/app/components/horse/ContactSeller";
+import HorseListingSidebar from "@/app/components/horse/HorseListingSidebar";
+import HorseSellerCard from "@/app/components/horse/HorseSellerCard";
 import RelatedHorses from "@/app/components/horse/RelatedHorses";
 import ListingBreadcrumbs from "@/app/components/horse/ListingBreadcrumbs";
 import StickyMobileContactBar from "@/app/components/horse/StickyMobileContactBar";
 import ListingTrainingSummarySection from "@/app/components/marketplace/ListingTrainingSummarySection";
 import ListingHealthSummarySection from "@/app/components/marketplace/ListingHealthSummarySection";
-import ShareListingButton from "@/app/components/marketplace/ShareListingButton";
+import PedigreeSection from "@/app/components/pedigree/PedigreeSection";
 import { buildPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-display";
 import { getCachedPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-profile-cache";
 import {
@@ -84,7 +86,7 @@ export default async function PublicHorseListingPage({ params }: Props) {
   }
 
   const { profile, isOwnerPreview } = result;
-  const { listing, horse, trainingSummary, healthSummary, publicUrl } = profile;
+  const { listing, horse, pedigreeHorse, trainingSummary, healthSummary, publicUrl } = profile;
 
   if (listing.status === "active") {
     await incrementListingViewCount(slug);
@@ -118,6 +120,16 @@ export default async function PublicHorseListingPage({ params }: Props) {
   const showMobileContact =
     listing.status === "active" && Boolean(horse.listingUuid);
 
+  const legacyPedigree = pedigreeSection.legacy ?? {
+    sire: horse.sire,
+    dam: horse.dam,
+    damSire: horse.damSire ?? "",
+  };
+
+  const hasLegacyPedigree = Boolean(
+    legacyPedigree.sire.trim() || legacyPedigree.dam.trim() || legacyPedigree.damSire.trim()
+  );
+
   return (
     <>
       <Navbar />
@@ -129,11 +141,9 @@ export default async function PublicHorseListingPage({ params }: Props) {
         />
       ) : null}
 
-      <main
-        className="bg-[#081223] min-h-screen text-white pt-28 pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:pb-24"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-[calc(9rem+env(safe-area-inset-bottom))] md:pb-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
+          <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
             <ListingBreadcrumbs
               horseName={horse.name}
               breed={horse.breed}
@@ -158,66 +168,68 @@ export default async function PublicHorseListingPage({ params }: Props) {
             ) : null}
           </div>
 
-          <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#111827] to-[#081223] p-6 sm:p-8 mb-10">
-            <p className="text-blue-400 uppercase tracking-[4px] text-xs font-semibold">
-              {horse.discipline}
-            </p>
-            <h1 className="text-4xl sm:text-6xl font-black mt-3">{horse.name}</h1>
-            <p className="mt-3 text-gray-300 text-lg">
-              {horse.breed} · {horse.level} · {horse.country}
-            </p>
-          </section>
+          <HorseGallery horse={horse} />
 
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-            <HorseGallery horse={horse} />
-            <div className="space-y-4">
-              <HorseInfo
-                horse={horse}
-                isFavorited={isFavorited}
-                returnPath={returnPath}
-                buyerPrefill={buyerPrefill}
-                isAuthenticated={Boolean(user)}
-                listingStatus={listing.status}
-                pedigreeHorseId={listing.pedigree_horse_id}
-              />
-              <ShareListingButton
-                url={publicUrl}
-                title={tHorse("shareTitle", { name: horse.name })}
-              />
-            </div>
-          </div>
-
-          <div className="mt-16 grid gap-8 lg:grid-cols-2">
-            <ListingTrainingSummarySection summary={trainingSummary} />
-            <ListingHealthSummarySection summary={healthSummary} />
-          </div>
-
-          <div className="mt-16 lg:mt-20">
-            <PedigreeSection
-              subjectName={pedigreeSection.subjectName}
-              tree={pedigreeSection.tree}
-              legacy={pedigreeSection.legacy}
+          <div className="mt-8 lg:mt-10">
+            <HorseListingHeader
+              horse={horse}
+              healthSummary={healthSummary}
+              pedigreeHorseId={listing.pedigree_horse_id}
+              pedigreeHorse={pedigreeHorse}
+              hasLegacyPedigree={hasLegacyPedigree}
             />
           </div>
 
-          <div className="mt-16 lg:mt-20">
-            <HorseDescription horse={horse} />
+          <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12 xl:gap-16">
+            <div className="min-w-0 space-y-12 lg:space-y-16">
+              <HorseQuickFacts horse={horse} pedigreeHorse={pedigreeHorse} />
+
+              <HorseDescription horse={horse} />
+
+              <HorseBloodlineVisual subjectName={horse.name} legacy={legacyPedigree} />
+
+              {pedigreeSection.tree ? (
+                <PedigreeSection
+                  subjectName={pedigreeSection.subjectName}
+                  tree={pedigreeSection.tree}
+                  legacy={pedigreeSection.legacy}
+                  hideLegacy
+                />
+              ) : null}
+
+              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                <ListingTrainingSummarySection summary={trainingSummary} />
+                <ListingHealthSummarySection summary={healthSummary} />
+              </div>
+
+              <HorseVideo horse={horse} />
+            </div>
+
+            <div className="min-w-0 space-y-5">
+              <HorseListingSidebar
+                horseName={horse.name}
+                listingId={horse.listingUuid}
+                returnPath={returnPath}
+                publicUrl={publicUrl}
+                buyerPrefill={buyerPrefill}
+                isAuthenticated={Boolean(user)}
+                isFavorited={isFavorited}
+                listingStatus={listing.status}
+                pedigreeHorseId={listing.pedigree_horse_id}
+                contactUnavailableLabel={tHorse("info.contactUnavailable")}
+                draftContactLabel={tHorse("info.draftContact")}
+                viewPedigreeLabel={tHorse("info.viewPedigree")}
+              />
+              <HorseSellerCard horse={horse} publishedAt={listing.published_at} />
+            </div>
           </div>
-
-          <HorseVideo horse={horse} />
-
-          <ContactSeller
-            horse={horse}
-            returnPath={returnPath}
-            buyerPrefill={buyerPrefill}
-            isAuthenticated={Boolean(user)}
-          />
 
           <RelatedHorses
             horses={relatedResult.listings.map((row) =>
               listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
             )}
             currentHorse={horse}
+            favoriteListingIds={favoriteListingIds}
           />
         </div>
       </main>
@@ -225,11 +237,14 @@ export default async function PublicHorseListingPage({ params }: Props) {
       {showMobileContact && horse.listingUuid ? (
         <StickyMobileContactBar
           horseName={horse.name}
+          price={horse.price}
           listingId={horse.listingUuid}
           returnPath={returnPath}
+          publicUrl={publicUrl}
           buyerPrefill={buyerPrefill}
           isAuthenticated={Boolean(user)}
           isFavorited={isFavorited}
+          contactLabel={tHorse("contact.contactSeller")}
         />
       ) : null}
     </>

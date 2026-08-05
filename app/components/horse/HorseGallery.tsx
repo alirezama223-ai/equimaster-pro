@@ -231,7 +231,7 @@ export default function HorseGallery({ horse }: Props) {
       />
 
       <div
-        className="group relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/10 bg-[#111827]"
+        className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f1729] shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -253,8 +253,8 @@ export default function HorseGallery({ horse }: Props) {
             fill
             priority={activeIndex === 0}
             loading={activeIndex === 0 ? undefined : "lazy"}
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover pointer-events-none"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px"
+            className="object-cover object-[center_22%] pointer-events-none transition-transform duration-500 [@media(hover:hover)]:group-hover:scale-[1.02]"
           />
         </button>
 
@@ -305,7 +305,7 @@ export default function HorseGallery({ horse }: Props) {
       </div>
 
       {hasMultipleImages ? (
-        <div className="flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="scroll-touch flex gap-2.5 overflow-x-auto pb-1 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 [&::-webkit-scrollbar]:hidden">
           {images.map((image, index) => {
             const isActive = index === activeIndex;
 
@@ -316,10 +316,10 @@ export default function HorseGallery({ horse }: Props) {
                 onClick={() => goToIndex(index)}
                 aria-label={t("gallery.showPhoto", { index: index + 1 })}
                 aria-current={isActive}
-                className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-xl border transition ${
+                className={`relative h-[72px] w-[96px] shrink-0 snap-start overflow-hidden rounded-xl border transition sm:h-20 sm:w-28 ${
                   isActive
-                    ? "border-blue-500 ring-2 ring-blue-500/60"
-                    : "border-white/10 hover:border-blue-400/60"
+                    ? "border-blue-500 ring-2 ring-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+                    : "border-white/10 opacity-80 [@media(hover:hover)]:hover:border-blue-400/60 [@media(hover:hover)]:hover:opacity-100"
                 }`}
               >
                 <Image

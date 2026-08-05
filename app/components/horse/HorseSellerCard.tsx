@@ -1,0 +1,76 @@
+import { getTranslations } from "next-intl/server";
+import { Horse } from "@/app/data/horses";
+import { findCountryByName } from "@/app/lib/constants/countries";
+
+type Props = {
+  horse: Horse;
+  publishedAt: string | null;
+};
+
+function sellerInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
+function formatListedDate(isoDate: string | null): string | null {
+  if (!isoDate) return null;
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+}
+
+export default async function HorseSellerCard({ horse, publishedAt }: Props) {
+  const t = await getTranslations("horse");
+  const sellerLabel = horse.sellerName?.trim() || horse.stableName?.trim();
+  const country = findCountryByName(horse.country);
+  const listedDate = formatListedDate(publishedAt);
+
+  if (!sellerLabel) {
+    return null;
+  }
+
+  return (
+    <section className="rounded-2xl border border-white/[0.08] bg-[#0f1729]/90 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.22)] sm:p-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">
+        {t("contact.contactSeller")}
+      </p>
+
+      <div className="mt-4 flex items-start gap-4">
+        <div
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600/90 to-indigo-800/90 text-base font-bold text-white ring-2 ring-white/10 shadow-lg"
+          aria-hidden="true"
+        >
+          {sellerInitials(sellerLabel)}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-lg font-bold text-white">{sellerLabel}</h3>
+          {horse.stableName && horse.sellerName ? (
+            <p className="mt-0.5 truncate text-sm text-gray-400">{horse.stableName}</p>
+          ) : null}
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+            {country ? (
+              <span className="inline-flex items-center gap-1.5 text-sm text-gray-400">
+                <span aria-hidden="true">{country.flag}</span>
+                {horse.country}
+              </span>
+            ) : null}
+            {listedDate ? (
+              <span className="text-sm text-gray-500">Listed {listedDate}</span>
+            ) : null}
+          </div>
+
+          {horse.verified ? (
+            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-600/10 px-3 py-1 text-xs font-semibold text-blue-200">
+              <span aria-hidden="true">✓</span>
+              {t("info.verified")} Seller
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}

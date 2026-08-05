@@ -1,7 +1,8 @@
 "use client";
 
 import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
-import FavoriteButton from "@/app/components/favorites/FavoriteButton";
+import MarketplaceCardFavoriteButton from "@/app/components/marketplace/MarketplaceCardFavoriteButton";
+import MarketplaceCardShareButton from "@/app/components/marketplace/MarketplaceCardShareButton";
 import { SAFE_AREA_BOTTOM_PADDING_STYLE } from "@/app/lib/browser-compat";
 
 type BuyerPrefill = {
@@ -11,44 +12,54 @@ type BuyerPrefill = {
 
 type Props = {
   horseName: string;
+  price: string;
   listingId: string;
   returnPath: string;
+  publicUrl: string;
   buyerPrefill?: BuyerPrefill;
   isAuthenticated: boolean;
   isFavorited: boolean;
+  contactLabel: string;
 };
 
 export default function StickyMobileContactBar({
   horseName,
+  price,
   listingId,
   returnPath,
+  publicUrl,
   buyerPrefill,
   isAuthenticated,
   isFavorited,
+  contactLabel,
 }: Props) {
   return (
     <div
-      className="glass-surface fixed inset-x-0 bottom-0 z-40 border-t border-white/10 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0a1220]/95 backdrop-blur-xl md:hidden"
       style={SAFE_AREA_BOTTOM_PADDING_STYLE}
     >
-      <div className="flex items-stretch gap-3 px-4 pt-3">
-        <div className="min-w-0 flex-1">
-          <ContactInquiryModal
-            horseName={horseName}
-            listingId={listingId}
-            returnPath={returnPath}
-            buyerPrefill={buyerPrefill}
-            isAuthenticated={isAuthenticated}
-            fullWidth
-            triggerClassName="py-3.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition"
-          />
+      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2 px-4 py-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-white">{horseName}</p>
+          <p className="truncate text-base font-bold text-blue-300">{price}</p>
         </div>
-        <FavoriteButton
+        <MarketplaceCardShareButton url={publicUrl} title={horseName} />
+        <MarketplaceCardFavoriteButton
           listingId={listingId}
           initialFavorited={isFavorited}
           returnPath={returnPath}
-          variant="button"
-          className="!w-auto shrink-0 px-5 py-3.5 min-w-[5.75rem] rounded-xl"
+        />
+      </div>
+      <div className="border-t border-white/[0.06] px-4 pb-3 pt-2">
+        <ContactInquiryModal
+          horseName={horseName}
+          listingId={listingId}
+          returnPath={returnPath}
+          buyerPrefill={buyerPrefill}
+          isAuthenticated={isAuthenticated}
+          fullWidth
+          triggerLabel={contactLabel}
+          triggerClassName="w-full min-h-12 rounded-xl bg-blue-600 px-4 text-base font-semibold text-white transition active:bg-blue-500"
         />
       </div>
     </div>
