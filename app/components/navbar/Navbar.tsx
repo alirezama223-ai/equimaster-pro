@@ -8,6 +8,8 @@ import NavbarMobileMenu from "@/app/components/navbar/NavbarMobileMenu";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
+import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 import {
   DESKTOP_INLINE_NAV_LINKS,
   navLinkClassName,
@@ -17,6 +19,8 @@ export default function Navbar() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const { brandShort } = useNavbarBrandLabels();
+  const { user, isLoading } = useNavbarAuthUser();
+  const mobileSellHref = !isLoading && !user ? loginRedirectPath("/sell") : "/sell";
 
   return (
     <header className="glass-surface fixed top-0 left-0 z-50 w-full border-b border-white/10">
@@ -30,8 +34,13 @@ export default function Navbar() {
 
         <div className="flex shrink-0 items-center gap-2">
           <Link
-            href="/sell"
+            href={mobileSellHref}
             aria-label={t("sellAHorse")}
+            onClick={(event) => {
+              if (isLoading) {
+                event.preventDefault();
+              }
+            }}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500"
           >
             <svg

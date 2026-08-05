@@ -17,7 +17,11 @@ export default function HeroSection({ stats }: Props) {
   const locale = useLocale();
 
   return (
-    <section className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white max-md:overflow-x-hidden">
+    <section
+      id="home-hero"
+      data-home-hero=""
+      className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white max-md:overflow-x-hidden"
+    >
       <div className="absolute -left-40 top-40 h-64 w-64 rounded-full bg-blue-600/20 blur-[140px] md:h-96 md:w-96" />
       <div className="absolute right-0 bottom-0 h-72 w-72 rounded-full bg-indigo-700/10 blur-[180px] md:h-[500px] md:w-[500px]" />
 

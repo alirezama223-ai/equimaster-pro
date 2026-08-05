@@ -3,10 +3,14 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LogoutButton from "@/app/components/auth/LogoutButton";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { openMobileFeedbackMenu } from "@/app/components/feedback/FeedbackWidget";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
+import { setMobileDrawerOpen } from "@/app/components/navbar/mobileDrawerState";
+import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
 import { FULL_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
 import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
 
@@ -14,20 +18,32 @@ export default function NavbarMobileMenu() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const tFeedback = useTranslations("feedback");
+  const { brandShort } = useNavbarBrandLabels();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const menuId = useId();
   const { user, isAdmin, isLoading } = useNavbarAuthUser();
+  const mobileSellHref = !isLoading && !user ? loginRedirectPath("/sell") : "/sell";
 
   useEffect(() => {
-    if (!open) {
-      return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setMobileDrawerOpen(open);
+
+    if (open) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        setMobileDrawerOpen(false);
+        document.body.style.overflow = previousOverflow;
+      };
     }
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
     return () => {
-      document.body.style.overflow = previousOverflow;
+      setMobileDrawerOpen(false);
     };
   }, [open]);
 
@@ -53,13 +69,163 @@ export default function NavbarMobileMenu() {
     setOpen(false);
   }
 
+  const drawer =
+    open && mounted ? (
+      <div
+        id={menuId}
+        role="dialog"
+        aria-modal="true"
+        aria-label={t("menu")}
+        className="fixed inset-0 z-[200] flex h-[100dvh] w-screen flex-col overflow-hidden md:hidden"
+        style={{ background: "var(--background)" }}
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
+          <span className="text-base font-black text-white">{brandShort}</span>
+          <button
+            type="button"
+            aria-label={t("closeMenu")}
+            onClick={closeMenu}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="scroll-touch min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
+          <nav className="grid gap-1" aria-label={t("primaryNav")}>
+            {FULL_NAV_LINKS.map((link) => (
+              <Link
+                key={`mobile-${link.href}-${link.labelKey}`}
+                href={link.href}
+                role="menuitem"
+                onClick={closeMenu}
+                className={`min-h-11 px-3 py-2.5 text-sm font-medium text-gray-200 ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
+              >
+                {t(link.labelKey)}
+              </Link>
+            ))}
+          </nav>
+
+          <div
+            className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3"
+            role="group"
+            aria-label={tCommon("language")}
+          >
+            <p className="mb-2 text-sm font-medium text-white">{tCommon("language")}</p>
+            <div className="[&_label]:w-full [&_select]:w-full">
+              <LocaleSwitcher />
+            </div>
+          </div>
+
+          <div className="my-3 border-t border-white/10" aria-hidden="true" />
+
+          <div className="grid gap-2">
+            <Link
+              href={mobileSellHref}
+              role="menuitem"
+              onClick={(event) => {
+                if (isLoading) {
+                  event.preventDefault();
+                  return;
+                }
+                closeMenu();
+              }}
+              className={`${actionLinkClass} bg-blue-600 hover:bg-blue-500`}
+            >
+              {t("sellAHorse")}
+            </Link>
+
+            {isLoading ? (
+              <div className="h-11 animate-pulse rounded-xl bg-white/10" aria-hidden="true" />
+            ) : null}
+
+            {!isLoading && !user ? (
+              <>
+                <Link
+                  href="/login"
+                  role="menuitem"
+                  onClick={closeMenu}
+                  className={`${actionLinkClass} bg-white/10 hover:bg-white/20`}
+                >
+                  {t("login")}
+                </Link>
+                <Link
+                  href="/signup"
+                  role="menuitem"
+                  onClick={closeMenu}
+                  className={`${actionLinkClass} border border-white/20 hover:bg-white hover:text-black`}
+                >
+                  {t("signup")}
+                </Link>
+              </>
+            ) : null}
+
+            {!isLoading && user ? (
+              <>
+                {isAdmin ? (
+                  <Link
+                    href="/admin"
+                    role="menuitem"
+                    onClick={closeMenu}
+                    className={`${actionLinkClass} border border-blue-500/40 text-blue-200 hover:bg-blue-500/10`}
+                  >
+                    {t("admin")}
+                  </Link>
+                ) : null}
+                <Link
+                  href="/account"
+                  role="menuitem"
+                  onClick={closeMenu}
+                  className={`${actionLinkClass} border border-white/20 hover:bg-white/10`}
+                >
+                  {t("account")}
+                </Link>
+                <div className="overflow-hidden rounded-xl border border-white/10">
+                  <LogoutButton variant="menu" />
+                </div>
+              </>
+            ) : null}
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                closeMenu();
+                openMobileFeedbackMenu();
+              }}
+              className={`${actionLinkClass} border border-blue-500/40 text-blue-100 hover:bg-blue-500/10`}
+            >
+              <span aria-hidden className="mr-2">
+                💬
+              </span>
+              {tFeedback("floatingButton")}
+            </button>
+
+            <div className="flex min-h-11 items-center justify-between gap-3 rounded-xl px-3 py-2">
+              <span className="text-sm text-gray-400">{t("notifications")}</span>
+              <NotificationBell />
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null;
+
   return (
     <div className="relative shrink-0">
       <button
         type="button"
         aria-expanded={open}
         aria-controls={menuId}
-        aria-haspopup="menu"
+        aria-haspopup="dialog"
         onClick={() => setOpen((current) => !current)}
         className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
       >
@@ -84,130 +250,7 @@ export default function NavbarMobileMenu() {
         </svg>
       </button>
 
-      {open ? (
-        <>
-          <button
-            type="button"
-            aria-label={t("closeMenu")}
-            className="fixed inset-0 top-16 z-[60] bg-black/60"
-            onClick={closeMenu}
-          />
-          <div
-            id={menuId}
-            role="menu"
-            className="glass-surface-strong scroll-touch fixed inset-x-0 top-16 z-[61] max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-white/10 p-3 shadow-2xl"
-          >
-            <nav className="grid gap-1" aria-label={t("primaryNav")}>
-              {FULL_NAV_LINKS.map((link) => (
-                <Link
-                  key={`mobile-${link.href}-${link.labelKey}`}
-                  href={link.href}
-                  role="menuitem"
-                  onClick={closeMenu}
-                  className={`min-h-11 px-3 py-2.5 text-sm font-medium text-gray-200 ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
-                >
-                  {t(link.labelKey)}
-                </Link>
-              ))}
-            </nav>
-
-            <div
-              className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3"
-              role="group"
-              aria-label={tCommon("language")}
-            >
-              <p className="mb-2 text-sm font-medium text-white">{tCommon("language")}</p>
-              <div className="[&_label]:w-full [&_select]:w-full">
-                <LocaleSwitcher />
-              </div>
-            </div>
-
-            <div className="my-3 border-t border-white/10" aria-hidden="true" />
-
-            <div className="grid gap-2">
-              <Link
-                href="/sell"
-                role="menuitem"
-                onClick={closeMenu}
-                className={`${actionLinkClass} bg-blue-600 hover:bg-blue-500`}
-              >
-                {t("sellAHorse")}
-              </Link>
-
-              {isLoading ? (
-                <div className="h-11 animate-pulse rounded-xl bg-white/10" aria-hidden="true" />
-              ) : null}
-
-              {!isLoading && !user ? (
-                <>
-                  <Link
-                    href="/login"
-                    role="menuitem"
-                    onClick={closeMenu}
-                    className={`${actionLinkClass} bg-white/10 hover:bg-white/20`}
-                  >
-                    {t("login")}
-                  </Link>
-                  <Link
-                    href="/signup"
-                    role="menuitem"
-                    onClick={closeMenu}
-                    className={`${actionLinkClass} border border-white/20 hover:bg-white hover:text-black`}
-                  >
-                    {t("signup")}
-                  </Link>
-                </>
-              ) : null}
-
-              {!isLoading && user ? (
-                <>
-                  {isAdmin ? (
-                    <Link
-                      href="/admin"
-                      role="menuitem"
-                      onClick={closeMenu}
-                      className={`${actionLinkClass} border border-blue-500/40 text-blue-200 hover:bg-blue-500/10`}
-                    >
-                      {t("admin")}
-                    </Link>
-                  ) : null}
-                  <Link
-                    href="/account"
-                    role="menuitem"
-                    onClick={closeMenu}
-                    className={`${actionLinkClass} border border-white/20 hover:bg-white/10`}
-                  >
-                    {t("account")}
-                  </Link>
-                  <div className="overflow-hidden rounded-xl border border-white/10">
-                    <LogoutButton variant="menu" />
-                  </div>
-                </>
-              ) : null}
-
-              <button
-                type="button"
-                role="menuitem"
-                onClick={() => {
-                  closeMenu();
-                  openMobileFeedbackMenu();
-                }}
-                className={`${actionLinkClass} border border-blue-500/40 text-blue-100 hover:bg-blue-500/10`}
-              >
-                <span aria-hidden className="mr-2">
-                  💬
-                </span>
-                {tFeedback("floatingButton")}
-              </button>
-
-              <div className="flex min-h-11 items-center justify-between gap-3 rounded-xl px-3 py-2">
-                <span className="text-sm text-gray-400">{t("notifications")}</span>
-                <NotificationBell />
-              </div>
-            </div>
-          </div>
-        </>
-      ) : null}
+      {mounted && drawer ? createPortal(drawer, document.body) : null}
     </div>
   );
 }
