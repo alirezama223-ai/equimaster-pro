@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import Navbar from "@/app/components/navbar/Navbar";
-import HorseCard from "@/app/components/featured/HorseCard";
+import MarketplaceListingCard from "@/app/components/marketplace/MarketplaceListingCard";
 import FadeUp from "@/app/components/animations/FadeUp";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
@@ -30,8 +30,8 @@ export default function MarketplaceHomeClient({
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
           <FadeUp>
             <section className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111827] to-[#081223] p-5 sm:p-12 mb-12">
               <p className="uppercase tracking-[0.2em] text-blue-500 text-xs font-semibold sm:tracking-[6px]">
@@ -84,6 +84,7 @@ export default function MarketplaceHomeClient({
             horses={featuredHorses}
             favoriteListingIds={favoriteListingIds}
             emptyMessage={t("home.noListings")}
+            featured
           />
 
           <ListingSection
@@ -126,6 +127,7 @@ function ListingSection({
   footerHref,
   footerLabel,
   emptyMessage,
+  featured = false,
 }: {
   title: string;
   subtitle: string;
@@ -134,6 +136,7 @@ function ListingSection({
   footerHref?: string;
   footerLabel?: string;
   emptyMessage: string;
+  featured?: boolean;
 }) {
   return (
     <section className="mt-12">
@@ -150,11 +153,12 @@ function ListingSection({
       </div>
 
       {horses.length > 0 ? (
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-2 lg:gap-8 xl:grid-cols-3">
           {horses.map((horse) => (
-            <HorseCard
+            <MarketplaceListingCard
               key={horse.listingUuid ?? horse.id}
               horse={horse}
+              featured={featured}
               isFavorited={Boolean(
                 horse.listingUuid && favoriteListingIds.includes(horse.listingUuid)
               )}

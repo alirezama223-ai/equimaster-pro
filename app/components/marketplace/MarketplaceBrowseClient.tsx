@@ -15,12 +15,13 @@ import {
   type SetStateAction,
 } from "react";
 import Navbar from "@/app/components/navbar/Navbar";
-import HorseCard from "@/app/components/featured/HorseCard";
 import FadeUp from "@/app/components/animations/FadeUp";
 import SearchableSelect from "@/app/components/shared/SearchableSelect";
 import EmptyState from "@/app/components/shared/EmptyState";
 import ErrorState from "@/app/components/shared/ErrorState";
-import LoadingState from "@/app/components/shared/LoadingState";
+import MarketplaceListingCard from "@/app/components/marketplace/MarketplaceListingCard";
+import MarketplaceBrowseEmptyState from "@/app/components/marketplace/MarketplaceBrowseEmptyState";
+import { MarketplaceListingCardSkeletonGrid } from "@/app/components/marketplace/MarketplaceListingCardSkeleton";
 import { useDebouncedValue } from "@/app/hooks/useDebouncedValue";
 import { getBreedSelectOptions } from "@/app/lib/breeds";
 import { getCountrySelectOptions } from "@/app/lib/constants/countries";
@@ -317,8 +318,8 @@ export default function MarketplaceBrowseClient({
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
           <FadeUp>
             <section className="mb-8 lg:mb-10">
               <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
@@ -387,11 +388,13 @@ export default function MarketplaceBrowseClient({
               </div>
 
               {isPending && horses.length === 0 ? (
-                <LoadingState message={t("browse.loadingResults")} className="py-16 text-center" />
+                <div aria-busy="true" aria-label={t("browse.loadingResults")}>
+                  <MarketplaceListingCardSkeletonGrid count={6} />
+                </div>
               ) : horses.length > 0 ? (
-                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-2 lg:gap-8 xl:grid-cols-3">
                   {horses.map((horse) => (
-                    <HorseCard
+                    <MarketplaceListingCard
                       key={horse.listingUuid ?? horse.id}
                       horse={horse}
                       isFavorited={Boolean(
@@ -407,10 +410,12 @@ export default function MarketplaceBrowseClient({
                   className="py-16"
                 />
               ) : (
-                <EmptyState
+                <MarketplaceBrowseEmptyState
                   title={t("browse.emptyResultsTitle")}
                   description={t("browse.noResults")}
-                  className="py-16"
+                  clearFiltersLabel={t("browse.clearAllFilters")}
+                  onClearFilters={clearAllFilters}
+                  className="py-8"
                 />
               )}
 
