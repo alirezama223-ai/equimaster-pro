@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import type { SellerChartSeries } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 
@@ -9,8 +10,8 @@ type Props = {
 };
 
 function SellerDashboardChart({ chart }: { chart: SellerChartSeries }) {
+  const t = useTranslations("dashboard");
   const maxValue = Math.max(...chart.points.map((point) => point.value), 1);
-  const isTimeline = chart.key === "inquiries";
 
   return (
     <div className="rounded-2xl border border-white/[0.06] bg-[#08111F]/70 p-4 sm:p-5">
@@ -18,13 +19,13 @@ function SellerDashboardChart({ chart }: { chart: SellerChartSeries }) {
         <div>
           <p className="text-sm font-semibold text-white">{chart.label}</p>
           <p className="mt-1 text-xs text-gray-500">
-            {isTimeline ? "Last 14 days" : "Top listings · last 30 days"}
+            {chart.isTimeline ? t("analytics.last14Days") : t("analytics.topListings30Days")}
           </p>
         </div>
         <p className="text-2xl font-black text-white">{chart.total}</p>
       </div>
 
-      {isTimeline ? (
+      {chart.isTimeline ? (
         <div className="flex h-36 items-end gap-1.5">
           {chart.points.map((point) => {
             const height = point.value > 0 ? Math.max((point.value / maxValue) * 100, 8) : 4;
@@ -76,11 +77,13 @@ function SellerDashboardChart({ chart }: { chart: SellerChartSeries }) {
 }
 
 function SellerDashboardAnalytics({ series }: Props) {
+  const t = useTranslations("dashboard");
+
   return (
     <DashboardCard
-      eyebrow="Analytics"
-      title="Performance overview"
-      description="Views, favorites, contacts, and inquiry activity from your existing marketplace data."
+      eyebrow={t("analytics.eyebrow")}
+      title={t("analytics.title")}
+      description={t("analytics.description")}
     >
       <div className="grid gap-4 md:grid-cols-2 xl:gap-5">
         {series.map((chart) => (

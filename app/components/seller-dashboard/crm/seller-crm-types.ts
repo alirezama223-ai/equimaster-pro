@@ -80,10 +80,18 @@ export type SellerCrmData = {
   aiRecommendations: CrmAiRecommendation[];
 };
 
-export const PIPELINE_COLUMNS: { key: PipelineStage; label: string }[] = [
-  { key: "new-inquiry", label: "New Inquiry" },
-  { key: "contacted", label: "Contacted" },
-  { key: "visit-scheduled", label: "Visit Scheduled" },
-  { key: "negotiating", label: "Negotiating" },
-  { key: "sold", label: "Sold" },
+export const PIPELINE_STAGES = [
+  "new-inquiry",
+  "contacted",
+  "visit-scheduled",
+  "negotiating",
+  "sold",
+] as const satisfies readonly PipelineStage[];
+
+export const PIPELINE_COLUMNS: { key: PipelineStage; labelKey: string }[] = [
+  { key: "new-inquiry", labelKey: "crm.pipeline.columns.new-inquiry" },
+  { key: "contacted", labelKey: "crm.pipeline.columns.contacted" },
+  { key: "visit-scheduled", labelKey: "crm.pipeline.columns.visit-scheduled" },
+  { key: "negotiating", labelKey: "crm.pipeline.columns.negotiating" },
+  { key: "sold", labelKey: "crm.pipeline.columns.sold" },
 ];

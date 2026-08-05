@@ -1,9 +1,10 @@
 "use client";
 
 import { memo, useCallback, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
-import { getBuyerInitials } from "@/app/components/seller-dashboard/crm/seller-crm-demo-data";
+import { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import {
   PIPELINE_COLUMNS,
   type PipelineDeal,
@@ -22,6 +23,7 @@ type Props = {
 };
 
 function SellerCrmPipeline({ initialDeals }: Props) {
+  const t = useTranslations("dashboard");
   const [deals, setDeals] = useState(initialDeals);
   const [draggedId, setDraggedId] = useState<string | null>(null);
 
@@ -48,14 +50,14 @@ function SellerCrmPipeline({ initialDeals }: Props) {
 
   return (
     <DashboardCard
-      eyebrow="Sales Pipeline"
-      title="Deal flow"
-      description="Drag deals across stages to manage your sales process. Changes are local preview only."
+      eyebrow={t("crm.pipeline.eyebrow")}
+      title={t("crm.pipeline.title")}
+      description={t("crm.pipeline.description")}
     >
       {deals.length === 0 ? (
         <SellerDashboardEmptyState
-          title="No active deals"
-          message="When buyers inquire about your horses, deals will appear in your pipeline."
+          title={t("crm.pipeline.emptyTitle")}
+          message={t("crm.pipeline.emptyMessage")}
           icon="📋"
         />
       ) : (
@@ -69,7 +71,7 @@ function SellerCrmPipeline({ initialDeals }: Props) {
                 onDrop={() => handleDrop(column.key)}
               >
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-white">{column.label}</h3>
+                  <h3 className="text-sm font-semibold text-white">{t(column.labelKey)}</h3>
                   <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
                     {dealsByStage[column.key].length}
                   </span>
@@ -103,7 +105,7 @@ function SellerCrmPipeline({ initialDeals }: Props) {
                         <span
                           className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${PRIORITY_STYLES[deal.priority]}`}
                         >
-                          {deal.priority}
+                          {t(`crm.pipeline.priority.${deal.priority}`)}
                         </span>
                       </div>
                     </article>

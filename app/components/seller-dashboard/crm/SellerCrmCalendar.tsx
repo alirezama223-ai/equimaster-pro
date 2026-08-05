@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import type { CrmVisit } from "@/app/components/seller-dashboard/crm/seller-crm-types";
@@ -10,15 +11,20 @@ type Props = {
 };
 
 function SellerCrmCalendar({ visits }: Props) {
+  const t = useTranslations("dashboard");
   const todayVisits = useMemo(() => visits.filter((visit) => visit.isToday), [visits]);
   const upcomingVisits = useMemo(() => visits.filter((visit) => !visit.isToday), [visits]);
 
   if (visits.length === 0) {
     return (
-      <DashboardCard eyebrow="Calendar" title="Visits & appointments" description="Plan buyer viewings and stable visits.">
+      <DashboardCard
+        eyebrow={t("crm.calendar.eyebrow")}
+        title={t("crm.calendar.title")}
+        description={t("crm.calendar.descriptionEmpty")}
+      >
         <SellerDashboardEmptyState
-          title="No visits scheduled"
-          message="Upcoming buyer appointments will appear here once scheduled."
+          title={t("crm.calendar.emptyTitle")}
+          message={t("crm.calendar.emptyMessage")}
           icon="📅"
         />
       </DashboardCard>
@@ -27,23 +33,23 @@ function SellerCrmCalendar({ visits }: Props) {
 
   return (
     <DashboardCard
-      eyebrow="Calendar"
-      title="Visits & appointments"
-      description="Today's viewings and upcoming buyer appointments."
+      eyebrow={t("crm.calendar.eyebrow")}
+      title={t("crm.calendar.title")}
+      description={t("crm.calendar.description")}
     >
       <div className="space-y-6">
         <section>
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">
-            Today&apos;s visits
+            {t("crm.calendar.todayHeading")}
           </h3>
           {todayVisits.length === 0 ? (
             <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-sm text-gray-500">
-              No visits scheduled for today.
+              {t("crm.calendar.noVisitsToday")}
             </p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               {todayVisits.map((visit) => (
-                <VisitCard key={visit.id} visit={visit} highlight />
+                <VisitCard key={visit.id} visit={visit} highlight t={t} />
               ))}
             </div>
           )}
@@ -51,11 +57,11 @@ function SellerCrmCalendar({ visits }: Props) {
 
         <section>
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-gray-400">
-            Upcoming appointments
+            {t("crm.calendar.upcomingHeading")}
           </h3>
           <div className="grid gap-3 sm:grid-cols-2">
             {upcomingVisits.map((visit) => (
-              <VisitCard key={visit.id} visit={visit} />
+              <VisitCard key={visit.id} visit={visit} t={t} />
             ))}
           </div>
         </section>
@@ -64,7 +70,15 @@ function SellerCrmCalendar({ visits }: Props) {
   );
 }
 
-function VisitCard({ visit, highlight = false }: { visit: CrmVisit; highlight?: boolean }) {
+function VisitCard({
+  visit,
+  highlight = false,
+  t,
+}: {
+  visit: CrmVisit;
+  highlight?: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
   return (
     <article
       className={`rounded-2xl border p-4 ${
@@ -80,7 +94,7 @@ function VisitCard({ visit, highlight = false }: { visit: CrmVisit; highlight?: 
         </div>
         {highlight ? (
           <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-200">
-            Today
+            {t("crm.calendar.todayBadge")}
           </span>
         ) : null}
       </div>
@@ -93,7 +107,7 @@ function VisitCard({ visit, highlight = false }: { visit: CrmVisit; highlight?: 
         type="button"
         className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-semibold text-white transition hover:bg-white/10"
       >
-        View details
+        {t("crm.calendar.viewDetails")}
       </button>
     </article>
   );

@@ -2,29 +2,30 @@
 
 import Image from "next/image";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
-import {
-  formatRelativeTime,
-  getBuyerInitials,
-} from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import type { SellerInquiry } from "@/app/types/inquiry";
 
 type Props = {
   inquiries: SellerInquiry[];
+  formatTime: (iso: string) => string;
 };
 
-function SellerDashboardMessages({ inquiries }: Props) {
+function SellerDashboardMessages({ inquiries, formatTime }: Props) {
+  const t = useTranslations("dashboard");
+
   return (
     <DashboardCard
-      eyebrow="Messages"
-      title="Latest conversations"
-      description="Recent buyer inquiries linked to your listings."
+      eyebrow={t("messages.eyebrow")}
+      title={t("messages.title")}
+      description={t("messages.description")}
     >
       {inquiries.length === 0 ? (
         <SellerDashboardEmptyState
-          title="No messages yet"
-          message="When buyers reach out about your horses, conversations will appear here."
+          title={t("messages.emptyTitle")}
+          message={t("messages.emptyMessage")}
           icon="💬"
         />
       ) : (
@@ -53,10 +54,10 @@ function SellerDashboardMessages({ inquiries }: Props) {
                       <p className="truncate text-sm text-blue-300">{inquiry.horse_name}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-xs text-gray-500">{formatRelativeTime(inquiry.created_at)}</p>
+                      <p className="text-xs text-gray-500">{formatTime(inquiry.created_at)}</p>
                       {unread ? (
                         <span className="mt-1 inline-flex rounded-full bg-blue-600/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-200">
-                          Unread
+                          {t("messages.unread")}
                         </span>
                       ) : null}
                     </div>

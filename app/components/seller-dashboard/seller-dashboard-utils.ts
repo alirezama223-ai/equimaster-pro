@@ -1,3 +1,4 @@
+import type { DashboardTranslator } from "@/app/components/seller-dashboard/dashboard-i18n";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerInquiry } from "@/app/types/inquiry";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
@@ -27,6 +28,7 @@ export type SellerChartSeries = {
   color: string;
   points: { label: string; value: number }[];
   total: number;
+  isTimeline?: boolean;
 };
 
 export type SellerTaskItem = {
@@ -45,66 +47,71 @@ function formatShortDay(date: Date): string {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-export function getGreetingPrefix(hour = new Date().getHours()): string {
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+export function getGreetingPrefix(t: DashboardTranslator, hour = new Date().getHours()): string {
+  if (hour < 12) return t("greeting.morning");
+  if (hour < 17) return t("greeting.afternoon");
+  return t("greeting.evening");
 }
 
 export function buildOverviewMetrics(
   stats: SellerDashboardStats,
   profileScore: number,
-  unreadMessages: number
+  unreadMessages: number,
+  t: DashboardTranslator
 ): SellerMetricCard[] {
-  const cards: SellerMetricCard[] = [
+  return [
     {
       key: "active",
-      label: "Active Listings",
+      label: t("metrics.activeListings"),
       value: stats.active,
-      trend: stats.draft > 0 ? `${stats.draft} drafts in progress` : "All listings live",
+      trend:
+        stats.draft > 0
+          ? t("metrics.draftsInProgress", { count: stats.draft })
+          : t("metrics.allListingsLive"),
       accent: "blue",
     },
     {
       key: "sold",
-      label: "Sold Horses",
+      label: t("metrics.soldHorses"),
       value: stats.sold,
-      trend: stats.sold > 0 ? "Completed sales" : "No sales recorded yet",
+      trend: stats.sold > 0 ? t("metrics.completedSales") : t("metrics.noSalesRecorded"),
       accent: "emerald",
     },
     {
       key: "favorites",
-      label: "Favorites",
+      label: t("metrics.favorites"),
       value: stats.totalFavorites,
-      trend: stats.totalFavorites > 0 ? "Buyers saved your horses" : "Waiting for first favorite",
+      trend:
+        stats.totalFavorites > 0
+          ? t("metrics.buyersSaved")
+          : t("metrics.waitingForFavorite"),
       accent: "violet",
     },
     {
       key: "messages",
-      label: "Messages",
+      label: t("metrics.messages"),
       value: stats.totalInquiries,
       trend:
         unreadMessages > 0
-          ? `${unreadMessages} unread conversation${unreadMessages === 1 ? "" : "s"}`
-          : "Inbox up to date",
+          ? t("metrics.unreadConversations", { count: unreadMessages })
+          : t("metrics.inboxUpToDate"),
       accent: "rose",
     },
     {
       key: "views",
-      label: "Views (30 days)",
+      label: t("metrics.views30Days"),
       value: stats.totalViews,
-      trend: stats.totalViews > 0 ? "Lifetime listing views" : "Publish to start tracking",
+      trend: stats.totalViews > 0 ? t("metrics.lifetimeViews") : t("metrics.publishToTrack"),
       accent: "amber",
     },
     {
       key: "profile",
-      label: "Profile Score",
+      label: t("metrics.profileScore"),
       value: `${profileScore}%`,
-      trend: profileScore >= 80 ? "Strong seller presence" : "Complete tasks to improve",
+      trend: profileScore >= 80 ? t("metrics.strongPresence") : t("metrics.completeTasks"),
       accent: "blue",
     },
   ];
-
-  return cards;
 }
 
 export function computeProfileScore(listings: HorseListingRow[]): number {
@@ -133,7 +140,10 @@ export function computeProfileScore(listings: HorseListingRow[]): number {
   return Math.min(100, score);
 }
 
-export function buildSellerTasks(listings: HorseListingRow[]): SellerTaskItem[] {
+export function buildSellerTasks(
+  listings: HorseListingRow[],
+  t: DashboardTranslator
+): SellerTaskItem[] {
   const hasProfileDetails = listings.some(
     (listing) =>
       listing.seller_name.trim() &&
@@ -152,11 +162,11 @@ export function buildSellerTasks(listings: HorseListingRow[]): SellerTaskItem[] 
   );
 
   return [
-    { key: "profile", label: "Complete profile", completed: hasProfileDetails },
-    { key: "verify", label: "Verify identity", completed: hasVerified },
-    { key: "passport", label: "Upload passport", completed: hasPassportData },
-    { key: "xrays", label: "Upload x-rays", completed: hasHealthDocs },
-    { key: "pedigree", label: "Add pedigree", completed: hasPedigree },
+    { key: "profile", label: t("tasks.items.profile"), completed: hasProfileDetails },
+    { key: "verify", label: t("tasks.items.verify"), completed: hasVerified },
+    { key: "passport", label: t("tasks.items.passport"), completed: hasPassportData },
+    { key: "xrays", label: t("tasks.items.xrays"), completed: hasHealthDocs },
+    { key: "pedigree", label: t("tasks.items.pedigree"), completed: hasPedigree },
   ];
 }
 
@@ -209,7 +219,8 @@ function buildListingMetricSeries(
 export function buildAnalyticsSeries(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  inquiries: SellerInquiry[]
+  inquiries: SellerInquiry[],
+  t: DashboardTranslator
 ): SellerChartSeries[] {
   const inquiryDates = inquiries.map((inquiry) => inquiry.created_at);
   const inquiryDaily = bucketSeriesFromDates(inquiryDates);
@@ -230,37 +241,41 @@ export function buildAnalyticsSeries(
   return [
     {
       key: "views",
-      label: "Views",
+      label: t("analytics.series.views"),
       color: "#3b82f6",
-      points: viewsByListing.length > 0 ? viewsByListing : [{ label: "No views yet", value: 0 }],
+      points:
+        viewsByListing.length > 0
+          ? viewsByListing
+          : [{ label: t("analytics.empty.noViews"), value: 0 }],
       total: listings.reduce((sum, listing) => sum + (listing.view_count ?? 0), 0),
     },
     {
       key: "favorites",
-      label: "Favorites",
+      label: t("analytics.series.favorites"),
       color: "#8b5cf6",
       points:
         favoritesByListing.length > 0
           ? favoritesByListing
-          : [{ label: "No favorites yet", value: 0 }],
+          : [{ label: t("analytics.empty.noFavorites"), value: 0 }],
       total: Object.values(metricsByListingId).reduce((sum, metric) => sum + metric.favoriteCount, 0),
     },
     {
       key: "contacts",
-      label: "Contacts",
+      label: t("analytics.series.contacts"),
       color: "#10b981",
       points:
         contactsByListing.length > 0
           ? contactsByListing
-          : [{ label: "No contacts yet", value: 0 }],
+          : [{ label: t("analytics.empty.noContacts"), value: 0 }],
       total: Object.values(metricsByListingId).reduce((sum, metric) => sum + metric.inquiryCount, 0),
     },
     {
       key: "inquiries",
-      label: "Inquiries",
+      label: t("analytics.series.inquiries"),
       color: "#f59e0b",
       points: inquiryDaily.slice(-14),
       total: inquiryTotal > 0 ? inquiryTotal : inquiries.length,
+      isTimeline: true,
     },
   ];
 }
@@ -269,21 +284,22 @@ export function countUnreadInquiries(inquiries: SellerInquiry[]): number {
   return inquiries.filter((inquiry) => inquiry.status === "new").length;
 }
 
-export function formatRelativeTime(iso: string): string {
+export function formatRelativeTime(iso: string, t: DashboardTranslator): string {
   const timestamp = new Date(iso).getTime();
   if (Number.isNaN(timestamp)) return "";
 
   const diffMs = Date.now() - timestamp;
   const minutes = Math.floor(diffMs / 60_000);
 
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1) return t("relativeTime.justNow");
+  if (minutes < 60) return t("relativeTime.minutesAgo", { count: minutes });
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("relativeTime.hoursAgo", { count: hours });
 
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days === 1) return t("relativeTime.yesterday");
+  if (days < 7) return t("relativeTime.daysAgo", { count: days });
 
   return new Date(timestamp).toLocaleDateString(undefined, {
     month: "short",

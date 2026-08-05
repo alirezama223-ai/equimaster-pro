@@ -1,0 +1,301 @@
+{
+  "header": {
+    "eyebrow": "Verkäufer-Dashboard",
+    "subtitle": "Entwürfe, veröffentlichte Inserate, Anfragen und Leistung verwalten.",
+    "crmSubtitle": "Käufer, Pipeline-Deals, Besuche und Leistung aus einem Premium-CRM-Arbeitsbereich verwalten.",
+    "createListing": "Inserat erstellen",
+    "loadError": "Verkäufer-Dashboard konnte nicht geladen werden.",
+    "overviewMetricsAria": "Übersichtskennzahlen",
+    "tabs": {
+      "crm": "CRM-Hub",
+      "overview": "Übersicht"
+    }
+  },
+  "greeting": {
+    "morning": "Guten Morgen",
+    "afternoon": "Guten Tag",
+    "evening": "Guten Abend"
+  },
+  "metrics": {
+    "activeListings": "Aktive Inserate",
+    "soldHorses": "Verkaufte Pferde",
+    "favorites": "Favoriten",
+    "messages": "Nachrichten",
+    "views30Days": "Aufrufe (30 Tage)",
+    "profileScore": "Profilbewertung",
+    "draftsInProgress": "{count} Entwürfe in Bearbeitung",
+    "allListingsLive": "Alle Inserate live",
+    "completedSales": "Abgeschlossene Verkäufe",
+    "noSalesRecorded": "Noch keine Verkäufe erfasst",
+    "buyersSaved": "Käufer haben Ihre Pferde gespeichert",
+    "waitingForFavorite": "Warten auf den ersten Favoriten",
+    "unreadConversations": "{count, plural, one {# ungelesene Unterhaltung} other {# ungelesene Unterhaltungen}}",
+    "inboxUpToDate": "Posteingang auf dem neuesten Stand",
+    "lifetimeViews": "Gesamtaufrufe der Inserate",
+    "publishToTrack": "Veröffentlichen, um Tracking zu starten",
+    "strongPresence": "Starke Verkäuferpräsenz",
+    "completeTasks": "Aufgaben erledigen, um sich zu verbessern"
+  },
+  "analytics": {
+    "eyebrow": "Analysen",
+    "title": "Leistungsübersicht",
+    "description": "Aufrufe, Favoriten, Kontakte und Anfrageaktivität aus Ihren vorhandenen Marktplatzdaten.",
+    "last14Days": "Letzte 14 Tage",
+    "topListings30Days": "Top-Inserate · letzte 30 Tage",
+    "series": {
+      "views": "Aufrufe",
+      "favorites": "Favoriten",
+      "contacts": "Kontakte",
+      "inquiries": "Anfragen"
+    },
+    "empty": {
+      "noViews": "Noch keine Aufrufe",
+      "noFavorites": "Noch keine Favoriten",
+      "noContacts": "Noch keine Kontakte"
+    }
+  },
+  "listings": {
+    "eyebrow": "Inserate",
+    "title": "Ihre Pferde",
+    "description": "Status, Leistung und Schnellaktionen an einem Ort verwalten.",
+    "emptyTitle": "Noch keine Inserate",
+    "emptyMessage": "Erstellen Sie Ihr erstes Inserat, um Käufer auf EquiMaster Pro zu erreichen.",
+    "table": {
+      "horse": "Pferd",
+      "status": "Status",
+      "views": "Aufrufe",
+      "favorites": "Favoriten",
+      "price": "Preis",
+      "actions": "Aktionen"
+    },
+    "mobileViews": "{count} Aufrufe",
+    "mobileFavorites": "{count} Favoriten"
+  },
+  "messages": {
+    "eyebrow": "Nachrichten",
+    "title": "Neueste Unterhaltungen",
+    "description": "Aktuelle Käuferanfragen zu Ihren Inseraten.",
+    "emptyTitle": "Noch keine Nachrichten",
+    "emptyMessage": "Wenn Käufer sich zu Ihren Pferden melden, erscheinen die Unterhaltungen hier.",
+    "unread": "Ungelesen"
+  },
+  "tasks": {
+    "eyebrow": "Aufgaben",
+    "title": "Verkäufer-Checkliste",
+    "description": "Erledigen Sie diese Schritte, um Vertrauen und Sichtbarkeit zu stärken.",
+    "progress": "Fortschritt",
+    "complete": "{completed}/{total} erledigt",
+    "items": {
+      "profile": "Profil vervollständigen",
+      "verify": "Identität verifizieren",
+      "passport": "Pass hochladen",
+      "xrays": "Röntgenbilder hochladen",
+      "pedigree": "Stammbaum hinzufügen"
+    }
+  },
+  "quickActions": {
+    "eyebrow": "Schnellaktionen",
+    "title": "Schneller vorankommen",
+    "description": "Starten Sie die häufigsten Verkäufer-Workflows mit einem Klick.",
+    "sellHorse": {
+      "label": "Pferd verkaufen",
+      "description": "Premium-Inserat erstellen"
+    },
+    "importHorse": {
+      "label": "Pferd importieren",
+      "description": "Bestehendes Inserat übernehmen"
+    },
+    "createStallion": {
+      "label": "Hengst anlegen",
+      "description": "Zuchtpferde präsentieren"
+    },
+    "addBreeder": {
+      "label": "Züchter hinzufügen",
+      "description": "Gestütprofil aufbauen"
+    },
+    "inviteBuyer": {
+      "label": "Käufer einladen",
+      "description": "Verkäuferprofil teilen"
+    }
+  },
+  "statusLabels": {
+    "active": "Veröffentlicht",
+    "draft": "Entwurf",
+    "sold": "Verkauft",
+    "archived": "Archiviert"
+  },
+  "preview": {
+    "eyebrow": "Inseratsvorschau",
+    "subtitle": "Prüfen Sie genau, wie Käufer dieses Inserat vor der Veröffentlichung sehen werden.",
+    "backToEdit": "Zurück zur Bearbeitung",
+    "publish": "Inserat veröffentlichen",
+    "publishing": "Wird veröffentlicht...",
+    "viewPublic": "Öffentliche Seite ansehen"
+  },
+  "edit": {
+    "eyebrow": "Verkäufer-Dashboard",
+    "title": "Inserat bearbeiten",
+    "subtitle": "Inseratsdetails, Medien und Verkäuferinformationen aktualisieren. Pferdedaten werden mit dem verknüpften Stammbaumdatensatz synchronisiert."
+  },
+  "relativeTime": {
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {count} Min.",
+    "hoursAgo": "vor {count} Std.",
+    "daysAgo": "vor {count} T.",
+    "recent": "Kürzlich",
+    "yesterday": "Gestern",
+    "hoursAgoLong": "vor {count} Std."
+  },
+  "crm": {
+    "pipeline": {
+      "eyebrow": "Vertriebspipeline",
+      "title": "Deal-Flow",
+      "description": "Deals per Drag-and-drop zwischen Phasen verschieben, um Ihren Verkaufsprozess zu steuern. Änderungen sind nur lokale Vorschau.",
+      "emptyTitle": "Keine aktiven Deals",
+      "emptyMessage": "Wenn Käufer sich zu Ihren Pferden melden, erscheinen Deals in Ihrer Pipeline.",
+      "columns": {
+        "new-inquiry": "Neue Anfrage",
+        "contacted": "Kontaktiert",
+        "visit-scheduled": "Besuch geplant",
+        "negotiating": "In Verhandlung",
+        "sold": "Verkauft"
+      },
+      "priority": {
+        "high": "hoch",
+        "medium": "mittel",
+        "low": "niedrig"
+      }
+    },
+    "buyers": {
+      "eyebrow": "Käufer-CRM",
+      "title": "Käuferbeziehungen",
+      "description": "Suchen, filtern und priorisieren Sie Ihre wertvollsten Interessenten.",
+      "searchPlaceholder": "Käufer oder Pferde suchen",
+      "filterAria": "Käufer filtern",
+      "sortAria": "Käufer sortieren",
+      "filterAll": "Alle Status",
+      "sortRecent": "Sortierung: Neueste",
+      "sortName": "Sortierung: Name",
+      "sortStatus": "Sortierung: Status",
+      "emptyTitle": "Keine passenden Käufer",
+      "emptyMessage": "Passen Sie Suche oder Filter an, um mehr Käuferbeziehungen zu sehen.",
+      "lastContact": "Letzter Kontakt · {time}",
+      "status": {
+        "new": "Neu",
+        "hot": "Heiß",
+        "returning": "Wiederkehrend",
+        "vip": "VIP"
+      }
+    },
+    "calendar": {
+      "eyebrow": "Kalender",
+      "title": "Besuche & Termine",
+      "descriptionEmpty": "Käuferbesichtigungen und Stallbesuche planen.",
+      "description": "Heutige Besichtigungen und anstehende Käuftermine.",
+      "emptyTitle": "Keine Besuche geplant",
+      "emptyMessage": "Anstehende Käuftermine erscheinen hier, sobald sie geplant sind.",
+      "todayHeading": "Heutige Besuche",
+      "upcomingHeading": "Anstehende Termine",
+      "noVisitsToday": "Für heute sind keine Besuche geplant.",
+      "todayBadge": "Heute",
+      "viewDetails": "Details ansehen"
+    },
+    "notifications": {
+      "eyebrow": "Benachrichtigungen",
+      "title": "Aktivitätsverlauf",
+      "description": "Behalten Sie Käufersignale und Marktplatzaktivität im Blick.",
+      "unreadBadge": "{count} ungelesen",
+      "emptyTitle": "Alles erledigt",
+      "emptyMessage": "Neue Anfragen, Favoriten und Profilaktivität erscheinen hier.",
+      "types": {
+        "inquiry": {
+          "title": "Neue Anfrage",
+          "description": "{buyer} hat nach {horse} gefragt"
+        },
+        "favorite": {
+          "title": "Pferd favorisiert",
+          "description": "Ein Käufer hat Ihr Inserat auf die Merkliste gesetzt",
+          "descriptionWithCount": "Ihre Inserate haben {count, plural, one {# Favorit} other {# Favoriten}} erhalten"
+        },
+        "profile-view": {
+          "title": "Profil angesehen",
+          "description": "Ihr Verkäuferprofil hat heute 12 Aufrufe erhalten"
+        },
+        "visit-request": {
+          "title": "Besuch angefragt",
+          "description": "Marcus Lindholm hat einen Stallbesuch diese Woche angefragt"
+        },
+        "offer": {
+          "title": "Angebot erhalten",
+          "description": "Emma Richardson hat ein vorläufiges Angebot eingereicht"
+        }
+      }
+    },
+    "performance": {
+      "eyebrow": "Leistung",
+      "title": "Geschäftseinblicke",
+      "description": "Erkennen Sie auf einen Blick Ihre stärksten Inserate und Verkäufereffizienz.",
+      "bestPerformingHorse": "Bestperformendes Pferd",
+      "mostViewed": "Meist aufgerufen",
+      "highestSaved": "Am häufigsten gespeichert",
+      "averageResponse": "Durchschnittliche Antwortzeit",
+      "conversion": "Conversion",
+      "viewsCount": "{count} Aufrufe",
+      "favoritesCount": "{count} Favoriten",
+      "fallbacks": {
+        "bestPerforming": "Veröffentlichen Sie ein Inserat, um die Leistung zu verfolgen",
+        "noViews": "Noch keine Aufrufe",
+        "noFavorites": "Noch keine Favoriten",
+        "averageResponse": "Unter 2 Stunden",
+        "noInquiries": "Noch keine Anfragen",
+        "conversionRate": "{rate} % Abschlussquote",
+        "zeroConversion": "0 % Abschlussquote"
+      }
+    },
+    "ai": {
+      "eyebrow": "KI-Assistent",
+      "title": "EquiMaster AI",
+      "description": "Personalisierte Empfehlungen, damit Sie Deals schneller abschließen und Inserate mit maximaler Wirkung präsentieren.",
+      "impactHigh": "hohe Wirkung",
+      "impactMedium": "mittlere Wirkung",
+      "viewAll": "Alle Empfehlungen ansehen",
+      "recommendations": {
+        "ai-response": "Antworten Sie innerhalb von 2 Stunden, um das Vertrauen der Käufer zu stärken",
+        "ai-video": "Laden Sie ein Springvideo hoch, um die Interaktion zu steigern",
+        "ai-xrays": "Fügen Sie Röntgenbilder hinzu, um das Vertrauen der Käufer zu stärken",
+        "ai-description": "Verbessern Sie die Beschreibung mit Trainingsschwerpunkten und Temperament",
+        "ai-price": "Erhöhen Sie den Preis um 5 % basierend auf der jüngsten Marktaktivität",
+        "ai-listing": "Veröffentlichen Sie Ihr erstes Inserat, um KI-Einblicke freizuschalten",
+        "ai-video-mock": "Laden Sie ein Springvideo hoch, sobald Ihr Inserat live ist"
+      }
+    },
+    "demo": {
+      "featuredHorse": "Empfohlenes Pferd",
+      "privateBuyer": "Privatkäufer",
+      "visitLocations": {
+        "0": "Indoor arena · Brabant",
+        "1": "Main stable · Utrecht",
+        "2": "Outdoor ring · Limburg",
+        "3": "Private viewing · Antwerp"
+      },
+      "mockHorses": {
+        "0": "Grand Prix Dream",
+        "1": "Midnight Sovereign",
+        "2": "Celeste Royale"
+      },
+      "mockBuyers": {
+        "0": { "name": "Sophie van der Berg", "horse": "Grand Prix Dream", "lastContact": "2h ago" },
+        "1": { "name": "Marcus Lindholm", "horse": "Midnight Sovereign", "lastContact": "Yesterday" },
+        "2": { "name": "Emma Richardson", "horse": "Celeste Royale", "lastContact": "3d ago" },
+        "3": { "name": "Luca Moretti", "horse": "Atlantic Storm", "lastContact": "Just now" }
+      },
+      "mockPipeline": {
+        "0": { "buyer": "Luca Moretti", "horse": "Atlantic Storm", "price": "€185,000", "date": "Aug 6" },
+        "1": { "buyer": "Sophie van der Berg", "horse": "Grand Prix Dream", "price": "€240,000", "date": "Aug 4" },
+        "2": { "buyer": "Marcus Lindholm", "horse": "Midnight Sovereign", "price": "€320,000", "date": "Aug 2" },
+        "3": { "buyer": "Emma Richardson", "horse": "Celeste Royale", "price": "€98,000", "date": "Jul 28" },
+        "4": { "buyer": "James Whitfield", "horse": "Silver Legacy", "price": "€156,000", "date": "Jul 20" }
+      }
+    }
+  }
+}

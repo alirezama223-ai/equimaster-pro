@@ -1,0 +1,301 @@
+{
+  "header": {
+    "eyebrow": "Verkopersdashboard",
+    "subtitle": "Beheer concepten, gepubliceerde advertenties, vragen en prestaties.",
+    "crmSubtitle": "Beheer kopers, pipeline-deals, bezoeken en prestaties vanuit één premium CRM-werkruimte.",
+    "createListing": "Advertentie maken",
+    "loadError": "Verkopersdashboard kon niet worden geladen.",
+    "overviewMetricsAria": "Overzichtsstatistieken",
+    "tabs": {
+      "crm": "CRM-hub",
+      "overview": "Overzicht"
+    }
+  },
+  "greeting": {
+    "morning": "Goedemorgen",
+    "afternoon": "Goedemiddag",
+    "evening": "Goedenavond"
+  },
+  "metrics": {
+    "activeListings": "Actieve advertenties",
+    "soldHorses": "Verkochte paarden",
+    "favorites": "Favorieten",
+    "messages": "Berichten",
+    "views30Days": "Weergaven (30 dagen)",
+    "profileScore": "Profielscore",
+    "draftsInProgress": "{count} concepten in behandeling",
+    "allListingsLive": "Alle advertenties live",
+    "completedSales": "Voltooide verkopen",
+    "noSalesRecorded": "Nog geen verkopen geregistreerd",
+    "buyersSaved": "Kopers hebben uw paarden opgeslagen",
+    "waitingForFavorite": "Wachten op eerste favoriet",
+    "unreadConversations": "{count, plural, one {# ongelezen gesprek} other {# ongelezen gesprekken}}",
+    "inboxUpToDate": "Postvak bijgewerkt",
+    "lifetimeViews": "Totale advertentieweergaven",
+    "publishToTrack": "Publiceer om tracking te starten",
+    "strongPresence": "Sterke verkoperspresence",
+    "completeTasks": "Voltooi taken om te verbeteren"
+  },
+  "analytics": {
+    "eyebrow": "Analyses",
+    "title": "Prestatieoverzicht",
+    "description": "Weergaven, favorieten, contacten en vraagactiviteit uit uw bestaande marktplaatsgegevens.",
+    "last14Days": "Afgelopen 14 dagen",
+    "topListings30Days": "Topadvertenties · afgelopen 30 dagen",
+    "series": {
+      "views": "Weergaven",
+      "favorites": "Favorieten",
+      "contacts": "Contacten",
+      "inquiries": "Vragen"
+    },
+    "empty": {
+      "noViews": "Nog geen weergaven",
+      "noFavorites": "Nog geen favorieten",
+      "noContacts": "Nog geen contacten"
+    }
+  },
+  "listings": {
+    "eyebrow": "Advertenties",
+    "title": "Uw paarden",
+    "description": "Beheer status, prestaties en snelle acties vanaf één plek.",
+    "emptyTitle": "Nog geen advertenties",
+    "emptyMessage": "Maak uw eerste advertentie om kopers op EquiMaster Pro te bereiken.",
+    "table": {
+      "horse": "Paard",
+      "status": "Status",
+      "views": "Weergaven",
+      "favorites": "Favorieten",
+      "price": "Prijs",
+      "actions": "Acties"
+    },
+    "mobileViews": "{count} weergaven",
+    "mobileFavorites": "{count} favorieten"
+  },
+  "messages": {
+    "eyebrow": "Berichten",
+    "title": "Laatste gesprekken",
+    "description": "Recente kopervragen gekoppeld aan uw advertenties.",
+    "emptyTitle": "Nog geen berichten",
+    "emptyMessage": "Wanneer kopers contact opnemen over uw paarden, verschijnen gesprekken hier.",
+    "unread": "Ongelezen"
+  },
+  "tasks": {
+    "eyebrow": "Taken",
+    "title": "Verkoperschecklist",
+    "description": "Voltooi deze stappen om vertrouwen en zichtbaarheid te versterken.",
+    "progress": "Voortgang",
+    "complete": "{completed}/{total} voltooid",
+    "items": {
+      "profile": "Profiel voltooien",
+      "verify": "Identiteit verifiëren",
+      "passport": "Paspoort uploaden",
+      "xrays": "Röntgenfoto's uploaden",
+      "pedigree": "Stamboom toevoegen"
+    }
+  },
+  "quickActions": {
+    "eyebrow": "Snelle acties",
+    "title": "Sneller vooruit",
+    "description": "Start de meest voorkomende verkopersworkflows met één klik.",
+    "sellHorse": {
+      "label": "Paard verkopen",
+      "description": "Premium advertentie maken"
+    },
+    "importHorse": {
+      "label": "Paard importeren",
+      "description": "Bestaande advertentie overnemen"
+    },
+    "createStallion": {
+      "label": "Hengst aanmaken",
+      "description": "Fokpaarden presenteren"
+    },
+    "addBreeder": {
+      "label": "Fokker toevoegen",
+      "description": "Uw stoeterijprofiel opbouwen"
+    },
+    "inviteBuyer": {
+      "label": "Koper uitnodigen",
+      "description": "Uw verkopersprofiel delen"
+    }
+  },
+  "statusLabels": {
+    "active": "Gepubliceerd",
+    "draft": "Concept",
+    "sold": "Verkocht",
+    "archived": "Gearchiveerd"
+  },
+  "preview": {
+    "eyebrow": "Advertentievoorbeeld",
+    "subtitle": "Bekijk precies hoe kopers deze advertentie zien voordat u publiceert.",
+    "backToEdit": "Terug naar bewerken",
+    "publish": "Advertentie publiceren",
+    "publishing": "Publiceren...",
+    "viewPublic": "Openbare pagina bekijken"
+  },
+  "edit": {
+    "eyebrow": "Verkopersdashboard",
+    "title": "Advertentie bewerken",
+    "subtitle": "Werk advertentiedetails, media en verkoperinformatie bij. Paardgegevens synchroniseren met het gekoppelde stamboomrecord."
+  },
+  "relativeTime": {
+    "justNow": "Zojuist",
+    "minutesAgo": "{count} min geleden",
+    "hoursAgo": "{count} u geleden",
+    "daysAgo": "{count} d geleden",
+    "recent": "Recent",
+    "yesterday": "Gisteren",
+    "hoursAgoLong": "{count} u geleden"
+  },
+  "crm": {
+    "pipeline": {
+      "eyebrow": "Verkooppipeline",
+      "title": "Dealstroom",
+      "description": "Sleep deals tussen fases om uw verkoopproces te beheren. Wijzigingen zijn alleen lokale preview.",
+      "emptyTitle": "Geen actieve deals",
+      "emptyMessage": "Wanneer kopers interesse tonen in uw paarden, verschijnen deals in uw pipeline.",
+      "columns": {
+        "new-inquiry": "Nieuwe vraag",
+        "contacted": "Gecontacteerd",
+        "visit-scheduled": "Bezoek gepland",
+        "negotiating": "In onderhandeling",
+        "sold": "Verkocht"
+      },
+      "priority": {
+        "high": "hoog",
+        "medium": "gemiddeld",
+        "low": "laag"
+      }
+    },
+    "buyers": {
+      "eyebrow": "Koper-CRM",
+      "title": "Koperrelaties",
+      "description": "Zoek, filter en prioriteer uw meest waardevolle prospects.",
+      "searchPlaceholder": "Zoek kopers of paarden",
+      "filterAria": "Kopers filteren",
+      "sortAria": "Kopers sorteren",
+      "filterAll": "Alle statussen",
+      "sortRecent": "Sorteren: recent",
+      "sortName": "Sorteren: naam",
+      "sortStatus": "Sorteren: status",
+      "emptyTitle": "Geen overeenkomende kopers",
+      "emptyMessage": "Pas uw zoekopdracht of filters aan om meer koperrelaties te zien.",
+      "lastContact": "Laatste contact · {time}",
+      "status": {
+        "new": "Nieuw",
+        "hot": "Heet",
+        "returning": "Terugkerend",
+        "vip": "VIP"
+      }
+    },
+    "calendar": {
+      "eyebrow": "Kalender",
+      "title": "Bezoeken en afspraken",
+      "descriptionEmpty": "Plan kopervisites en stalbezoeken.",
+      "description": "Bezoeken van vandaag en aankomende koperafspraken.",
+      "emptyTitle": "Geen bezoeken gepland",
+      "emptyMessage": "Aankomende koperafspraken verschijnen hier zodra ze zijn gepland.",
+      "todayHeading": "Bezoeken vandaag",
+      "upcomingHeading": "Aankomende afspraken",
+      "noVisitsToday": "Geen bezoeken gepland voor vandaag.",
+      "todayBadge": "Vandaag",
+      "viewDetails": "Details bekijken"
+    },
+    "notifications": {
+      "eyebrow": "Meldingen",
+      "title": "Activiteitstijdlijn",
+      "description": "Blijf op de hoogte van kopersignalen en marktplaatsactiviteit.",
+      "unreadBadge": "{count} ongelezen",
+      "emptyTitle": "Alles bijgewerkt",
+      "emptyMessage": "Nieuwe vragen, favorieten en profielactiviteit verschijnen hier.",
+      "types": {
+        "inquiry": {
+          "title": "Nieuwe vraag",
+          "description": "{buyer} vroeg naar {horse}"
+        },
+        "favorite": {
+          "title": "Paard favoriet gemaakt",
+          "description": "Een koper heeft uw advertentie op de shortlist gezet",
+          "descriptionWithCount": "Uw advertenties hebben {count, plural, one {# favoriet} other {# favorieten}} ontvangen"
+        },
+        "profile-view": {
+          "title": "Profiel bekeken",
+          "description": "Uw verkopersprofiel heeft vandaag 12 weergaven ontvangen"
+        },
+        "visit-request": {
+          "title": "Bezoek aangevraagd",
+          "description": "Marcus Lindholm heeft een stalbezoek deze week aangevraagd"
+        },
+        "offer": {
+          "title": "Bod ontvangen",
+          "description": "Emma Richardson heeft een voorlopig bod ingediend"
+        }
+      }
+    },
+    "performance": {
+      "eyebrow": "Prestaties",
+      "title": "Zakelijke inzichten",
+      "description": "Spot in één oogopslag uw sterkste advertenties en verkopersefficiëntie.",
+      "bestPerformingHorse": "Best presterend paard",
+      "mostViewed": "Meest bekeken",
+      "highestSaved": "Meest opgeslagen",
+      "averageResponse": "Gemiddelde reactietijd",
+      "conversion": "Conversie",
+      "viewsCount": "{count} weergaven",
+      "favoritesCount": "{count} favorieten",
+      "fallbacks": {
+        "bestPerforming": "Publiceer een advertentie om prestaties te volgen",
+        "noViews": "Nog geen weergaven",
+        "noFavorites": "Nog geen favorieten",
+        "averageResponse": "Minder dan 2 uur",
+        "noInquiries": "Nog geen vragen",
+        "conversionRate": "{rate}% sluitingspercentage",
+        "zeroConversion": "0% sluitingspercentage"
+      }
+    },
+    "ai": {
+      "eyebrow": "AI-assistent",
+      "title": "EquiMaster AI",
+      "description": "Gepersonaliseerde aanbevelingen om deals sneller te sluiten en advertenties met maximale impact te presenteren.",
+      "impactHigh": "hoge impact",
+      "impactMedium": "gemiddelde impact",
+      "viewAll": "Alle aanbevelingen bekijken",
+      "recommendations": {
+        "ai-response": "Reageer binnen 2 uur om het vertrouwen van kopers te vergroten",
+        "ai-video": "Upload een springvideo om betrokkenheid te verhogen",
+        "ai-xrays": "Voeg röntgenfoto's toe om het vertrouwen van kopers te versterken",
+        "ai-description": "Verbeter de beschrijving met trainingshighlights en temperament",
+        "ai-price": "Verhoog de prijs met 5% op basis van recente marktactiviteit",
+        "ai-listing": "Publiceer uw eerste advertentie om AI-inzichten te ontgrendelen",
+        "ai-video-mock": "Upload een springvideo wanneer uw advertentie live gaat"
+      }
+    },
+    "demo": {
+      "featuredHorse": "Uitgelicht paard",
+      "privateBuyer": "Particuliere koper",
+      "visitLocations": {
+        "0": "Indoor arena · Brabant",
+        "1": "Main stable · Utrecht",
+        "2": "Outdoor ring · Limburg",
+        "3": "Private viewing · Antwerp"
+      },
+      "mockHorses": {
+        "0": "Grand Prix Dream",
+        "1": "Midnight Sovereign",
+        "2": "Celeste Royale"
+      },
+      "mockBuyers": {
+        "0": { "name": "Sophie van der Berg", "horse": "Grand Prix Dream", "lastContact": "2h ago" },
+        "1": { "name": "Marcus Lindholm", "horse": "Midnight Sovereign", "lastContact": "Yesterday" },
+        "2": { "name": "Emma Richardson", "horse": "Celeste Royale", "lastContact": "3d ago" },
+        "3": { "name": "Luca Moretti", "horse": "Atlantic Storm", "lastContact": "Just now" }
+      },
+      "mockPipeline": {
+        "0": { "buyer": "Luca Moretti", "horse": "Atlantic Storm", "price": "€185,000", "date": "Aug 6" },
+        "1": { "buyer": "Sophie van der Berg", "horse": "Grand Prix Dream", "price": "€240,000", "date": "Aug 4" },
+        "2": { "buyer": "Marcus Lindholm", "horse": "Midnight Sovereign", "price": "€320,000", "date": "Aug 2" },
+        "3": { "buyer": "Emma Richardson", "horse": "Celeste Royale", "price": "€98,000", "date": "Jul 28" },
+        "4": { "buyer": "James Whitfield", "horse": "Silver Legacy", "price": "€156,000", "date": "Jul 20" }
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@ type Props = {
 export const dynamic = "force-dynamic";
 
 export default async function EditSellerListingPage({ params }: Props) {
-  const t = await getTranslations("marketplace");
+  const t = await getTranslations("dashboard");
   const { id } = await params;
 
   if (!isListingUuid(id)) {
@@ -39,13 +39,13 @@ export default async function EditSellerListingPage({ params }: Props) {
           <FadeUp>
             <div className="text-center mb-12">
               <p className="uppercase tracking-[6px] text-blue-500 text-sm font-semibold">
-                {t("sellerDashboard.edit.eyebrow")}
+                {t("edit.eyebrow")}
               </p>
               <h1 className="text-4xl sm:text-5xl font-black text-white mt-4">
-                {t("sellerDashboard.edit.title")}
+                {t("edit.title")}
               </h1>
               <p className="mt-5 max-w-2xl mx-auto text-gray-400 text-lg">
-                {t("sellerDashboard.edit.subtitle")}
+                {t("edit.subtitle")}
               </p>
             </div>
             <SellListingForm mode="edit" initialListing={result.data} />

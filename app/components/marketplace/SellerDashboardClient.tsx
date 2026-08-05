@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { memo, useMemo, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useState, useTransition } from "react";
 import {
   archiveHorseListing,
   deleteHorseListing,
@@ -29,6 +29,7 @@ import {
   buildSellerTasks,
   computeProfileScore,
   countUnreadInquiries,
+  formatRelativeTime,
   getGreetingPrefix,
 } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import { listingRowToFormData, listingImagesFromRow } from "@/app/lib/horse-listings";
@@ -59,13 +60,16 @@ type Props = {
 };
 
 function SellerDashboardClient({ dashboard, sellerName }: Props) {
-  const t = useTranslations("marketplace");
+  const t = useTranslations("dashboard");
+  const tMarketplace = useTranslations("marketplace");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const [activeView, setActiveView] = useState<"overview" | "crm">("crm");
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const formatTime = useCallback((iso: string) => formatRelativeTime(iso, t), [t]);
 
   const profileScore = useMemo(
     () => computeProfileScore(dashboard.listings),
@@ -76,19 +80,20 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     [dashboard.recentInquiries]
   );
   const overviewMetrics = useMemo(
-    () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages),
-    [dashboard.stats, profileScore, unreadMessages]
+    () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages, t),
+    [dashboard.stats, profileScore, unreadMessages, t]
   );
   const analyticsSeries = useMemo(
     () =>
       buildAnalyticsSeries(
         dashboard.listings,
         dashboard.metricsByListingId,
-        dashboard.recentInquiries
+        dashboard.recentInquiries,
+        t
       ),
-    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries]
+    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries, t]
   );
-  const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
+  const tasks = useMemo(() => buildSellerTasks(dashboard.listings, t), [dashboard.listings, t]);
   const crmData = useMemo(
     () =>
       buildSellerCrmData({
@@ -97,8 +102,9 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
         recentInquiries: dashboard.recentInquiries,
         stats: dashboard.stats,
         priceOnRequestLabel: tCommon("priceOnRequest"),
+        t,
       }),
-    [dashboard, tCommon]
+    [dashboard, tCommon, t]
   );
 
   function runListingAction(
@@ -116,7 +122,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     setPendingId(listing.id);
     startTransition(async () => {
       const result = await action();
-      const message = resolveListingActionError(result, t);
+      const message = resolveListingActionError(result, tMarketplace);
       if (message) {
         setError(message);
       } else if (result.publicUrl) {
@@ -165,23 +171,21 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-400">
-                {t("sellerDashboard.eyebrow")}
+                {t("header.eyebrow")}
               </p>
               <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-                {getGreetingPrefix()}, {sellerName}
+                {getGreetingPrefix(t)}, {sellerName}
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
-                {activeView === "crm"
-                  ? "Manage buyers, pipeline deals, visits, and performance from one premium CRM workspace."
-                  : t("sellerDashboard.subtitle")}
+                {activeView === "crm" ? t("header.crmSubtitle") : t("header.subtitle")}
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="inline-flex rounded-xl border border-white/10 bg-[#08111F]/80 p-1">
                 {(
                   [
-                    { key: "crm", label: "CRM Hub" },
-                    { key: "overview", label: "Overview" },
+                    { key: "crm", label: t("header.tabs.crm") },
+                    { key: "overview", label: t("header.tabs.overview") },
                   ] as const
                 ).map((tab) => (
                   <button
@@ -202,7 +206,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
               href={MARKETPLACE_PATHS.createListing}
               className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
             >
-              {t("sellerDashboard.createListing")}
+              {t("header.createListing")}
             </Link>
             </div>
           </div>
@@ -210,7 +214,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
       </FadeUp>
 
       <FadeUp>
-        <section aria-label="Overview metrics">
+        <section aria-label={t("header.overviewMetricsAria")}>
           <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
             {overviewMetrics.map((metric) => (
               <SellerDashboardMetricCard key={metric.key} metric={metric} />
@@ -245,7 +249,10 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
             </FadeUp>
 
             <FadeUp>
-              <SellerDashboardMessages inquiries={dashboard.recentInquiries} />
+              <SellerDashboardMessages
+                inquiries={dashboard.recentInquiries}
+                formatTime={formatTime}
+              />
             </FadeUp>
           </div>
 
@@ -270,7 +277,8 @@ export function ListingPreviewActions({
 }: {
   listing: HorseListingRow;
 }) {
-  const t = useTranslations("marketplace");
+  const t = useTranslations("dashboard");
+  const tMarketplace = useTranslations("marketplace");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -281,7 +289,7 @@ export function ListingPreviewActions({
     setError(null);
     startTransition(async () => {
       const result = await publishHorseListing(listing.id);
-      const message = resolveListingActionError(result, t);
+      const message = resolveListingActionError(result, tMarketplace);
       if (message) {
         setError(message);
         return;
@@ -312,7 +320,7 @@ export function ListingPreviewActions({
           href={getListingEditPath(listing.id)}
           className="rounded-xl border border-white/20 px-8 py-4 text-center font-semibold text-white transition hover:bg-white/10"
         >
-          {t("sellerDashboard.preview.backToEdit")}
+          {t("preview.backToEdit")}
         </Link>
         {listing.status !== "active" ? (
           <button
@@ -321,14 +329,14 @@ export function ListingPreviewActions({
             disabled={isPending}
             className="rounded-xl bg-emerald-600 px-8 py-4 font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-60"
           >
-            {isPending ? t("sellerDashboard.preview.publishing") : t("sellerDashboard.preview.publish")}
+            {isPending ? t("preview.publishing") : t("preview.publish")}
           </button>
         ) : (
           <Link
             href={getPublicListingPath(listing.slug)}
             className="rounded-xl bg-blue-600 px-8 py-4 text-center font-semibold text-white transition hover:bg-blue-500"
           >
-            {t("sellerDashboard.preview.viewPublic")}
+            {t("preview.viewPublic")}
           </Link>
         )}
       </div>

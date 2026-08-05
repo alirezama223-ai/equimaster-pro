@@ -39,8 +39,18 @@ function SellerDashboardListingsTable({
   isPending,
   onAction,
 }: Props) {
-  const t = useTranslations("marketplace");
+  const t = useTranslations("dashboard");
+  const tMarketplace = useTranslations("marketplace");
   const tCommon = useTranslations("common");
+
+  const tableHeadings = [
+    t("listings.table.horse"),
+    t("listings.table.status"),
+    t("listings.table.views"),
+    t("listings.table.favorites"),
+    t("listings.table.price"),
+    t("listings.table.actions"),
+  ];
 
   const sortedListings = [...listings].sort(
     (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
@@ -48,22 +58,22 @@ function SellerDashboardListingsTable({
 
   return (
     <DashboardCard
-      eyebrow="Listings"
-      title="Your horses"
-      description="Manage status, performance, and quick actions from one place."
+      eyebrow={t("listings.eyebrow")}
+      title={t("listings.title")}
+      description={t("listings.description")}
       action={
         <Link
           href="/sell"
           className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
         >
-          {t("sellerDashboard.createListing")}
+          {t("header.createListing")}
         </Link>
       }
     >
       {sortedListings.length === 0 ? (
         <SellerDashboardEmptyState
-          title="No listings yet"
-          message="Create your first listing to start reaching buyers on EquiMaster Pro."
+          title={t("listings.emptyTitle")}
+          message={t("listings.emptyMessage")}
           icon="🐴"
         />
       ) : (
@@ -72,7 +82,7 @@ function SellerDashboardListingsTable({
             <table className="min-w-full divide-y divide-white/[0.06]">
               <thead className="bg-white/[0.02]">
                 <tr>
-                  {["Horse", "Status", "Views", "Favorites", "Price", "Actions"].map((heading) => (
+                  {tableHeadings.map((heading) => (
                     <th
                       key={heading}
                       scope="col"
@@ -120,7 +130,7 @@ function SellerDashboardListingsTable({
                         <span
                           className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${statusClass}`}
                         >
-                          {t(`sellerDashboard.statusLabels.${resolvedStatus}`)}
+                          {t(`statusLabels.${resolvedStatus}`)}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-sm font-medium text-white">
@@ -170,15 +180,17 @@ function SellerDashboardListingsTable({
                         <span
                           className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusClass}`}
                         >
-                          {t(`sellerDashboard.statusLabels.${resolvedStatus}`)}
+                          {t(`statusLabels.${resolvedStatus}`)}
                         </span>
                       </div>
                       <p className="mt-1 text-sm text-gray-400">
                         {formatListingRowPrice(listing, tCommon("priceOnRequest"))}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-3 text-xs text-gray-500">
-                        <span>{metrics?.viewCount ?? 0} views</span>
-                        <span>{metrics?.favoriteCount ?? 0} favorites</span>
+                        <span>{t("listings.mobileViews", { count: metrics?.viewCount ?? 0 })}</span>
+                        <span>
+                          {t("listings.mobileFavorites", { count: metrics?.favoriteCount ?? 0 })}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -187,7 +199,7 @@ function SellerDashboardListingsTable({
                       href={getListingEditPath(listing.id)}
                       className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-4 text-sm font-semibold text-white transition hover:bg-white/5"
                     >
-                      {t("actions.edit")}
+                      {tMarketplace("actions.edit")}
                     </Link>
                     <ListingCardActions listing={listing} busy={busy} onAction={onAction} />
                   </div>

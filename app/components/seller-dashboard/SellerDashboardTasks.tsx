@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import type { SellerTaskItem } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 
@@ -9,6 +10,7 @@ type Props = {
 };
 
 function SellerDashboardTasks({ tasks }: Props) {
+  const t = useTranslations("dashboard");
   const completedCount = useMemo(
     () => tasks.filter((task) => task.completed).length,
     [tasks]
@@ -17,15 +19,15 @@ function SellerDashboardTasks({ tasks }: Props) {
 
   return (
     <DashboardCard
-      eyebrow="Tasks"
-      title="Seller checklist"
-      description="Complete these steps to strengthen trust and visibility."
+      eyebrow={t("tasks.eyebrow")}
+      title={t("tasks.title")}
+      description={t("tasks.description")}
     >
       <div className="mb-5">
         <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="text-gray-400">Progress</span>
+          <span className="text-gray-400">{t("tasks.progress")}</span>
           <span className="font-semibold text-white">
-            {completedCount}/{tasks.length} complete
+            {t("tasks.complete", { completed: completedCount, total: tasks.length })}
           </span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-white/5">

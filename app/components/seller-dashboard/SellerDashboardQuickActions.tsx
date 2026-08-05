@@ -2,64 +2,59 @@
 
 import { Link } from "@/i18n/navigation";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 
-type QuickAction = {
-  key: string;
-  label: string;
-  description: string;
-  href: string;
-  icon: string;
-};
-
-const QUICK_ACTIONS: QuickAction[] = [
-  {
-    key: "sell",
-    label: "Sell Horse",
-    description: "Create a premium listing",
-    href: MARKETPLACE_PATHS.createListing,
-    icon: "🐎",
-  },
-  {
-    key: "import",
-    label: "Import Horse",
-    description: "Bring an existing listing in",
-    href: MARKETPLACE_PATHS.createListing,
-    icon: "📥",
-  },
-  {
-    key: "stallion",
-    label: "Create Stallion",
-    description: "Showcase breeding stock",
-    href: "/account",
-    icon: "⭐",
-  },
-  {
-    key: "breeder",
-    label: "Add Breeder",
-    description: "Build your stud profile",
-    href: "/account",
-    icon: "🏇",
-  },
-  {
-    key: "invite",
-    label: "Invite Buyer",
-    description: "Share your seller profile",
-    href: MARKETPLACE_PATHS.sellerDashboard,
-    icon: "✉️",
-  },
-];
-
 function SellerDashboardQuickActions() {
+  const t = useTranslations("dashboard");
+
+  const quickActions = [
+    {
+      key: "sell",
+      label: t("quickActions.sellHorse.label"),
+      description: t("quickActions.sellHorse.description"),
+      href: MARKETPLACE_PATHS.createListing,
+      icon: "🐎",
+    },
+    {
+      key: "import",
+      label: t("quickActions.importHorse.label"),
+      description: t("quickActions.importHorse.description"),
+      href: MARKETPLACE_PATHS.createListing,
+      icon: "📥",
+    },
+    {
+      key: "stallion",
+      label: t("quickActions.createStallion.label"),
+      description: t("quickActions.createStallion.description"),
+      href: "/account",
+      icon: "⭐",
+    },
+    {
+      key: "breeder",
+      label: t("quickActions.addBreeder.label"),
+      description: t("quickActions.addBreeder.description"),
+      href: "/account",
+      icon: "🏇",
+    },
+    {
+      key: "invite",
+      label: t("quickActions.inviteBuyer.label"),
+      description: t("quickActions.inviteBuyer.description"),
+      href: MARKETPLACE_PATHS.sellerDashboard,
+      icon: "✉️",
+    },
+  ];
+
   return (
     <DashboardCard
-      eyebrow="Quick Actions"
-      title="Move faster"
-      description="Launch the most common seller workflows in one tap."
+      eyebrow={t("quickActions.eyebrow")}
+      title={t("quickActions.title")}
+      description={t("quickActions.description")}
     >
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-        {QUICK_ACTIONS.map((action) => (
+        {quickActions.map((action) => (
           <Link
             key={action.key}
             href={action.href}

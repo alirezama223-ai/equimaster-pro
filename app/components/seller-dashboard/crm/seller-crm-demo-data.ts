@@ -1,5 +1,6 @@
-import { formatListingRowPrice } from "@/app/lib/horse-listings";
+import type { DashboardTranslator } from "@/app/components/seller-dashboard/dashboard-i18n";
 import { formatRelativeTime, getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import { formatListingRowPrice } from "@/app/lib/horse-listings";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerInquiry } from "@/app/types/inquiry";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
@@ -15,79 +16,35 @@ import type {
   SellerCrmData,
 } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
-const MOCK_BUYERS: Omit<CrmBuyer, "id">[] = [
-  {
-    name: "Sophie van der Berg",
-    email: "sophie.vanderberg@example.com",
-    interestedHorse: "Grand Prix Dream",
-    lastContactLabel: "2h ago",
-    status: "hot",
-  },
-  {
-    name: "Marcus Lindholm",
-    email: "marcus.lindholm@example.com",
-    interestedHorse: "Midnight Sovereign",
-    lastContactLabel: "Yesterday",
-    status: "vip",
-  },
-  {
-    name: "Emma Richardson",
-    email: "emma.r@example.com",
-    interestedHorse: "Celeste Royale",
-    lastContactLabel: "3d ago",
-    status: "returning",
-  },
-  {
-    name: "Luca Moretti",
-    email: "luca.moretti@example.com",
-    interestedHorse: "Atlantic Storm",
-    lastContactLabel: "Just now",
-    status: "new",
-  },
-];
+function buildMockBuyers(t: DashboardTranslator): Omit<CrmBuyer, "id">[] {
+  return [0, 1, 2, 3].map((index) => ({
+    name: t(`crm.demo.mockBuyers.${index}.name`),
+    email: `buyer-${index}@example.com`,
+    interestedHorse: t(`crm.demo.mockBuyers.${index}.horse`),
+    lastContactLabel: t(`crm.demo.mockBuyers.${index}.lastContact`),
+    status: (["hot", "vip", "returning", "new"] as const)[index],
+  }));
+}
 
-const MOCK_PIPELINE: Omit<PipelineDeal, "id">[] = [
-  {
-    buyerName: "Luca Moretti",
-    horseName: "Atlantic Storm",
-    priceLabel: "€185,000",
-    dateLabel: "Aug 6",
-    priority: "high",
-    stage: "new-inquiry",
-  },
-  {
-    buyerName: "Sophie van der Berg",
-    horseName: "Grand Prix Dream",
-    priceLabel: "€240,000",
-    dateLabel: "Aug 4",
-    priority: "high",
-    stage: "contacted",
-  },
-  {
-    buyerName: "Marcus Lindholm",
-    horseName: "Midnight Sovereign",
-    priceLabel: "€320,000",
-    dateLabel: "Aug 2",
-    priority: "medium",
-    stage: "visit-scheduled",
-  },
-  {
-    buyerName: "Emma Richardson",
-    horseName: "Celeste Royale",
-    priceLabel: "€98,000",
-    dateLabel: "Jul 28",
-    priority: "medium",
-    stage: "negotiating",
-  },
-  {
-    buyerName: "James Whitfield",
-    horseName: "Silver Legacy",
-    priceLabel: "€156,000",
-    dateLabel: "Jul 20",
-    priority: "low",
-    stage: "sold",
-  },
-];
+function buildMockPipeline(t: DashboardTranslator): Omit<PipelineDeal, "id">[] {
+  const stages: PipelineStage[] = [
+    "new-inquiry",
+    "contacted",
+    "visit-scheduled",
+    "negotiating",
+    "sold",
+  ];
+  const priorities: PipelinePriority[] = ["high", "high", "medium", "medium", "low"];
+
+  return [0, 1, 2, 3, 4].map((index) => ({
+    buyerName: t(`crm.demo.mockPipeline.${index}.buyer`),
+    horseName: t(`crm.demo.mockPipeline.${index}.horse`),
+    priceLabel: t(`crm.demo.mockPipeline.${index}.price`),
+    dateLabel: t(`crm.demo.mockPipeline.${index}.date`),
+    priority: priorities[index],
+    stage: stages[index],
+  }));
+}
 
 function inquiryToStage(inquiry: SellerInquiry, index: number): PipelineStage {
   if (inquiry.status === "replied") return index % 2 === 0 ? "negotiating" : "contacted";
@@ -104,20 +61,21 @@ function inquiryToPriority(inquiry: SellerInquiry): PipelinePriority {
 function buildPipelineFromInquiries(
   inquiries: SellerInquiry[],
   listings: HorseListingRow[],
-  priceOnRequestLabel: string
+  priceOnRequestLabel: string,
+  t: DashboardTranslator
 ): PipelineDeal[] {
   const fromInquiries = inquiries.map((inquiry, index) => {
     const listing = listings.find((row) => row.name === inquiry.horse_name);
     const priceLabel = listing
       ? formatListingRowPrice(listing, priceOnRequestLabel)
-      : "Price on request";
+      : priceOnRequestLabel;
 
     return {
       id: `inquiry-${inquiry.id}`,
       buyerName: inquiry.buyer_name,
       horseName: inquiry.horse_name,
       priceLabel,
-      dateLabel: formatRelativeTime(inquiry.created_at) || "Recent",
+      dateLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
       priority: inquiryToPriority(inquiry),
       stage: inquiryToStage(inquiry, index),
     };
@@ -127,7 +85,7 @@ function buildPipelineFromInquiries(
     return fromInquiries;
   }
 
-  const mockDeals = MOCK_PIPELINE.map((deal, index) => ({
+  const mockDeals = buildMockPipeline(t).map((deal, index) => ({
     ...deal,
     id: `mock-pipeline-${index}`,
   }));
@@ -143,7 +101,7 @@ function buildPipelineFromInquiries(
   return merged;
 }
 
-function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
+function buildBuyersFromInquiries(inquiries: SellerInquiry[], t: DashboardTranslator): CrmBuyer[] {
   const buyerMap = new Map<string, CrmBuyer>();
 
   inquiries.forEach((inquiry, index) => {
@@ -155,7 +113,7 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
       name: inquiry.buyer_name,
       email: inquiry.buyer_email,
       interestedHorse: inquiry.horse_name,
-      lastContactLabel: formatRelativeTime(inquiry.created_at) || "Recent",
+      lastContactLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
       status: inquiry.status === "new" ? "new" : index % 3 === 0 ? "returning" : "hot",
     });
   });
@@ -166,7 +124,7 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
     return buyers;
   }
 
-  MOCK_BUYERS.forEach((buyer, index) => {
+  buildMockBuyers(t).forEach((buyer, index) => {
     if (buyers.some((item) => item.email === buyer.email)) return;
     buyers.push({ ...buyer, id: `mock-buyer-${index}` });
   });
@@ -174,18 +132,22 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
   return buyers;
 }
 
-function buildVisits(listings: HorseListingRow[], buyers: CrmBuyer[]): CrmVisit[] {
+function buildVisits(
+  listings: HorseListingRow[],
+  buyers: CrmBuyer[],
+  t: DashboardTranslator
+): CrmVisit[] {
   const today = new Date();
   const horseNames =
     listings.length > 0
       ? listings.slice(0, 3).map((listing) => listing.name)
-      : ["Grand Prix Dream", "Midnight Sovereign", "Celeste Royale"];
+      : [0, 1, 2].map((index) => t(`crm.demo.mockHorses.${index}`));
 
   const visitTemplates = [
-    { dayOffset: 0, time: "10:30", location: "Indoor arena · Brabant" },
-    { dayOffset: 0, time: "15:00", location: "Main stable · Utrecht" },
-    { dayOffset: 2, time: "11:00", location: "Outdoor ring · Limburg" },
-    { dayOffset: 5, time: "09:30", location: "Private viewing · Antwerp" },
+    { dayOffset: 0, time: "10:30", locationKey: "0" },
+    { dayOffset: 0, time: "15:00", locationKey: "1" },
+    { dayOffset: 2, time: "11:00", locationKey: "2" },
+    { dayOffset: 5, time: "09:30", locationKey: "3" },
   ];
 
   return visitTemplates.map((template, index) => {
@@ -201,9 +163,9 @@ function buildVisits(listings: HorseListingRow[], buyers: CrmBuyer[]): CrmVisit[
         day: "numeric",
       }),
       timeLabel: template.time,
-      horseName: horseNames[index % horseNames.length] ?? "Featured horse",
-      buyerName: buyer?.name ?? "Private buyer",
-      location: template.location,
+      horseName: horseNames[index % horseNames.length] ?? t("crm.demo.featuredHorse"),
+      buyerName: buyer?.name ?? t("crm.demo.privateBuyer"),
+      location: t(`crm.demo.visitLocations.${template.locationKey}`),
       isToday: template.dayOffset === 0,
     };
   });
@@ -211,14 +173,18 @@ function buildVisits(listings: HorseListingRow[], buyers: CrmBuyer[]): CrmVisit[
 
 function buildNotifications(
   inquiries: SellerInquiry[],
-  stats: { totalFavorites: number; totalViews: number }
+  stats: { totalFavorites: number; totalViews: number },
+  t: DashboardTranslator
 ): CrmNotification[] {
   const notifications: CrmNotification[] = inquiries.slice(0, 3).map((inquiry, index) => ({
     id: `notif-inquiry-${inquiry.id}`,
     type: "inquiry" as const,
-    title: "New inquiry",
-    description: `${inquiry.buyer_name} asked about ${inquiry.horse_name}`,
-    timeLabel: formatRelativeTime(inquiry.created_at) || "Recent",
+    title: t("crm.notifications.types.inquiry.title"),
+    description: t("crm.notifications.types.inquiry.description", {
+      buyer: inquiry.buyer_name,
+      horse: inquiry.horse_name,
+    }),
+    timeLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
     unread: inquiry.status === "new" || index === 0,
   }));
 
@@ -226,43 +192,41 @@ function buildNotifications(
     {
       id: "notif-favorite",
       type: "favorite",
-      title: "Horse favorited",
-      description: "A buyer saved your listing to their shortlist",
-      timeLabel: "4h ago",
+      title: t("crm.notifications.types.favorite.title"),
+      description:
+        stats.totalFavorites > 0
+          ? t("crm.notifications.types.favorite.descriptionWithCount", {
+              count: stats.totalFavorites,
+            })
+          : t("crm.notifications.types.favorite.description"),
+      timeLabel: t("relativeTime.hoursAgoLong", { count: 4 }),
       unread: true,
     },
     {
       id: "notif-profile",
       type: "profile-view",
-      title: "Profile viewed",
-      description: "Your seller profile received 12 views today",
-      timeLabel: "6h ago",
+      title: t("crm.notifications.types.profile-view.title"),
+      description: t("crm.notifications.types.profile-view.description"),
+      timeLabel: t("relativeTime.hoursAgoLong", { count: 6 }),
       unread: stats.totalViews > 0,
     },
     {
       id: "notif-visit",
       type: "visit-request",
-      title: "Visit requested",
-      description: "Marcus Lindholm requested a stable visit this week",
-      timeLabel: "Yesterday",
+      title: t("crm.notifications.types.visit-request.title"),
+      description: t("crm.notifications.types.visit-request.description"),
+      timeLabel: t("relativeTime.yesterday"),
       unread: false,
     },
     {
       id: "notif-offer",
       type: "offer",
-      title: "Offer received",
-      description: "Emma Richardson submitted a preliminary offer",
-      timeLabel: "2d ago",
+      title: t("crm.notifications.types.offer.title"),
+      description: t("crm.notifications.types.offer.description"),
+      timeLabel: t("relativeTime.daysAgo", { count: 2 }),
       unread: false,
     },
   ];
-
-  if (stats.totalFavorites > 0) {
-    mockNotifications[0] = {
-      ...mockNotifications[0],
-      description: `Your listings received ${stats.totalFavorites} favorite${stats.totalFavorites === 1 ? "" : "s"}`,
-    };
-  }
 
   return [...notifications, ...mockNotifications].slice(0, 6);
 }
@@ -270,7 +234,8 @@ function buildNotifications(
 function buildPerformance(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  stats: { sold: number; totalInquiries: number; active: number }
+  stats: { sold: number; totalInquiries: number; active: number },
+  t: DashboardTranslator
 ): CrmPerformanceSnapshot {
   const ranked = listings
     .map((listing) => ({
@@ -289,72 +254,43 @@ function buildPerformance(
     stats.active > 0 ? Math.round((stats.sold / Math.max(stats.active + stats.sold, 1)) * 100) : 0;
 
   return {
-    bestPerformingHorse: top?.name ?? "Publish a listing to track performance",
-    mostViewedHorse: mostViewed?.name ?? "No views yet",
+    bestPerformingHorse: top?.name ?? t("crm.performance.fallbacks.bestPerforming"),
+    mostViewedHorse: mostViewed?.name ?? t("crm.performance.fallbacks.noViews"),
     mostViewedCount: mostViewed?.views ?? 0,
-    highestSavedHorse: mostSaved?.name ?? "No favorites yet",
+    highestSavedHorse: mostSaved?.name ?? t("crm.performance.fallbacks.noFavorites"),
     highestSavedCount: mostSaved?.favorites ?? 0,
-    averageResponseLabel: stats.totalInquiries > 0 ? "Under 2 hours" : "No inquiries yet",
-    conversionLabel: stats.active + stats.sold > 0 ? `${conversionRate}% close rate` : "0% close rate",
+    averageResponseLabel:
+      stats.totalInquiries > 0
+        ? t("crm.performance.fallbacks.averageResponse")
+        : t("crm.performance.fallbacks.noInquiries"),
+    conversionLabel:
+      stats.active + stats.sold > 0
+        ? t("crm.performance.fallbacks.conversionRate", { rate: conversionRate })
+        : t("crm.performance.fallbacks.zeroConversion"),
   };
 }
 
-function buildAiRecommendations(listings: HorseListingRow[]): CrmAiRecommendation[] {
-  const recommendations: CrmAiRecommendation[] = [
-    {
-      id: "ai-response",
-      label: "Respond within 2 hours to increase buyer trust",
-      impact: "high",
-    },
-  ];
-
+function buildAiRecommendations(
+  listings: HorseListingRow[],
+  t: DashboardTranslator
+): CrmAiRecommendation[] {
+  const recommendationIds = ["ai-response"];
   const activeListing = listings.find((listing) => listing.status === "active") ?? listings[0];
 
   if (activeListing) {
-    if (!activeListing.video_url) {
-      recommendations.push({
-        id: "ai-video",
-        label: "Upload a jumping video to boost engagement",
-        impact: "high",
-      });
-    }
-    if (!activeListing.public_health_summary) {
-      recommendations.push({
-        id: "ai-xrays",
-        label: "Add x-rays to strengthen buyer confidence",
-        impact: "medium",
-      });
-    }
-    if (activeListing.description.trim().length < 120) {
-      recommendations.push({
-        id: "ai-description",
-        label: "Improve description with training highlights and temperament",
-        impact: "medium",
-      });
-    }
-    if (activeListing.price && !activeListing.price_on_request) {
-      recommendations.push({
-        id: "ai-price",
-        label: "Increase price by 5% based on recent market activity",
-        impact: "medium",
-      });
-    }
+    if (!activeListing.video_url) recommendationIds.push("ai-video");
+    if (!activeListing.public_health_summary) recommendationIds.push("ai-xrays");
+    if (activeListing.description.trim().length < 120) recommendationIds.push("ai-description");
+    if (activeListing.price && !activeListing.price_on_request) recommendationIds.push("ai-price");
   } else {
-    recommendations.push(
-      {
-        id: "ai-listing",
-        label: "Publish your first listing to unlock AI insights",
-        impact: "high",
-      },
-      {
-        id: "ai-video-mock",
-        label: "Upload a jumping video when your listing goes live",
-        impact: "medium",
-      }
-    );
+    recommendationIds.push("ai-listing", "ai-video-mock");
   }
 
-  return recommendations.slice(0, 5);
+  return recommendationIds.slice(0, 5).map((id) => ({
+    id,
+    label: t(`crm.ai.recommendations.${id}`),
+    impact: id === "ai-response" || id === "ai-video" || id === "ai-listing" ? "high" : "medium",
+  }));
 }
 
 type BuildArgs = {
@@ -370,6 +306,7 @@ type BuildArgs = {
     totalInquiries: number;
   };
   priceOnRequestLabel: string;
+  t: DashboardTranslator;
 };
 
 export function buildSellerCrmData({
@@ -378,16 +315,17 @@ export function buildSellerCrmData({
   recentInquiries,
   stats,
   priceOnRequestLabel,
+  t,
 }: BuildArgs): SellerCrmData {
-  const buyers = buildBuyersFromInquiries(recentInquiries);
+  const buyers = buildBuyersFromInquiries(recentInquiries, t);
 
   return {
-    pipeline: buildPipelineFromInquiries(recentInquiries, listings, priceOnRequestLabel),
+    pipeline: buildPipelineFromInquiries(recentInquiries, listings, priceOnRequestLabel, t),
     buyers,
-    visits: buildVisits(listings, buyers),
-    notifications: buildNotifications(recentInquiries, stats),
-    performance: buildPerformance(listings, metricsByListingId, stats),
-    aiRecommendations: buildAiRecommendations(listings),
+    visits: buildVisits(listings, buyers, t),
+    notifications: buildNotifications(recentInquiries, stats, t),
+    performance: buildPerformance(listings, metricsByListingId, stats, t),
+    aiRecommendations: buildAiRecommendations(listings, t),
   };
 }
 

@@ -1,0 +1,301 @@
+{
+  "header": {
+    "eyebrow": "Panel de vendedor",
+    "subtitle": "Gestione borradores, anuncios publicados, consultas y rendimiento.",
+    "crmSubtitle": "Gestione compradores, deals del pipeline, visitas y rendimiento desde un espacio CRM premium.",
+    "createListing": "Crear anuncio",
+    "loadError": "No se pudo cargar el panel de vendedor.",
+    "overviewMetricsAria": "Métricas generales",
+    "tabs": {
+      "crm": "Hub CRM",
+      "overview": "Resumen"
+    }
+  },
+  "greeting": {
+    "morning": "Buenos días",
+    "afternoon": "Buenas tardes",
+    "evening": "Buenas noches"
+  },
+  "metrics": {
+    "activeListings": "Anuncios activos",
+    "soldHorses": "Caballos vendidos",
+    "favorites": "Favoritos",
+    "messages": "Mensajes",
+    "views30Days": "Visitas (30 días)",
+    "profileScore": "Puntuación del perfil",
+    "draftsInProgress": "{count} borradores en curso",
+    "allListingsLive": "Todos los anuncios en vivo",
+    "completedSales": "Ventas completadas",
+    "noSalesRecorded": "Aún no hay ventas registradas",
+    "buyersSaved": "Compradores guardaron sus caballos",
+    "waitingForFavorite": "Esperando el primer favorito",
+    "unreadConversations": "{count, plural, one {# conversación sin leer} other {# conversaciones sin leer}}",
+    "inboxUpToDate": "Bandeja de entrada al día",
+    "lifetimeViews": "Visitas totales de anuncios",
+    "publishToTrack": "Publique para empezar el seguimiento",
+    "strongPresence": "Fuerte presencia de vendedor",
+    "completeTasks": "Complete tareas para mejorar"
+  },
+  "analytics": {
+    "eyebrow": "Analítica",
+    "title": "Resumen de rendimiento",
+    "description": "Visitas, favoritos, contactos y actividad de consultas desde sus datos existentes del marketplace.",
+    "last14Days": "Últimos 14 días",
+    "topListings30Days": "Mejores anuncios · últimos 30 días",
+    "series": {
+      "views": "Visitas",
+      "favorites": "Favoritos",
+      "contacts": "Contactos",
+      "inquiries": "Consultas"
+    },
+    "empty": {
+      "noViews": "Aún no hay visitas",
+      "noFavorites": "Aún no hay favoritos",
+      "noContacts": "Aún no hay contactos"
+    }
+  },
+  "listings": {
+    "eyebrow": "Anuncios",
+    "title": "Sus caballos",
+    "description": "Gestione estado, rendimiento y acciones rápidas desde un solo lugar.",
+    "emptyTitle": "Aún no hay anuncios",
+    "emptyMessage": "Cree su primer anuncio para llegar a compradores en EquiMaster Pro.",
+    "table": {
+      "horse": "Caballo",
+      "status": "Estado",
+      "views": "Visitas",
+      "favorites": "Favoritos",
+      "price": "Precio",
+      "actions": "Acciones"
+    },
+    "mobileViews": "{count} visitas",
+    "mobileFavorites": "{count} favoritos"
+  },
+  "messages": {
+    "eyebrow": "Mensajes",
+    "title": "Últimas conversaciones",
+    "description": "Consultas recientes de compradores vinculadas a sus anuncios.",
+    "emptyTitle": "Aún no hay mensajes",
+    "emptyMessage": "Cuando los compradores se pongan en contacto sobre sus caballos, las conversaciones aparecerán aquí.",
+    "unread": "Sin leer"
+  },
+  "tasks": {
+    "eyebrow": "Tareas",
+    "title": "Lista de verificación del vendedor",
+    "description": "Complete estos pasos para reforzar la confianza y la visibilidad.",
+    "progress": "Progreso",
+    "complete": "{completed}/{total} completado",
+    "items": {
+      "profile": "Completar perfil",
+      "verify": "Verificar identidad",
+      "passport": "Subir pasaporte",
+      "xrays": "Subir radiografías",
+      "pedigree": "Añadir pedigree"
+    }
+  },
+  "quickActions": {
+    "eyebrow": "Acciones rápidas",
+    "title": "Avance más rápido",
+    "description": "Inicie los flujos de trabajo de vendedor más comunes con un toque.",
+    "sellHorse": {
+      "label": "Vender caballo",
+      "description": "Crear un anuncio premium"
+    },
+    "importHorse": {
+      "label": "Importar caballo",
+      "description": "Incorporar un anuncio existente"
+    },
+    "createStallion": {
+      "label": "Crear semental",
+      "description": "Mostrar caballos de cría"
+    },
+    "addBreeder": {
+      "label": "Añadir criador",
+      "description": "Construir su perfil de yeguada"
+    },
+    "inviteBuyer": {
+      "label": "Invitar comprador",
+      "description": "Compartir su perfil de vendedor"
+    }
+  },
+  "statusLabels": {
+    "active": "Publicado",
+    "draft": "Borrador",
+    "sold": "Vendido",
+    "archived": "Archivado"
+  },
+  "preview": {
+    "eyebrow": "Vista previa del anuncio",
+    "subtitle": "Revise exactamente cómo verán los compradores este anuncio antes de publicar.",
+    "backToEdit": "Volver a editar",
+    "publish": "Publicar anuncio",
+    "publishing": "Publicando...",
+    "viewPublic": "Ver página pública"
+  },
+  "edit": {
+    "eyebrow": "Panel de vendedor",
+    "title": "Editar anuncio",
+    "subtitle": "Actualice detalles del anuncio, medios e información del vendedor. Los datos del caballo se sincronizan con el registro genealógico vinculado."
+  },
+  "relativeTime": {
+    "justNow": "Ahora mismo",
+    "minutesAgo": "hace {count} min",
+    "hoursAgo": "hace {count} h",
+    "daysAgo": "hace {count} d",
+    "recent": "Reciente",
+    "yesterday": "Ayer",
+    "hoursAgoLong": "hace {count} h"
+  },
+  "crm": {
+    "pipeline": {
+      "eyebrow": "Pipeline de ventas",
+      "title": "Flujo de deals",
+      "description": "Arrastre deals entre etapas para gestionar su proceso de ventas. Los cambios son solo vista previa local.",
+      "emptyTitle": "No hay deals activos",
+      "emptyMessage": "Cuando los compradores muestren interés en sus caballos, los deals aparecerán en su pipeline.",
+      "columns": {
+        "new-inquiry": "Nueva consulta",
+        "contacted": "Contactado",
+        "visit-scheduled": "Visita programada",
+        "negotiating": "En negociación",
+        "sold": "Vendido"
+      },
+      "priority": {
+        "high": "alta",
+        "medium": "media",
+        "low": "baja"
+      }
+    },
+    "buyers": {
+      "eyebrow": "CRM de compradores",
+      "title": "Relaciones con compradores",
+      "description": "Busque, filtre y priorice sus prospectos más valiosos.",
+      "searchPlaceholder": "Buscar compradores o caballos",
+      "filterAria": "Filtrar compradores",
+      "sortAria": "Ordenar compradores",
+      "filterAll": "Todos los estados",
+      "sortRecent": "Ordenar: reciente",
+      "sortName": "Ordenar: nombre",
+      "sortStatus": "Ordenar: estado",
+      "emptyTitle": "Ningún comprador coincide",
+      "emptyMessage": "Intente ajustar su búsqueda o filtros para ver más relaciones con compradores.",
+      "lastContact": "Último contacto · {time}",
+      "status": {
+        "new": "Nuevo",
+        "hot": "Caliente",
+        "returning": "Recurrente",
+        "vip": "VIP"
+      }
+    },
+    "calendar": {
+      "eyebrow": "Calendario",
+      "title": "Visitas y citas",
+      "descriptionEmpty": "Planifique visitas de compradores y visitas a la cuadra.",
+      "description": "Visitas de hoy y próximas citas con compradores.",
+      "emptyTitle": "No hay visitas programadas",
+      "emptyMessage": "Las próximas citas con compradores aparecerán aquí una vez programadas.",
+      "todayHeading": "Visitas de hoy",
+      "upcomingHeading": "Próximas citas",
+      "noVisitsToday": "No hay visitas programadas para hoy.",
+      "todayBadge": "Hoy",
+      "viewDetails": "Ver detalles"
+    },
+    "notifications": {
+      "eyebrow": "Notificaciones",
+      "title": "Línea de tiempo de actividad",
+      "description": "Manténgase al día con señales de compradores y actividad del marketplace.",
+      "unreadBadge": "{count} sin leer",
+      "emptyTitle": "Todo al día",
+      "emptyMessage": "Nuevas consultas, favoritos y actividad del perfil aparecerán aquí.",
+      "types": {
+        "inquiry": {
+          "title": "Nueva consulta",
+          "description": "{buyer} preguntó por {horse}"
+        },
+        "favorite": {
+          "title": "Caballo marcado como favorito",
+          "description": "Un comprador guardó su anuncio en su lista de favoritos",
+          "descriptionWithCount": "Sus anuncios recibieron {count, plural, one {# favorito} other {# favoritos}}"
+        },
+        "profile-view": {
+          "title": "Perfil visitado",
+          "description": "Su perfil de vendedor recibió 12 visitas hoy"
+        },
+        "visit-request": {
+          "title": "Visita solicitada",
+          "description": "Marcus Lindholm solicitó una visita a la cuadra esta semana"
+        },
+        "offer": {
+          "title": "Oferta recibida",
+          "description": "Emma Richardson envió una oferta preliminar"
+        }
+      }
+    },
+    "performance": {
+      "eyebrow": "Rendimiento",
+      "title": "Información comercial",
+      "description": "Identifique de un vistazo sus anuncios más fuertes y la eficiencia del vendedor.",
+      "bestPerformingHorse": "Caballo con mejor rendimiento",
+      "mostViewed": "Más visitado",
+      "highestSaved": "Más guardado",
+      "averageResponse": "Respuesta media",
+      "conversion": "Conversión",
+      "viewsCount": "{count} visitas",
+      "favoritesCount": "{count} favoritos",
+      "fallbacks": {
+        "bestPerforming": "Publique un anuncio para seguir el rendimiento",
+        "noViews": "Aún no hay visitas",
+        "noFavorites": "Aún no hay favoritos",
+        "averageResponse": "Menos de 2 horas",
+        "noInquiries": "Aún no hay consultas",
+        "conversionRate": "{rate}% tasa de cierre",
+        "zeroConversion": "0% tasa de cierre"
+      }
+    },
+    "ai": {
+      "eyebrow": "Asistente IA",
+      "title": "EquiMaster AI",
+      "description": "Recomendaciones personalizadas para cerrar deals más rápido y presentar anuncios con máximo impacto.",
+      "impactHigh": "alto impacto",
+      "impactMedium": "impacto medio",
+      "viewAll": "Ver todas las recomendaciones",
+      "recommendations": {
+        "ai-response": "Responda en menos de 2 horas para aumentar la confianza del comprador",
+        "ai-video": "Suba un vídeo de salto para impulsar el engagement",
+        "ai-xrays": "Añada radiografías para reforzar la confianza del comprador",
+        "ai-description": "Mejore la descripción con aspectos destacados del entrenamiento y temperamento",
+        "ai-price": "Aumente el precio un 5% según la actividad reciente del mercado",
+        "ai-listing": "Publique su primer anuncio para desbloquear insights de IA",
+        "ai-video-mock": "Suba un vídeo de salto cuando su anuncio esté en vivo"
+      }
+    },
+    "demo": {
+      "featuredHorse": "Caballo destacado",
+      "privateBuyer": "Comprador privado",
+      "visitLocations": {
+        "0": "Indoor arena · Brabant",
+        "1": "Main stable · Utrecht",
+        "2": "Outdoor ring · Limburg",
+        "3": "Private viewing · Antwerp"
+      },
+      "mockHorses": {
+        "0": "Grand Prix Dream",
+        "1": "Midnight Sovereign",
+        "2": "Celeste Royale"
+      },
+      "mockBuyers": {
+        "0": { "name": "Sophie van der Berg", "horse": "Grand Prix Dream", "lastContact": "2h ago" },
+        "1": { "name": "Marcus Lindholm", "horse": "Midnight Sovereign", "lastContact": "Yesterday" },
+        "2": { "name": "Emma Richardson", "horse": "Celeste Royale", "lastContact": "3d ago" },
+        "3": { "name": "Luca Moretti", "horse": "Atlantic Storm", "lastContact": "Just now" }
+      },
+      "mockPipeline": {
+        "0": { "buyer": "Luca Moretti", "horse": "Atlantic Storm", "price": "€185,000", "date": "Aug 6" },
+        "1": { "buyer": "Sophie van der Berg", "horse": "Grand Prix Dream", "price": "€240,000", "date": "Aug 4" },
+        "2": { "buyer": "Marcus Lindholm", "horse": "Midnight Sovereign", "price": "€320,000", "date": "Aug 2" },
+        "3": { "buyer": "Emma Richardson", "horse": "Celeste Royale", "price": "€98,000", "date": "Jul 28" },
+        "4": { "buyer": "James Whitfield", "horse": "Silver Legacy", "price": "€156,000", "date": "Jul 20" }
+      }
+    }
+  }
+}

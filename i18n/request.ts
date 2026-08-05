@@ -3,7 +3,7 @@ import { hasLocale } from "next-intl";
 import { routing } from "./routing";
 
 const namespaces = [
-  "common", "nav", "auth", "metadata", "home", "marketplace", "sell", "account",
+  "common", "nav", "auth", "metadata", "home", "marketplace", "dashboard", "sell", "account",
   "horse", "favorites", "training", "health", "admin", "breeding", "stallions",
   "breeders", "pedigree", "inquiries", "notifications", "demo", "bloodlines",
   "events", "traits", "feedback",

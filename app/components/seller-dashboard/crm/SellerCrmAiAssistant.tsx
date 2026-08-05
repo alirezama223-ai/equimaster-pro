@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import type { CrmAiRecommendation } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 type Props = {
@@ -8,6 +9,8 @@ type Props = {
 };
 
 function SellerCrmAiAssistant({ recommendations }: Props) {
+  const t = useTranslations("dashboard");
+
   return (
     <section className="relative overflow-hidden rounded-[28px] border border-blue-500/30 bg-gradient-to-br from-[#0f1f3d] via-[#0a1628] to-[#081223] p-6 sm:p-8">
       <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-blue-500/20 blur-3xl" />
@@ -22,14 +25,13 @@ function SellerCrmAiAssistant({ recommendations }: Props) {
           </span>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-300">
-              AI Assistant
+              {t("crm.ai.eyebrow")}
             </p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">
-              EquiMaster AI
+              {t("crm.ai.title")}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-blue-100/70">
-              Personalized recommendations to help you close deals faster and present listings with
-              maximum impact.
+              {t("crm.ai.description")}
             </p>
           </div>
         </div>
@@ -53,7 +55,7 @@ function SellerCrmAiAssistant({ recommendations }: Props) {
               <div className="min-w-0">
                 <p className="text-sm leading-relaxed text-white">{item.label}</p>
                 <p className="mt-1 text-[11px] uppercase tracking-wide text-blue-300/70">
-                  {item.impact} impact
+                  {item.impact === "high" ? t("crm.ai.impactHigh") : t("crm.ai.impactMedium")}
                 </p>
               </div>
             </li>
@@ -64,7 +66,7 @@ function SellerCrmAiAssistant({ recommendations }: Props) {
           type="button"
           className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(59,130,246,0.35)] transition hover:bg-blue-500"
         >
-          View all recommendations
+          {t("crm.ai.viewAll")}
         </button>
       </div>
     </section>

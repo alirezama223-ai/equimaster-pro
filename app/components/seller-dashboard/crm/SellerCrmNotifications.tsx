@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import type { CrmNotification, CrmNotificationType } from "@/app/components/seller-dashboard/crm/seller-crm-types";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 function SellerCrmNotifications({ notifications }: Props) {
+  const t = useTranslations("dashboard");
   const unreadCount = useMemo(
     () => notifications.filter((notification) => notification.unread).length,
     [notifications]
@@ -25,21 +27,21 @@ function SellerCrmNotifications({ notifications }: Props) {
 
   return (
     <DashboardCard
-      eyebrow="Notifications"
-      title="Activity timeline"
-      description="Stay on top of buyer signals and marketplace activity."
+      eyebrow={t("crm.notifications.eyebrow")}
+      title={t("crm.notifications.title")}
+      description={t("crm.notifications.description")}
       action={
         unreadCount > 0 ? (
           <span className="inline-flex min-h-7 items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 text-xs font-semibold text-blue-200">
-            {unreadCount} unread
+            {t("crm.notifications.unreadBadge", { count: unreadCount })}
           </span>
         ) : null
       }
     >
       {notifications.length === 0 ? (
         <SellerDashboardEmptyState
-          title="All caught up"
-          message="New inquiries, favorites, and profile activity will show up here."
+          title={t("crm.notifications.emptyTitle")}
+          message={t("crm.notifications.emptyMessage")}
           icon="🔔"
         />
       ) : (

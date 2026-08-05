@@ -1,0 +1,301 @@
+{
+  "header": {
+    "eyebrow": "Seller Dashboard",
+    "subtitle": "Manage drafts, published listings, inquiries, and performance.",
+    "crmSubtitle": "Manage buyers, pipeline deals, visits, and performance from one premium CRM workspace.",
+    "createListing": "Create listing",
+    "loadError": "Unable to load seller dashboard.",
+    "overviewMetricsAria": "Overview metrics",
+    "tabs": {
+      "crm": "CRM Hub",
+      "overview": "Overview"
+    }
+  },
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "metrics": {
+    "activeListings": "Active Listings",
+    "soldHorses": "Sold Horses",
+    "favorites": "Favorites",
+    "messages": "Messages",
+    "views30Days": "Views (30 days)",
+    "profileScore": "Profile Score",
+    "draftsInProgress": "{count} drafts in progress",
+    "allListingsLive": "All listings live",
+    "completedSales": "Completed sales",
+    "noSalesRecorded": "No sales recorded yet",
+    "buyersSaved": "Buyers saved your horses",
+    "waitingForFavorite": "Waiting for first favorite",
+    "unreadConversations": "{count, plural, one {# unread conversation} other {# unread conversations}}",
+    "inboxUpToDate": "Inbox up to date",
+    "lifetimeViews": "Lifetime listing views",
+    "publishToTrack": "Publish to start tracking",
+    "strongPresence": "Strong seller presence",
+    "completeTasks": "Complete tasks to improve"
+  },
+  "analytics": {
+    "eyebrow": "Analytics",
+    "title": "Performance overview",
+    "description": "Views, favorites, contacts, and inquiry activity from your existing marketplace data.",
+    "last14Days": "Last 14 days",
+    "topListings30Days": "Top listings · last 30 days",
+    "series": {
+      "views": "Views",
+      "favorites": "Favorites",
+      "contacts": "Contacts",
+      "inquiries": "Inquiries"
+    },
+    "empty": {
+      "noViews": "No views yet",
+      "noFavorites": "No favorites yet",
+      "noContacts": "No contacts yet"
+    }
+  },
+  "listings": {
+    "eyebrow": "Listings",
+    "title": "Your horses",
+    "description": "Manage status, performance, and quick actions from one place.",
+    "emptyTitle": "No listings yet",
+    "emptyMessage": "Create your first listing to start reaching buyers on EquiMaster Pro.",
+    "table": {
+      "horse": "Horse",
+      "status": "Status",
+      "views": "Views",
+      "favorites": "Favorites",
+      "price": "Price",
+      "actions": "Actions"
+    },
+    "mobileViews": "{count} views",
+    "mobileFavorites": "{count} favorites"
+  },
+  "messages": {
+    "eyebrow": "Messages",
+    "title": "Latest conversations",
+    "description": "Recent buyer inquiries linked to your listings.",
+    "emptyTitle": "No messages yet",
+    "emptyMessage": "When buyers reach out about your horses, conversations will appear here.",
+    "unread": "Unread"
+  },
+  "tasks": {
+    "eyebrow": "Tasks",
+    "title": "Seller checklist",
+    "description": "Complete these steps to strengthen trust and visibility.",
+    "progress": "Progress",
+    "complete": "{completed}/{total} complete",
+    "items": {
+      "profile": "Complete profile",
+      "verify": "Verify identity",
+      "passport": "Upload passport",
+      "xrays": "Upload x-rays",
+      "pedigree": "Add pedigree"
+    }
+  },
+  "quickActions": {
+    "eyebrow": "Quick Actions",
+    "title": "Move faster",
+    "description": "Launch the most common seller workflows in one tap.",
+    "sellHorse": {
+      "label": "Sell Horse",
+      "description": "Create a premium listing"
+    },
+    "importHorse": {
+      "label": "Import Horse",
+      "description": "Bring an existing listing in"
+    },
+    "createStallion": {
+      "label": "Create Stallion",
+      "description": "Showcase breeding stock"
+    },
+    "addBreeder": {
+      "label": "Add Breeder",
+      "description": "Build your stud profile"
+    },
+    "inviteBuyer": {
+      "label": "Invite Buyer",
+      "description": "Share your seller profile"
+    }
+  },
+  "statusLabels": {
+    "active": "Published",
+    "draft": "Draft",
+    "sold": "Sold",
+    "archived": "Archived"
+  },
+  "preview": {
+    "eyebrow": "Listing Preview",
+    "subtitle": "Review exactly how buyers will see this listing before publishing.",
+    "backToEdit": "Back to edit",
+    "publish": "Publish listing",
+    "publishing": "Publishing...",
+    "viewPublic": "View public page"
+  },
+  "edit": {
+    "eyebrow": "Seller Dashboard",
+    "title": "Edit listing",
+    "subtitle": "Update listing details, media, and seller information. Horse data syncs to the linked pedigree record."
+  },
+  "relativeTime": {
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "recent": "Recent",
+    "yesterday": "Yesterday",
+    "hoursAgoLong": "{count}h ago"
+  },
+  "crm": {
+    "pipeline": {
+      "eyebrow": "Sales Pipeline",
+      "title": "Deal flow",
+      "description": "Drag deals across stages to manage your sales process. Changes are local preview only.",
+      "emptyTitle": "No active deals",
+      "emptyMessage": "When buyers inquire about your horses, deals will appear in your pipeline.",
+      "columns": {
+        "new-inquiry": "New Inquiry",
+        "contacted": "Contacted",
+        "visit-scheduled": "Visit Scheduled",
+        "negotiating": "Negotiating",
+        "sold": "Sold"
+      },
+      "priority": {
+        "high": "high",
+        "medium": "medium",
+        "low": "low"
+      }
+    },
+    "buyers": {
+      "eyebrow": "Buyer CRM",
+      "title": "Buyer relationships",
+      "description": "Search, filter, and prioritize your most valuable prospects.",
+      "searchPlaceholder": "Search buyers or horses",
+      "filterAria": "Filter buyers",
+      "sortAria": "Sort buyers",
+      "filterAll": "All statuses",
+      "sortRecent": "Sort: Recent",
+      "sortName": "Sort: Name",
+      "sortStatus": "Sort: Status",
+      "emptyTitle": "No buyers match",
+      "emptyMessage": "Try adjusting your search or filters to see more buyer relationships.",
+      "lastContact": "Last contact · {time}",
+      "status": {
+        "new": "New",
+        "hot": "Hot",
+        "returning": "Returning",
+        "vip": "VIP"
+      }
+    },
+    "calendar": {
+      "eyebrow": "Calendar",
+      "title": "Visits & appointments",
+      "descriptionEmpty": "Plan buyer viewings and stable visits.",
+      "description": "Today's viewings and upcoming buyer appointments.",
+      "emptyTitle": "No visits scheduled",
+      "emptyMessage": "Upcoming buyer appointments will appear here once scheduled.",
+      "todayHeading": "Today's visits",
+      "upcomingHeading": "Upcoming appointments",
+      "noVisitsToday": "No visits scheduled for today.",
+      "todayBadge": "Today",
+      "viewDetails": "View details"
+    },
+    "notifications": {
+      "eyebrow": "Notifications",
+      "title": "Activity timeline",
+      "description": "Stay on top of buyer signals and marketplace activity.",
+      "unreadBadge": "{count} unread",
+      "emptyTitle": "All caught up",
+      "emptyMessage": "New inquiries, favorites, and profile activity will show up here.",
+      "types": {
+        "inquiry": {
+          "title": "New inquiry",
+          "description": "{buyer} asked about {horse}"
+        },
+        "favorite": {
+          "title": "Horse favorited",
+          "description": "A buyer saved your listing to their shortlist",
+          "descriptionWithCount": "Your listings received {count, plural, one {# favorite} other {# favorites}}"
+        },
+        "profile-view": {
+          "title": "Profile viewed",
+          "description": "Your seller profile received 12 views today"
+        },
+        "visit-request": {
+          "title": "Visit requested",
+          "description": "Marcus Lindholm requested a stable visit this week"
+        },
+        "offer": {
+          "title": "Offer received",
+          "description": "Emma Richardson submitted a preliminary offer"
+        }
+      }
+    },
+    "performance": {
+      "eyebrow": "Performance",
+      "title": "Business insights",
+      "description": "Spot your strongest listings and seller efficiency at a glance.",
+      "bestPerformingHorse": "Best performing horse",
+      "mostViewed": "Most viewed",
+      "highestSaved": "Highest saved",
+      "averageResponse": "Average response",
+      "conversion": "Conversion",
+      "viewsCount": "{count} views",
+      "favoritesCount": "{count} favorites",
+      "fallbacks": {
+        "bestPerforming": "Publish a listing to track performance",
+        "noViews": "No views yet",
+        "noFavorites": "No favorites yet",
+        "averageResponse": "Under 2 hours",
+        "noInquiries": "No inquiries yet",
+        "conversionRate": "{rate}% close rate",
+        "zeroConversion": "0% close rate"
+      }
+    },
+    "ai": {
+      "eyebrow": "AI Assistant",
+      "title": "EquiMaster AI",
+      "description": "Personalized recommendations to help you close deals faster and present listings with maximum impact.",
+      "impactHigh": "high impact",
+      "impactMedium": "medium impact",
+      "viewAll": "View all recommendations",
+      "recommendations": {
+        "ai-response": "Respond within 2 hours to increase buyer trust",
+        "ai-video": "Upload a jumping video to boost engagement",
+        "ai-xrays": "Add x-rays to strengthen buyer confidence",
+        "ai-description": "Improve description with training highlights and temperament",
+        "ai-price": "Increase price by 5% based on recent market activity",
+        "ai-listing": "Publish your first listing to unlock AI insights",
+        "ai-video-mock": "Upload a jumping video when your listing goes live"
+      }
+    },
+    "demo": {
+      "featuredHorse": "Featured horse",
+      "privateBuyer": "Private buyer",
+      "visitLocations": {
+        "0": "Indoor arena · Brabant",
+        "1": "Main stable · Utrecht",
+        "2": "Outdoor ring · Limburg",
+        "3": "Private viewing · Antwerp"
+      },
+      "mockHorses": {
+        "0": "Grand Prix Dream",
+        "1": "Midnight Sovereign",
+        "2": "Celeste Royale"
+      },
+      "mockBuyers": {
+        "0": { "name": "Sophie van der Berg", "horse": "Grand Prix Dream", "lastContact": "2h ago" },
+        "1": { "name": "Marcus Lindholm", "horse": "Midnight Sovereign", "lastContact": "Yesterday" },
+        "2": { "name": "Emma Richardson", "horse": "Celeste Royale", "lastContact": "3d ago" },
+        "3": { "name": "Luca Moretti", "horse": "Atlantic Storm", "lastContact": "Just now" }
+      },
+      "mockPipeline": {
+        "0": { "buyer": "Luca Moretti", "horse": "Atlantic Storm", "price": "€185,000", "date": "Aug 6" },
+        "1": { "buyer": "Sophie van der Berg", "horse": "Grand Prix Dream", "price": "€240,000", "date": "Aug 4" },
+        "2": { "buyer": "Marcus Lindholm", "horse": "Midnight Sovereign", "price": "€320,000", "date": "Aug 2" },
+        "3": { "buyer": "Emma Richardson", "horse": "Celeste Royale", "price": "€98,000", "date": "Jul 28" },
+        "4": { "buyer": "James Whitfield", "horse": "Silver Legacy", "price": "€156,000", "date": "Jul 20" }
+      }
+    }
+  }
+}

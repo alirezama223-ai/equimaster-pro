@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import type { CrmPerformanceSnapshot } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
@@ -39,37 +40,39 @@ function PerformanceCard({
 }
 
 function SellerCrmPerformance({ performance }: Props) {
+  const t = useTranslations("dashboard");
+
   return (
     <DashboardCard
-      eyebrow="Performance"
-      title="Business insights"
-      description="Spot your strongest listings and seller efficiency at a glance."
+      eyebrow={t("crm.performance.eyebrow")}
+      title={t("crm.performance.title")}
+      description={t("crm.performance.description")}
     >
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <PerformanceCard
-          label="Best performing horse"
+          label={t("crm.performance.bestPerformingHorse")}
           value={performance.bestPerformingHorse}
           accent="blue"
         />
         <PerformanceCard
-          label="Most viewed"
+          label={t("crm.performance.mostViewed")}
           value={performance.mostViewedHorse}
-          detail={`${performance.mostViewedCount} views`}
+          detail={t("crm.performance.viewsCount", { count: performance.mostViewedCount })}
           accent="violet"
         />
         <PerformanceCard
-          label="Highest saved"
+          label={t("crm.performance.highestSaved")}
           value={performance.highestSavedHorse}
-          detail={`${performance.highestSavedCount} favorites`}
+          detail={t("crm.performance.favoritesCount", { count: performance.highestSavedCount })}
           accent="rose"
         />
         <PerformanceCard
-          label="Average response"
+          label={t("crm.performance.averageResponse")}
           value={performance.averageResponseLabel}
           accent="emerald"
         />
         <PerformanceCard
-          label="Conversion"
+          label={t("crm.performance.conversion")}
           value={performance.conversionLabel}
           accent="amber"
         />

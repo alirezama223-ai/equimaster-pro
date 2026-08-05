@@ -1,9 +1,10 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
-import { getBuyerInitials } from "@/app/components/seller-dashboard/crm/seller-crm-demo-data";
+import { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import type { BuyerStatus, CrmBuyer } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 const STATUS_STYLES: Record<BuyerStatus, string> = {
@@ -11,13 +12,6 @@ const STATUS_STYLES: Record<BuyerStatus, string> = {
   hot: "border-rose-500/30 bg-rose-500/10 text-rose-200",
   returning: "border-violet-500/30 bg-violet-500/10 text-violet-200",
   vip: "border-amber-500/30 bg-amber-500/10 text-amber-200",
-};
-
-const STATUS_LABELS: Record<BuyerStatus, string> = {
-  new: "New",
-  hot: "Hot",
-  returning: "Returning",
-  vip: "VIP",
 };
 
 type SortKey = "name" | "recent" | "status";
@@ -28,6 +22,7 @@ type Props = {
 };
 
 function SellerCrmBuyers({ buyers }: Props) {
+  const t = useTranslations("dashboard");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [sort, setSort] = useState<SortKey>("recent");
@@ -60,18 +55,18 @@ function SellerCrmBuyers({ buyers }: Props) {
 
   return (
     <DashboardCard
-      eyebrow="Buyer CRM"
-      title="Buyer relationships"
-      description="Search, filter, and prioritize your most valuable prospects."
+      eyebrow={t("crm.buyers.eyebrow")}
+      title={t("crm.buyers.title")}
+      description={t("crm.buyers.description")}
     >
       <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center">
         <label className="min-w-0 flex-1">
-          <span className="sr-only">Search buyers</span>
+          <span className="sr-only">{t("crm.buyers.searchPlaceholder")}</span>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search buyers or horses"
+            placeholder={t("crm.buyers.searchPlaceholder")}
             className="min-h-11 w-full rounded-xl border border-white/10 bg-[#08111F] px-4 text-sm text-white placeholder:text-gray-500 outline-none transition focus:border-blue-500/40"
           />
         </label>
@@ -80,31 +75,31 @@ function SellerCrmBuyers({ buyers }: Props) {
             value={filter}
             onChange={(event) => setFilter(event.target.value as FilterKey)}
             className="min-h-11 rounded-xl border border-white/10 bg-[#08111F] px-3 text-sm text-white outline-none"
-            aria-label="Filter buyers"
+            aria-label={t("crm.buyers.filterAria")}
           >
-            <option value="all">All statuses</option>
-            <option value="new">New</option>
-            <option value="hot">Hot</option>
-            <option value="returning">Returning</option>
-            <option value="vip">VIP</option>
+            <option value="all">{t("crm.buyers.filterAll")}</option>
+            <option value="new">{t("crm.buyers.status.new")}</option>
+            <option value="hot">{t("crm.buyers.status.hot")}</option>
+            <option value="returning">{t("crm.buyers.status.returning")}</option>
+            <option value="vip">{t("crm.buyers.status.vip")}</option>
           </select>
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortKey)}
             className="min-h-11 rounded-xl border border-white/10 bg-[#08111F] px-3 text-sm text-white outline-none"
-            aria-label="Sort buyers"
+            aria-label={t("crm.buyers.sortAria")}
           >
-            <option value="recent">Sort: Recent</option>
-            <option value="name">Sort: Name</option>
-            <option value="status">Sort: Status</option>
+            <option value="recent">{t("crm.buyers.sortRecent")}</option>
+            <option value="name">{t("crm.buyers.sortName")}</option>
+            <option value="status">{t("crm.buyers.sortStatus")}</option>
           </select>
         </div>
       </div>
 
       {filteredBuyers.length === 0 ? (
         <SellerDashboardEmptyState
-          title="No buyers match"
-          message="Try adjusting your search or filters to see more buyer relationships."
+          title={t("crm.buyers.emptyTitle")}
+          message={t("crm.buyers.emptyMessage")}
           icon="👥"
         />
       ) : (
@@ -124,11 +119,13 @@ function SellerCrmBuyers({ buyers }: Props) {
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-                <span className="text-xs text-gray-500">Last contact · {buyer.lastContactLabel}</span>
+                <span className="text-xs text-gray-500">
+                  {t("crm.buyers.lastContact", { time: buyer.lastContactLabel })}
+                </span>
                 <span
                   className={`inline-flex min-h-7 items-center rounded-full border px-2.5 text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[buyer.status]}`}
                 >
-                  {STATUS_LABELS[buyer.status]}
+                  {t(`crm.buyers.status.${buyer.status}`)}
                 </span>
               </div>
             </li>

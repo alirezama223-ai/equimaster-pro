@@ -15,7 +15,7 @@ export async function generateMetadata() {
 export const dynamic = "force-dynamic";
 
 export default async function SellerDashboardPage() {
-  const t = await getTranslations("marketplace");
+  const t = await getTranslations("dashboard");
   const tAccount = await getTranslations("account.dashboard");
   const [result, supabase] = await Promise.all([
     getSellerDashboardData(),
@@ -41,7 +41,7 @@ export default async function SellerDashboardPage() {
         <Navbar />
         <main className="min-h-screen overflow-x-hidden bg-[#081223] pt-28 pb-24 px-4 sm:px-5">
           <div className="mx-auto max-w-[1440px]">
-            <p className="text-red-300">{result.error ?? t("sellerDashboard.loadError")}</p>
+            <p className="text-red-300">{result.error ?? t("header.loadError")}</p>
           </div>
         </main>
       </>

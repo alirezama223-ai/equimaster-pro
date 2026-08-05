@@ -14,7 +14,7 @@ type Props = {
 export const dynamic = "force-dynamic";
 
 export default async function ListingPreviewPage({ params }: Props) {
-  const t = await getTranslations("marketplace");
+  const t = await getTranslations("dashboard");
   const { id } = await params;
 
   if (!isListingUuid(id)) {
@@ -39,10 +39,10 @@ export default async function ListingPreviewPage({ params }: Props) {
           <FadeUp>
             <div className="text-center mb-10">
               <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
-                {t("sellerDashboard.preview.eyebrow")}
+                {t("preview.eyebrow")}
               </p>
               <h1 className="text-4xl font-black text-white mt-3">{result.data.name}</h1>
-              <p className="mt-3 text-gray-400">{t("sellerDashboard.preview.subtitle")}</p>
+              <p className="mt-3 text-gray-400">{t("preview.subtitle")}</p>
             </div>
             <ListingPreviewActions listing={result.data} />
           </FadeUp>
