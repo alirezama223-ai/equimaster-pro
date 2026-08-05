@@ -1,14 +1,14 @@
 {
-  "title": "❤️ Mes favoris",
+  "title": "❤️ Mes chevaux favoris",
   "emptyTitle": "Aucun favori pour le moment",
-  "emptyDescription": "Enregistrez les chevaux qui vous intéressent — ils apparaîtront ici.",
+  "emptyDescription": "Enregistrez les chevaux qui vous plaisent et ils apparaîtront ici.",
   "browseMarketplace": "Parcourir le marketplace",
   "button": {
     "removeAria": "Retirer des favoris",
-    "saveAria": "Ajouter aux favoris",
-    "saving": "Enregistrement …",
-    "saved": "♥ Ajouté aux favoris",
-    "save": "♡ Enregistrer ce cheval",
+    "saveAria": "Enregistrer dans les favoris",
+    "saving": "Enregistrement...",
+    "saved": "♥ Enregistré dans les favoris",
+    "save": "♡ Enregistrer le cheval",
     "loadingIndicator": "…"
   }
 }

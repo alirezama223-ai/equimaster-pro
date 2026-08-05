@@ -1,12 +1,12 @@
 {
-  "title": "❤️ Mis favoritos",
+  "title": "❤️ Mis caballos favoritos",
   "emptyTitle": "Aún no hay favoritos",
-  "emptyDescription": "Guarde los caballos que le interesen — aparecerán aquí.",
+  "emptyDescription": "Guarde los caballos que le gusten y aparecerán aquí.",
   "browseMarketplace": "Explorar marketplace",
   "button": {
-    "removeAria": "Quitar de favoritos",
+    "removeAria": "Eliminar de favoritos",
     "saveAria": "Guardar en favoritos",
-    "saving": "Guardando …",
+    "saving": "Guardando...",
     "saved": "♥ Guardado en favoritos",
     "save": "♡ Guardar caballo",
     "loadingIndicator": "…"

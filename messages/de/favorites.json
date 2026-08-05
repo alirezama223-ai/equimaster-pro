@@ -6,8 +6,8 @@
   "button": {
     "removeAria": "Aus Favoriten entfernen",
     "saveAria": "Zu Favoriten hinzufügen",
-    "saving": "Wird gespeichert …",
-    "saved": "♥ Zu Favoriten hinzugefügt",
+    "saving": "Speichern...",
+    "saved": "♥ Zu Favoriten gespeichert",
     "save": "♡ Pferd speichern",
     "loadingIndicator": "…"
   }
