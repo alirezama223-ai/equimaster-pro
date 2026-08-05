@@ -61,12 +61,12 @@ export default function FeedbackWidget({ isAuthenticated }: Props) {
         type="button"
         onClick={handleOpen}
         aria-label={t("floatingButtonAria")}
-        className="glass-surface fixed z-40 hidden h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-blue-500/40 px-5 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-900/30 transition hover:border-blue-400 hover:bg-blue-600 md:inline-flex md:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] md:right-[max(1.5rem,env(safe-area-inset-right,0px))]"
+        className="glass-surface fixed z-40 inline-flex h-11 w-11 min-w-11 items-center justify-center gap-2 rounded-full border border-blue-500/40 text-sm font-semibold text-white shadow-xl shadow-blue-900/30 transition hover:border-blue-400 hover:bg-blue-600 max-md:bottom-[calc(90px+env(safe-area-inset-bottom,0px))] max-md:right-4 md:bottom-[max(1.5rem,env(safe-area-inset-bottom,0px))] md:right-[max(1.5rem,env(safe-area-inset-right,0px))] md:h-auto md:w-auto md:px-5 md:py-3.5"
       >
         <span aria-hidden className="text-base">
           💬
         </span>
-        <span>{t("floatingButton")}</span>
+        <span className="hidden md:inline">{t("floatingButton")}</span>
       </button>
 
       {isOpen ? (

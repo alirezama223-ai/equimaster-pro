@@ -13,6 +13,8 @@ type Props = {
   onFavoriteChange?: (favorited: boolean) => void;
   /** Translation namespace for card labels — use "home" on the homepage. */
   labelsScope?: "home" | "marketplace";
+  /** Applies homepage-only mobile card styling below md. */
+  homepageMobile?: boolean;
 };
 
 export default function HorseCard({
@@ -20,6 +22,7 @@ export default function HorseCard({
   isFavorited = false,
   onFavoriteChange,
   labelsScope = "marketplace",
+  homepageMobile = false,
 }: Props) {
   const t = useTranslations(labelsScope);
   const detailPath = getHorseDetailPath(horse);
@@ -42,8 +45,10 @@ export default function HorseCard({
     t("horseCard.genderUnknown");
 
   return (
-    <Link href={detailPath}>
-      <div className="group overflow-hidden rounded-3xl bg-[#111827] border border-white/10 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-500 cursor-pointer">
+    <Link href={detailPath} className={homepageMobile ? "block min-w-0 max-w-full" : undefined}>
+      <div
+        className={`group cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-[#111827] transition-all duration-500 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-900/20 ${homepageMobile ? "max-md:min-w-0 max-md:max-w-full" : ""}`}
+      >
         <div className="relative overflow-hidden">
           <Image
             src={horse.images[0]}
@@ -52,7 +57,7 @@ export default function HorseCard({
             height={420}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 400px"
             loading="lazy"
-            className="w-full h-72 object-cover group-hover:scale-110 transition duration-700"
+            className={`w-full object-cover transition duration-700 group-hover:scale-110 ${homepageMobile ? "h-72 max-md:h-[220px]" : "h-72"}`}
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -72,15 +77,23 @@ export default function HorseCard({
             />
           ) : null}
 
-          <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md rounded-xl px-4 py-2">
-            <p className="text-xs text-gray-300 uppercase">{t("horseCard.price")}</p>
-            <p className="text-white font-bold text-xl">{horse.price}</p>
+          <div
+            className={`absolute bottom-4 left-4 rounded-xl px-4 py-2 backdrop-blur-md ${homepageMobile ? "max-md:border max-md:border-blue-500/40 max-md:bg-blue-600/90" : "bg-black/60"}`}
+          >
+            <p className="text-xs uppercase text-gray-300 max-md:text-blue-100">{t("horseCard.price")}</p>
+            <p
+              className={`font-bold text-white ${homepageMobile ? "text-xl max-md:text-2xl max-md:text-blue-50" : "text-xl"}`}
+            >
+              {horse.price}
+            </p>
           </div>
         </div>
 
-        <div className="p-6">
+        <div className={`p-6 ${homepageMobile ? "max-md:p-5" : ""}`}>
           <div className="mb-5">
-            <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition">
+            <h3
+              className={`font-bold text-white transition group-hover:text-blue-400 ${homepageMobile ? "text-2xl max-md:text-[1.625rem] max-md:leading-tight" : "text-2xl"}`}
+            >
               {horse.name}
             </h3>
 

@@ -14,8 +14,8 @@ export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Prop
   const t = useTranslations("home.featured");
 
   return (
-    <section className="bg-[#08111F] py-20 sm:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="overflow-x-hidden bg-[#08111F] py-20 max-md:min-w-0 max-md:max-w-full sm:py-32">
+      <div className="mx-auto max-w-7xl min-w-0 max-w-full px-4 sm:px-6">
         <FadeUp>
           <div className="text-center mb-12 sm:mb-16">
             <p className="uppercase tracking-[0.2em] text-blue-500 text-sm font-semibold sm:tracking-[6px]">
@@ -40,12 +40,13 @@ export default function FeaturedHorses({ horses, favoriteListingIds = [] }: Prop
           </div>
         ) : (
           <FadeUp>
-            <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid min-w-0 max-w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-10 xl:grid-cols-3">
               {horses.map((horse) => (
                 <HorseCard
                   key={horse.listingUuid ?? horse.id}
                   horse={horse}
                   labelsScope="home"
+                  homepageMobile
                   isFavorited={
                     horse.listingUuid
                       ? favoriteListingIds.includes(horse.listingUuid)

@@ -197,7 +197,7 @@ export default function HomeClient({
   );
 
   return (
-    <>
+    <div className="max-md:min-w-0 max-md:max-w-full max-md:overflow-x-hidden">
       <Navbar />
 
       <HeroSection stats={heroStats} />
@@ -281,6 +281,6 @@ export default function HomeClient({
       )}
 
       <FadeUp>{premiumStallions}</FadeUp>
-    </>
+    </div>
   );
 }

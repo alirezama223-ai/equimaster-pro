@@ -20,15 +20,34 @@ export default function Navbar() {
 
   return (
     <header className="glass-surface fixed top-0 left-0 z-50 w-full border-b border-white/10">
-      <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-3 px-3 md:hidden">
+      <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 md:hidden">
         <Link
           href="/"
-          className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-base font-black text-white transition hover:text-blue-400"
+          className="inline-flex min-h-11 min-w-0 shrink-0 items-center whitespace-nowrap text-base font-black text-white transition hover:text-blue-400"
         >
           {brandShort}
         </Link>
 
-        <NavbarMobileMenu />
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/sell"
+            aria-label={t("sellAHorse")}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+            </svg>
+          </Link>
+
+          <NavbarMobileMenu />
+        </div>
       </div>
 
       <div className="mx-auto hidden h-16 min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 md:flex lg:px-8">
