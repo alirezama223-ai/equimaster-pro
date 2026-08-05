@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Horse } from "@/app/data/horses";
 import { getHorseGalleryImages } from "@/app/lib/horse-listings";
@@ -16,10 +16,11 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.5;
 
-export default function HorseGallery({ horse }: Props) {
+export default memo(function HorseGallery({ horse }: Props) {
   const t = useTranslations("horse");
   const images = useMemo(() => getHorseGalleryImages(horse.images), [horse.images]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [imageVisible, setImageVisible] = useState(true);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [zoom, setZoom] = useState(MIN_ZOOM);
   const touchStartX = useRef<number | null>(null);
@@ -69,11 +70,17 @@ export default function HorseGallery({ horse }: Props) {
     (index: number) => {
       if (images.length === 0) return;
       const wrapped = ((index % images.length) + images.length) % images.length;
-      setActiveIndex(wrapped);
-      setZoom(MIN_ZOOM);
-      announceSlide(wrapped);
+      if (wrapped === activeIndex) return;
+
+      setImageVisible(false);
+      window.setTimeout(() => {
+        setActiveIndex(wrapped);
+        setZoom(MIN_ZOOM);
+        setImageVisible(true);
+        announceSlide(wrapped);
+      }, 180);
     },
-    [announceSlide, images.length]
+    [activeIndex, announceSlide, images.length]
   );
 
   const goToPrevious = useCallback(() => {
@@ -254,7 +261,9 @@ export default function HorseGallery({ horse }: Props) {
             priority={activeIndex === 0}
             loading={activeIndex === 0 ? undefined : "lazy"}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px"
-            className="object-cover object-[center_22%] pointer-events-none transition-transform duration-500 [@media(hover:hover)]:group-hover:scale-[1.02]"
+            className={`object-cover object-[center_22%] pointer-events-none transition-all duration-300 ease-out [@media(hover:hover)]:group-hover:scale-[1.02] ${
+              imageVisible ? "opacity-100 scale-100" : "opacity-0 scale-[1.01]"
+            }`}
           />
         </button>
 
@@ -429,4 +438,4 @@ export default function HorseGallery({ horse }: Props) {
       ) : null}
     </div>
   );
-}
+});

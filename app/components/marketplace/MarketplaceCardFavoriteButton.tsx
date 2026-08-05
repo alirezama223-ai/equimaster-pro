@@ -12,6 +12,7 @@ type Props = {
   initialFavorited: boolean;
   returnPath?: string;
   disabled?: boolean;
+  className?: string;
   onChange?: (favorited: boolean) => void;
 };
 
@@ -20,6 +21,7 @@ export default function MarketplaceCardFavoriteButton({
   initialFavorited,
   returnPath,
   disabled = false,
+  className = "",
   onChange,
 }: Props) {
   const t = useTranslations("favorites");
@@ -67,11 +69,11 @@ export default function MarketplaceCardFavoriteButton({
       aria-label={favorited ? t("button.removeAria") : t("button.saveAria")}
       title={favorited ? t("button.removeAria") : t("button.saveAria")}
       active={favorited}
-      className={
+      className={`${
         favorited
           ? "border-red-500/40 bg-red-500/10 text-red-300 [@media(hover:hover)]:hover:bg-red-500/20"
           : ""
-      }
+      } ${className}`}
     >
       {isPending ? (
         <span className="text-sm animate-pulse" aria-hidden="true">

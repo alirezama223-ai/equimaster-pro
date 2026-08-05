@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Horse } from "@/app/data/horses";
 import { findCountryByName } from "@/app/lib/constants/countries";
 import type { PedigreeHorse } from "@/app/types/pedigree";
+import HorseDetailSection from "@/app/components/horse/HorseDetailSection";
 
 type Props = {
   horse: Horse;
@@ -46,6 +47,18 @@ export default async function HorseQuickFacts({ horse, pedigreeHorse }: Props) {
     { key: "gender", label: t("info.gender"), value: genderLabel, icon: factIcons.gender },
     { key: "color", label: t("info.color"), value: horse.color, icon: factIcons.color },
     {
+      key: "discipline",
+      label: t("info.discipline"),
+      value: horse.discipline,
+      icon: factIcons.breed,
+    },
+    {
+      key: "training",
+      label: t("info.training"),
+      value: horse.level,
+      icon: factIcons.height,
+    },
+    {
       key: "location",
       label: t("info.country"),
       value: country ? (
@@ -70,16 +83,17 @@ export default async function HorseQuickFacts({ horse, pedigreeHorse }: Props) {
   }
 
   return (
-    <section aria-labelledby="horse-quick-facts-heading">
-      <h2 id="horse-quick-facts-heading" className="sr-only">
-        {t("info.breed")}
-      </h2>
+    <HorseDetailSection
+      id="overview"
+      title={t("info.breed")}
+      subtitle={`${horse.discipline} · ${horse.level}`}
+    >
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {facts.map((fact) => (
           <FactCard key={fact.key} icon={fact.icon} label={fact.label} value={fact.value} />
         ))}
       </div>
-    </section>
+    </HorseDetailSection>
   );
 }
 
@@ -93,7 +107,7 @@ function FactCard({
   value: ReactNode;
 }) {
   return (
-    <div className="group rounded-2xl border border-white/[0.08] bg-[#0f1729]/80 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.18)] transition duration-300 [@media(hover:hover)]:hover:border-white/15 [@media(hover:hover)]:hover:bg-[#131d30] [@media(hover:hover)]:hover:shadow-[0_8px_32px_rgba(0,0,0,0.28)] sm:p-5">
+    <div className="group rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition duration-300 [@media(hover:hover)]:hover:border-white/12 [@media(hover:hover)]:hover:bg-white/[0.04] sm:p-5">
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"

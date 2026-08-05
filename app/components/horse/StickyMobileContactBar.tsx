@@ -1,8 +1,7 @@
 "use client";
 
 import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
-import MarketplaceCardFavoriteButton from "@/app/components/marketplace/MarketplaceCardFavoriteButton";
-import MarketplaceCardShareButton from "@/app/components/marketplace/MarketplaceCardShareButton";
+import HorseQuickActions from "@/app/components/horse/HorseQuickActions";
 import { SAFE_AREA_BOTTOM_PADDING_STYLE } from "@/app/lib/browser-compat";
 
 type BuyerPrefill = {
@@ -35,19 +34,22 @@ export default function StickyMobileContactBar({
 }: Props) {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0a1220]/95 backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0a1220]/95 backdrop-blur-xl lg:hidden"
       style={SAFE_AREA_BOTTOM_PADDING_STYLE}
     >
-      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2 px-4 py-3">
-        <div className="min-w-0">
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-white">{horseName}</p>
           <p className="truncate text-base font-bold text-blue-300">{price}</p>
         </div>
-        <MarketplaceCardShareButton url={publicUrl} title={horseName} />
-        <MarketplaceCardFavoriteButton
+        <HorseQuickActions
           listingId={listingId}
-          initialFavorited={isFavorited}
+          horseName={horseName}
+          publicUrl={publicUrl}
           returnPath={returnPath}
+          isFavorited={isFavorited}
+          isAuthenticated={isAuthenticated}
+          layout="row"
         />
       </div>
       <div className="border-t border-white/[0.06] px-4 pb-3 pt-2">

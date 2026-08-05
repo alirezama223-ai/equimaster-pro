@@ -29,9 +29,15 @@ type Props = {
   listingId: string;
   name: string;
   disabled?: boolean;
+  className?: string;
 };
 
-export default function MarketplaceCompareButton({ listingId, name, disabled = false }: Props) {
+export default function MarketplaceCompareButton({
+  listingId,
+  name,
+  disabled = false,
+  className = "",
+}: Props) {
   const [selected, setSelected] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
 
@@ -88,6 +94,7 @@ export default function MarketplaceCompareButton({ listingId, name, disabled = f
       aria-label={selected ? `Remove ${name} from compare` : `Compare ${name}`}
       title={title}
       active={selected}
+      className={className}
     >
       <span aria-hidden="true" className="text-base leading-none">
         ⇄

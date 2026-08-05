@@ -10,7 +10,7 @@ export default async function ListingHealthSummarySection({ summary }: Props) {
 
   if (!summary) {
     return (
-      <section className="rounded-2xl border border-white/[0.08] bg-[#111827] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] sm:p-6 lg:p-8">
+      <section id="health" className="scroll-mt-28 rounded-2xl border border-white/[0.08] bg-[#111827] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold">{t("healthSummary.title")}</h2>
         <p className="mt-3 text-gray-400">{t("healthSummary.empty")}</p>
       </section>
@@ -18,7 +18,7 @@ export default async function ListingHealthSummarySection({ summary }: Props) {
   }
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+    <section id="health" className="scroll-mt-28 rounded-2xl border border-white/[0.08] bg-[#111827] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold">{t("healthSummary.title")}</h2>
       <p className="mt-2 text-gray-400">{t("healthSummary.subtitle")}</p>
 

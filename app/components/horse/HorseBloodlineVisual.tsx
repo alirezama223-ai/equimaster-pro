@@ -1,4 +1,6 @@
 import { getTranslations } from "next-intl/server";
+import HorseDetailSection from "@/app/components/horse/HorseDetailSection";
+import HorseSectionEmpty from "@/app/components/horse/HorseSectionEmpty";
 
 type LegacyPedigree = {
   sire: string;
@@ -14,8 +16,16 @@ type Props = {
 export default async function HorseBloodlineVisual({ subjectName, legacy }: Props) {
   const t = await getTranslations("pedigree");
 
-  if (!legacy || (!legacy.sire.trim() && !legacy.dam.trim())) {
-    return null;
+  const hasPedigree = Boolean(
+    legacy && (legacy.sire.trim() || legacy.dam.trim() || legacy.damSire.trim())
+  );
+
+  if (!hasPedigree || !legacy) {
+    return (
+      <HorseDetailSection id="pedigree" title={t("section.title")} subtitle={t("section.subtitle")}>
+        <HorseSectionEmpty message={t("section.subtitle")} />
+      </HorseDetailSection>
+    );
   }
 
   const sire = legacy.sire.trim() || "—";
@@ -23,17 +33,8 @@ export default async function HorseBloodlineVisual({ subjectName, legacy }: Prop
   const damSire = legacy.damSire.trim() || "—";
 
   return (
-    <section aria-labelledby="bloodline-heading" className="overflow-hidden">
-      <div className="mb-6">
-        <h2 id="bloodline-heading" className="text-2xl font-bold text-white sm:text-3xl">
-          {t("section.title")}
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
-          {t("section.subtitle")}
-        </p>
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#111827] to-[#0a1220] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.3)] sm:p-8">
+    <HorseDetailSection id="pedigree" title={t("section.title")} subtitle={t("section.subtitle")}>
+      <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <BloodlineNode label={t("section.sire")} name={sire} accent="blue" />
           <BloodlineNode label={t("section.dam")} name={dam} accent="violet" />
@@ -56,7 +57,7 @@ export default async function HorseBloodlineVisual({ subjectName, legacy }: Prop
           <BloodlineNode label={t("section.damSire")} name={damSire} accent="slate" />
         </div>
       </div>
-    </section>
+    </HorseDetailSection>
   );
 }
 
@@ -80,9 +81,9 @@ function BloodlineNode({
 
   return (
     <div
-      className={`rounded-2xl border p-4 text-center transition duration-300 sm:p-5 ${accentStyles[accent]} ${
+      className={`rounded-xl border p-4 text-center transition duration-300 sm:p-5 ${accentStyles[accent]} ${
         featured
-          ? "shadow-[0_0_0_1px_rgba(16,185,129,0.15),0_8px_32px_rgba(0,0,0,0.25)]"
+          ? "shadow-[0_0_0_1px_rgba(16,185,129,0.15)]"
           : "[@media(hover:hover)]:hover:border-white/20 [@media(hover:hover)]:hover:bg-white/[0.06]"
       }`}
     >

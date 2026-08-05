@@ -8,9 +8,10 @@ import MarketplaceCardQuickAction from "@/app/components/marketplace/Marketplace
 type Props = {
   url: string;
   title: string;
+  className?: string;
 };
 
-export default function MarketplaceCardShareButton({ url, title }: Props) {
+export default function MarketplaceCardShareButton({ url, title, className = "" }: Props) {
   const t = useTranslations("marketplace");
   const [copied, setCopied] = useState(false);
 
@@ -43,7 +44,7 @@ export default function MarketplaceCardShareButton({ url, title }: Props) {
       onClick={handleShare}
       aria-label={label}
       title={label}
-      className={copied ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300" : ""}
+      className={`${copied ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300" : ""} ${className}`}
     >
       <span aria-hidden="true" className="text-base leading-none">
         {copied ? "✓" : "↗"}

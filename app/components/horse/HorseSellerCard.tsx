@@ -5,6 +5,7 @@ import { findCountryByName } from "@/app/lib/constants/countries";
 type Props = {
   horse: Horse;
   publishedAt: string | null;
+  memberSince: string | null;
 };
 
 function sellerInitials(name: string): string {
@@ -14,18 +15,19 @@ function sellerInitials(name: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-function formatListedDate(isoDate: string | null): string | null {
+function formatMemberSince(isoDate: string | null): string | null {
   if (!isoDate) return null;
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+  return date.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 }
 
-export default async function HorseSellerCard({ horse, publishedAt }: Props) {
+export default async function HorseSellerCard({ horse, publishedAt, memberSince }: Props) {
   const t = await getTranslations("horse");
   const sellerLabel = horse.sellerName?.trim() || horse.stableName?.trim();
   const country = findCountryByName(horse.country);
-  const listedDate = formatListedDate(publishedAt);
+  const memberSinceLabel = formatMemberSince(memberSince);
+  const publishedLabel = formatMemberSince(publishedAt);
 
   if (!sellerLabel) {
     return null;
@@ -51,15 +53,18 @@ export default async function HorseSellerCard({ horse, publishedAt }: Props) {
             <p className="mt-0.5 truncate text-sm text-gray-400">{horse.stableName}</p>
           ) : null}
 
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <div className="mt-2 space-y-1">
             {country ? (
-              <span className="inline-flex items-center gap-1.5 text-sm text-gray-400">
+              <p className="inline-flex items-center gap-1.5 text-sm text-gray-400">
                 <span aria-hidden="true">{country.flag}</span>
                 {horse.country}
-              </span>
+              </p>
             ) : null}
-            {listedDate ? (
-              <span className="text-sm text-gray-500">Listed {listedDate}</span>
+            {memberSinceLabel ? (
+              <p className="text-sm text-gray-500">Member since {memberSinceLabel}</p>
+            ) : null}
+            {publishedLabel && !memberSinceLabel ? (
+              <p className="text-sm text-gray-500">Listed {publishedLabel}</p>
             ) : null}
           </div>
 

@@ -1,8 +1,9 @@
+import nextDynamic from "next/dynamic";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Navbar from "@/app/components/navbar/Navbar";
-import HorseGallery from "@/app/components/horse/HorseGallery";
 import HorseListingHeader from "@/app/components/horse/HorseListingHeader";
 import HorseQuickFacts from "@/app/components/horse/HorseQuickFacts";
 import HorseBloodlineVisual from "@/app/components/horse/HorseBloodlineVisual";
@@ -11,11 +12,20 @@ import HorseVideo from "@/app/components/horse/HorseVideo";
 import HorseListingSidebar from "@/app/components/horse/HorseListingSidebar";
 import HorseSellerCard from "@/app/components/horse/HorseSellerCard";
 import RelatedHorses from "@/app/components/horse/RelatedHorses";
+import HorseLocationSection from "@/app/components/horse/HorseLocationSection";
+import HorseDocumentsSection from "@/app/components/horse/HorseDocumentsSection";
+import HorseDetailSectionNav from "@/app/components/horse/HorseDetailSectionNav";
 import ListingBreadcrumbs from "@/app/components/horse/ListingBreadcrumbs";
 import StickyMobileContactBar from "@/app/components/horse/StickyMobileContactBar";
 import ListingTrainingSummarySection from "@/app/components/marketplace/ListingTrainingSummarySection";
 import ListingHealthSummarySection from "@/app/components/marketplace/ListingHealthSummarySection";
 import PedigreeSection from "@/app/components/pedigree/PedigreeSection";
+import {
+  HorseGallerySkeleton,
+  HorseSellerCardSkeleton,
+  HorseSidebarSkeleton,
+  RelatedHorsesSkeleton,
+} from "@/app/components/horse/HorseDetailSkeletons";
 import { buildPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-display";
 import { getCachedPublicListingProfileBySlug } from "@/app/lib/marketplace/listing-profile-cache";
 import {
@@ -31,6 +41,10 @@ import { getRelatedActiveListings } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import { createClient } from "@/app/lib/supabase/server";
 import { type AppLocale, routing } from "@/i18n/routing";
+
+const HorseGallery = nextDynamic(() => import("@/app/components/horse/HorseGallery"), {
+  loading: () => <HorseGallerySkeleton />,
+});
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +81,7 @@ export default async function PublicHorseListingPage({ params }: Props) {
   const t = await getTranslations("marketplace");
   const tCommon = await getTranslations("common");
   const tHorse = await getTranslations("horse");
+  const tPedigree = await getTranslations("pedigree");
   const tNav = await getTranslations("nav");
   const supabase = await createClient();
   const {
@@ -130,6 +145,15 @@ export default async function PublicHorseListingPage({ params }: Props) {
     legacyPedigree.sire.trim() || legacyPedigree.dam.trim() || legacyPedigree.damSire.trim()
   );
 
+  const sectionNav = [
+    { id: "overview", label: tHorse("info.breed") },
+    { id: "description", label: tHorse("description.title") },
+    { id: "pedigree", label: tPedigree("section.title") },
+    { id: "health", label: t("healthSummary.title") },
+    { id: "location", label: tHorse("info.country") },
+    { id: "documents", label: tPedigree("profile.registration") },
+  ];
+
   return (
     <>
       <Navbar />
@@ -141,7 +165,7 @@ export default async function PublicHorseListingPage({ params }: Props) {
         />
       ) : null}
 
-      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-[calc(9rem+env(safe-area-inset-bottom))] md:pb-24">
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-[calc(10rem+env(safe-area-inset-bottom))] lg:pb-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-5 lg:px-6">
           <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
             <ListingBreadcrumbs
@@ -168,7 +192,9 @@ export default async function PublicHorseListingPage({ params }: Props) {
             ) : null}
           </div>
 
-          <HorseGallery horse={horse} />
+          <Suspense fallback={<HorseGallerySkeleton />}>
+            <HorseGallery horse={horse} />
+          </Suspense>
 
           <div className="mt-8 lg:mt-10">
             <HorseListingHeader
@@ -180,8 +206,10 @@ export default async function PublicHorseListingPage({ params }: Props) {
             />
           </div>
 
-          <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12 xl:gap-16">
-            <div className="min-w-0 space-y-12 lg:space-y-16">
+          <HorseDetailSectionNav sections={sectionNav} />
+
+          <div className="mt-8 grid gap-10 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-12 xl:gap-16">
+            <div className="min-w-0 space-y-8 lg:space-y-10">
               <HorseQuickFacts horse={horse} pedigreeHorse={pedigreeHorse} />
 
               <HorseDescription horse={horse} />
@@ -197,40 +225,56 @@ export default async function PublicHorseListingPage({ params }: Props) {
                 />
               ) : null}
 
-              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                <ListingTrainingSummarySection summary={trainingSummary} />
-                <ListingHealthSummarySection summary={healthSummary} />
-              </div>
+              <ListingHealthSummarySection summary={healthSummary} />
+
+              <ListingTrainingSummarySection summary={trainingSummary} />
+
+              <HorseLocationSection horse={horse} />
+
+              <HorseDocumentsSection pedigreeHorse={pedigreeHorse} />
 
               <HorseVideo horse={horse} />
             </div>
 
             <div className="min-w-0 space-y-5">
-              <HorseListingSidebar
-                horseName={horse.name}
-                listingId={horse.listingUuid}
-                returnPath={returnPath}
-                publicUrl={publicUrl}
-                buyerPrefill={buyerPrefill}
-                isAuthenticated={Boolean(user)}
-                isFavorited={isFavorited}
-                listingStatus={listing.status}
-                pedigreeHorseId={listing.pedigree_horse_id}
-                contactUnavailableLabel={tHorse("info.contactUnavailable")}
-                draftContactLabel={tHorse("info.draftContact")}
-                viewPedigreeLabel={tHorse("info.viewPedigree")}
-              />
-              <HorseSellerCard horse={horse} publishedAt={listing.published_at} />
+              <Suspense fallback={<HorseSidebarSkeleton />}>
+                <HorseListingSidebar
+                  horseName={horse.name}
+                  price={horse.price}
+                  listingId={horse.listingUuid}
+                  returnPath={returnPath}
+                  publicUrl={publicUrl}
+                  buyerPrefill={buyerPrefill}
+                  isAuthenticated={Boolean(user)}
+                  isFavorited={isFavorited}
+                  listingStatus={listing.status}
+                  pedigreeHorseId={listing.pedigree_horse_id}
+                  contactUnavailableLabel={tHorse("info.contactUnavailable")}
+                  draftContactLabel={tHorse("info.draftContact")}
+                  viewPedigreeLabel={tHorse("info.viewPedigree")}
+                  askingPriceLabel={tHorse("info.askingPrice")}
+                />
+              </Suspense>
+
+              <Suspense fallback={<HorseSellerCardSkeleton />}>
+                <HorseSellerCard
+                  horse={horse}
+                  publishedAt={listing.published_at}
+                  memberSince={listing.created_at}
+                />
+              </Suspense>
             </div>
           </div>
 
-          <RelatedHorses
-            horses={relatedResult.listings.map((row) =>
-              listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
-            )}
-            currentHorse={horse}
-            favoriteListingIds={favoriteListingIds}
-          />
+          <Suspense fallback={<RelatedHorsesSkeleton />}>
+            <RelatedHorses
+              horses={relatedResult.listings.map((row) =>
+                listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
+              )}
+              currentHorse={horse}
+              favoriteListingIds={favoriteListingIds}
+            />
+          </Suspense>
         </div>
       </main>
 
