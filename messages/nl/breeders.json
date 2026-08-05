@@ -1,20 +1,20 @@
 {
   "directory": {
-    "title": "Fokkerij- & stoeterijoverzicht",
-    "subtitle": "Ontdek professionele fokkerijen en stoeterijen in heel Europa.",
+    "title": "Fokker- & fokkerijregister",
+    "subtitle": "Ontdek professionele fokkers en fokkerijen door heel Europa.",
     "searchLabel": "Zoeken",
-    "searchPlaceholder": "Stoeterijnaam, locatie …",
+    "searchPlaceholder": "Fokkerijnaam, locatie...",
     "countryLabel": "Land",
     "allCountries": "Alle landen",
-    "allCountriesPlaceholder": "Alle landen …",
+    "allCountriesPlaceholder": "Alle landen…",
     "disciplineLabel": "Discipline",
     "allDisciplines": "Alle disciplines",
-    "allDisciplinesPlaceholder": "Alle disciplines …",
-    "showingCount": "{count, plural, =1 {1 stoeterij} other {# stoeterijen}}",
-    "loadError": "Fokkerijen konden niet worden geladen: {error}",
-    "emptyTitle": "Geen stoeterijen gevonden",
-    "emptyNoData": "Het fokkerijoverzicht is klaar. Maak uw stoeterijprofiel aan via uw account.",
-    "emptyFiltered": "Pas uw zoekopdracht aan om meer fokkerijen te vinden."
+    "allDisciplinesPlaceholder": "Alle disciplines…",
+    "showingCount": "{count, plural, =1 {1 fokkerij} other {# fokkerijen}} weergegeven",
+    "loadError": "Fokkers konden niet worden geladen: {error}",
+    "emptyTitle": "Geen fokkerijen gevonden",
+    "emptyNoData": "Het fokkerregister is klaar. Maak uw fokkerijprofiel aan vanuit uw account om te beginnen.",
+    "emptyFiltered": "Pas uw zoekopdracht aan om meer fokkers te vinden."
   },
   "card": {
     "coverAlt": "{name} omslag",
@@ -23,7 +23,7 @@
     "view": "Bekijken →"
   },
   "detail": {
-    "backToDirectory": "← Terug naar fokkerijoverzicht",
+    "backToDirectory": "← Terug naar fokkerregister",
     "coverAlt": "{name} omslag",
     "logoAlt": "{name} logo",
     "about": "Over",

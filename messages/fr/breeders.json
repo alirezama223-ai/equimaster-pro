@@ -1,20 +1,20 @@
 {
   "directory": {
-    "title": "Répertoire des éleveurs & haras",
-    "subtitle": "Découvrez les éleveurs professionnels et haras à travers l'Europe.",
+    "title": "Répertoire éleveurs & haras",
+    "subtitle": "Découvrez des éleveurs professionnels et des haras à travers l'Europe.",
     "searchLabel": "Recherche",
-    "searchPlaceholder": "Nom du haras, localisation …",
+    "searchPlaceholder": "Nom du haras, localisation...",
     "countryLabel": "Pays",
     "allCountries": "Tous les pays",
-    "allCountriesPlaceholder": "Tous les pays …",
+    "allCountriesPlaceholder": "Tous les pays…",
     "disciplineLabel": "Discipline",
     "allDisciplines": "Toutes les disciplines",
-    "allDisciplinesPlaceholder": "Toutes les disciplines …",
-    "showingCount": "{count, plural, =1 {1 haras} other {# haras}}",
+    "allDisciplinesPlaceholder": "Toutes les disciplines…",
+    "showingCount": "Affichage de {count, plural, =1 {1 haras} other {# haras}}",
     "loadError": "Impossible de charger les éleveurs : {error}",
     "emptyTitle": "Aucun haras trouvé",
-    "emptyNoData": "Le répertoire des éleveurs est prêt. Créez votre profil de haras depuis votre compte.",
-    "emptyFiltered": "Ajustez votre recherche pour trouver plus d'éleveurs."
+    "emptyNoData": "Le répertoire des éleveurs est prêt. Créez votre profil de haras depuis votre compte pour commencer.",
+    "emptyFiltered": "Essayez d'ajuster votre recherche pour trouver plus d'éleveurs."
   },
   "card": {
     "coverAlt": "Couverture de {name}",
@@ -28,7 +28,7 @@
     "logoAlt": "Logo de {name}",
     "about": "À propos",
     "stallions": "Étalons",
-    "noStallions": "Aucun étalon actif inscrit pour le moment.",
+    "noStallions": "Aucun étalon actif listé pour le moment.",
     "horsesForSale": "Chevaux à vendre",
     "contact": "Contact",
     "contactDescription": "Contactez {name} pour des demandes de reproduction ou de vente.",
