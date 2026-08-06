@@ -1,0 +1,100 @@
+{
+  "title": "Subscription",
+  "subtitle": "Manage your EquiMaster plan, billing, and listing quota.",
+  "currentPlan": "Current plan",
+  "renew": "Renew plan",
+  "manageBilling": "Manage billing",
+  "cancel": "Cancel subscription",
+  "resume": "Resume subscription",
+  "upgrade": "Upgrade",
+  "downgrade": "Change plan",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "yearlySave": "Save with yearly billing",
+  "usageTitle": "Usage",
+  "activeListings": "Active listings",
+  "listingQuota": "{used} of {limit} active listings used",
+  "unlimitedListings": "Unlimited active listings",
+  "remainingListings": "{count} listings remaining",
+  "atLimit": "You have reached your listing limit.",
+  "invoicesTitle": "Invoices",
+  "noInvoices": "No invoices yet.",
+  "viewInvoice": "View invoice",
+  "downloadInvoice": "Download PDF",
+  "periodEnd": "Renews on {date}",
+  "cancelsOn": "Cancels on {date}",
+  "canceled": "Canceled",
+  "checkoutSuccess": "Your subscription checkout completed successfully.",
+  "checkoutCanceled": "Checkout was canceled.",
+  "actions": {
+    "choosePro": "Upgrade to Pro",
+    "chooseEnterprise": "Upgrade to Enterprise",
+    "stayOnFree": "Stay on Free"
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "description": "Essential tools to get started on EquiMaster.",
+      "features": [
+        "3 active horse listings",
+        "Basic dashboard",
+        "Basic messaging"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Scale sales with featured listings, analytics, and CRM.",
+      "features": [
+        "25 active listings",
+        "Featured listings",
+        "Verified badge priority",
+        "Analytics and CRM",
+        "Unlimited messaging",
+        "Premium support"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Unlimited scale for professional teams and organizations.",
+      "features": [
+        "Unlimited listings",
+        "Unlimited staff",
+        "Advanced CRM",
+        "Multiple seller accounts",
+        "API access ready",
+        "Enterprise support"
+      ]
+    }
+  },
+  "upgradeModal": {
+    "title": "Upgrade your plan",
+    "description": "You have reached your active listing limit. Upgrade to publish more horses on EquiMaster.",
+    "currentUsage": "{used} of {limit} active listings used",
+    "cta": "View plans",
+    "close": "Not now"
+  },
+  "admin": {
+    "title": "Subscriptions",
+    "subtitle": "Monitor plans, customers, revenue, and active subscriptions.",
+    "plans": "Plans",
+    "customers": "Customers",
+    "revenue": "Revenue",
+    "subscriptions": "Subscriptions",
+    "mrr": "Monthly recurring revenue",
+    "totalRevenue": "Total paid revenue",
+    "paidSubscriptions": "Active paid subscriptions",
+    "freeUsers": "Free users",
+    "proUsers": "Pro users",
+    "enterpriseUsers": "Enterprise users",
+    "paidInvoices": "Paid invoices",
+    "noCustomers": "No subscriptions found.",
+    "listingUsage": "{count} active listings"
+  },
+  "errors": {
+    "loadFailed": "Unable to load subscription details.",
+    "checkoutFailed": "Unable to start checkout.",
+    "portalFailed": "Unable to open billing portal.",
+    "cancelFailed": "Unable to cancel subscription.",
+    "resumeFailed": "Unable to resume subscription."
+  }
+}

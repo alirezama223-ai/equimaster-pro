@@ -18,6 +18,7 @@ type NavKey =
   | "settings"
   | "sellers"
   | "verification"
+  | "subscriptions"
   | "pedigree"
   | "traits";
 
@@ -42,6 +43,7 @@ const navLinks: NavItem[] = [
 ];
 
 const toolLinks: NavItem[] = [
+  { href: "/admin/subscriptions", key: "subscriptions" },
   { href: "/admin/verification", key: "verification" },
   { href: "/admin/sellers", key: "sellers" },
   { href: "/admin/pedigree", key: "pedigree" },

@@ -59,13 +59,19 @@ type Props = {
   };
   sellerName: string;
   sellerVerified?: boolean;
+  crmEnabled?: boolean;
 };
 
-function SellerDashboardClient({ dashboard, sellerName, sellerVerified = false }: Props) {
+function SellerDashboardClient({
+  dashboard,
+  sellerName,
+  sellerVerified = false,
+  crmEnabled = true,
+}: Props) {
   const t = useTranslations("dashboard");
   const tMarketplace = useTranslations("marketplace");
   const router = useRouter();
-  const [activeView, setActiveView] = useState<"overview" | "crm">("crm");
+  const [activeView, setActiveView] = useState<"overview" | "crm">(crmEnabled ? "crm" : "overview");
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -177,7 +183,7 @@ function SellerDashboardClient({ dashboard, sellerName, sellerVerified = false }
               <div className="inline-flex rounded-xl border border-white/10 bg-[#08111F]/80 p-1">
                 {(
                   [
-                    { key: "crm", label: t("header.tabs.crm") },
+                    ...(crmEnabled ? [{ key: "crm" as const, label: t("header.tabs.crm") }] : []),
                     { key: "overview", label: t("header.tabs.overview") },
                   ] as const
                 ).map((tab) => (

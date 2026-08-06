@@ -21,7 +21,9 @@ import {
   removeListingVideoFromStorage,
   copyListingVideoForDuplicate,
 } from "@/app/lib/horse-video-storage";
+import { assertCanActivateListing } from "@/app/lib/subscriptions/queries";
 import { createClient } from "@/app/lib/supabase/server";
+import { LISTING_QUOTA_ERROR_CODE } from "@/app/types/subscription";
 import { isValidListingSlug } from "@/app/lib/security/path-validation";
 import { getClientIp } from "@/app/lib/security/request-context";
 import { checkRateLimit } from "@/app/lib/security/rate-limit";
@@ -295,6 +297,17 @@ export async function createHorseListing(formData: FormData) {
   });
 
   const shouldPublish = payload.publish === true;
+
+  if (shouldPublish) {
+    const quota = await assertCanActivateListing(supabase, user.id);
+    if (!quota.ok) {
+      return {
+        error: quota.error,
+        errorCode: LISTING_QUOTA_ERROR_CODE,
+        quota: quota.quota,
+      };
+    }
+  }
 
   const insertPayload = {
     user_id: user.id,
@@ -901,6 +914,17 @@ export async function publishHorseListing(id: string) {
 
   if (!row.pedigree_horse_id) {
     return { errorKey: "publishNoHorseRecord" };
+  }
+
+  if (row.status !== "active") {
+    const quota = await assertCanActivateListing(supabase, user.id, { excludeListingId: id });
+    if (!quota.ok) {
+      return {
+        errorKey: "publishQuotaExceeded",
+        errorCode: LISTING_QUOTA_ERROR_CODE,
+        quota: quota.quota,
+      };
+    }
   }
 
   const { data, error } = await supabase

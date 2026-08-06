@@ -1,8 +1,12 @@
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import Navbar from "@/app/components/navbar/Navbar";
 import SellListingForm from "@/app/components/sell/SellListingForm";
 import FadeUp from "@/app/components/animations/FadeUp";
+import { getListingQuotaSnapshot } from "@/app/actions/subscriptions";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
+import { createClient } from "@/app/lib/supabase/server";
+import { loginRedirectPath } from "@/app/lib/auth/paths";
 
 export async function generateMetadata() {
   return createPageMetadata("sell", "/sell");
@@ -10,6 +14,16 @@ export async function generateMetadata() {
 
 export default async function SellPage() {
   const t = await getTranslations("sell");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(loginRedirectPath("/sell"));
+  }
+
+  const quotaResult = await getListingQuotaSnapshot();
 
   return (
     <>
@@ -28,7 +42,7 @@ export default async function SellPage() {
           </FadeUp>
 
           <FadeUp>
-            <SellListingForm />
+            <SellListingForm listingQuota={quotaResult.snapshot?.usage ?? null} />
           </FadeUp>
         </div>
       </main>

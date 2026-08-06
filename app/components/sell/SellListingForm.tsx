@@ -15,6 +15,7 @@ import PriceSection from "@/app/components/sell/PriceSection";
 import SellerInfoSection from "@/app/components/sell/SellerInfoSection";
 import SportInfoSection from "@/app/components/sell/SportInfoSection";
 import VerificationSection from "@/app/components/sell/VerificationSection";
+import UpgradeModal from "@/app/components/subscription/UpgradeModal";
 import {
   createHorseListing,
   rollbackHorseListing,
@@ -41,6 +42,8 @@ import {
   validateListingForm,
 } from "@/app/lib/listing-validation";
 import { HorseListingRow } from "@/app/types/horse-listing";
+import { LISTING_QUOTA_ERROR_CODE } from "@/app/types/subscription";
+import type { SubscriptionUsageSnapshot } from "@/app/types/subscription";
 import {
   initialListingFormData,
   ListingFormData,
@@ -50,6 +53,7 @@ import {
 type Props = {
   mode?: "create" | "edit";
   initialListing?: HorseListingRow;
+  listingQuota?: SubscriptionUsageSnapshot | null;
 };
 
 type Step = "form" | "preview" | "success";
@@ -82,6 +86,7 @@ function buildExistingVideoState(listing: HorseListingRow): ExistingVideoState |
 export default function SellListingForm({
   mode = "create",
   initialListing,
+  listingQuota = null,
 }: Props) {
   const t = useTranslations("sell");
   const isEditMode = mode === "edit" && Boolean(initialListing);
@@ -111,6 +116,10 @@ export default function SellListingForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedListingId, setSavedListingId] = useState<string | null>(listingId);
   const [savedListingPublished, setSavedListingPublished] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [quotaSnapshot, setQuotaSnapshot] = useState<SubscriptionUsageSnapshot | null>(
+    listingQuota
+  );
 
   function updateField<K extends keyof ListingFormData>(
     field: K,
@@ -191,6 +200,18 @@ export default function SellListingForm({
     });
 
     const result = await createHorseListing(submission);
+
+    if (
+      result.error &&
+      "errorCode" in result &&
+      result.errorCode === LISTING_QUOTA_ERROR_CODE &&
+      result.quota
+    ) {
+      setQuotaSnapshot(result.quota);
+      setUpgradeModalOpen(true);
+      setSubmitError(result.error);
+      return;
+    }
 
     if (result.error && !result.data) {
       setSubmitError(result.error);
@@ -525,7 +546,14 @@ export default function SellListingForm({
   }
 
   return (
-    <form
+    <>
+      <UpgradeModal
+        open={upgradeModalOpen}
+        used={quotaSnapshot?.activeListings ?? listingQuota?.activeListings ?? 0}
+        limit={quotaSnapshot?.listingLimit ?? listingQuota?.listingLimit ?? null}
+        onClose={() => setUpgradeModalOpen(false)}
+      />
+      <form
       className="space-y-8"
       onSubmit={(event) => {
         event.preventDefault();
@@ -592,5 +620,6 @@ export default function SellListingForm({
         </button>
       </div>
     </form>
+    </>
   );
 }

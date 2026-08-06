@@ -282,6 +282,7 @@
     "publishNoPhotos": "Add at least one photo before publishing this listing.",
     "publishNoHorseRecord": "This listing must be linked to a horse record before publishing.",
     "publishFailed": "Publish failed. Please try again.",
+    "publishQuotaExceeded": "You have reached your active listing limit. Upgrade your plan to publish more horses.",
     "unpublishFailed": "Unpublish failed. Please try again.",
     "markSoldFailed": "Unable to mark listing as sold.",
     "archiveFailed": "Archive failed. Please try again.",

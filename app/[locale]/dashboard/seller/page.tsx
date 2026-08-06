@@ -8,6 +8,7 @@ import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { createClient } from "@/app/lib/supabase/server";
 import { getProfileForUser } from "@/app/lib/profiles";
+import { getListingQuotaSnapshot } from "@/app/actions/subscriptions";
 
 export async function generateMetadata() {
   return createPageMetadata("sellerDashboard", MARKETPLACE_PATHS.sellerDashboard);
@@ -37,6 +38,7 @@ export default async function SellerDashboardPage() {
     tAccount("defaultName");
 
   const profile = user ? await getProfileForUser(supabase, user.id) : null;
+  const quotaResult = user ? await getListingQuotaSnapshot() : { snapshot: null };
 
   if (!result.dashboard) {
     return (
@@ -60,6 +62,7 @@ export default async function SellerDashboardPage() {
             dashboard={result.dashboard}
             sellerName={sellerName}
             sellerVerified={Boolean(profile?.seller_verified)}
+            crmEnabled={quotaResult.snapshot?.features.crmEnabled ?? false}
           />
         </div>
       </main>

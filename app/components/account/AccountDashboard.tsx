@@ -82,6 +82,15 @@ export default async function AccountDashboard({
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
         <Link
+          href="/account/subscription"
+          className="text-blue-300 hover:text-blue-200 font-semibold"
+        >
+          {t("openSubscription")}
+        </Link>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
+        <Link
           href="/account/verification"
           className="text-blue-300 hover:text-blue-200 font-semibold"
         >
