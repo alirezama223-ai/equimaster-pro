@@ -1,14 +1,17 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import AdminAnalyticsGrid from "@/app/components/admin/AdminAnalyticsGrid";
+import AdminBarChart from "@/app/components/admin/AdminBarChart";
+import AdminEnterpriseMetrics from "@/app/components/admin/AdminEnterpriseMetrics";
 import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
-import { getAdminAnalyticsStats } from "@/app/actions/admin-panel";
+import { getAdminDashboardCharts, getAdminEnterpriseStats } from "@/app/actions/admin-enterprise";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const t = await getTranslations("admin");
-  const { stats, error } = await getAdminAnalyticsStats();
+  const [{ stats, error }, { charts, error: chartsError }] = await Promise.all([
+    getAdminEnterpriseStats(),
+    getAdminDashboardCharts(),
+  ]);
 
   if (!stats) {
     return (
@@ -18,6 +21,21 @@ export default async function AdminDashboardPage() {
     );
   }
 
+  const metricLabels = {
+    totalUsers: t("enterprise.totalUsers"),
+    newUsers30d: t("enterprise.newUsers30d"),
+    totalListings: t("enterprise.totalListings"),
+    publishedListings: t("enterprise.publishedListings"),
+    pendingListings: t("enterprise.pendingListings"),
+    rejectedListings: t("enterprise.rejectedListings"),
+    totalBreeders: t("stats.totalBreeders"),
+    totalStallions: t("stats.totalStallions"),
+    totalFavorites: t("enterprise.totalFavorites"),
+    totalMessages: t("enterprise.totalMessages"),
+    totalNotifications: t("enterprise.totalNotifications"),
+    openFeedback: t("analytics.openFeedback"),
+  };
+
   return (
     <div className="space-y-8">
       <AdminPageHeader
@@ -26,52 +44,21 @@ export default async function AdminDashboardPage() {
         description={t("dashboard.subtitle")}
       />
 
-      <AdminAnalyticsGrid stats={stats} />
+      <AdminEnterpriseMetrics stats={stats} labels={metricLabels} />
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        <Link
-          href="/admin/users"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.quickLinks.usersTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.quickLinks.usersSubtitle")}</p>
-        </Link>
-        <Link
-          href="/admin/listings?filter=draft"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.quickLinks.listingsTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.quickLinks.listingsSubtitle")}</p>
-        </Link>
-        <Link
-          href="/admin/sellers"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.quickLinks.sellersTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.quickLinks.sellersSubtitle")}</p>
-        </Link>
-        <Link
-          href="/admin/breeders?filter=pending"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.reviewBreedersTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.reviewBreedersSubtitle")}</p>
-        </Link>
-        <Link
-          href="/admin/stallions?filter=pending"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.reviewStallionsTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.reviewStallionsSubtitle")}</p>
-        </Link>
-        <Link
-          href="/admin/reports"
-          className="rounded-3xl border border-white/10 bg-[#111827] p-6 transition hover:border-blue-500/40"
-        >
-          <h2 className="text-xl font-bold text-white">{t("dashboard.quickLinks.reportsTitle")}</h2>
-          <p className="mt-2 text-gray-400">{t("dashboard.quickLinks.reportsSubtitle")}</p>
-        </Link>
-      </div>
+      {charts && !chartsError ? (
+        <div className="grid gap-6 xl:grid-cols-2">
+          <AdminBarChart title={t("enterprise.charts.listingsPerMonth")} points={charts.listingsPerMonth} />
+          <AdminBarChart title={t("enterprise.charts.newUsers")} points={charts.newUsersPerMonth} accent="emerald" />
+          <AdminBarChart title={t("enterprise.charts.messages")} points={charts.messagesPerMonth} accent="violet" />
+          <AdminBarChart title={t("enterprise.charts.views")} points={charts.viewsPerMonth} accent="amber" />
+          <AdminBarChart
+            title={t("enterprise.charts.countries")}
+            points={charts.listingsByCountry}
+            accent="violet"
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

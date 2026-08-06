@@ -4,39 +4,37 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+type NavKey =
+  | "dashboard"
+  | "users"
+  | "listings"
+  | "breeders"
+  | "stallions"
+  | "messages"
+  | "feedback"
+  | "reports"
+  | "notifications"
+  | "analytics"
+  | "settings";
+
 type NavItem = {
   href: string;
-  key:
-    | "dashboard"
-    | "users"
-    | "listings"
-    | "sellers"
-    | "reports"
-    | "settings"
-    | "breeders"
-    | "stallions"
-    | "pedigree"
-    | "traits"
-    | "feedback";
+  key: NavKey;
   exact?: boolean;
-  section?: "primary" | "catalog";
 };
 
-const primaryLinks: NavItem[] = [
+const navLinks: NavItem[] = [
   { href: "/admin", key: "dashboard", exact: true },
   { href: "/admin/users", key: "users" },
   { href: "/admin/listings", key: "listings" },
-  { href: "/admin/sellers", key: "sellers" },
+  { href: "/admin/breeders", key: "breeders" },
+  { href: "/admin/stallions", key: "stallions" },
+  { href: "/admin/messages", key: "messages" },
+  { href: "/admin/feedback", key: "feedback" },
   { href: "/admin/reports", key: "reports" },
+  { href: "/admin/notifications", key: "notifications" },
+  { href: "/admin/analytics", key: "analytics" },
   { href: "/admin/settings", key: "settings" },
-];
-
-const catalogLinks: NavItem[] = [
-  { href: "/admin/breeders", key: "breeders", section: "catalog" },
-  { href: "/admin/stallions", key: "stallions", section: "catalog" },
-  { href: "/admin/pedigree", key: "pedigree", section: "catalog" },
-  { href: "/admin/traits", key: "traits", section: "catalog" },
-  { href: "/admin/feedback", key: "feedback", section: "catalog" },
 ];
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -82,20 +80,8 @@ export default function AdminShell({ children }: Props) {
         <p className="mt-1 text-xs text-gray-500">{t("shell.subtitle")}</p>
       </div>
 
-      <nav className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4">
-        <div className="space-y-1">
-          <p className="px-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">
-            {t("shell.sections.platform")}
-          </p>
-          {primaryLinks.map(renderLink)}
-        </div>
-
-        <div className="space-y-1">
-          <p className="px-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">
-            {t("shell.sections.catalog")}
-          </p>
-          {catalogLinks.map(renderLink)}
-        </div>
+      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
+        {navLinks.map(renderLink)}
       </nav>
 
       <div className="border-t border-white/10 p-4">

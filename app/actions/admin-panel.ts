@@ -25,6 +25,20 @@ const DEFAULT_SETTINGS: AdminMarketplaceSettings = {
   require_listing_review: false,
   support_email: "support@equimaster.pro",
   welcome_message: "Welcome to EquiMaster Pro.",
+  homepage_hero: {
+    title: "Find your next champion",
+    subtitle: "Premium horses, verified sellers, and trusted breeders worldwide.",
+    cta_label: "Browse marketplace",
+    cta_href: "/marketplace",
+  },
+  featured_breeds: [],
+  featured_stallions: [],
+  feature_flags: {
+    enable_messaging: true,
+    enable_favorites: true,
+    enable_seller_verification: true,
+    enable_listing_moderation: true,
+  },
 };
 
 function revalidateAdminPaths() {
@@ -32,109 +46,28 @@ function revalidateAdminPaths() {
   revalidatePath("/admin/users");
   revalidatePath("/admin/listings");
   revalidatePath("/admin/sellers");
+  revalidatePath("/admin/messages");
   revalidatePath("/admin/reports");
+  revalidatePath("/admin/notifications");
+  revalidatePath("/admin/analytics");
   revalidatePath("/admin/settings");
 }
 
-function mapListingRow(row: HorseListingRow, priceOnRequestLabel: string): AdminListingListItem {
-  return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    sellerId: row.user_id,
-    sellerName: row.seller_name,
-    sellerReference: formatOwnerReference(row.user_id),
-    breed: row.breed,
-    country: row.country,
-    status: row.status,
-    verified: row.verified,
-    viewCount: row.view_count ?? 0,
-    priceLabel: formatListingRowPrice(row, priceOnRequestLabel),
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    publishedAt: row.published_at,
-  };
-}
+import { mapListingRow } from "@/app/lib/admin-listing-mapper";
 
 export async function getAdminAnalyticsStats(): Promise<{
   stats: AdminAnalyticsStats | null;
   error?: string;
 }> {
-  const auth = await requireAdmin();
-  if (auth.error || !auth.supabase) {
-    return { stats: null, error: auth.error ?? "Forbidden" };
-  }
-
-  const base = await getAdminDashboardStats();
-  if (!base.stats) {
-    return { stats: null, error: base.error ?? "Unable to load dashboard stats." };
-  }
-
-  const supabase = auth.supabase;
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString();
-
-  const [
-    { count: totalUsers },
-    { count: adminUsers },
-    { count: verifiedSellers },
-    { count: pendingSellers },
-    { count: totalListings },
-    { count: draftListings },
-    { count: archivedListings },
-    { count: soldListings },
-    { count: openFeedbackReports },
-    { count: totalConversations },
-    listingsViewsResult,
-    { count: listingsPublishedLast30Days },
-  ] = await Promise.all([
-    supabase.from("profiles").select("user_id", { count: "exact", head: true }),
-    supabase.from("profiles").select("user_id", { count: "exact", head: true }).eq("role", "admin"),
-    supabase.from("profiles").select("user_id", { count: "exact", head: true }).eq("seller_verified", true),
-    supabase.from("profiles").select("user_id", { count: "exact", head: true }).eq("seller_verified", false),
-    supabase.from("horse_listings").select("id", { count: "exact", head: true }),
-    supabase.from("horse_listings").select("id", { count: "exact", head: true }).eq("status", "draft"),
-    supabase.from("horse_listings").select("id", { count: "exact", head: true }).eq("status", "archived"),
-    supabase.from("horse_listings").select("id", { count: "exact", head: true }).eq("status", "sold"),
-    supabase
-      .from("feedback_reports")
-      .select("id", { count: "exact", head: true })
-      .in("status", ["open", "in_progress"]),
-    supabase.from("conversations").select("id", { count: "exact", head: true }),
-    supabase.from("horse_listings").select("view_count"),
-    supabase
-      .from("horse_listings")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active")
-      .gte("published_at", thirtyDaysAgo),
-  ]);
-
-  const totalListingViews = (listingsViewsResult.data ?? []).reduce(
-    (sum, row) => sum + (Number(row.view_count) || 0),
-    0
-  );
-
-  return {
-    stats: {
-      ...base.stats,
-      totalUsers: totalUsers ?? 0,
-      adminUsers: adminUsers ?? 0,
-      verifiedSellers: verifiedSellers ?? 0,
-      pendingSellers: pendingSellers ?? 0,
-      totalListings: totalListings ?? 0,
-      draftListings: draftListings ?? 0,
-      archivedListings: archivedListings ?? 0,
-      soldListings: soldListings ?? 0,
-      openFeedbackReports: openFeedbackReports ?? 0,
-      totalConversations: totalConversations ?? 0,
-      totalListingViews,
-      listingsPublishedLast30Days: listingsPublishedLast30Days ?? 0,
-    },
-  };
+  const { getAdminEnterpriseStats } = await import("@/app/actions/admin-enterprise");
+  return getAdminEnterpriseStats();
 }
 
 export async function getAdminUsers(
   page = 1,
-  filter: AdminUserFilter = "all"
+  filter: AdminUserFilter = "all",
+  search = "",
+  sort: "newest" | "oldest" | "most_listings" = "newest"
 ): Promise<{
   users: AdminUserListItem[];
   hasMore: boolean;
@@ -151,14 +84,25 @@ export async function getAdminUsers(
 
   let query = auth.supabase
     .from("profiles")
-    .select("user_id, role, seller_verified, created_at, updated_at")
-    .order("created_at", { ascending: false })
+    .select(
+      "user_id, role, seller_verified, account_status, country, seller_verification_status, created_at, updated_at"
+    )
     .range(from, to);
+
+  if (sort === "newest") query = query.order("created_at", { ascending: false });
+  if (sort === "oldest") query = query.order("created_at", { ascending: true });
+  if (sort === "most_listings") query = query.order("updated_at", { ascending: false });
 
   if (filter === "admin") {
     query = query.eq("role", "admin");
   } else if (filter === "verified_seller") {
     query = query.eq("seller_verified", true);
+  } else if (filter === "suspended") {
+    query = query.eq("account_status", "suspended");
+  } else if (filter === "banned") {
+    query = query.eq("account_status", "banned");
+  } else if (filter === "pending_verification") {
+    query = query.eq("seller_verification_status", "pending");
   }
 
   const { data, error } = await query;
@@ -190,7 +134,19 @@ export async function getAdminUsers(
     return {
       userId: row.user_id as string,
       role: row.role === "admin" ? "admin" : "user",
+      accountStatus:
+        row.account_status === "suspended" || row.account_status === "banned"
+          ? row.account_status
+          : "active",
+      country: (row.country as string | null) ?? null,
       sellerVerified: Boolean(row.seller_verified),
+      sellerVerificationStatus:
+        row.seller_verification_status === "pending" ||
+        row.seller_verification_status === "approved" ||
+        row.seller_verification_status === "rejected" ||
+        row.seller_verification_status === "more_info"
+          ? row.seller_verification_status
+          : "none",
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
       listingCount: counts.total,
@@ -201,6 +157,15 @@ export async function getAdminUsers(
   let users = fetched;
   if (filter === "seller") {
     users = users.filter((user) => user.listingCount > 0);
+  }
+
+  const normalizedSearch = search.trim().toLowerCase();
+  if (normalizedSearch) {
+    users = users.filter((user) => user.userId.toLowerCase().includes(normalizedSearch));
+  }
+
+  if (sort === "most_listings") {
+    users = [...users].sort((a, b) => b.listingCount - a.listingCount);
   }
 
   const hasMore = rows.length > ADMIN_USERS_PAGE_SIZE;
@@ -256,7 +221,8 @@ export async function setAdminSellerVerified(userId: string, sellerVerified: boo
 export async function getAdminListings(
   page = 1,
   filter: AdminListingFilter = "all",
-  search = ""
+  search = "",
+  sort: "newest" | "oldest" | "most_views" | "updated" = "updated"
 ): Promise<{
   listings: AdminListingListItem[];
   hasMore: boolean;
@@ -274,10 +240,22 @@ export async function getAdminListings(
   let query = auth.supabase
     .from("horse_listings")
     .select("*")
-    .order("updated_at", { ascending: false })
     .range(from, to);
 
-  if (filter !== "all") {
+  if (sort === "newest") query = query.order("created_at", { ascending: false });
+  if (sort === "oldest") query = query.order("created_at", { ascending: true });
+  if (sort === "most_views") query = query.order("view_count", { ascending: false });
+  if (sort === "updated") query = query.order("updated_at", { ascending: false });
+
+  if (filter === "pending") {
+    query = query.eq("status", "draft");
+  } else if (filter === "rejected") {
+    query = query.not("rejection_reason", "is", null);
+  } else if (filter === "featured") {
+    query = query.eq("featured", true);
+  } else if (filter === "hidden") {
+    query = query.eq("hidden", true);
+  } else if (filter !== "all") {
     query = query.eq("status", filter);
   }
 
@@ -392,7 +370,9 @@ export async function getAdminSellers(): Promise<{
 
   const { data: profiles, error: profilesError } = await auth.supabase
     .from("profiles")
-    .select("user_id, role, seller_verified, created_at")
+    .select(
+      "user_id, role, seller_verified, seller_verification_status, seller_verification_documents, seller_verification_notes, created_at"
+    )
     .in("user_id", sellerIds)
     .order("created_at", { ascending: false });
 
@@ -406,6 +386,17 @@ export async function getAdminSellers(): Promise<{
       userId: profile.user_id as string,
       sellerReference: formatOwnerReference(profile.user_id as string),
       sellerVerified: Boolean(profile.seller_verified),
+      sellerVerificationStatus:
+        profile.seller_verification_status === "pending" ||
+        profile.seller_verification_status === "approved" ||
+        profile.seller_verification_status === "rejected" ||
+        profile.seller_verification_status === "more_info"
+          ? profile.seller_verification_status
+          : "none",
+      sellerVerificationNotes: (profile.seller_verification_notes as string | null) ?? null,
+      sellerVerificationDocuments: Array.isArray(profile.seller_verification_documents)
+        ? profile.seller_verification_documents
+        : [],
       role: profile.role === "admin" ? "admin" : "user",
       listingCount: metrics.listingCount,
       activeListingCount: metrics.activeListingCount,
@@ -496,6 +487,10 @@ export async function getAdminSettings(): Promise<{
     settings: {
       ...DEFAULT_SETTINGS,
       ...value,
+      homepage_hero: { ...DEFAULT_SETTINGS.homepage_hero, ...value.homepage_hero },
+      feature_flags: { ...DEFAULT_SETTINGS.feature_flags, ...value.feature_flags },
+      featured_breeds: value.featured_breeds ?? DEFAULT_SETTINGS.featured_breeds,
+      featured_stallions: value.featured_stallions ?? DEFAULT_SETTINGS.featured_stallions,
     },
   };
 }

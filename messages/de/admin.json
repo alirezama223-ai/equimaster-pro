@@ -34,15 +34,87 @@
   "nav": {
     "dashboard": "Dashboard",
     "users": "Users",
-    "listings": "Listings",
-    "sellers": "Sellers",
-    "reports": "Reports",
-    "settings": "Settings",
+    "listings": "Horse Listings",
     "breeders": "Breeders",
     "stallions": "Stallions",
-    "pedigree": "Pedigree",
-    "traits": "Traits",
-    "feedback": "Feedback"
+    "messages": "Messages",
+    "feedback": "Feedback",
+    "reports": "Reports",
+    "notifications": "Notifications",
+    "analytics": "Analytics",
+    "settings": "System Settings"
+  },
+  "enterprise": {
+    "totalUsers": "Total Users",
+    "newUsers30d": "New Users (30d)",
+    "totalListings": "Horse Listings",
+    "publishedListings": "Published Listings",
+    "pendingListings": "Pending Listings",
+    "rejectedListings": "Rejected Listings",
+    "totalFavorites": "Favorites",
+    "totalMessages": "Messages",
+    "totalNotifications": "Notifications",
+    "charts": {
+      "listingsPerMonth": "Listings per month",
+      "newUsers": "New users",
+      "messages": "Messages",
+      "views": "Views",
+      "countries": "Countries"
+    }
+  },
+  "analyticsPage": {
+    "title": "Analytics",
+    "subtitle": "Marketplace performance, discovery trends, and conversion signals.",
+    "loadError": "Unable to load analytics.",
+    "views": "Total views",
+    "favorites": "Favorites",
+    "inquiries": "Inquiries",
+    "conversionRate": "Conversion rate",
+    "countries": "Listings by country",
+    "topBreeds": "Top breeds",
+    "topDisciplines": "Top disciplines",
+    "mostViewedHorses": "Most viewed horses",
+    "topSellers": "Top sellers",
+    "viewCount": "{count} views",
+    "viewListing": "View →",
+    "sellerStats": "{listings} listings · {views} views"
+  },
+  "messages": {
+    "title": "Messages",
+    "subtitle": "Monitor buyer/seller conversations across the marketplace.",
+    "conversationsTitle": "Recent conversations",
+    "recentMessagesTitle": "Recent messages",
+    "emptyConversations": "No conversations yet.",
+    "emptyMessages": "No messages yet.",
+    "columns": {
+      "listing": "Listing",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "messages": "Messages",
+      "updated": "Updated"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page}"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Broadcast announcements to targeted user groups.",
+    "targetLabel": "Target audience",
+    "titleLabel": "Notification title",
+    "bodyLabel": "Notification message",
+    "send": "Send broadcast",
+    "sending": "Sending…",
+    "sent": "Broadcast sent to {count} users.",
+    "targets": {
+      "all": "All users",
+      "breeders": "Breeders",
+      "sellers": "Sellers",
+      "buyers": "Buyers",
+      "admins": "Admins"
+    }
   },
   "analytics": {
     "totalUsers": "Total Users",
@@ -199,19 +271,33 @@
   },
   "users": {
     "title": "User Management",
-    "subtitle": "Manage account roles, seller verification, and listing activity. User emails are not exposed in this view.",
+    "subtitle": "Search, filter, and manage account roles, status, verification, and marketplace activity.",
     "empty": "No users match this filter.",
+    "searchLabel": "Search users",
+    "searchPlaceholder": "Search by user ID…",
+    "searchAction": "Search",
     "filterLabel": "Filter users",
+    "sortLabel": "Sort by",
     "filters": {
       "all": "All users",
       "admin": "Admins",
       "seller": "Sellers with listings",
-      "verifiedSeller": "Verified sellers"
+      "verifiedSeller": "Verified sellers",
+      "pendingVerification": "Pending verification",
+      "suspended": "Suspended",
+      "banned": "Banned"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "mostListings": "Most listings"
     },
     "columns": {
       "user": "User ID",
       "role": "Role",
-      "seller": "Seller status",
+      "status": "Status",
+      "country": "Country",
+      "seller": "Seller",
       "listings": "Listings",
       "joined": "Joined",
       "actions": "Actions"
@@ -220,14 +306,23 @@
       "admin": "Admin",
       "user": "User"
     },
+    "accountStatus": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "banned": "Banned"
+    },
     "sellerVerified": "Verified seller",
     "sellerPending": "Not verified",
     "listingCounts": "{total} total · {active} active",
     "actions": {
+      "openProfile": "Open profile",
       "makeAdmin": "Make admin",
-      "revokeAdmin": "Revoke admin",
+      "revokeAdmin": "Remove admin",
       "verifySeller": "Verify seller",
-      "unverifySeller": "Unverify seller"
+      "unverifySeller": "Unverify seller",
+      "suspend": "Suspend",
+      "activate": "Activate",
+      "ban": "Ban"
     },
     "pagination": {
       "previous": "Previous",
@@ -236,19 +331,30 @@
     }
   },
   "listings": {
-    "title": "Listing Moderation",
-    "subtitle": "Review horse listings, approve drafts, archive inactive inventory, and manage verified badges.",
+    "title": "Horse Listing Moderation",
+    "subtitle": "Review pending listings, approve or reject with reasons, feature inventory, and run bulk actions.",
     "empty": "No listings match your filters.",
     "searchLabel": "Search listings",
     "searchPlaceholder": "Search by name, seller, or breed…",
     "searchAction": "Search",
     "filterLabel": "Status filter",
+    "sortLabel": "Sort by",
     "filters": {
       "all": "All statuses",
-      "active": "Active",
+      "pending": "Pending approval",
+      "active": "Published",
+      "rejected": "Rejected",
       "draft": "Draft",
+      "featured": "Featured",
+      "hidden": "Hidden",
       "sold": "Sold",
       "archived": "Archived"
+    },
+    "sort": {
+      "updated": "Recently updated",
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "mostViews": "Most views"
     },
     "columns": {
       "listing": "Listing",
@@ -264,14 +370,34 @@
       "sold": "Sold",
       "archived": "Archived"
     },
+    "featuredBadge": "Featured",
+    "hiddenBadge": "Hidden",
     "verifiedBadge": "Verified listing",
     "viewPublic": "View public page →",
+    "rejectTitle": "Reject listing",
+    "rejectPlaceholder": "Provide a rejection reason for the seller…",
+    "bulk": {
+      "selectAll": "Select all listings",
+      "selected": "{count} selected",
+      "approve": "Approve selected",
+      "archive": "Archive selected",
+      "feature": "Feature selected",
+      "hide": "Hide selected",
+      "delete": "Delete selected"
+    },
     "actions": {
       "approve": "Approve",
+      "reject": "Reject",
       "archive": "Archive",
       "restore": "Restore draft",
       "verify": "Verify",
-      "unverify": "Unverify"
+      "unverify": "Unverify",
+      "feature": "Feature",
+      "unfeature": "Unfeature",
+      "hide": "Hide",
+      "unhide": "Unhide",
+      "delete": "Delete",
+      "cancel": "Cancel"
     },
     "pagination": {
       "previous": "Previous",
@@ -281,22 +407,22 @@
   },
   "sellers": {
     "title": "Seller Verification",
-    "subtitle": "Review sellers with marketplace inventory and control seller trust badges.",
-    "empty": "No sellers with listings were found.",
-    "verified": "Verified",
-    "pending": "Pending",
+    "subtitle": "Review pending verification requests, inspect uploaded documents, and approve or reject sellers.",
+    "empty": "No pending seller verification requests.",
+    "noDocuments": "No documents uploaded.",
+    "notesPlaceholder": "Internal notes or request for more information…",
     "listingCounts": "{total} total · {active} active",
-    "columns": {
-      "seller": "Seller ID",
-      "status": "Verification",
-      "listings": "Listings",
-      "views": "Total views",
-      "joined": "Joined",
-      "actions": "Actions"
+    "verificationStatus": {
+      "none": "Not submitted",
+      "pending": "Pending review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "more_info": "More info requested"
     },
     "actions": {
-      "verify": "Verify seller",
-      "unverify": "Unverify seller"
+      "approve": "Approve",
+      "reject": "Reject",
+      "requestInfo": "Request more info"
     }
   },
   "reports": {
@@ -321,13 +447,32 @@
   },
   "settings": {
     "title": "System Settings",
-    "subtitle": "Configure marketplace-wide behavior and support defaults.",
+    "subtitle": "Configure homepage content, marketplace behavior, maintenance mode, and feature flags.",
+    "sections": {
+      "marketplace": "Marketplace configuration",
+      "homepage": "Homepage hero & featured content",
+      "featureFlags": "Feature flags"
+    },
     "maintenanceMode": "Maintenance mode",
     "maintenanceModeHelp": "When enabled, the marketplace can be restricted for non-admin users.",
     "requireListingReview": "Require listing review",
     "requireListingReviewHelp": "New listings remain in draft until an admin approves them.",
     "supportEmail": "Support email",
     "welcomeMessage": "Welcome message",
+    "heroTitle": "Hero title",
+    "heroSubtitle": "Hero subtitle",
+    "heroCtaLabel": "Hero CTA label",
+    "heroCtaHref": "Hero CTA link",
+    "featuredBreeds": "Featured breeds",
+    "featuredBreedsPlaceholder": "Warmblood, Hanoverian, KWPN",
+    "featuredStallions": "Featured stallions",
+    "featuredStallionsPlaceholder": "Stallion UUIDs or slugs, comma-separated",
+    "featureFlags": {
+      "enable_messaging": "Enable messaging",
+      "enable_favorites": "Enable favorites",
+      "enable_seller_verification": "Enable seller verification",
+      "enable_listing_moderation": "Enable listing moderation"
+    },
     "save": "Save settings",
     "saving": "Saving…",
     "saved": "Settings saved successfully."
