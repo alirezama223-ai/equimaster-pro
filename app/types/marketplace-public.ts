@@ -1,5 +1,6 @@
 import type { Horse } from "@/app/data/horses";
 import type { HorseListingRow } from "@/app/types/horse-listing";
+import type { ConversationPreview } from "@/app/types/messaging";
 import type { PedigreeHorse } from "@/app/types/pedigree";
 
 export type PublicTrainingSummarySnapshot = {
@@ -48,7 +49,7 @@ export type SellerDashboardData = {
   };
   listings: HorseListingRow[];
   metricsByListingId: Record<string, SellerDashboardListingMetrics>;
-  inquiries: import("@/app/types/inquiry").SellerInquiry[];
-  recentInquiries: import("@/app/types/inquiry").SellerInquiry[];
+  conversations: ConversationPreview[];
+  recentConversations: ConversationPreview[];
   crm: import("@/app/components/seller-dashboard/crm/seller-crm-types").SellerCrmData;
 };

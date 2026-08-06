@@ -14,4 +14,5 @@ export const MARKETPLACE_PATHS = {
   home: "/marketplace",
   sellerDashboard: "/dashboard/seller",
   createListing: "/sell",
+  inbox: "/inbox",
 } as const;

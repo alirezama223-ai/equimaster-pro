@@ -2,35 +2,33 @@
 
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-import { getUnresolvedNotificationCount } from "@/app/actions/events";
+import { useCallback, useEffect, useState } from "react";
+import { getUnreadMessageCount } from "@/app/actions/messaging";
+import { useUnreadMessagesRealtime } from "@/app/hooks/useConversationRealtime";
 
 export default function NotificationBell() {
-  const t = useTranslations("notifications");
+  const t = useTranslations("messaging");
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadCount() {
-      const result = await getUnresolvedNotificationCount();
-      if (!cancelled) {
-        setCount(result.count);
-      }
-    }
-
-    void loadCount();
-    return () => {
-      cancelled = true;
-    };
+  const refreshCount = useCallback(async () => {
+    const nextCount = await getUnreadMessageCount();
+    setCount(nextCount);
   }, []);
+
+  useEffect(() => {
+    void refreshCount();
+  }, [refreshCount]);
+
+  useUnreadMessagesRealtime(() => {
+    void refreshCount();
+  });
 
   const ariaLabel =
     count > 0 ? t("bell.ariaLabelWithCount", { count }) : t("bell.ariaLabel");
 
   return (
     <Link
-      href="/notifications"
+      href="/inbox"
       className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-gray-300 transition hover:border-blue-500/40 hover:text-white"
       aria-label={ariaLabel}
     >

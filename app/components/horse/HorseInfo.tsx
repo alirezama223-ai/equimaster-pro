@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Horse } from "@/app/data/horses";
 import FavoriteButton from "@/app/components/favorites/FavoriteButton";
-import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
+import StartConversationButton from "@/app/components/messaging/StartConversationButton";
 
 type BuyerPrefill = {
   buyerName: string;
@@ -69,11 +69,9 @@ export default async function HorseInfo({
 
         <div className="mt-8 space-y-4">
           {horse.listingUuid && listingStatus === "active" ? (
-            <ContactInquiryModal
-              horseName={horse.name}
-              listingId={horse.listingUuid}
+            <StartConversationButton
+              horseListingId={horse.listingUuid}
               returnPath={returnPath}
-              buyerPrefill={buyerPrefill}
               isAuthenticated={isAuthenticated}
               fullWidth
             />

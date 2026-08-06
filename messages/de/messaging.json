@@ -1,0 +1,34 @@
+{
+  "bell": {
+    "ariaLabel": "Posteingang öffnen",
+    "ariaLabelWithCount": "{count, plural, one {# ungelesene Nachricht} other {# ungelesene Nachrichten}}"
+  },
+  "inbox": {
+    "title": "Posteingang",
+    "subtitle": "Ihre Käufer- und Verkäufergespräche",
+    "emptyTitle": "Noch keine Gespräche",
+    "emptyMessage": "Wenn Sie einen Verkäufer kontaktieren oder Käufernachrichten erhalten, erscheinen Gespräche hier.",
+    "noMessagesYet": "Noch keine Nachrichten",
+    "loadMore": "Weitere Gespräche laden",
+    "loadingMore": "Wird geladen..."
+  },
+  "chat": {
+    "loading": "Gespräch wird geladen",
+    "loadError": "Dieses Gespräch konnte nicht geladen werden.",
+    "sendError": "Ihre Nachricht konnte gerade nicht gesendet werden.",
+    "unavailableTitle": "Gespräch nicht verfügbar",
+    "backToInbox": "Zurück zum Posteingang",
+    "emptyTitle": "Gespräch beginnen",
+    "emptyMessage": "Senden Sie eine Nachricht zu diesem Pferdeinserat.",
+    "composerLabel": "Nachricht schreiben",
+    "composerPlaceholder": "Nachricht schreiben...",
+    "shortcutHint": "Enter zum Senden · Umschalt+Enter für neue Zeile",
+    "send": "Senden",
+    "sending": "Wird gesendet...",
+    "loadOlder": "Ältere Nachrichten laden",
+    "loadingOlder": "Wird geladen...",
+    "you": "Sie",
+    "selectTitle": "Gespräch auswählen",
+    "selectMessage": "Wählen Sie links ein Gespräch, um Nachrichten zu einem Pferdeinserat anzuzeigen."
+  }
+}

@@ -21,7 +21,8 @@ export type MetadataPageKey =
   | "notifications"
   | "training"
   | "admin"
-  | "sellerDashboard";
+  | "sellerDashboard"
+  | "inbox";
 
 const NO_INDEX_PAGES = new Set<MetadataPageKey>([
   "login",
@@ -33,6 +34,7 @@ const NO_INDEX_PAGES = new Set<MetadataPageKey>([
   "training",
   "admin",
   "sellerDashboard",
+  "inbox",
 ]);
 
 function buildLanguageAlternates(pathname: string, baseUrl: string): Record<string, string> {

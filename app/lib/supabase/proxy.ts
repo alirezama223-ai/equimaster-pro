@@ -12,6 +12,7 @@ const protectedRoutes = [
   "/favorites",
   "/training",
   "/notifications",
+  "/inbox",
 ];
 
 function isProtectedPath(pathname: string) {

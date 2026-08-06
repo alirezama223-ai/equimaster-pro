@@ -1,0 +1,34 @@
+{
+  "bell": {
+    "ariaLabel": "Open inbox",
+    "ariaLabelWithCount": "{count, plural, one {# unread message} other {# unread messages}}"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "subtitle": "Your buyer and seller conversations",
+    "emptyTitle": "No conversations yet",
+    "emptyMessage": "When you message a seller or receive buyer messages, conversations will appear here.",
+    "noMessagesYet": "No messages yet",
+    "loadMore": "Load more conversations",
+    "loadingMore": "Loading..."
+  },
+  "chat": {
+    "loading": "Loading conversation",
+    "loadError": "Unable to load this conversation.",
+    "sendError": "Unable to send your message right now.",
+    "unavailableTitle": "Conversation unavailable",
+    "backToInbox": "Back to inbox",
+    "emptyTitle": "Start the conversation",
+    "emptyMessage": "Send a message about this horse listing.",
+    "composerLabel": "Write a message",
+    "composerPlaceholder": "Write your message...",
+    "shortcutHint": "Enter to send · Shift+Enter for a new line",
+    "send": "Send",
+    "sending": "Sending...",
+    "loadOlder": "Load older messages",
+    "loadingOlder": "Loading...",
+    "you": "You",
+    "selectTitle": "Select a conversation",
+    "selectMessage": "Choose a thread from the list to view messages about a horse listing."
+  }
+}

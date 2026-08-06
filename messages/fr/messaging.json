@@ -1,0 +1,34 @@
+{
+  "bell": {
+    "ariaLabel": "Ouvrir la boîte de réception",
+    "ariaLabelWithCount": "{count, plural, one {# message non lu} other {# messages non lus}}"
+  },
+  "inbox": {
+    "title": "Boîte de réception",
+    "subtitle": "Vos conversations acheteur et vendeur",
+    "emptyTitle": "Aucune conversation",
+    "emptyMessage": "Lorsque vous contactez un vendeur ou recevez des messages, les conversations apparaîtront ici.",
+    "noMessagesYet": "Pas encore de messages",
+    "loadMore": "Charger plus de conversations",
+    "loadingMore": "Chargement..."
+  },
+  "chat": {
+    "loading": "Chargement de la conversation",
+    "loadError": "Impossible de charger cette conversation.",
+    "sendError": "Impossible d'envoyer votre message pour le moment.",
+    "unavailableTitle": "Conversation indisponible",
+    "backToInbox": "Retour à la boîte de réception",
+    "emptyTitle": "Commencer la conversation",
+    "emptyMessage": "Envoyez un message à propos de cette annonce.",
+    "composerLabel": "Écrire un message",
+    "composerPlaceholder": "Écrivez votre message...",
+    "shortcutHint": "Entrée pour envoyer · Maj+Entrée pour une nouvelle ligne",
+    "send": "Envoyer",
+    "sending": "Envoi...",
+    "loadOlder": "Charger les messages plus anciens",
+    "loadingOlder": "Chargement...",
+    "you": "Vous",
+    "selectTitle": "Sélectionner une conversation",
+    "selectMessage": "Choisissez une conversation à gauche pour voir les messages d'une annonce."
+  }
+}

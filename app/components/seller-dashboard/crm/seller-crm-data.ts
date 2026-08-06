@@ -1,7 +1,6 @@
 import { formatListingRowPrice } from "@/app/lib/horse-listings";
 import type { HorseListingRow } from "@/app/types/horse-listing";
-import type { SellerInquiry } from "@/app/types/inquiry";
-import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
+import type { ConversationPreview, MessageRow } from "@/app/types/messaging";
 import type {
   CrmAiRecommendation,
   CrmBuyer,
@@ -14,123 +13,156 @@ import type {
   SellerCrmData,
 } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
-function inquiryToStage(inquiry: SellerInquiry): PipelineStage {
-  if (inquiry.status === "replied") return "negotiating";
-  if (inquiry.status === "read") return "contacted";
-  if (inquiry.status === "archived") return "sold";
+export type SellerCrmConversation = ConversationPreview & {
+  buyer_id: string;
+  seller_id: string;
+  messages: MessageRow[];
+};
+
+function conversationToStage(
+  conversation: SellerCrmConversation,
+  messages: MessageRow[]
+): PipelineStage {
+  const sorted = [...messages].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  const lastMessage = sorted[0];
+
+  if (conversation.unread_count > 0 && lastMessage?.sender_id === conversation.buyer_id) {
+    return "new-inquiry";
+  }
+
+  if (messages.some((message) => message.sender_id === conversation.seller_id)) {
+    return messages.length >= 4 ? "negotiating" : "contacted";
+  }
+
   return "new-inquiry";
 }
 
-function inquiryToPriority(inquiry: SellerInquiry): PipelinePriority {
-  if (inquiry.status === "new") return "high";
-  if (inquiry.message.length > 120) return "medium";
+function conversationToPriority(conversation: SellerCrmConversation): PipelinePriority {
+  if (conversation.unread_count > 0) return "high";
+  if ((conversation.last_message_body?.length ?? 0) > 120) return "medium";
   return "low";
 }
 
-function buildPipelineFromInquiries(
-  inquiries: SellerInquiry[],
+function buildPipelineFromConversations(
+  conversations: SellerCrmConversation[],
   listings: HorseListingRow[],
   priceOnRequestLabel: string
 ): PipelineDeal[] {
-  return inquiries.map((inquiry) => {
+  return conversations.map((conversation) => {
     const listing =
-      listings.find((row) => row.id === inquiry.horse_listing_id) ??
-      listings.find((row) => row.name === inquiry.horse_name);
+      listings.find((row) => row.id === conversation.horse_listing_id) ??
+      listings.find((row) => row.name === conversation.horse_name);
     const priceLabel = listing
       ? formatListingRowPrice(listing, priceOnRequestLabel)
       : priceOnRequestLabel;
 
     return {
-      id: `inquiry-${inquiry.id}`,
-      buyerName: inquiry.buyer_name,
-      horseName: inquiry.horse_name,
+      id: `conversation-${conversation.id}`,
+      buyerName: conversation.buyer_display_name,
+      horseName: conversation.horse_name,
       priceLabel,
-      dateAt: inquiry.created_at,
-      priority: inquiryToPriority(inquiry),
-      stage: inquiryToStage(inquiry),
+      dateAt: conversation.last_message_at ?? conversation.updated_at,
+      priority: conversationToPriority(conversation),
+      stage: conversationToStage(conversation, conversation.messages),
     };
   });
 }
 
-function deriveBuyerStatus(inquiriesForBuyer: SellerInquiry[]): CrmBuyer["status"] {
-  const sorted = [...inquiriesForBuyer].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+function deriveBuyerStatus(conversationsForBuyer: SellerCrmConversation[]): CrmBuyer["status"] {
+  const sorted = [...conversationsForBuyer].sort(
+    (a, b) =>
+      new Date(b.last_message_at ?? b.updated_at).getTime() -
+      new Date(a.last_message_at ?? a.updated_at).getTime()
   );
   const latest = sorted[0];
 
-  if (inquiriesForBuyer.length >= 3) return "vip";
-  if (inquiriesForBuyer.length >= 2) return "returning";
-  if (latest?.status === "new") return "new";
+  if (conversationsForBuyer.length >= 3) return "vip";
+  if (conversationsForBuyer.length >= 2) return "returning";
+  if (latest?.unread_count) return "new";
 
-  const createdAt = latest ? new Date(latest.created_at).getTime() : 0;
+  const createdAt = latest
+    ? new Date(latest.last_message_at ?? latest.updated_at).getTime()
+    : 0;
   const isRecent = Date.now() - createdAt < 7 * 86_400_000;
   if (isRecent) return "hot";
 
   return "returning";
 }
 
-function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
-  const buyerMap = new Map<string, SellerInquiry[]>();
+function buildBuyersFromConversations(conversations: SellerCrmConversation[]): CrmBuyer[] {
+  const buyerMap = new Map<string, SellerCrmConversation[]>();
 
-  for (const inquiry of inquiries) {
-    const key = inquiry.buyer_email.toLowerCase();
+  for (const conversation of conversations) {
+    const key = conversation.buyer_id;
     const existing = buyerMap.get(key) ?? [];
-    existing.push(inquiry);
+    existing.push(conversation);
     buyerMap.set(key, existing);
   }
 
-  return Array.from(buyerMap.entries()).map(([email, buyerInquiries]) => {
-    const sorted = [...buyerInquiries].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  return Array.from(buyerMap.entries()).map(([buyerId, buyerConversations]) => {
+    const sorted = [...buyerConversations].sort(
+      (a, b) =>
+        new Date(b.last_message_at ?? b.updated_at).getTime() -
+        new Date(a.last_message_at ?? a.updated_at).getTime()
     );
-    const latest = sorted[0];
+    const latest = sorted[0]!;
 
     return {
-      id: `buyer-${latest.id}`,
-      name: latest.buyer_name,
-      email,
+      id: `buyer-${buyerId}`,
+      name: latest.buyer_display_name,
+      email: `${buyerId.slice(0, 8)}@conversation.local`,
       interestedHorse: latest.horse_name,
-      lastContactAt: latest.created_at,
-      status: deriveBuyerStatus(buyerInquiries),
+      lastContactAt: latest.last_message_at ?? latest.updated_at,
+      status: deriveBuyerStatus(buyerConversations),
     };
   });
 }
 
-function buildNotifications(inquiries: SellerInquiry[]): CrmNotification[] {
-  return inquiries.slice(0, 10).map((inquiry) => ({
-    id: `notif-inquiry-${inquiry.id}`,
+function buildNotifications(conversations: SellerCrmConversation[]): CrmNotification[] {
+  return conversations.slice(0, 10).map((conversation) => ({
+    id: `notif-conversation-${conversation.id}`,
     type: "inquiry" as const,
     titleKey: "crm.notifications.types.inquiry.title",
     descriptionKey: "crm.notifications.types.inquiry.description",
     descriptionValues: {
-      buyer: inquiry.buyer_name,
-      horse: inquiry.horse_name,
+      buyer: conversation.buyer_display_name,
+      horse: conversation.horse_name,
     },
-    timeAt: inquiry.created_at,
-    unread: inquiry.status === "new",
+    timeAt: conversation.last_message_at ?? conversation.updated_at,
+    unread: conversation.unread_count > 0,
   }));
 }
 
-function computeAverageResponseMs(inquiries: SellerInquiry[]): number | null {
+function computeAverageResponseMs(conversations: SellerCrmConversation[]): number | null {
   const durations: number[] = [];
 
-  for (const inquiry of inquiries) {
-    const inquiryCreatedAt = new Date(inquiry.created_at).getTime();
-    if (Number.isNaN(inquiryCreatedAt)) continue;
+  for (const conversation of conversations) {
+    const sorted = [...conversation.messages].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
 
-    const sellerReplies = inquiry.messages
-      .filter((message) => message.sender_id === inquiry.seller_id)
-      .sort(
-        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      );
+    let waitingSince: number | null = null;
 
-    const firstReply = sellerReplies[0];
-    if (!firstReply) continue;
+    for (const message of sorted) {
+      const createdAt = new Date(message.created_at).getTime();
+      if (Number.isNaN(createdAt)) continue;
 
-    const replyAt = new Date(firstReply.created_at).getTime();
-    if (Number.isNaN(replyAt) || replyAt <= inquiryCreatedAt) continue;
+      if (message.sender_id === conversation.buyer_id) {
+        waitingSince = createdAt;
+        continue;
+      }
 
-    durations.push(replyAt - inquiryCreatedAt);
+      if (
+        message.sender_id === conversation.seller_id &&
+        waitingSince !== null &&
+        createdAt > waitingSince
+      ) {
+        durations.push(createdAt - waitingSince);
+        waitingSince = null;
+      }
+    }
   }
 
   if (durations.length === 0) return null;
@@ -140,8 +172,8 @@ function computeAverageResponseMs(inquiries: SellerInquiry[]): number | null {
 
 function buildPerformance(
   listings: HorseListingRow[],
-  metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  inquiries: SellerInquiry[],
+  metricsByListingId: Record<string, { viewCount: number; favoriteCount: number }>,
+  conversations: SellerCrmConversation[],
   stats: { sold: number; active: number }
 ): CrmPerformanceSnapshot {
   const listingMetrics = listings.map((listing) => ({
@@ -164,7 +196,7 @@ function buildPerformance(
     .sort((a, b) => b.favorites - a.favorites)[0];
 
   const top = rankedByScore[0];
-  const averageResponseMs = computeAverageResponseMs(inquiries);
+  const averageResponseMs = computeAverageResponseMs(conversations);
   const hasSalesData = stats.active + stats.sold > 0;
   const conversionRate = hasSalesData
     ? Math.round((stats.sold / Math.max(stats.active + stats.sold, 1)) * 100)
@@ -179,7 +211,7 @@ function buildPerformance(
     highestSavedCount: mostSaved?.favorites ?? 0,
     averageResponseMs,
     averageResponseFallbackKey:
-      inquiries.length === 0
+      conversations.length === 0
         ? "crm.performance.fallbacks.noInquiries"
         : averageResponseMs === null
           ? "crm.performance.fallbacks.noResponseData"
@@ -191,13 +223,13 @@ function buildPerformance(
 
 function buildAiRecommendations(
   listings: HorseListingRow[],
-  inquiries: SellerInquiry[]
+  conversations: SellerCrmConversation[]
 ): CrmAiRecommendation[] {
   const recommendationIds: string[] = [];
-  const hasUnreadInquiries = inquiries.some((inquiry) => inquiry.status === "new");
+  const hasUnreadMessages = conversations.some((conversation) => conversation.unread_count > 0);
   const activeListing = listings.find((listing) => listing.status === "active") ?? listings[0];
 
-  if (hasUnreadInquiries) {
+  if (hasUnreadMessages) {
     recommendationIds.push("ai-response");
   }
 
@@ -218,8 +250,8 @@ function buildAiRecommendations(
 
 type BuildArgs = {
   listings: HorseListingRow[];
-  metricsByListingId: Record<string, SellerDashboardListingMetrics>;
-  inquiries: SellerInquiry[];
+  metricsByListingId: Record<string, { viewCount: number; favoriteCount: number }>;
+  conversations: SellerCrmConversation[];
   stats: {
     total: number;
     active: number;
@@ -234,17 +266,17 @@ type BuildArgs = {
 export function buildSellerCrmData({
   listings,
   metricsByListingId,
-  inquiries,
+  conversations,
   stats,
   priceOnRequestLabel,
 }: BuildArgs): SellerCrmData {
   return {
-    pipeline: buildPipelineFromInquiries(inquiries, listings, priceOnRequestLabel),
-    buyers: buildBuyersFromInquiries(inquiries),
+    pipeline: buildPipelineFromConversations(conversations, listings, priceOnRequestLabel),
+    buyers: buildBuyersFromConversations(conversations),
     visits: [] as CrmVisit[],
-    notifications: buildNotifications(inquiries),
-    performance: buildPerformance(listings, metricsByListingId, inquiries, stats),
-    aiRecommendations: buildAiRecommendations(listings, inquiries),
+    notifications: buildNotifications(conversations),
+    performance: buildPerformance(listings, metricsByListingId, conversations, stats),
+    aiRecommendations: buildAiRecommendations(listings, conversations),
   };
 }
 
@@ -263,4 +295,29 @@ export function formatAverageResponseDuration(
     return t("crm.performance.fallbacks.averageResponseHours", { count: hours });
   }
   return t("crm.performance.fallbacks.averageResponseMinutes", { count: minutes });
+}
+
+function attachMessagesToConversations(
+  conversations: ConversationPreview[],
+  messages: MessageRow[]
+): SellerCrmConversation[] {
+  const grouped = new Map<string, MessageRow[]>();
+
+  for (const message of messages) {
+    const existing = grouped.get(message.conversation_id) ?? [];
+    existing.push(message);
+    grouped.set(message.conversation_id, existing);
+  }
+
+  return conversations.map((conversation) => ({
+    ...conversation,
+    messages: grouped.get(conversation.id) ?? [],
+  }));
+}
+
+export function buildSellerCrmConversations(
+  conversations: ConversationPreview[],
+  messages: MessageRow[]
+): SellerCrmConversation[] {
+  return attachMessagesToConversations(conversations, messages);
 }

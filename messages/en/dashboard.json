@@ -78,7 +78,9 @@
     "description": "Recent buyer inquiries linked to your listings.",
     "emptyTitle": "No messages yet",
     "emptyMessage": "When buyers reach out about your horses, conversations will appear here.",
-    "unread": "Unread"
+    "unread": "Unread",
+    "viewInbox": "Open inbox",
+    "noPreview": "No messages yet"
   },
   "tasks": {
     "eyebrow": "Tasks",

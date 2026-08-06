@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Horse } from "@/app/data/horses";
-import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
+import StartConversationButton from "@/app/components/messaging/StartConversationButton";
 
 type BuyerPrefill = {
   buyerName: string;
@@ -53,11 +53,9 @@ export default async function ContactSeller({
       </div>
 
       {canInquire && horse.listingUuid ? (
-        <ContactInquiryModal
-          horseName={horse.name}
-          listingId={horse.listingUuid}
+        <StartConversationButton
+          horseListingId={horse.listingUuid}
           returnPath={returnPath}
-          buyerPrefill={buyerPrefill}
           isAuthenticated={isAuthenticated}
         />
       ) : (

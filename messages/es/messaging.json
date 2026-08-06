@@ -1,0 +1,34 @@
+{
+  "bell": {
+    "ariaLabel": "Abrir bandeja de entrada",
+    "ariaLabelWithCount": "{count, plural, one {# mensaje sin leer} other {# mensajes sin leer}}"
+  },
+  "inbox": {
+    "title": "Bandeja de entrada",
+    "subtitle": "Sus conversaciones de comprador y vendedor",
+    "emptyTitle": "Aún no hay conversaciones",
+    "emptyMessage": "Cuando contacte a un vendedor o reciba mensajes de compradores, las conversaciones aparecerán aquí.",
+    "noMessagesYet": "Aún no hay mensajes",
+    "loadMore": "Cargar más conversaciones",
+    "loadingMore": "Cargando..."
+  },
+  "chat": {
+    "loading": "Cargando conversación",
+    "loadError": "No se pudo cargar esta conversación.",
+    "sendError": "No se pudo enviar su mensaje en este momento.",
+    "unavailableTitle": "Conversación no disponible",
+    "backToInbox": "Volver a la bandeja de entrada",
+    "emptyTitle": "Iniciar la conversación",
+    "emptyMessage": "Envíe un mensaje sobre este anuncio de caballo.",
+    "composerLabel": "Escribir un mensaje",
+    "composerPlaceholder": "Escriba su mensaje...",
+    "shortcutHint": "Enter para enviar · Mayús+Enter para nueva línea",
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "loadOlder": "Cargar mensajes anteriores",
+    "loadingOlder": "Cargando...",
+    "you": "Usted",
+    "selectTitle": "Seleccionar una conversación",
+    "selectMessage": "Elija una conversación a la izquierda para ver mensajes sobre un anuncio."
+  }
+}

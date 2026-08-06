@@ -33,7 +33,12 @@
     "generic": "Contact the seller for more information.",
     "privateInquiry": "Send a private inquiry through EquiMaster Pro. Your message is shared only with the seller.",
     "contactSeller": "Contact Seller",
+    "startConversation": "Start Conversation",
     "mailSubject": "Inquiry about {name}"
+  },
+  "conversation": {
+    "startConversation": "Start Conversation",
+    "starting": "Opening..."
   },
   "inquiry": {
     "modalEyebrow": "Contact Seller",

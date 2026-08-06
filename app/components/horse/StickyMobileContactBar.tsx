@@ -1,6 +1,6 @@
 "use client";
 
-import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
+import StartConversationButton from "@/app/components/messaging/StartConversationButton";
 import HorseQuickActions from "@/app/components/horse/HorseQuickActions";
 import { SAFE_AREA_BOTTOM_PADDING_STYLE } from "@/app/lib/browser-compat";
 
@@ -53,14 +53,11 @@ export default function StickyMobileContactBar({
         />
       </div>
       <div className="border-t border-white/[0.06] px-4 pb-3 pt-2">
-        <ContactInquiryModal
-          horseName={horseName}
-          listingId={listingId}
+        <StartConversationButton
+          horseListingId={listingId}
           returnPath={returnPath}
-          buyerPrefill={buyerPrefill}
           isAuthenticated={isAuthenticated}
           fullWidth
-          triggerLabel={contactLabel}
           triggerClassName="w-full min-h-12 rounded-xl bg-blue-600 px-4 text-base font-semibold text-white transition active:bg-blue-500"
         />
       </div>

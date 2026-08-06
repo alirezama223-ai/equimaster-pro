@@ -1,9 +1,12 @@
 "use server";
 
 import { getTranslations } from "next-intl/server";
-import { getSellerInquiries } from "@/app/actions/inquiries";
 import { getMyHorseListings, getSellerListingStats } from "@/app/actions/horse-listings";
-import { buildSellerCrmData } from "@/app/components/seller-dashboard/crm/seller-crm-data";
+import { getSellerConversationsWithMessages } from "@/app/actions/messaging";
+import {
+  buildSellerCrmConversations,
+  buildSellerCrmData,
+} from "@/app/components/seller-dashboard/crm/seller-crm-data";
 import { createClient } from "@/app/lib/supabase/server";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerDashboardData, SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
@@ -27,10 +30,10 @@ export async function getSellerDashboardData(): Promise<{
     return { dashboard: null, unauthenticated: true };
   }
 
-  const [listingsResult, statsResult, inquiriesResult] = await Promise.all([
+  const [listingsResult, statsResult, messagingResult] = await Promise.all([
     getMyHorseListings(),
     getSellerListingStats(),
-    getSellerInquiries(),
+    getSellerConversationsWithMessages(),
   ]);
 
   if (listingsResult.error) {
@@ -39,7 +42,11 @@ export async function getSellerDashboardData(): Promise<{
 
   const listings = (listingsResult.data ?? []) as ListingWithCounts[];
   const listingIds = listings.map((listing) => listing.id);
-  const inquiries = inquiriesResult.inquiries;
+  const conversations = messagingResult.conversations;
+  const crmConversations = buildSellerCrmConversations(
+    conversations,
+    messagingResult.messages
+  );
 
   let favoriteRows: { horse_listing_id: string }[] = [];
   if (listingIds.length > 0) {
@@ -48,16 +55,6 @@ export async function getSellerDashboardData(): Promise<{
       .select("horse_listing_id")
       .in("horse_listing_id", listingIds);
     favoriteRows = (data ?? []) as { horse_listing_id: string }[];
-  }
-
-  let inquiryRows: { horse_listing_id: string }[] = [];
-  if (listingIds.length > 0) {
-    const { data } = await supabase
-      .from("inquiries")
-      .select("horse_listing_id")
-      .eq("seller_id", user.id)
-      .in("horse_listing_id", listingIds);
-    inquiryRows = (data ?? []) as { horse_listing_id: string }[];
   }
 
   const metricsByListingId: Record<string, SellerDashboardListingMetrics> = {};
@@ -83,8 +80,8 @@ export async function getSellerDashboardData(): Promise<{
     }
   }
 
-  for (const row of inquiryRows) {
-    const metrics = metricsByListingId[row.horse_listing_id];
+  for (const conversation of conversations) {
+    const metrics = metricsByListingId[conversation.horse_listing_id];
     if (metrics) metrics.inquiryCount += 1;
   }
 
@@ -93,7 +90,7 @@ export async function getSellerDashboardData(): Promise<{
     favoriteRows.length > 0
       ? favoriteRows.length
       : listings.reduce((sum, listing) => sum + (listing.favorite_count ?? 0), 0);
-  const totalInquiries = inquiryRows.length;
+  const totalInquiries = conversations.length;
 
   const tCommon = await getTranslations("common");
   const stats = {
@@ -108,12 +105,12 @@ export async function getSellerDashboardData(): Promise<{
       stats,
       listings: listings as HorseListingRow[],
       metricsByListingId,
-      inquiries,
-      recentInquiries: inquiries.slice(0, 8),
+      conversations,
+      recentConversations: conversations.slice(0, 8),
       crm: buildSellerCrmData({
         listings: listings as HorseListingRow[],
         metricsByListingId,
-        inquiries,
+        conversations: crmConversations,
         stats,
         priceOnRequestLabel: tCommon("priceOnRequest"),
       }),

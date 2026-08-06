@@ -162,6 +162,15 @@
       "openGraphDescription": "Manage your horse listings and seller activity.",
       "twitterTitle": "Seller Dashboard | EquiMaster Pro",
       "twitterDescription": "Manage your horse listings and seller activity."
+    },
+    "inbox": {
+      "title": "Inbox",
+      "description": "Buyer and seller conversations about horse listings on EquiMaster Pro.",
+      "keywords": "horse marketplace inbox, buyer seller messages",
+      "openGraphTitle": "Inbox | EquiMaster Pro",
+      "openGraphDescription": "Manage your horse marketplace conversations.",
+      "twitterTitle": "Inbox | EquiMaster Pro",
+      "twitterDescription": "Manage your horse marketplace conversations."
     }
   },
   "entities": {

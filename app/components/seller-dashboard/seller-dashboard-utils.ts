@@ -1,5 +1,5 @@
 import type { HorseListingRow } from "@/app/types/horse-listing";
-import type { SellerInquiry } from "@/app/types/inquiry";
+import type { ConversationPreview } from "@/app/types/messaging";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
 
 export type SellerDashboardStats = {
@@ -216,10 +216,12 @@ function buildListingMetricSeries(
 export function buildAnalyticsSeries(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  inquiries: SellerInquiry[]
+  conversations: ConversationPreview[]
 ): SellerChartSeries[] {
-  const inquiryDates = inquiries.map((inquiry) => inquiry.created_at);
-  const inquiryDaily = bucketSeriesFromDates(inquiryDates);
+  const conversationDates = conversations.map(
+    (conversation) => conversation.last_message_at ?? conversation.updated_at
+  );
+  const inquiryDaily = bucketSeriesFromDates(conversationDates);
   const inquiryTotal = inquiryDaily.reduce((sum, point) => sum + point.value, 0);
 
   const viewsByListing = buildListingMetricSeries(listings, metricsByListingId, "viewCount");
@@ -283,8 +285,8 @@ export function buildAnalyticsSeries(
   ];
 }
 
-export function countUnreadInquiries(inquiries: SellerInquiry[]): number {
-  return inquiries.filter((inquiry) => inquiry.status === "new").length;
+export function countUnreadConversations(conversations: ConversationPreview[]): number {
+  return conversations.reduce((sum, conversation) => sum + conversation.unread_count, 0);
 }
 
 export function getBuyerInitials(name: string): string {

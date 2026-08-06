@@ -28,15 +28,15 @@ import {
   buildOverviewMetrics,
   buildSellerTasks,
   computeProfileScore,
-  countUnreadInquiries,
+  countUnreadConversations,
 } from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import type { ConversationPreview } from "@/app/types/messaging";
 import { listingRowToFormData, listingImagesFromRow } from "@/app/lib/horse-listings";
 import type { ListingActionKey } from "@/app/lib/marketplace/listing-actions-config";
 import { resolveListingActionError } from "@/app/lib/marketplace/listing-action-errors";
 import { getPublicListingPath, getListingEditPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
-import type { SellerInquiry } from "@/app/types/inquiry";
 
 type Props = {
   dashboard: {
@@ -52,8 +52,8 @@ type Props = {
     };
     listings: HorseListingRow[];
     metricsByListingId: Record<string, SellerDashboardListingMetrics>;
-    inquiries: SellerInquiry[];
-    recentInquiries: SellerInquiry[];
+    conversations: ConversationPreview[];
+    recentConversations: ConversationPreview[];
     crm: import("@/app/components/seller-dashboard/crm/seller-crm-types").SellerCrmData;
   };
   sellerName: string;
@@ -75,8 +75,8 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     [dashboard.listings]
   );
   const unreadMessages = useMemo(
-    () => countUnreadInquiries(dashboard.inquiries),
-    [dashboard.inquiries]
+    () => countUnreadConversations(dashboard.conversations),
+    [dashboard.conversations]
   );
   const overviewMetrics = useMemo(
     () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages),
@@ -87,9 +87,9 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
       buildAnalyticsSeries(
         dashboard.listings,
         dashboard.metricsByListingId,
-        dashboard.inquiries
+        dashboard.conversations
       ),
-    [dashboard.listings, dashboard.metricsByListingId, dashboard.inquiries]
+    [dashboard.listings, dashboard.metricsByListingId, dashboard.conversations]
   );
   const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
 
@@ -236,7 +236,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
 
             <FadeUp>
               <SellerDashboardMessages
-                inquiries={dashboard.recentInquiries}
+                conversations={dashboard.recentConversations}
                 formatTime={formatTime}
               />
             </FadeUp>

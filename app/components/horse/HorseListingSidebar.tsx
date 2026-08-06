@@ -2,7 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import ContactInquiryModal from "@/app/components/horse/ContactInquiryModal";
+import StartConversationButton from "@/app/components/messaging/StartConversationButton";
 import HorseQuickActions from "@/app/components/horse/HorseQuickActions";
 
 type BuyerPrefill = {
@@ -71,11 +71,9 @@ export default function HorseListingSidebar({
           />
 
           {canInquire && listingId ? (
-            <ContactInquiryModal
-              horseName={horseName}
-              listingId={listingId}
+            <StartConversationButton
+              horseListingId={listingId}
               returnPath={returnPath}
-              buyerPrefill={buyerPrefill}
               isAuthenticated={isAuthenticated}
               fullWidth
               triggerClassName="w-full min-h-12 rounded-xl bg-blue-600 px-5 py-3.5 text-base font-semibold text-white transition [@media(hover:hover)]:hover:bg-blue-500"

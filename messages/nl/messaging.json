@@ -1,0 +1,34 @@
+{
+  "bell": {
+    "ariaLabel": "Inbox openen",
+    "ariaLabelWithCount": "{count, plural, one {# ongelezen bericht} other {# ongelezen berichten}}"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "subtitle": "Uw gesprekken met kopers en verkopers",
+    "emptyTitle": "Nog geen gesprekken",
+    "emptyMessage": "Wanneer u een verkoper bericht of kopersberichten ontvangt, verschijnen gesprekken hier.",
+    "noMessagesYet": "Nog geen berichten",
+    "loadMore": "Meer gesprekken laden",
+    "loadingMore": "Laden..."
+  },
+  "chat": {
+    "loading": "Gesprek laden",
+    "loadError": "Dit gesprek kon niet worden geladen.",
+    "sendError": "Uw bericht kon nu niet worden verzonden.",
+    "unavailableTitle": "Gesprek niet beschikbaar",
+    "backToInbox": "Terug naar inbox",
+    "emptyTitle": "Start het gesprek",
+    "emptyMessage": "Stuur een bericht over deze advertentie.",
+    "composerLabel": "Schrijf een bericht",
+    "composerPlaceholder": "Schrijf uw bericht...",
+    "shortcutHint": "Enter om te verzenden · Shift+Enter voor nieuwe regel",
+    "send": "Verzenden",
+    "sending": "Verzenden...",
+    "loadOlder": "Oudere berichten laden",
+    "loadingOlder": "Laden...",
+    "you": "U",
+    "selectTitle": "Selecteer een gesprek",
+    "selectMessage": "Kies links een gesprek om berichten over een paardenadvertentie te bekijken."
+  }
+}
