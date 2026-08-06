@@ -52,9 +52,7 @@ function buildPipelineFromInquiries(
   });
 }
 
-function deriveBuyerStatus(
-  inquiriesForBuyer: SellerInquiry[]
-): CrmBuyer["status"] {
+function deriveBuyerStatus(inquiriesForBuyer: SellerInquiry[]): CrmBuyer["status"] {
   const sorted = [...inquiriesForBuyer].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
@@ -113,45 +111,81 @@ function buildNotifications(inquiries: SellerInquiry[]): CrmNotification[] {
   }));
 }
 
+function computeAverageResponseMs(inquiries: SellerInquiry[]): number | null {
+  const durations: number[] = [];
+
+  for (const inquiry of inquiries) {
+    const inquiryCreatedAt = new Date(inquiry.created_at).getTime();
+    if (Number.isNaN(inquiryCreatedAt)) continue;
+
+    const sellerReplies = inquiry.messages
+      .filter((message) => message.sender_id === inquiry.seller_id)
+      .sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+
+    const firstReply = sellerReplies[0];
+    if (!firstReply) continue;
+
+    const replyAt = new Date(firstReply.created_at).getTime();
+    if (Number.isNaN(replyAt) || replyAt <= inquiryCreatedAt) continue;
+
+    durations.push(replyAt - inquiryCreatedAt);
+  }
+
+  if (durations.length === 0) return null;
+
+  return Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length);
+}
+
 function buildPerformance(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  stats: { sold: number; totalInquiries: number; active: number }
+  inquiries: SellerInquiry[],
+  stats: { sold: number; active: number }
 ): CrmPerformanceSnapshot {
-  const ranked = listings
-    .map((listing) => ({
-      name: listing.name,
-      views: metricsByListingId[listing.id]?.viewCount ?? listing.view_count ?? 0,
-      favorites: metricsByListingId[listing.id]?.favoriteCount ?? 0,
-    }))
-    .sort((a, b) => b.views + b.favorites * 2 - (a.views + a.favorites * 2));
+  const listingMetrics = listings.map((listing) => ({
+    name: listing.name,
+    views: metricsByListingId[listing.id]?.viewCount ?? listing.view_count ?? 0,
+    favorites: metricsByListingId[listing.id]?.favoriteCount ?? 0,
+    score:
+      (metricsByListingId[listing.id]?.viewCount ?? listing.view_count ?? 0) +
+      (metricsByListingId[listing.id]?.favoriteCount ?? 0) * 2,
+  }));
 
-  const top = ranked[0];
-  const mostViewed = [...ranked].sort((a, b) => b.views - a.views)[0];
-  const mostSaved = [...ranked].sort((a, b) => b.favorites - a.favorites)[0];
+  const rankedByScore = [...listingMetrics]
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score);
+  const mostViewed = [...listingMetrics]
+    .filter((entry) => entry.views > 0)
+    .sort((a, b) => b.views - a.views)[0];
+  const mostSaved = [...listingMetrics]
+    .filter((entry) => entry.favorites > 0)
+    .sort((a, b) => b.favorites - a.favorites)[0];
 
-  const conversionRate =
-    stats.active > 0 ? Math.round((stats.sold / Math.max(stats.active + stats.sold, 1)) * 100) : 0;
+  const top = rankedByScore[0];
+  const averageResponseMs = computeAverageResponseMs(inquiries);
+  const hasSalesData = stats.active + stats.sold > 0;
+  const conversionRate = hasSalesData
+    ? Math.round((stats.sold / Math.max(stats.active + stats.sold, 1)) * 100)
+    : null;
 
   return {
-    bestPerformingHorse: top?.name ?? "",
-    bestPerformingFallbackKey: top ? undefined : "crm.performance.fallbacks.bestPerforming",
-    mostViewedHorse: mostViewed?.name ?? "",
-    mostViewedFallbackKey: mostViewed ? undefined : "crm.performance.fallbacks.noViews",
+    hasListingData: listings.length > 0,
+    bestPerformingHorse: top?.name ?? null,
+    mostViewedHorse: mostViewed?.name ?? null,
     mostViewedCount: mostViewed?.views ?? 0,
-    highestSavedHorse: mostSaved?.name ?? "",
-    highestSavedFallbackKey: mostSaved ? undefined : "crm.performance.fallbacks.noFavorites",
+    highestSavedHorse: mostSaved?.name ?? null,
     highestSavedCount: mostSaved?.favorites ?? 0,
-    averageResponseKey:
-      stats.totalInquiries > 0
-        ? "crm.performance.fallbacks.averageResponse"
-        : "crm.performance.fallbacks.noInquiries",
-    conversionKey:
-      stats.active + stats.sold > 0
-        ? "crm.performance.fallbacks.conversionRate"
-        : "crm.performance.fallbacks.zeroConversion",
-    conversionValues:
-      stats.active + stats.sold > 0 ? { rate: conversionRate } : undefined,
+    averageResponseMs,
+    averageResponseFallbackKey:
+      inquiries.length === 0
+        ? "crm.performance.fallbacks.noInquiries"
+        : averageResponseMs === null
+          ? "crm.performance.fallbacks.noResponseData"
+          : undefined,
+    conversionRate,
+    conversionFallbackKey: hasSalesData ? undefined : "crm.performance.fallbacks.noListingsForConversion",
   };
 }
 
@@ -171,7 +205,6 @@ function buildAiRecommendations(
     if (!activeListing.video_url) recommendationIds.push("ai-video");
     if (!activeListing.public_health_summary) recommendationIds.push("ai-xrays");
     if (activeListing.description.trim().length < 120) recommendationIds.push("ai-description");
-    if (activeListing.price && !activeListing.price_on_request) recommendationIds.push("ai-price");
   } else if (listings.length === 0) {
     recommendationIds.push("ai-listing");
   }
@@ -210,7 +243,24 @@ export function buildSellerCrmData({
     buyers: buildBuyersFromInquiries(inquiries),
     visits: [] as CrmVisit[],
     notifications: buildNotifications(inquiries),
-    performance: buildPerformance(listings, metricsByListingId, stats),
+    performance: buildPerformance(listings, metricsByListingId, inquiries, stats),
     aiRecommendations: buildAiRecommendations(listings, inquiries),
   };
+}
+
+export function formatAverageResponseDuration(
+  ms: number,
+  t: (key: string, values?: Record<string, number>) => string
+): string {
+  const hours = Math.floor(ms / 3_600_000);
+  const minutes = Math.max(1, Math.floor((ms % 3_600_000) / 60_000));
+
+  if (hours >= 24) {
+    const days = Math.floor(hours / 24);
+    return t("crm.performance.fallbacks.averageResponseDays", { count: days });
+  }
+  if (hours >= 1) {
+    return t("crm.performance.fallbacks.averageResponseHours", { count: hours });
+  }
+  return t("crm.performance.fallbacks.averageResponseMinutes", { count: minutes });
 }

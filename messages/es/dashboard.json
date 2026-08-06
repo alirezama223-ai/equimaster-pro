@@ -51,7 +51,8 @@
     "empty": {
       "noViews": "Aún no hay visitas",
       "noFavorites": "Aún no hay favoritos",
-      "noContacts": "Aún no hay contactos"
+      "noContacts": "Aún no hay contactos",
+      "noInquiries": "Aún no hay consultas"
     }
   },
   "listings": {
@@ -85,6 +86,8 @@
     "description": "Complete estos pasos para reforzar la confianza y la visibilidad.",
     "progress": "Progreso",
     "complete": "{completed}/{total} completado",
+    "emptyTitle": "Aún no hay lista de tareas",
+    "emptyMessage": "Cree un anuncio para ver las tareas de perfil y anuncio aquí.",
     "items": {
       "profile": "Completar perfil",
       "verify": "Verificar identidad",
@@ -206,28 +209,11 @@
       "description": "Manténgase al día con señales de compradores y actividad del marketplace.",
       "unreadBadge": "{count} sin leer",
       "emptyTitle": "Todo al día",
-      "emptyMessage": "Nuevas consultas, favoritos y actividad del perfil aparecerán aquí.",
+      "emptyMessage": "Las nuevas consultas aparecerán aquí cuando los compradores se pongan en contacto sobre sus caballos.",
       "types": {
         "inquiry": {
           "title": "Nueva consulta",
           "description": "{buyer} preguntó por {horse}"
-        },
-        "favorite": {
-          "title": "Caballo marcado como favorito",
-          "description": "Un comprador guardó su anuncio en su lista de favoritos",
-          "descriptionWithCount": "Sus anuncios recibieron {count, plural, one {# favorito} other {# favoritos}}"
-        },
-        "profile-view": {
-          "title": "Perfil visitado",
-          "description": "Su perfil de vendedor recibió 12 visitas hoy"
-        },
-        "visit-request": {
-          "title": "Visita solicitada",
-          "description": "Marcus Lindholm solicitó una visita a la cuadra esta semana"
-        },
-        "offer": {
-          "title": "Oferta recibida",
-          "description": "Emma Richardson envió una oferta preliminar"
         }
       }
     },
@@ -235,6 +221,8 @@
       "eyebrow": "Rendimiento",
       "title": "Información comercial",
       "description": "Identifique de un vistazo sus anuncios más fuertes y la eficiencia del vendedor.",
+      "emptyTitle": "Aún no hay datos de rendimiento",
+      "emptyMessage": "Publique anuncios y reciba consultas para desbloquear información de rendimiento.",
       "bestPerformingHorse": "Caballo con mejor rendimiento",
       "mostViewed": "Más visitado",
       "highestSaved": "Más guardado",
@@ -243,13 +231,16 @@
       "viewsCount": "{count} visitas",
       "favoritesCount": "{count} favoritos",
       "fallbacks": {
-        "bestPerforming": "Publique un anuncio para seguir el rendimiento",
+        "bestPerforming": "Aún no hay datos de interacción",
         "noViews": "Aún no hay visitas",
         "noFavorites": "Aún no hay favoritos",
-        "averageResponse": "Menos de 2 horas",
         "noInquiries": "Aún no hay consultas",
-        "conversionRate": "{rate}% tasa de cierre",
-        "zeroConversion": "0% tasa de cierre"
+        "noResponseData": "Aún no hay respuestas registradas",
+        "averageResponseMinutes": "{count, plural, one {# minuto} other {# minutos}}",
+        "averageResponseHours": "{count, plural, one {# hora} other {# horas}}",
+        "averageResponseDays": "{count, plural, one {# día} other {# días}}",
+        "noListingsForConversion": "No hay anuncios para medir",
+        "conversionRate": "{rate}% tasa de cierre"
       }
     },
     "ai": {
@@ -262,11 +253,10 @@
       "emptyTitle": "Aún no hay recomendaciones",
       "emptyMessage": "Publique un anuncio o reciba consultas de compradores para desbloquear consejos personalizados.",
       "recommendations": {
-        "ai-response": "Responda en menos de 2 horas para aumentar la confianza del comprador",
+        "ai-response": "Responda a las consultas sin leer para mantener el interés de los compradores",
         "ai-video": "Suba un vídeo de salto para impulsar el engagement",
         "ai-xrays": "Añada radiografías para reforzar la confianza del comprador",
         "ai-description": "Mejore la descripción con aspectos destacados del entrenamiento y temperamento",
-        "ai-price": "Aumente el precio un 5% según la actividad reciente del mercado",
         "ai-listing": "Publique su primer anuncio para desbloquear insights de IA"
       }
     }

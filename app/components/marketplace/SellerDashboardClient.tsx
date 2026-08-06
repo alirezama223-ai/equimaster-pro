@@ -244,7 +244,10 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
 
           <aside className="min-w-0 space-y-8">
             <FadeUp>
-              <SellerDashboardTasks tasks={tasks} />
+              <SellerDashboardTasks
+                tasks={tasks}
+                hasListings={dashboard.listings.length > 0}
+              />
             </FadeUp>
             <FadeUp>
               <SellerDashboardQuickActions />

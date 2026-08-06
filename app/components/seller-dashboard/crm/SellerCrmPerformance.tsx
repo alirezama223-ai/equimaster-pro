@@ -3,6 +3,8 @@
 import { memo } from "react";
 import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
+import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
+import { formatAverageResponseDuration } from "@/app/components/seller-dashboard/crm/seller-crm-data";
 import type { CrmPerformanceSnapshot } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 type Props = {
@@ -42,15 +44,46 @@ function PerformanceCard({
 function SellerCrmPerformance({ performance }: Props) {
   const t = useTranslations("dashboard");
 
-  const bestPerformingValue = performance.bestPerformingFallbackKey
-    ? t(performance.bestPerformingFallbackKey)
-    : performance.bestPerformingHorse;
-  const mostViewedValue = performance.mostViewedFallbackKey
-    ? t(performance.mostViewedFallbackKey)
-    : performance.mostViewedHorse;
-  const highestSavedValue = performance.highestSavedFallbackKey
-    ? t(performance.highestSavedFallbackKey)
-    : performance.highestSavedHorse;
+  const hasAnyMetric =
+    performance.bestPerformingHorse != null ||
+    performance.mostViewedHorse != null ||
+    performance.highestSavedHorse != null ||
+    performance.averageResponseMs != null ||
+    performance.conversionRate != null;
+
+  if (!performance.hasListingData && !hasAnyMetric) {
+    return (
+      <DashboardCard
+        eyebrow={t("crm.performance.eyebrow")}
+        title={t("crm.performance.title")}
+        description={t("crm.performance.description")}
+      >
+        <SellerDashboardEmptyState
+          title={t("crm.performance.emptyTitle")}
+          message={t("crm.performance.emptyMessage")}
+          icon="📈"
+        />
+      </DashboardCard>
+    );
+  }
+
+  const bestPerformingValue = performance.bestPerformingHorse
+    ? performance.bestPerformingHorse
+    : t("crm.performance.fallbacks.bestPerforming");
+  const mostViewedValue = performance.mostViewedHorse
+    ? performance.mostViewedHorse
+    : t("crm.performance.fallbacks.noViews");
+  const highestSavedValue = performance.highestSavedHorse
+    ? performance.highestSavedHorse
+    : t("crm.performance.fallbacks.noFavorites");
+  const averageResponseValue =
+    performance.averageResponseMs != null
+      ? formatAverageResponseDuration(performance.averageResponseMs, t)
+      : t(performance.averageResponseFallbackKey ?? "crm.performance.fallbacks.noInquiries");
+  const conversionValue =
+    performance.conversionRate != null
+      ? t("crm.performance.fallbacks.conversionRate", { rate: performance.conversionRate })
+      : t(performance.conversionFallbackKey ?? "crm.performance.fallbacks.noListingsForConversion");
 
   return (
     <DashboardCard
@@ -67,23 +100,31 @@ function SellerCrmPerformance({ performance }: Props) {
         <PerformanceCard
           label={t("crm.performance.mostViewed")}
           value={mostViewedValue}
-          detail={t("crm.performance.viewsCount", { count: performance.mostViewedCount })}
+          detail={
+            performance.mostViewedHorse
+              ? t("crm.performance.viewsCount", { count: performance.mostViewedCount })
+              : undefined
+          }
           accent="violet"
         />
         <PerformanceCard
           label={t("crm.performance.highestSaved")}
           value={highestSavedValue}
-          detail={t("crm.performance.favoritesCount", { count: performance.highestSavedCount })}
+          detail={
+            performance.highestSavedHorse
+              ? t("crm.performance.favoritesCount", { count: performance.highestSavedCount })
+              : undefined
+          }
           accent="rose"
         />
         <PerformanceCard
           label={t("crm.performance.averageResponse")}
-          value={t(performance.averageResponseKey)}
+          value={averageResponseValue}
           accent="emerald"
         />
         <PerformanceCard
           label={t("crm.performance.conversion")}
-          value={t(performance.conversionKey, performance.conversionValues)}
+          value={conversionValue}
           accent="amber"
         />
       </div>

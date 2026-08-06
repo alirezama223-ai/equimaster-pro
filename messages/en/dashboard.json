@@ -51,7 +51,8 @@
     "empty": {
       "noViews": "No views yet",
       "noFavorites": "No favorites yet",
-      "noContacts": "No contacts yet"
+      "noContacts": "No contacts yet",
+      "noInquiries": "No inquiries yet"
     }
   },
   "listings": {
@@ -85,6 +86,8 @@
     "description": "Complete these steps to strengthen trust and visibility.",
     "progress": "Progress",
     "complete": "{completed}/{total} complete",
+    "emptyTitle": "No checklist yet",
+    "emptyMessage": "Create a listing to see profile and listing tasks here.",
     "items": {
       "profile": "Complete profile",
       "verify": "Verify identity",
@@ -206,28 +209,11 @@
       "description": "Stay on top of buyer signals and marketplace activity.",
       "unreadBadge": "{count} unread",
       "emptyTitle": "All caught up",
-      "emptyMessage": "New inquiries, favorites, and profile activity will show up here.",
+      "emptyMessage": "New inquiries will appear here when buyers contact you about your horses.",
       "types": {
         "inquiry": {
           "title": "New inquiry",
           "description": "{buyer} asked about {horse}"
-        },
-        "favorite": {
-          "title": "Horse favorited",
-          "description": "A buyer saved your listing to their shortlist",
-          "descriptionWithCount": "Your listings received {count, plural, one {# favorite} other {# favorites}}"
-        },
-        "profile-view": {
-          "title": "Profile viewed",
-          "description": "Your seller profile received 12 views today"
-        },
-        "visit-request": {
-          "title": "Visit requested",
-          "description": "Marcus Lindholm requested a stable visit this week"
-        },
-        "offer": {
-          "title": "Offer received",
-          "description": "Emma Richardson submitted a preliminary offer"
         }
       }
     },
@@ -235,6 +221,8 @@
       "eyebrow": "Performance",
       "title": "Business insights",
       "description": "Spot your strongest listings and seller efficiency at a glance.",
+      "emptyTitle": "No performance data yet",
+      "emptyMessage": "Publish listings and receive inquiries to unlock performance insights.",
       "bestPerformingHorse": "Best performing horse",
       "mostViewed": "Most viewed",
       "highestSaved": "Highest saved",
@@ -243,13 +231,16 @@
       "viewsCount": "{count} views",
       "favoritesCount": "{count} favorites",
       "fallbacks": {
-        "bestPerforming": "Publish a listing to track performance",
+        "bestPerforming": "No engagement data yet",
         "noViews": "No views yet",
         "noFavorites": "No favorites yet",
-        "averageResponse": "Under 2 hours",
         "noInquiries": "No inquiries yet",
-        "conversionRate": "{rate}% close rate",
-        "zeroConversion": "0% close rate"
+        "noResponseData": "No replies recorded yet",
+        "averageResponseMinutes": "{count, plural, one {# minute} other {# minutes}}",
+        "averageResponseHours": "{count, plural, one {# hour} other {# hours}}",
+        "averageResponseDays": "{count, plural, one {# day} other {# days}}",
+        "noListingsForConversion": "No listings to measure",
+        "conversionRate": "{rate}% close rate"
       }
     },
     "ai": {
@@ -262,11 +253,10 @@
       "emptyTitle": "No recommendations yet",
       "emptyMessage": "Publish a listing or receive buyer inquiries to unlock personalized tips.",
       "recommendations": {
-        "ai-response": "Respond within 2 hours to increase buyer trust",
+        "ai-response": "Respond to unread inquiries to keep buyers engaged",
         "ai-video": "Upload a jumping video to boost engagement",
         "ai-xrays": "Add x-rays to strengthen buyer confidence",
-        "ai-description": "Improve description with training highlights and temperament",
-        "ai-price": "Increase price by 5% based on recent market activity",
+        "ai-description": "Improve the description with training highlights and temperament",
         "ai-listing": "Publish your first listing to unlock AI insights"
       }
     }

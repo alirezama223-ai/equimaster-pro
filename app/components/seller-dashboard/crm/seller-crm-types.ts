@@ -52,17 +52,16 @@ export type CrmNotification = {
 };
 
 export type CrmPerformanceSnapshot = {
-  bestPerformingHorse: string;
-  bestPerformingFallbackKey?: string;
-  mostViewedHorse: string;
-  mostViewedFallbackKey?: string;
+  hasListingData: boolean;
+  bestPerformingHorse: string | null;
+  mostViewedHorse: string | null;
   mostViewedCount: number;
-  highestSavedHorse: string;
-  highestSavedFallbackKey?: string;
+  highestSavedHorse: string | null;
   highestSavedCount: number;
-  averageResponseKey: string;
-  conversionKey: string;
-  conversionValues?: Record<string, string | number>;
+  averageResponseMs: number | null;
+  averageResponseFallbackKey?: string;
+  conversionRate: number | null;
+  conversionFallbackKey?: string;
 };
 
 export type CrmAiRecommendation = {

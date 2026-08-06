@@ -13,7 +13,11 @@ type Props = {
 function SellerDashboardChart({ chart }: { chart: SellerChartSeries }) {
   const t = useTranslations("dashboard");
   const locale = useLocale();
-  const maxValue = Math.max(...chart.points.map((point) => point.value), 1);
+  const hasEmptyChart =
+    chart.points.length === 1 && chart.points[0]?.isEmptyPlaceholder === true;
+  const maxValue = hasEmptyChart
+    ? 1
+    : Math.max(...chart.points.map((point) => point.value), 1);
 
   const getPointLabel = (point: SellerChartSeries["points"][number]) => {
     if (point.isEmptyPlaceholder && chart.emptyKey) {
@@ -37,7 +41,11 @@ function SellerDashboardChart({ chart }: { chart: SellerChartSeries }) {
         <p className="text-2xl font-black text-white">{chart.total}</p>
       </div>
 
-      {chart.isTimeline ? (
+      {hasEmptyChart ? (
+        <div className="flex h-36 items-center justify-center rounded-xl border border-dashed border-white/10 px-4">
+          <p className="text-sm text-gray-500">{t(chart.emptyKey ?? "analytics.empty.noViews")}</p>
+        </div>
+      ) : chart.isTimeline ? (
         <div className="flex h-36 items-end gap-1.5">
           {chart.points.map((point) => {
             const height = point.value > 0 ? Math.max((point.value / maxValue) * 100, 8) : 4;

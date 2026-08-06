@@ -51,7 +51,8 @@
     "empty": {
       "noViews": "Noch keine Aufrufe",
       "noFavorites": "Noch keine Favoriten",
-      "noContacts": "Noch keine Kontakte"
+      "noContacts": "Noch keine Kontakte",
+      "noInquiries": "Noch keine Anfragen"
     }
   },
   "listings": {
@@ -85,6 +86,8 @@
     "description": "Erledigen Sie diese Schritte, um Vertrauen und Sichtbarkeit zu stärken.",
     "progress": "Fortschritt",
     "complete": "{completed}/{total} erledigt",
+    "emptyTitle": "Noch keine Checkliste",
+    "emptyMessage": "Erstellen Sie ein Inserat, um Profil- und Inseratsaufgaben hier zu sehen.",
     "items": {
       "profile": "Profil vervollständigen",
       "verify": "Identität verifizieren",
@@ -206,28 +209,11 @@
       "description": "Behalten Sie Käufersignale und Marktplatzaktivität im Blick.",
       "unreadBadge": "{count} ungelesen",
       "emptyTitle": "Alles erledigt",
-      "emptyMessage": "Neue Anfragen, Favoriten und Profilaktivität erscheinen hier.",
+      "emptyMessage": "Neue Anfragen erscheinen hier, wenn Käufer Sie zu Ihren Pferden kontaktieren.",
       "types": {
         "inquiry": {
           "title": "Neue Anfrage",
           "description": "{buyer} hat nach {horse} gefragt"
-        },
-        "favorite": {
-          "title": "Pferd favorisiert",
-          "description": "Ein Käufer hat Ihr Inserat auf die Merkliste gesetzt",
-          "descriptionWithCount": "Ihre Inserate haben {count, plural, one {# Favorit} other {# Favoriten}} erhalten"
-        },
-        "profile-view": {
-          "title": "Profil angesehen",
-          "description": "Ihr Verkäuferprofil hat heute 12 Aufrufe erhalten"
-        },
-        "visit-request": {
-          "title": "Besuch angefragt",
-          "description": "Marcus Lindholm hat einen Stallbesuch diese Woche angefragt"
-        },
-        "offer": {
-          "title": "Angebot erhalten",
-          "description": "Emma Richardson hat ein vorläufiges Angebot eingereicht"
         }
       }
     },
@@ -235,6 +221,8 @@
       "eyebrow": "Leistung",
       "title": "Geschäftseinblicke",
       "description": "Erkennen Sie auf einen Blick Ihre stärksten Inserate und Verkäufereffizienz.",
+      "emptyTitle": "Noch keine Leistungsdaten",
+      "emptyMessage": "Veröffentlichen Sie Inserate und erhalten Sie Anfragen, um Leistungseinblicke freizuschalten.",
       "bestPerformingHorse": "Bestperformendes Pferd",
       "mostViewed": "Meist aufgerufen",
       "highestSaved": "Am häufigsten gespeichert",
@@ -243,13 +231,16 @@
       "viewsCount": "{count} Aufrufe",
       "favoritesCount": "{count} Favoriten",
       "fallbacks": {
-        "bestPerforming": "Veröffentlichen Sie ein Inserat, um die Leistung zu verfolgen",
+        "bestPerforming": "Noch keine Engagement-Daten",
         "noViews": "Noch keine Aufrufe",
         "noFavorites": "Noch keine Favoriten",
-        "averageResponse": "Unter 2 Stunden",
         "noInquiries": "Noch keine Anfragen",
-        "conversionRate": "{rate} % Abschlussquote",
-        "zeroConversion": "0 % Abschlussquote"
+        "noResponseData": "Noch keine Antworten erfasst",
+        "averageResponseMinutes": "{count, plural, one {# Minute} other {# Minuten}}",
+        "averageResponseHours": "{count, plural, one {# Stunde} other {# Stunden}}",
+        "averageResponseDays": "{count, plural, one {# Tag} other {# Tage}}",
+        "noListingsForConversion": "Keine Inserate zum Messen",
+        "conversionRate": "{rate} % Abschlussquote"
       }
     },
     "ai": {
@@ -262,11 +253,10 @@
       "emptyTitle": "Noch keine Empfehlungen",
       "emptyMessage": "Veröffentlichen Sie ein Inserat oder erhalten Sie Käuferanfragen, um personalisierte Tipps freizuschalten.",
       "recommendations": {
-        "ai-response": "Antworten Sie innerhalb von 2 Stunden, um das Vertrauen der Käufer zu stärken",
+        "ai-response": "Beantworten Sie ungelesene Anfragen, um Käufer engagiert zu halten",
         "ai-video": "Laden Sie ein Springvideo hoch, um die Interaktion zu steigern",
         "ai-xrays": "Fügen Sie Röntgenbilder hinzu, um das Vertrauen der Käufer zu stärken",
         "ai-description": "Verbessern Sie die Beschreibung mit Trainingsschwerpunkten und Temperament",
-        "ai-price": "Erhöhen Sie den Preis um 5 % basierend auf der jüngsten Marktaktivität",
         "ai-listing": "Veröffentlichen Sie Ihr erstes Inserat, um KI-Einblicke freizuschalten"
       }
     }

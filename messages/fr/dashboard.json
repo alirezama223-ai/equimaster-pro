@@ -51,7 +51,8 @@
     "empty": {
       "noViews": "Aucune vue pour le moment",
       "noFavorites": "Aucun favori pour le moment",
-      "noContacts": "Aucun contact pour le moment"
+      "noContacts": "Aucun contact pour le moment",
+      "noInquiries": "Aucune demande pour le moment"
     }
   },
   "listings": {
@@ -85,6 +86,8 @@
     "description": "Complétez ces étapes pour renforcer la confiance et la visibilité.",
     "progress": "Progression",
     "complete": "{completed}/{total} terminé",
+    "emptyTitle": "Aucune liste pour le moment",
+    "emptyMessage": "Créez une annonce pour voir les tâches de profil et d'annonce ici.",
     "items": {
       "profile": "Compléter le profil",
       "verify": "Vérifier l'identité",
@@ -206,28 +209,11 @@
       "description": "Restez informé des signaux acheteurs et de l'activité marketplace.",
       "unreadBadge": "{count} non lu(s)",
       "emptyTitle": "Tout est à jour",
-      "emptyMessage": "Nouvelles demandes, favoris et activité de profil apparaîtront ici.",
+      "emptyMessage": "Les nouvelles demandes apparaîtront ici lorsque des acheteurs vous contactent.",
       "types": {
         "inquiry": {
           "title": "Nouvelle demande",
           "description": "{buyer} s'est renseigné(e) sur {horse}"
-        },
-        "favorite": {
-          "title": "Cheval mis en favori",
-          "description": "Un acheteur a enregistré votre annonce dans sa liste de favoris",
-          "descriptionWithCount": "Vos annonces ont reçu {count, plural, one {# favori} other {# favoris}}"
-        },
-        "profile-view": {
-          "title": "Profil consulté",
-          "description": "Votre profil vendeur a reçu 12 vues aujourd'hui"
-        },
-        "visit-request": {
-          "title": "Visite demandée",
-          "description": "Marcus Lindholm a demandé une visite d'écurie cette semaine"
-        },
-        "offer": {
-          "title": "Offre reçue",
-          "description": "Emma Richardson a soumis une offre préliminaire"
         }
       }
     },
@@ -235,6 +221,8 @@
       "eyebrow": "Performance",
       "title": "Insights business",
       "description": "Identifiez d'un coup d'œil vos annonces les plus performantes et votre efficacité vendeur.",
+      "emptyTitle": "Aucune donnée de performance",
+      "emptyMessage": "Publiez des annonces et recevez des demandes pour débloquer les insights de performance.",
       "bestPerformingHorse": "Cheval le plus performant",
       "mostViewed": "Le plus consulté",
       "highestSaved": "Le plus enregistré",
@@ -243,13 +231,16 @@
       "viewsCount": "{count} vues",
       "favoritesCount": "{count} favoris",
       "fallbacks": {
-        "bestPerforming": "Publiez une annonce pour suivre les performances",
+        "bestPerforming": "Aucune donnée d'engagement",
         "noViews": "Aucune vue pour le moment",
         "noFavorites": "Aucun favori pour le moment",
-        "averageResponse": "Moins de 2 heures",
         "noInquiries": "Aucune demande pour le moment",
-        "conversionRate": "{rate} % de taux de clôture",
-        "zeroConversion": "0 % de taux de clôture"
+        "noResponseData": "Aucune réponse enregistrée",
+        "averageResponseMinutes": "{count, plural, one {# minute} other {# minutes}}",
+        "averageResponseHours": "{count, plural, one {# heure} other {# heures}}",
+        "averageResponseDays": "{count, plural, one {# jour} other {# jours}}",
+        "noListingsForConversion": "Aucune annonce à mesurer",
+        "conversionRate": "{rate} % de taux de clôture"
       }
     },
     "ai": {
@@ -262,11 +253,10 @@
       "emptyTitle": "Aucune recommandation pour le moment",
       "emptyMessage": "Publiez une annonce ou recevez des demandes d'acheteurs pour débloquer des conseils personnalisés.",
       "recommendations": {
-        "ai-response": "Répondez sous 2 heures pour renforcer la confiance des acheteurs",
+        "ai-response": "Répondez aux demandes non lues pour maintenir l'engagement des acheteurs",
         "ai-video": "Téléversez une vidéo de saut pour booster l'engagement",
         "ai-xrays": "Ajoutez des radios pour renforcer la confiance des acheteurs",
         "ai-description": "Améliorez la description avec les points forts d'entraînement et le tempérament",
-        "ai-price": "Augmentez le prix de 5 % selon l'activité récente du marché",
         "ai-listing": "Publiez votre première annonce pour débloquer les insights IA"
       }
     }

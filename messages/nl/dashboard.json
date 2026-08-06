@@ -51,7 +51,8 @@
     "empty": {
       "noViews": "Nog geen weergaven",
       "noFavorites": "Nog geen favorieten",
-      "noContacts": "Nog geen contacten"
+      "noContacts": "Nog geen contacten",
+      "noInquiries": "Nog geen vragen"
     }
   },
   "listings": {
@@ -85,6 +86,8 @@
     "description": "Voltooi deze stappen om vertrouwen en zichtbaarheid te versterken.",
     "progress": "Voortgang",
     "complete": "{completed}/{total} voltooid",
+    "emptyTitle": "Nog geen checklist",
+    "emptyMessage": "Maak een advertentie aan om profiel- en advertentietaken hier te zien.",
     "items": {
       "profile": "Profiel voltooien",
       "verify": "Identiteit verifiëren",
@@ -206,28 +209,11 @@
       "description": "Blijf op de hoogte van kopersignalen en marktplaatsactiviteit.",
       "unreadBadge": "{count} ongelezen",
       "emptyTitle": "Alles bijgewerkt",
-      "emptyMessage": "Nieuwe vragen, favorieten en profielactiviteit verschijnen hier.",
+      "emptyMessage": "Nieuwe vragen verschijnen hier wanneer kopers contact met u opnemen over uw paarden.",
       "types": {
         "inquiry": {
           "title": "Nieuwe vraag",
           "description": "{buyer} vroeg naar {horse}"
-        },
-        "favorite": {
-          "title": "Paard favoriet gemaakt",
-          "description": "Een koper heeft uw advertentie op de shortlist gezet",
-          "descriptionWithCount": "Uw advertenties hebben {count, plural, one {# favoriet} other {# favorieten}} ontvangen"
-        },
-        "profile-view": {
-          "title": "Profiel bekeken",
-          "description": "Uw verkopersprofiel heeft vandaag 12 weergaven ontvangen"
-        },
-        "visit-request": {
-          "title": "Bezoek aangevraagd",
-          "description": "Marcus Lindholm heeft een stalbezoek deze week aangevraagd"
-        },
-        "offer": {
-          "title": "Bod ontvangen",
-          "description": "Emma Richardson heeft een voorlopig bod ingediend"
         }
       }
     },
@@ -235,6 +221,8 @@
       "eyebrow": "Prestaties",
       "title": "Zakelijke inzichten",
       "description": "Spot in één oogopslag uw sterkste advertenties en verkopersefficiëntie.",
+      "emptyTitle": "Nog geen prestatiegegevens",
+      "emptyMessage": "Publiceer advertenties en ontvang vragen om prestatie-inzichten te ontgrendelen.",
       "bestPerformingHorse": "Best presterend paard",
       "mostViewed": "Meest bekeken",
       "highestSaved": "Meest opgeslagen",
@@ -243,13 +231,16 @@
       "viewsCount": "{count} weergaven",
       "favoritesCount": "{count} favorieten",
       "fallbacks": {
-        "bestPerforming": "Publiceer een advertentie om prestaties te volgen",
+        "bestPerforming": "Nog geen engagementgegevens",
         "noViews": "Nog geen weergaven",
         "noFavorites": "Nog geen favorieten",
-        "averageResponse": "Minder dan 2 uur",
         "noInquiries": "Nog geen vragen",
-        "conversionRate": "{rate}% sluitingspercentage",
-        "zeroConversion": "0% sluitingspercentage"
+        "noResponseData": "Nog geen antwoorden geregistreerd",
+        "averageResponseMinutes": "{count, plural, one {# minuut} other {# minuten}}",
+        "averageResponseHours": "{count, plural, one {# uur} other {# uur}}",
+        "averageResponseDays": "{count, plural, one {# dag} other {# dagen}}",
+        "noListingsForConversion": "Geen advertenties om te meten",
+        "conversionRate": "{rate}% sluitingspercentage"
       }
     },
     "ai": {
@@ -262,11 +253,10 @@
       "emptyTitle": "Nog geen aanbevelingen",
       "emptyMessage": "Publiceer een advertentie of ontvang kopersaanvragen om gepersonaliseerde tips te ontgrendelen.",
       "recommendations": {
-        "ai-response": "Reageer binnen 2 uur om het vertrouwen van kopers te vergroten",
+        "ai-response": "Reageer op ongelezen vragen om kopers betrokken te houden",
         "ai-video": "Upload een springvideo om betrokkenheid te verhogen",
         "ai-xrays": "Voeg röntgenfoto's toe om het vertrouwen van kopers te versterken",
         "ai-description": "Verbeter de beschrijving met trainingshighlights en temperament",
-        "ai-price": "Verhoog de prijs met 5% op basis van recente marktactiviteit",
         "ai-listing": "Publiceer uw eerste advertentie om AI-inzichten te ontgrendelen"
       }
     }

@@ -115,7 +115,7 @@ export function buildOverviewMetrics(
 }
 
 export function computeProfileScore(listings: HorseListingRow[]): number {
-  if (listings.length === 0) return 12;
+  if (listings.length === 0) return 0;
 
   let score = 20;
 
@@ -271,9 +271,13 @@ export function buildAnalyticsSeries(
     {
       key: "inquiries",
       labelKey: "analytics.series.inquiries",
+      emptyKey: "analytics.empty.noInquiries",
       color: "#f59e0b",
-      points: inquiryDaily.slice(-14),
-      total: inquiryTotal > 0 ? inquiryTotal : inquiries.length,
+      points:
+        inquiryTotal > 0
+          ? inquiryDaily.slice(-14)
+          : [{ value: 0, isEmptyPlaceholder: true }],
+      total: inquiryTotal,
       isTimeline: true,
     },
   ];
