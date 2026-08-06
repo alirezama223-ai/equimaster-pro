@@ -5,32 +5,11 @@ import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import { formatDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
-import type { CrmNotification, CrmNotificationType } from "@/app/components/seller-dashboard/crm/seller-crm-types";
-
-const TYPE_ICONS: Record<CrmNotificationType, string> = {
-  inquiry: "💬",
-  favorite: "♥",
-  "profile-view": "👁",
-  "visit-request": "📅",
-  offer: "💰",
-};
+import type { CrmNotification } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 type Props = {
   notifications: CrmNotification[];
 };
-
-function resolveNotificationTime(
-  notification: CrmNotification,
-  t: ReturnType<typeof useTranslations>
-) {
-  if (notification.timeAt) {
-    return formatDashboardRelativeTime(notification.timeAt, t);
-  }
-  if (notification.timeKey) {
-    return t(notification.timeKey, notification.timeValues);
-  }
-  return "";
-}
 
 function SellerCrmNotifications({ notifications }: Props) {
   const t = useTranslations("dashboard");
@@ -70,7 +49,7 @@ function SellerCrmNotifications({ notifications }: Props) {
                     : "border-white/10 bg-[#08111F] text-gray-300"
                 }`}
               >
-                {TYPE_ICONS[notification.type]}
+                💬
               </span>
               <div
                 className={`rounded-2xl border p-4 ${
@@ -91,7 +70,7 @@ function SellerCrmNotifications({ notifications }: Props) {
                   ) : null}
                 </div>
                 <p className="mt-3 text-xs text-gray-500">
-                  {resolveNotificationTime(notification, t)}
+                  {formatDashboardRelativeTime(notification.timeAt, t)}
                 </p>
               </div>
             </li>

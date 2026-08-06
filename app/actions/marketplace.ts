@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  fetchBreedListingCounts,
   fetchMarketplaceFilterOptions,
   searchActiveHorseListings,
 } from "@/app/lib/marketplace/search";
@@ -32,6 +33,14 @@ export async function getMarketplaceFilterOptions(): Promise<{
 }> {
   const supabase = await createClient();
   return fetchMarketplaceFilterOptions(supabase);
+}
+
+export async function getBreedListingCounts(): Promise<{
+  counts: Record<string, number>;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  return fetchBreedListingCounts(supabase);
 }
 
 export async function getRelatedActiveListings(

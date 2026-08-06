@@ -48,5 +48,7 @@ export type SellerDashboardData = {
   };
   listings: HorseListingRow[];
   metricsByListingId: Record<string, SellerDashboardListingMetrics>;
+  inquiries: import("@/app/types/inquiry").SellerInquiry[];
   recentInquiries: import("@/app/types/inquiry").SellerInquiry[];
+  crm: import("@/app/components/seller-dashboard/crm/seller-crm-types").SellerCrmData;
 };

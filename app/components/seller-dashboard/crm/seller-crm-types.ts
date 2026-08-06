@@ -13,9 +13,7 @@ export type PipelineDeal = {
   buyerAvatar?: string;
   horseName: string;
   priceLabel: string;
-  dateAt?: string;
-  dateKey?: string;
-  demoIndex?: number;
+  dateAt: string;
   priority: PipelinePriority;
   stage: PipelineStage;
 };
@@ -27,9 +25,7 @@ export type CrmBuyer = {
   name: string;
   email: string;
   interestedHorse: string;
-  lastContactAt?: string;
-  lastContactKey?: string;
-  demoIndex?: number;
+  lastContactAt: string;
   status: BuyerStatus;
 };
 
@@ -38,19 +34,12 @@ export type CrmVisit = {
   dateAt: string;
   timeLabel: string;
   horseName: string;
-  demoHorseIndex?: number;
   buyerName: string;
-  demoBuyerIndex?: number;
-  locationKey: string;
+  location: string;
   isToday: boolean;
 };
 
-export type CrmNotificationType =
-  | "inquiry"
-  | "favorite"
-  | "profile-view"
-  | "visit-request"
-  | "offer";
+export type CrmNotificationType = "inquiry";
 
 export type CrmNotification = {
   id: string;
@@ -58,9 +47,7 @@ export type CrmNotification = {
   titleKey: string;
   descriptionKey: string;
   descriptionValues?: Record<string, string | number>;
-  timeAt?: string;
-  timeKey?: string;
-  timeValues?: Record<string, string | number>;
+  timeAt: string;
   unread: boolean;
 };
 

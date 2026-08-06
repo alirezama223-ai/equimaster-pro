@@ -98,6 +98,8 @@
     "noListings": "Aucune annonce publiée pour le moment. Soyez le premier vendeur sur EquiMaster.",
     "browseByBreed": "Parcourir par race",
     "browseByDiscipline": "Parcourir par discipline",
+    "viewAllBreeds": "Voir toutes les races →",
+    "showFeaturedBreeds": "Afficher les races en vedette",
     "noCategories": "Aucune catégorie disponible pour le moment."
   },
   "horseCard": {

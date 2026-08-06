@@ -259,42 +259,15 @@
       "impactHigh": "hohe Wirkung",
       "impactMedium": "mittlere Wirkung",
       "viewAll": "Alle Empfehlungen ansehen",
+      "emptyTitle": "Noch keine Empfehlungen",
+      "emptyMessage": "Veröffentlichen Sie ein Inserat oder erhalten Sie Käuferanfragen, um personalisierte Tipps freizuschalten.",
       "recommendations": {
         "ai-response": "Antworten Sie innerhalb von 2 Stunden, um das Vertrauen der Käufer zu stärken",
         "ai-video": "Laden Sie ein Springvideo hoch, um die Interaktion zu steigern",
         "ai-xrays": "Fügen Sie Röntgenbilder hinzu, um das Vertrauen der Käufer zu stärken",
         "ai-description": "Verbessern Sie die Beschreibung mit Trainingsschwerpunkten und Temperament",
         "ai-price": "Erhöhen Sie den Preis um 5 % basierend auf der jüngsten Marktaktivität",
-        "ai-listing": "Veröffentlichen Sie Ihr erstes Inserat, um KI-Einblicke freizuschalten",
-        "ai-video-mock": "Laden Sie ein Springvideo hoch, sobald Ihr Inserat live ist"
-      }
-    },
-    "demo": {
-      "featuredHorse": "Empfohlenes Pferd",
-      "privateBuyer": "Privatkäufer",
-      "visitLocations": {
-        "0": "Indoor-Reitplatz · Brabant",
-        "1": "Haupstall · Utrecht",
-        "2": "Außenreitplatz · Limburg",
-        "3": "Private Besichtigung · Antwerpen"
-      },
-      "mockHorses": {
-        "0": "Grand Prix Dream",
-        "1": "Midnight Sovereign",
-        "2": "Celeste Royale"
-      },
-      "mockBuyers": {
-        "0": { "name": "Sophie van der Berg", "horse": "Grand Prix Dream", "lastContact": "2h ago" },
-        "1": { "name": "Marcus Lindholm", "horse": "Midnight Sovereign", "lastContact": "Yesterday" },
-        "2": { "name": "Emma Richardson", "horse": "Celeste Royale", "lastContact": "3d ago" },
-        "3": { "name": "Luca Moretti", "horse": "Atlantic Storm", "lastContact": "Just now" }
-      },
-      "mockPipeline": {
-        "0": { "buyer": "Luca Moretti", "horse": "Atlantic Storm", "price": "€185.000", "date": "6. Aug." },
-        "1": { "buyer": "Sophie van der Berg", "horse": "Grand Prix Dream", "price": "€240.000", "date": "4. Aug." },
-        "2": { "buyer": "Marcus Lindholm", "horse": "Midnight Sovereign", "price": "€320.000", "date": "2. Aug." },
-        "3": { "buyer": "Emma Richardson", "horse": "Celeste Royale", "price": "€98.000", "date": "28. Juli" },
-        "4": { "buyer": "James Whitfield", "horse": "Silver Legacy", "price": "€156.000", "date": "20. Juli" }
+        "ai-listing": "Veröffentlichen Sie Ihr erstes Inserat, um KI-Einblicke freizuschalten"
       }
     }
   }

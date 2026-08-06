@@ -10,20 +10,6 @@ type Props = {
   visits: CrmVisit[];
 };
 
-function resolveVisitHorseName(visit: CrmVisit, t: ReturnType<typeof useTranslations>) {
-  if (visit.demoHorseIndex != null) {
-    return t(`crm.demo.mockHorses.${visit.demoHorseIndex}`);
-  }
-  return visit.horseName;
-}
-
-function resolveVisitBuyerName(visit: CrmVisit, t: ReturnType<typeof useTranslations>) {
-  if (visit.demoBuyerIndex != null) {
-    return t(`crm.demo.mockBuyers.${visit.demoBuyerIndex}.name`);
-  }
-  return visit.buyerName;
-}
-
 function formatVisitDate(dateAt: string, locale: string) {
   return new Date(dateAt).toLocaleDateString(locale, {
     weekday: "short",
@@ -102,10 +88,7 @@ function VisitCard({
   t: ReturnType<typeof useTranslations>;
 }) {
   const locale = useLocale();
-  const horseName = resolveVisitHorseName(visit, t);
-  const buyerName = resolveVisitBuyerName(visit, t);
   const dateLabel = formatVisitDate(visit.dateAt, locale);
-  const location = t(visit.locationKey);
 
   return (
     <article
@@ -127,9 +110,9 @@ function VisitCard({
         ) : null}
       </div>
       <div className="mt-4 space-y-1">
-        <p className="font-medium text-white">{horseName}</p>
-        <p className="text-sm text-gray-400">{buyerName}</p>
-        <p className="text-xs text-gray-500">{location}</p>
+        <p className="font-medium text-white">{visit.horseName}</p>
+        <p className="text-sm text-gray-400">{visit.buyerName}</p>
+        <p className="text-xs text-gray-500">{visit.location}</p>
       </div>
       <button
         type="button"

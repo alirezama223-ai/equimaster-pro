@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getBreedNames } from "@/app/lib/breeds";
+import { buildBreedListingCounts } from "@/app/lib/marketplace/featured-breeds";
 import { COUNTRY_NAMES } from "@/app/lib/constants/countries";
 import { DISCIPLINE_LABELS } from "@/app/lib/constants/disciplines";
 import type { HorseListingRow } from "@/app/types/horse-listing";
@@ -298,6 +299,23 @@ export async function fetchMarketplaceFilterOptions(
     countries: [...COUNTRY_NAMES],
     disciplines: [...DISCIPLINE_LABELS],
     levels,
+  };
+}
+
+export async function fetchBreedListingCounts(
+  supabase: SupabaseClient
+): Promise<{ counts: Record<string, number>; error?: string }> {
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("breed")
+    .eq("status", "active");
+
+  if (error) {
+    return { counts: {}, error: error.message };
+  }
+
+  return {
+    counts: buildBreedListingCounts((data ?? []) as { breed: string | null }[]),
   };
 }
 

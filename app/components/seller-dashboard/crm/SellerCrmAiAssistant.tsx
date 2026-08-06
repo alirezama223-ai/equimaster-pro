@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import type { CrmAiRecommendation } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 type Props = {
@@ -36,40 +37,52 @@ function SellerCrmAiAssistant({ recommendations }: Props) {
           </div>
         </div>
 
-        <ul className="mt-6 space-y-3">
-          {recommendations.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-start gap-3 rounded-2xl border border-blue-500/15 bg-blue-500/5 px-4 py-3 backdrop-blur-sm"
-            >
-              <span
-                aria-hidden="true"
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                  item.impact === "high"
-                    ? "bg-blue-500/20 text-blue-200"
-                    : "bg-white/5 text-gray-300"
-                }`}
-              >
-                →
-              </span>
-              <div className="min-w-0">
-                <p className="text-sm leading-relaxed text-white">
-                  {t(`crm.ai.recommendations.${item.id}`)}
-                </p>
-                <p className="mt-1 text-[11px] uppercase tracking-wide text-blue-300/70">
-                  {item.impact === "high" ? t("crm.ai.impactHigh") : t("crm.ai.impactMedium")}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        {recommendations.length === 0 ? (
+          <div className="mt-6">
+            <SellerDashboardEmptyState
+              title={t("crm.ai.emptyTitle")}
+              message={t("crm.ai.emptyMessage")}
+              icon="✦"
+            />
+          </div>
+        ) : (
+          <>
+            <ul className="mt-6 space-y-3">
+              {recommendations.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-start gap-3 rounded-2xl border border-blue-500/15 bg-blue-500/5 px-4 py-3 backdrop-blur-sm"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      item.impact === "high"
+                        ? "bg-blue-500/20 text-blue-200"
+                        : "bg-white/5 text-gray-300"
+                    }`}
+                  >
+                    →
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm leading-relaxed text-white">
+                      {t(`crm.ai.recommendations.${item.id}`)}
+                    </p>
+                    <p className="mt-1 text-[11px] uppercase tracking-wide text-blue-300/70">
+                      {item.impact === "high" ? t("crm.ai.impactHigh") : t("crm.ai.impactMedium")}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-        <button
-          type="button"
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(59,130,246,0.35)] transition hover:bg-blue-500"
-        >
-          {t("crm.ai.viewAll")}
-        </button>
+            <button
+              type="button"
+              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(59,130,246,0.35)] transition hover:bg-blue-500"
+            >
+              {t("crm.ai.viewAll")}
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

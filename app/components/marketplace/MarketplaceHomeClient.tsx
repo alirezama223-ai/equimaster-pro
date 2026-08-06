@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import Navbar from "@/app/components/navbar/Navbar";
 import MarketplaceListingCard from "@/app/components/marketplace/MarketplaceListingCard";
 import FadeUp from "@/app/components/animations/FadeUp";
@@ -13,6 +14,7 @@ type Props = {
   featuredHorses: Horse[];
   newestHorses: Horse[];
   breeds: string[];
+  featuredBreeds: string[];
   disciplines: string[];
   favoriteListingIds: string[];
 };
@@ -21,6 +23,7 @@ export default function MarketplaceHomeClient({
   featuredHorses,
   newestHorses,
   breeds,
+  featuredBreeds,
   disciplines,
   favoriteListingIds,
 }: Props) {
@@ -98,10 +101,13 @@ export default function MarketplaceHomeClient({
           />
 
           <section className="mt-16 grid gap-8 lg:grid-cols-2">
-            <BrowseGroup
+            <BreedBrowseGroup
               title={t("home.browseByBreed")}
-              items={breeds.slice(0, 12)}
+              featuredItems={featuredBreeds}
+              allItems={breeds}
               emptyMessage={t("home.noCategories")}
+              viewAllLabel={t("home.viewAllBreeds")}
+              showFeaturedLabel={t("home.showFeaturedBreeds")}
               buildHref={(breed) => `/horses${buildMarketplaceSearchQuery({ breed })}`}
             />
             <BrowseGroup
@@ -168,6 +174,60 @@ function ListingSection({
       ) : (
         <div className="rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center text-gray-400">
           {emptyMessage}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function BreedBrowseGroup({
+  title,
+  featuredItems,
+  allItems,
+  emptyMessage,
+  viewAllLabel,
+  showFeaturedLabel,
+  buildHref,
+}: {
+  title: string;
+  featuredItems: string[];
+  allItems: string[];
+  emptyMessage: string;
+  viewAllLabel: string;
+  showFeaturedLabel: string;
+  buildHref: (item: string) => string;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const hasMoreBreeds = allItems.length > featuredItems.length;
+  const items = showAll ? allItems : featuredItems;
+
+  return (
+    <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
+      <div className="flex items-start justify-between gap-4">
+        <h2 className="text-xl font-bold">{title}</h2>
+        {hasMoreBreeds ? (
+          <button
+            type="button"
+            onClick={() => setShowAll((current) => !current)}
+            className="shrink-0 text-sm text-blue-300 hover:text-blue-200 transition"
+          >
+            {showAll ? showFeaturedLabel : viewAllLabel}
+          </button>
+        ) : null}
+      </div>
+      {items.length === 0 ? (
+        <p className="mt-4 text-gray-400">{emptyMessage}</p>
+      ) : (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {items.map((item) => (
+            <Link
+              key={item}
+              href={buildHref(item)}
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-200 hover:border-blue-500/40 hover:text-white transition"
+            >
+              {item}
+            </Link>
+          ))}
         </div>
       )}
     </section>

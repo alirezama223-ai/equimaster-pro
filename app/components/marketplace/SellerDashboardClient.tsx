@@ -22,7 +22,6 @@ import SellerDashboardMetricCard from "@/app/components/seller-dashboard/SellerD
 import SellerDashboardQuickActions from "@/app/components/seller-dashboard/SellerDashboardQuickActions";
 import SellerDashboardTasks from "@/app/components/seller-dashboard/SellerDashboardTasks";
 import SellerCrmHub from "@/app/components/seller-dashboard/crm/SellerCrmHub";
-import { buildSellerCrmData } from "@/app/components/seller-dashboard/crm/seller-crm-demo-data";
 import { getGreetingPrefix, useDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import {
   buildAnalyticsSeries,
@@ -53,7 +52,9 @@ type Props = {
     };
     listings: HorseListingRow[];
     metricsByListingId: Record<string, SellerDashboardListingMetrics>;
+    inquiries: SellerInquiry[];
     recentInquiries: SellerInquiry[];
+    crm: import("@/app/components/seller-dashboard/crm/seller-crm-types").SellerCrmData;
   };
   sellerName: string;
 };
@@ -61,7 +62,6 @@ type Props = {
 function SellerDashboardClient({ dashboard, sellerName }: Props) {
   const t = useTranslations("dashboard");
   const tMarketplace = useTranslations("marketplace");
-  const tCommon = useTranslations("common");
   const router = useRouter();
   const [activeView, setActiveView] = useState<"overview" | "crm">("crm");
   const [error, setError] = useState<string | null>(null);
@@ -75,8 +75,8 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     [dashboard.listings]
   );
   const unreadMessages = useMemo(
-    () => countUnreadInquiries(dashboard.recentInquiries),
-    [dashboard.recentInquiries]
+    () => countUnreadInquiries(dashboard.inquiries),
+    [dashboard.inquiries]
   );
   const overviewMetrics = useMemo(
     () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages),
@@ -87,22 +87,11 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
       buildAnalyticsSeries(
         dashboard.listings,
         dashboard.metricsByListingId,
-        dashboard.recentInquiries
+        dashboard.inquiries
       ),
-    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries]
+    [dashboard.listings, dashboard.metricsByListingId, dashboard.inquiries]
   );
   const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
-  const crmData = useMemo(
-    () =>
-      buildSellerCrmData({
-        listings: dashboard.listings,
-        metricsByListingId: dashboard.metricsByListingId,
-        recentInquiries: dashboard.recentInquiries,
-        stats: dashboard.stats,
-        priceOnRequestLabel: tCommon("priceOnRequest"),
-      }),
-    [dashboard, tCommon]
-  );
 
   function runListingAction(
     listing: HorseListingRow,
@@ -227,7 +216,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
       ) : null}
 
       {activeView === "crm" ? (
-        <SellerCrmHub crm={crmData} />
+        <SellerCrmHub crm={dashboard.crm} />
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-10">
           <div className="min-w-0 space-y-8">
