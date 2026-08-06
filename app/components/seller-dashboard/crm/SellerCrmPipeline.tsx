@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import { formatDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import {
   PIPELINE_COLUMNS,
   type PipelineDeal,
@@ -21,6 +22,37 @@ const PRIORITY_STYLES: Record<PipelinePriority, string> = {
 type Props = {
   initialDeals: PipelineDeal[];
 };
+
+function resolveDealBuyerName(deal: PipelineDeal, t: ReturnType<typeof useTranslations>) {
+  if (deal.demoIndex != null) {
+    return t(`crm.demo.mockPipeline.${deal.demoIndex}.buyer`);
+  }
+  return deal.buyerName;
+}
+
+function resolveDealHorseName(deal: PipelineDeal, t: ReturnType<typeof useTranslations>) {
+  if (deal.demoIndex != null) {
+    return t(`crm.demo.mockPipeline.${deal.demoIndex}.horse`);
+  }
+  return deal.horseName;
+}
+
+function resolveDealPrice(deal: PipelineDeal, t: ReturnType<typeof useTranslations>) {
+  if (deal.demoIndex != null) {
+    return t(`crm.demo.mockPipeline.${deal.demoIndex}.price`);
+  }
+  return deal.priceLabel;
+}
+
+function resolveDealDate(deal: PipelineDeal, t: ReturnType<typeof useTranslations>) {
+  if (deal.dateAt) {
+    return formatDashboardRelativeTime(deal.dateAt, t);
+  }
+  if (deal.dateKey) {
+    return t(deal.dateKey);
+  }
+  return "";
+}
 
 function SellerCrmPipeline({ initialDeals }: Props) {
   const t = useTranslations("dashboard");
@@ -78,7 +110,13 @@ function SellerCrmPipeline({ initialDeals }: Props) {
                 </div>
 
                 <div className="min-h-[220px] space-y-3 rounded-2xl border border-white/[0.06] bg-[#08111F]/50 p-3">
-                  {dealsByStage[column.key].map((deal) => (
+                  {dealsByStage[column.key].map((deal) => {
+                    const buyerName = resolveDealBuyerName(deal, t);
+                    const horseName = resolveDealHorseName(deal, t);
+                    const priceLabel = resolveDealPrice(deal, t);
+                    const dateLabel = resolveDealDate(deal, t);
+
+                    return (
                     <article
                       key={deal.id}
                       draggable
@@ -90,16 +128,16 @@ function SellerCrmPipeline({ initialDeals }: Props) {
                     >
                       <div className="flex items-start gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-blue-500/10 text-xs font-bold text-white">
-                          {getBuyerInitials(deal.buyerName)}
+                          {getBuyerInitials(buyerName)}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-semibold text-white">{deal.buyerName}</p>
-                          <p className="truncate text-xs text-blue-300">{deal.horseName}</p>
+                          <p className="truncate font-semibold text-white">{buyerName}</p>
+                          <p className="truncate text-xs text-blue-300">{horseName}</p>
                         </div>
                       </div>
                       <div className="mt-3 flex items-center justify-between gap-2">
-                        <span className="text-sm font-semibold text-white">{deal.priceLabel}</span>
-                        <span className="text-[11px] text-gray-500">{deal.dateLabel}</span>
+                        <span className="text-sm font-semibold text-white">{priceLabel}</span>
+                        <span className="text-[11px] text-gray-500">{dateLabel}</span>
                       </div>
                       <div className="mt-3">
                         <span
@@ -109,7 +147,8 @@ function SellerCrmPipeline({ initialDeals }: Props) {
                         </span>
                       </div>
                     </article>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

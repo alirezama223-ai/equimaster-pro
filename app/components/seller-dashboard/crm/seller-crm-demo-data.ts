@@ -1,5 +1,3 @@
-import type { DashboardTranslator } from "@/app/components/seller-dashboard/dashboard-i18n";
-import { formatRelativeTime, getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import { formatListingRowPrice } from "@/app/lib/horse-listings";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerInquiry } from "@/app/types/inquiry";
@@ -16,17 +14,21 @@ import type {
   SellerCrmData,
 } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
-function buildMockBuyers(t: DashboardTranslator): Omit<CrmBuyer, "id">[] {
+function buildMockBuyers(): Omit<CrmBuyer, "id">[] {
+  const now = Date.now();
+  const contactOffsets = [2 * 3_600_000, 26 * 3_600_000, 3 * 86_400_000, 45_000];
+
   return [0, 1, 2, 3].map((index) => ({
-    name: t(`crm.demo.mockBuyers.${index}.name`),
+    name: "",
     email: `buyer-${index}@example.com`,
-    interestedHorse: t(`crm.demo.mockBuyers.${index}.horse`),
-    lastContactLabel: t(`crm.demo.mockBuyers.${index}.lastContact`),
+    interestedHorse: "",
+    demoIndex: index,
+    lastContactAt: new Date(now - contactOffsets[index]).toISOString(),
     status: (["hot", "vip", "returning", "new"] as const)[index],
   }));
 }
 
-function buildMockPipeline(t: DashboardTranslator): Omit<PipelineDeal, "id">[] {
+function buildMockPipeline(): Omit<PipelineDeal, "id">[] {
   const stages: PipelineStage[] = [
     "new-inquiry",
     "contacted",
@@ -37,10 +39,11 @@ function buildMockPipeline(t: DashboardTranslator): Omit<PipelineDeal, "id">[] {
   const priorities: PipelinePriority[] = ["high", "high", "medium", "medium", "low"];
 
   return [0, 1, 2, 3, 4].map((index) => ({
-    buyerName: t(`crm.demo.mockPipeline.${index}.buyer`),
-    horseName: t(`crm.demo.mockPipeline.${index}.horse`),
-    priceLabel: t(`crm.demo.mockPipeline.${index}.price`),
-    dateLabel: t(`crm.demo.mockPipeline.${index}.date`),
+    buyerName: "",
+    horseName: "",
+    priceLabel: "",
+    demoIndex: index,
+    dateKey: `crm.demo.mockPipeline.${index}.date`,
     priority: priorities[index],
     stage: stages[index],
   }));
@@ -61,10 +64,9 @@ function inquiryToPriority(inquiry: SellerInquiry): PipelinePriority {
 function buildPipelineFromInquiries(
   inquiries: SellerInquiry[],
   listings: HorseListingRow[],
-  priceOnRequestLabel: string,
-  t: DashboardTranslator
+  priceOnRequestLabel: string
 ): PipelineDeal[] {
-  const fromInquiries = inquiries.map((inquiry, index) => {
+  const fromInquiries: PipelineDeal[] = inquiries.map((inquiry, index) => {
     const listing = listings.find((row) => row.name === inquiry.horse_name);
     const priceLabel = listing
       ? formatListingRowPrice(listing, priceOnRequestLabel)
@@ -75,7 +77,7 @@ function buildPipelineFromInquiries(
       buyerName: inquiry.buyer_name,
       horseName: inquiry.horse_name,
       priceLabel,
-      dateLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
+      dateAt: inquiry.created_at,
       priority: inquiryToPriority(inquiry),
       stage: inquiryToStage(inquiry, index),
     };
@@ -85,23 +87,21 @@ function buildPipelineFromInquiries(
     return fromInquiries;
   }
 
-  const mockDeals = buildMockPipeline(t).map((deal, index) => ({
+  const mockDeals: PipelineDeal[] = buildMockPipeline().map((deal, index) => ({
     ...deal,
     id: `mock-pipeline-${index}`,
   }));
 
-  const merged = [...fromInquiries];
+  const merged: PipelineDeal[] = [...fromInquiries];
   for (const deal of mockDeals) {
     if (merged.length >= 6) break;
-    if (!merged.some((item) => item.buyerName === deal.buyerName && item.horseName === deal.horseName)) {
-      merged.push(deal);
-    }
+    merged.push(deal);
   }
 
   return merged;
 }
 
-function buildBuyersFromInquiries(inquiries: SellerInquiry[], t: DashboardTranslator): CrmBuyer[] {
+function buildBuyersFromInquiries(inquiries: SellerInquiry[]): CrmBuyer[] {
   const buyerMap = new Map<string, CrmBuyer>();
 
   inquiries.forEach((inquiry, index) => {
@@ -113,7 +113,7 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[], t: DashboardTransl
       name: inquiry.buyer_name,
       email: inquiry.buyer_email,
       interestedHorse: inquiry.horse_name,
-      lastContactLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
+      lastContactAt: inquiry.created_at,
       status: inquiry.status === "new" ? "new" : index % 3 === 0 ? "returning" : "hot",
     });
   });
@@ -124,7 +124,7 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[], t: DashboardTransl
     return buyers;
   }
 
-  buildMockBuyers(t).forEach((buyer, index) => {
+  buildMockBuyers().forEach((buyer, index) => {
     if (buyers.some((item) => item.email === buyer.email)) return;
     buyers.push({ ...buyer, id: `mock-buyer-${index}` });
   });
@@ -132,16 +132,9 @@ function buildBuyersFromInquiries(inquiries: SellerInquiry[], t: DashboardTransl
   return buyers;
 }
 
-function buildVisits(
-  listings: HorseListingRow[],
-  buyers: CrmBuyer[],
-  t: DashboardTranslator
-): CrmVisit[] {
+function buildVisits(listings: HorseListingRow[], buyers: CrmBuyer[]): CrmVisit[] {
   const today = new Date();
-  const horseNames =
-    listings.length > 0
-      ? listings.slice(0, 3).map((listing) => listing.name)
-      : [0, 1, 2].map((index) => t(`crm.demo.mockHorses.${index}`));
+  const hasListingHorses = listings.length > 0;
 
   const visitTemplates = [
     { dayOffset: 0, time: "10:30", locationKey: "0" },
@@ -157,15 +150,13 @@ function buildVisits(
 
     return {
       id: `visit-${index}`,
-      dateLabel: date.toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      }),
+      dateAt: date.toISOString(),
       timeLabel: template.time,
-      horseName: horseNames[index % horseNames.length] ?? t("crm.demo.featuredHorse"),
-      buyerName: buyer?.name ?? t("crm.demo.privateBuyer"),
-      location: t(`crm.demo.visitLocations.${template.locationKey}`),
+      horseName: hasListingHorses ? listings[index % listings.length]?.name ?? "" : "",
+      demoHorseIndex: hasListingHorses ? undefined : index % 3,
+      buyerName: buyer?.demoIndex == null ? buyer?.name ?? "" : "",
+      demoBuyerIndex: buyer?.demoIndex,
+      locationKey: `crm.demo.visitLocations.${template.locationKey}`,
       isToday: template.dayOffset === 0,
     };
   });
@@ -173,18 +164,18 @@ function buildVisits(
 
 function buildNotifications(
   inquiries: SellerInquiry[],
-  stats: { totalFavorites: number; totalViews: number },
-  t: DashboardTranslator
+  stats: { totalFavorites: number; totalViews: number }
 ): CrmNotification[] {
   const notifications: CrmNotification[] = inquiries.slice(0, 3).map((inquiry, index) => ({
     id: `notif-inquiry-${inquiry.id}`,
     type: "inquiry" as const,
-    title: t("crm.notifications.types.inquiry.title"),
-    description: t("crm.notifications.types.inquiry.description", {
+    titleKey: "crm.notifications.types.inquiry.title",
+    descriptionKey: "crm.notifications.types.inquiry.description",
+    descriptionValues: {
       buyer: inquiry.buyer_name,
       horse: inquiry.horse_name,
-    }),
-    timeLabel: formatRelativeTime(inquiry.created_at, t) || t("relativeTime.recent"),
+    },
+    timeAt: inquiry.created_at,
     unread: inquiry.status === "new" || index === 0,
   }));
 
@@ -192,38 +183,41 @@ function buildNotifications(
     {
       id: "notif-favorite",
       type: "favorite",
-      title: t("crm.notifications.types.favorite.title"),
-      description:
+      titleKey: "crm.notifications.types.favorite.title",
+      descriptionKey:
         stats.totalFavorites > 0
-          ? t("crm.notifications.types.favorite.descriptionWithCount", {
-              count: stats.totalFavorites,
-            })
-          : t("crm.notifications.types.favorite.description"),
-      timeLabel: t("relativeTime.hoursAgoLong", { count: 4 }),
+          ? "crm.notifications.types.favorite.descriptionWithCount"
+          : "crm.notifications.types.favorite.description",
+      descriptionValues:
+        stats.totalFavorites > 0 ? { count: stats.totalFavorites } : undefined,
+      timeKey: "relativeTime.hoursAgoLong",
+      timeValues: { count: 4 },
       unread: true,
     },
     {
       id: "notif-profile",
       type: "profile-view",
-      title: t("crm.notifications.types.profile-view.title"),
-      description: t("crm.notifications.types.profile-view.description"),
-      timeLabel: t("relativeTime.hoursAgoLong", { count: 6 }),
+      titleKey: "crm.notifications.types.profile-view.title",
+      descriptionKey: "crm.notifications.types.profile-view.description",
+      timeKey: "relativeTime.hoursAgoLong",
+      timeValues: { count: 6 },
       unread: stats.totalViews > 0,
     },
     {
       id: "notif-visit",
       type: "visit-request",
-      title: t("crm.notifications.types.visit-request.title"),
-      description: t("crm.notifications.types.visit-request.description"),
-      timeLabel: t("relativeTime.yesterday"),
+      titleKey: "crm.notifications.types.visit-request.title",
+      descriptionKey: "crm.notifications.types.visit-request.description",
+      timeKey: "relativeTime.yesterday",
       unread: false,
     },
     {
       id: "notif-offer",
       type: "offer",
-      title: t("crm.notifications.types.offer.title"),
-      description: t("crm.notifications.types.offer.description"),
-      timeLabel: t("relativeTime.daysAgo", { count: 2 }),
+      titleKey: "crm.notifications.types.offer.title",
+      descriptionKey: "crm.notifications.types.offer.description",
+      timeKey: "relativeTime.daysAgo",
+      timeValues: { count: 2 },
       unread: false,
     },
   ];
@@ -234,15 +228,13 @@ function buildNotifications(
 function buildPerformance(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  stats: { sold: number; totalInquiries: number; active: number },
-  t: DashboardTranslator
+  stats: { sold: number; totalInquiries: number; active: number }
 ): CrmPerformanceSnapshot {
   const ranked = listings
     .map((listing) => ({
       name: listing.name,
       views: metricsByListingId[listing.id]?.viewCount ?? listing.view_count ?? 0,
       favorites: metricsByListingId[listing.id]?.favoriteCount ?? 0,
-      inquiries: metricsByListingId[listing.id]?.inquiryCount ?? 0,
     }))
     .sort((a, b) => b.views + b.favorites * 2 - (a.views + a.favorites * 2));
 
@@ -254,26 +246,28 @@ function buildPerformance(
     stats.active > 0 ? Math.round((stats.sold / Math.max(stats.active + stats.sold, 1)) * 100) : 0;
 
   return {
-    bestPerformingHorse: top?.name ?? t("crm.performance.fallbacks.bestPerforming"),
-    mostViewedHorse: mostViewed?.name ?? t("crm.performance.fallbacks.noViews"),
+    bestPerformingHorse: top?.name ?? "",
+    bestPerformingFallbackKey: top ? undefined : "crm.performance.fallbacks.bestPerforming",
+    mostViewedHorse: mostViewed?.name ?? "",
+    mostViewedFallbackKey: mostViewed ? undefined : "crm.performance.fallbacks.noViews",
     mostViewedCount: mostViewed?.views ?? 0,
-    highestSavedHorse: mostSaved?.name ?? t("crm.performance.fallbacks.noFavorites"),
+    highestSavedHorse: mostSaved?.name ?? "",
+    highestSavedFallbackKey: mostSaved ? undefined : "crm.performance.fallbacks.noFavorites",
     highestSavedCount: mostSaved?.favorites ?? 0,
-    averageResponseLabel:
+    averageResponseKey:
       stats.totalInquiries > 0
-        ? t("crm.performance.fallbacks.averageResponse")
-        : t("crm.performance.fallbacks.noInquiries"),
-    conversionLabel:
+        ? "crm.performance.fallbacks.averageResponse"
+        : "crm.performance.fallbacks.noInquiries",
+    conversionKey:
       stats.active + stats.sold > 0
-        ? t("crm.performance.fallbacks.conversionRate", { rate: conversionRate })
-        : t("crm.performance.fallbacks.zeroConversion"),
+        ? "crm.performance.fallbacks.conversionRate"
+        : "crm.performance.fallbacks.zeroConversion",
+    conversionValues:
+      stats.active + stats.sold > 0 ? { rate: conversionRate } : undefined,
   };
 }
 
-function buildAiRecommendations(
-  listings: HorseListingRow[],
-  t: DashboardTranslator
-): CrmAiRecommendation[] {
+function buildAiRecommendations(listings: HorseListingRow[]): CrmAiRecommendation[] {
   const recommendationIds = ["ai-response"];
   const activeListing = listings.find((listing) => listing.status === "active") ?? listings[0];
 
@@ -288,7 +282,6 @@ function buildAiRecommendations(
 
   return recommendationIds.slice(0, 5).map((id) => ({
     id,
-    label: t(`crm.ai.recommendations.${id}`),
     impact: id === "ai-response" || id === "ai-video" || id === "ai-listing" ? "high" : "medium",
   }));
 }
@@ -306,7 +299,6 @@ type BuildArgs = {
     totalInquiries: number;
   };
   priceOnRequestLabel: string;
-  t: DashboardTranslator;
 };
 
 export function buildSellerCrmData({
@@ -315,18 +307,17 @@ export function buildSellerCrmData({
   recentInquiries,
   stats,
   priceOnRequestLabel,
-  t,
 }: BuildArgs): SellerCrmData {
-  const buyers = buildBuyersFromInquiries(recentInquiries, t);
+  const buyers = buildBuyersFromInquiries(recentInquiries);
 
   return {
-    pipeline: buildPipelineFromInquiries(recentInquiries, listings, priceOnRequestLabel, t),
+    pipeline: buildPipelineFromInquiries(recentInquiries, listings, priceOnRequestLabel),
     buyers,
-    visits: buildVisits(listings, buyers, t),
-    notifications: buildNotifications(recentInquiries, stats, t),
-    performance: buildPerformance(listings, metricsByListingId, stats, t),
-    aiRecommendations: buildAiRecommendations(listings, t),
+    visits: buildVisits(listings, buyers),
+    notifications: buildNotifications(recentInquiries, stats),
+    performance: buildPerformance(listings, metricsByListingId, stats),
+    aiRecommendations: buildAiRecommendations(listings),
   };
 }
 
-export { getBuyerInitials };
+export { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";

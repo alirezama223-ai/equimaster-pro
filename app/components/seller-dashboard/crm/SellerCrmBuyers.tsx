@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import { getBuyerInitials } from "@/app/components/seller-dashboard/seller-dashboard-utils";
+import { formatDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import type { BuyerStatus, CrmBuyer } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 const STATUS_STYLES: Record<BuyerStatus, string> = {
@@ -21,6 +22,27 @@ type Props = {
   buyers: CrmBuyer[];
 };
 
+function resolveBuyerName(buyer: CrmBuyer, t: ReturnType<typeof useTranslations>) {
+  if (buyer.demoIndex != null) {
+    return t(`crm.demo.mockBuyers.${buyer.demoIndex}.name`);
+  }
+  return buyer.name;
+}
+
+function resolveInterestedHorse(buyer: CrmBuyer, t: ReturnType<typeof useTranslations>) {
+  if (buyer.demoIndex != null) {
+    return t(`crm.demo.mockBuyers.${buyer.demoIndex}.horse`);
+  }
+  return buyer.interestedHorse;
+}
+
+function resolveLastContactTimestamp(buyer: CrmBuyer) {
+  if (buyer.lastContactAt) {
+    return new Date(buyer.lastContactAt).getTime();
+  }
+  return 0;
+}
+
 function SellerCrmBuyers({ buyers }: Props) {
   const t = useTranslations("dashboard");
   const [query, setQuery] = useState("");
@@ -32,12 +54,15 @@ function SellerCrmBuyers({ buyers }: Props) {
 
     if (query.trim()) {
       const normalized = query.trim().toLowerCase();
-      result = result.filter(
-        (buyer) =>
-          buyer.name.toLowerCase().includes(normalized) ||
-          buyer.interestedHorse.toLowerCase().includes(normalized) ||
+      result = result.filter((buyer) => {
+        const buyerName = resolveBuyerName(buyer, t).toLowerCase();
+        const interestedHorse = resolveInterestedHorse(buyer, t).toLowerCase();
+        return (
+          buyerName.includes(normalized) ||
+          interestedHorse.includes(normalized) ||
           buyer.email.toLowerCase().includes(normalized)
-      );
+        );
+      });
     }
 
     if (filter !== "all") {
@@ -45,13 +70,15 @@ function SellerCrmBuyers({ buyers }: Props) {
     }
 
     result.sort((a, b) => {
-      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "name") {
+        return resolveBuyerName(a, t).localeCompare(resolveBuyerName(b, t));
+      }
       if (sort === "status") return a.status.localeCompare(b.status);
-      return a.lastContactLabel.localeCompare(b.lastContactLabel);
+      return resolveLastContactTimestamp(b) - resolveLastContactTimestamp(a);
     });
 
     return result;
-  }, [buyers, filter, query, sort]);
+  }, [buyers, filter, query, sort, t]);
 
   return (
     <DashboardCard
@@ -104,23 +131,33 @@ function SellerCrmBuyers({ buyers }: Props) {
         />
       ) : (
         <ul className="space-y-3">
-          {filteredBuyers.map((buyer) => (
+          {filteredBuyers.map((buyer) => {
+            const buyerName = resolveBuyerName(buyer, t);
+            const interestedHorse = resolveInterestedHorse(buyer, t);
+            const lastContact =
+              buyer.lastContactAt != null
+                ? formatDashboardRelativeTime(buyer.lastContactAt, t)
+                : buyer.lastContactKey
+                  ? t(buyer.lastContactKey)
+                  : t("relativeTime.recent");
+
+            return (
             <li
               key={buyer.id}
               className="flex flex-col gap-4 rounded-2xl border border-white/[0.06] bg-[#08111F]/70 p-4 sm:flex-row sm:items-center"
             >
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-blue-500/20 to-violet-500/20 text-sm font-bold text-white">
-                  {getBuyerInitials(buyer.name)}
+                  {getBuyerInitials(buyerName)}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate font-semibold text-white">{buyer.name}</p>
-                  <p className="truncate text-sm text-blue-300">{buyer.interestedHorse}</p>
+                  <p className="truncate font-semibold text-white">{buyerName}</p>
+                  <p className="truncate text-sm text-blue-300">{interestedHorse}</p>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                 <span className="text-xs text-gray-500">
-                  {t("crm.buyers.lastContact", { time: buyer.lastContactLabel })}
+                  {t("crm.buyers.lastContact", { time: lastContact })}
                 </span>
                 <span
                   className={`inline-flex min-h-7 items-center rounded-full border px-2.5 text-[11px] font-semibold uppercase tracking-wide ${STATUS_STYLES[buyer.status]}`}
@@ -129,7 +166,8 @@ function SellerCrmBuyers({ buyers }: Props) {
                 </span>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </DashboardCard>

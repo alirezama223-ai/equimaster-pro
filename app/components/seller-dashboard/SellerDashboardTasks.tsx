@@ -55,7 +55,7 @@ function SellerDashboardTasks({ tasks }: Props) {
               {task.completed ? "✓" : ""}
             </span>
             <span className={`text-sm ${task.completed ? "text-gray-400 line-through" : "text-white"}`}>
-              {task.label}
+              {t(`tasks.items.${task.key}`)}
             </span>
           </li>
         ))}

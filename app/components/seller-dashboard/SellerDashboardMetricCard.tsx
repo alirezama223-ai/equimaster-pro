@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 import type { SellerMetricCard } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 
 const accentStyles = {
@@ -16,6 +17,7 @@ type Props = {
 };
 
 function SellerDashboardMetricCard({ metric }: Props) {
+  const t = useTranslations("dashboard");
   const accent = metric.accent ?? "blue";
 
   return (
@@ -24,11 +26,13 @@ function SellerDashboardMetricCard({ metric }: Props) {
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_55%)] opacity-0 transition duration-300 group-hover:opacity-100" />
       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">
-        {metric.label}
+        {t(metric.labelKey)}
       </p>
       <p className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">{metric.value}</p>
-      {metric.trend ? (
-        <p className="mt-2 text-xs leading-relaxed text-gray-500">{metric.trend}</p>
+      {metric.trendKey ? (
+        <p className="mt-2 text-xs leading-relaxed text-gray-500">
+          {t(metric.trendKey, metric.trendValues)}
+        </p>
       ) : null}
     </div>
   );

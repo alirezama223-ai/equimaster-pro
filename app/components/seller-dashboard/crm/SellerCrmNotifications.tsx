@@ -4,6 +4,7 @@ import { memo, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
+import { formatDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import type { CrmNotification, CrmNotificationType } from "@/app/components/seller-dashboard/crm/seller-crm-types";
 
 const TYPE_ICONS: Record<CrmNotificationType, string> = {
@@ -17,6 +18,19 @@ const TYPE_ICONS: Record<CrmNotificationType, string> = {
 type Props = {
   notifications: CrmNotification[];
 };
+
+function resolveNotificationTime(
+  notification: CrmNotification,
+  t: ReturnType<typeof useTranslations>
+) {
+  if (notification.timeAt) {
+    return formatDashboardRelativeTime(notification.timeAt, t);
+  }
+  if (notification.timeKey) {
+    return t(notification.timeKey, notification.timeValues);
+  }
+  return "";
+}
 
 function SellerCrmNotifications({ notifications }: Props) {
   const t = useTranslations("dashboard");
@@ -67,16 +81,18 @@ function SellerCrmNotifications({ notifications }: Props) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-white">{notification.title}</p>
+                    <p className="font-semibold text-white">{t(notification.titleKey)}</p>
                     <p className="mt-1 text-sm leading-relaxed text-gray-400">
-                      {notification.description}
+                      {t(notification.descriptionKey, notification.descriptionValues)}
                     </p>
                   </div>
                   {notification.unread ? (
                     <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-500" />
                   ) : null}
                 </div>
-                <p className="mt-3 text-xs text-gray-500">{notification.timeLabel}</p>
+                <p className="mt-3 text-xs text-gray-500">
+                  {resolveNotificationTime(notification, t)}
+                </p>
               </div>
             </li>
           ))}

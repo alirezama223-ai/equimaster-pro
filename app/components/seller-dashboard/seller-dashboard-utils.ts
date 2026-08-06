@@ -1,4 +1,3 @@
-import type { DashboardTranslator } from "@/app/components/seller-dashboard/dashboard-i18n";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { SellerInquiry } from "@/app/types/inquiry";
 import type { SellerDashboardListingMetrics } from "@/app/types/marketplace-public";
@@ -16,24 +15,32 @@ export type SellerDashboardStats = {
 
 export type SellerMetricCard = {
   key: string;
-  label: string;
+  labelKey: string;
   value: number | string;
-  trend?: string;
+  trendKey?: string;
+  trendValues?: Record<string, string | number>;
   accent?: "blue" | "emerald" | "violet" | "amber" | "rose";
+};
+
+export type SellerChartPoint = {
+  label?: string;
+  dateKey?: string;
+  value: number;
+  isEmptyPlaceholder?: boolean;
 };
 
 export type SellerChartSeries = {
   key: string;
-  label: string;
+  labelKey: string;
+  emptyKey?: string;
   color: string;
-  points: { label: string; value: number }[];
+  points: SellerChartPoint[];
   total: number;
   isTimeline?: boolean;
 };
 
 export type SellerTaskItem = {
-  key: string;
-  label: string;
+  key: "profile" | "verify" | "passport" | "xrays" | "pedigree";
   completed: boolean;
 };
 
@@ -43,72 +50,65 @@ function startOfDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-function formatShortDay(date: Date): string {
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+function formatShortDay(date: Date, locale?: string): string {
+  return date.toLocaleDateString(locale, { month: "short", day: "numeric" });
 }
 
-export function getGreetingPrefix(t: DashboardTranslator, hour = new Date().getHours()): string {
-  if (hour < 12) return t("greeting.morning");
-  if (hour < 17) return t("greeting.afternoon");
-  return t("greeting.evening");
+export function formatAnalyticsTimelineLabel(dateKey: string, locale?: string): string {
+  return formatShortDay(new Date(dateKey), locale);
 }
 
 export function buildOverviewMetrics(
   stats: SellerDashboardStats,
   profileScore: number,
-  unreadMessages: number,
-  t: DashboardTranslator
+  unreadMessages: number
 ): SellerMetricCard[] {
   return [
     {
       key: "active",
-      label: t("metrics.activeListings"),
+      labelKey: "metrics.activeListings",
       value: stats.active,
-      trend:
-        stats.draft > 0
-          ? t("metrics.draftsInProgress", { count: stats.draft })
-          : t("metrics.allListingsLive"),
+      trendKey:
+        stats.draft > 0 ? "metrics.draftsInProgress" : "metrics.allListingsLive",
+      trendValues: stats.draft > 0 ? { count: stats.draft } : undefined,
       accent: "blue",
     },
     {
       key: "sold",
-      label: t("metrics.soldHorses"),
+      labelKey: "metrics.soldHorses",
       value: stats.sold,
-      trend: stats.sold > 0 ? t("metrics.completedSales") : t("metrics.noSalesRecorded"),
+      trendKey: stats.sold > 0 ? "metrics.completedSales" : "metrics.noSalesRecorded",
       accent: "emerald",
     },
     {
       key: "favorites",
-      label: t("metrics.favorites"),
+      labelKey: "metrics.favorites",
       value: stats.totalFavorites,
-      trend:
-        stats.totalFavorites > 0
-          ? t("metrics.buyersSaved")
-          : t("metrics.waitingForFavorite"),
+      trendKey:
+        stats.totalFavorites > 0 ? "metrics.buyersSaved" : "metrics.waitingForFavorite",
       accent: "violet",
     },
     {
       key: "messages",
-      label: t("metrics.messages"),
+      labelKey: "metrics.messages",
       value: stats.totalInquiries,
-      trend:
-        unreadMessages > 0
-          ? t("metrics.unreadConversations", { count: unreadMessages })
-          : t("metrics.inboxUpToDate"),
+      trendKey:
+        unreadMessages > 0 ? "metrics.unreadConversations" : "metrics.inboxUpToDate",
+      trendValues: unreadMessages > 0 ? { count: unreadMessages } : undefined,
       accent: "rose",
     },
     {
       key: "views",
-      label: t("metrics.views30Days"),
+      labelKey: "metrics.views30Days",
       value: stats.totalViews,
-      trend: stats.totalViews > 0 ? t("metrics.lifetimeViews") : t("metrics.publishToTrack"),
+      trendKey: stats.totalViews > 0 ? "metrics.lifetimeViews" : "metrics.publishToTrack",
       accent: "amber",
     },
     {
       key: "profile",
-      label: t("metrics.profileScore"),
+      labelKey: "metrics.profileScore",
       value: `${profileScore}%`,
-      trend: profileScore >= 80 ? t("metrics.strongPresence") : t("metrics.completeTasks"),
+      trendKey: profileScore >= 80 ? "metrics.strongPresence" : "metrics.completeTasks",
       accent: "blue",
     },
   ];
@@ -140,10 +140,7 @@ export function computeProfileScore(listings: HorseListingRow[]): number {
   return Math.min(100, score);
 }
 
-export function buildSellerTasks(
-  listings: HorseListingRow[],
-  t: DashboardTranslator
-): SellerTaskItem[] {
+export function buildSellerTasks(listings: HorseListingRow[]): SellerTaskItem[] {
   const hasProfileDetails = listings.some(
     (listing) =>
       listing.seller_name.trim() &&
@@ -162,11 +159,11 @@ export function buildSellerTasks(
   );
 
   return [
-    { key: "profile", label: t("tasks.items.profile"), completed: hasProfileDetails },
-    { key: "verify", label: t("tasks.items.verify"), completed: hasVerified },
-    { key: "passport", label: t("tasks.items.passport"), completed: hasPassportData },
-    { key: "xrays", label: t("tasks.items.xrays"), completed: hasHealthDocs },
-    { key: "pedigree", label: t("tasks.items.pedigree"), completed: hasPedigree },
+    { key: "profile", completed: hasProfileDetails },
+    { key: "verify", completed: hasVerified },
+    { key: "passport", completed: hasPassportData },
+    { key: "xrays", completed: hasHealthDocs },
+    { key: "pedigree", completed: hasPedigree },
   ];
 }
 
@@ -182,7 +179,7 @@ function buildDailyBuckets(days = 30): Map<string, number> {
   return buckets;
 }
 
-function bucketSeriesFromDates(dates: string[], days = 30): { label: string; value: number }[] {
+function bucketSeriesFromDates(dates: string[], days = 30): SellerChartPoint[] {
   const buckets = buildDailyBuckets(days);
   const cutoff = startOfDay(new Date()).getTime() - (days - 1) * DAY_MS;
 
@@ -196,7 +193,7 @@ function bucketSeriesFromDates(dates: string[], days = 30): { label: string; val
   }
 
   return Array.from(buckets.entries()).map(([key, value]) => ({
-    label: formatShortDay(new Date(key)),
+    dateKey: key,
     value,
   }));
 }
@@ -205,7 +202,7 @@ function buildListingMetricSeries(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
   metric: "viewCount" | "favoriteCount" | "inquiryCount"
-): { label: string; value: number }[] {
+): SellerChartPoint[] {
   return listings
     .map((listing) => ({
       label: listing.name.length > 18 ? `${listing.name.slice(0, 16)}…` : listing.name,
@@ -219,8 +216,7 @@ function buildListingMetricSeries(
 export function buildAnalyticsSeries(
   listings: HorseListingRow[],
   metricsByListingId: Record<string, SellerDashboardListingMetrics>,
-  inquiries: SellerInquiry[],
-  t: DashboardTranslator
+  inquiries: SellerInquiry[]
 ): SellerChartSeries[] {
   const inquiryDates = inquiries.map((inquiry) => inquiry.created_at);
   const inquiryDaily = bucketSeriesFromDates(inquiryDates);
@@ -241,37 +237,40 @@ export function buildAnalyticsSeries(
   return [
     {
       key: "views",
-      label: t("analytics.series.views"),
+      labelKey: "analytics.series.views",
+      emptyKey: "analytics.empty.noViews",
       color: "#3b82f6",
       points:
         viewsByListing.length > 0
           ? viewsByListing
-          : [{ label: t("analytics.empty.noViews"), value: 0 }],
+          : [{ label: "", value: 0, isEmptyPlaceholder: true }],
       total: listings.reduce((sum, listing) => sum + (listing.view_count ?? 0), 0),
     },
     {
       key: "favorites",
-      label: t("analytics.series.favorites"),
+      labelKey: "analytics.series.favorites",
+      emptyKey: "analytics.empty.noFavorites",
       color: "#8b5cf6",
       points:
         favoritesByListing.length > 0
           ? favoritesByListing
-          : [{ label: t("analytics.empty.noFavorites"), value: 0 }],
+          : [{ label: "", value: 0, isEmptyPlaceholder: true }],
       total: Object.values(metricsByListingId).reduce((sum, metric) => sum + metric.favoriteCount, 0),
     },
     {
       key: "contacts",
-      label: t("analytics.series.contacts"),
+      labelKey: "analytics.series.contacts",
+      emptyKey: "analytics.empty.noContacts",
       color: "#10b981",
       points:
         contactsByListing.length > 0
           ? contactsByListing
-          : [{ label: t("analytics.empty.noContacts"), value: 0 }],
+          : [{ label: "", value: 0, isEmptyPlaceholder: true }],
       total: Object.values(metricsByListingId).reduce((sum, metric) => sum + metric.inquiryCount, 0),
     },
     {
       key: "inquiries",
-      label: t("analytics.series.inquiries"),
+      labelKey: "analytics.series.inquiries",
       color: "#f59e0b",
       points: inquiryDaily.slice(-14),
       total: inquiryTotal > 0 ? inquiryTotal : inquiries.length,
@@ -282,29 +281,6 @@ export function buildAnalyticsSeries(
 
 export function countUnreadInquiries(inquiries: SellerInquiry[]): number {
   return inquiries.filter((inquiry) => inquiry.status === "new").length;
-}
-
-export function formatRelativeTime(iso: string, t: DashboardTranslator): string {
-  const timestamp = new Date(iso).getTime();
-  if (Number.isNaN(timestamp)) return "";
-
-  const diffMs = Date.now() - timestamp;
-  const minutes = Math.floor(diffMs / 60_000);
-
-  if (minutes < 1) return t("relativeTime.justNow");
-  if (minutes < 60) return t("relativeTime.minutesAgo", { count: minutes });
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return t("relativeTime.hoursAgo", { count: hours });
-
-  const days = Math.floor(hours / 24);
-  if (days === 1) return t("relativeTime.yesterday");
-  if (days < 7) return t("relativeTime.daysAgo", { count: days });
-
-  return new Date(timestamp).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
 }
 
 export function getBuyerInitials(name: string): string {

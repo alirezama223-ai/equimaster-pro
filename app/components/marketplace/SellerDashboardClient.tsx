@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useMemo, useState, useTransition } from "react";
+import { memo, useMemo, useState, useTransition } from "react";
 import {
   archiveHorseListing,
   deleteHorseListing,
@@ -23,14 +23,13 @@ import SellerDashboardQuickActions from "@/app/components/seller-dashboard/Selle
 import SellerDashboardTasks from "@/app/components/seller-dashboard/SellerDashboardTasks";
 import SellerCrmHub from "@/app/components/seller-dashboard/crm/SellerCrmHub";
 import { buildSellerCrmData } from "@/app/components/seller-dashboard/crm/seller-crm-demo-data";
+import { getGreetingPrefix, useDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import {
   buildAnalyticsSeries,
   buildOverviewMetrics,
   buildSellerTasks,
   computeProfileScore,
   countUnreadInquiries,
-  formatRelativeTime,
-  getGreetingPrefix,
 } from "@/app/components/seller-dashboard/seller-dashboard-utils";
 import { listingRowToFormData, listingImagesFromRow } from "@/app/lib/horse-listings";
 import type { ListingActionKey } from "@/app/lib/marketplace/listing-actions-config";
@@ -69,7 +68,7 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const formatTime = useCallback((iso: string) => formatRelativeTime(iso, t), [t]);
+  const formatTime = useDashboardRelativeTime();
 
   const profileScore = useMemo(
     () => computeProfileScore(dashboard.listings),
@@ -80,20 +79,19 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
     [dashboard.recentInquiries]
   );
   const overviewMetrics = useMemo(
-    () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages, t),
-    [dashboard.stats, profileScore, unreadMessages, t]
+    () => buildOverviewMetrics(dashboard.stats, profileScore, unreadMessages),
+    [dashboard.stats, profileScore, unreadMessages]
   );
   const analyticsSeries = useMemo(
     () =>
       buildAnalyticsSeries(
         dashboard.listings,
         dashboard.metricsByListingId,
-        dashboard.recentInquiries,
-        t
+        dashboard.recentInquiries
       ),
-    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries, t]
+    [dashboard.listings, dashboard.metricsByListingId, dashboard.recentInquiries]
   );
-  const tasks = useMemo(() => buildSellerTasks(dashboard.listings, t), [dashboard.listings, t]);
+  const tasks = useMemo(() => buildSellerTasks(dashboard.listings), [dashboard.listings]);
   const crmData = useMemo(
     () =>
       buildSellerCrmData({
@@ -102,9 +100,8 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
         recentInquiries: dashboard.recentInquiries,
         stats: dashboard.stats,
         priceOnRequestLabel: tCommon("priceOnRequest"),
-        t,
       }),
-    [dashboard, tCommon, t]
+    [dashboard, tCommon]
   );
 
   function runListingAction(

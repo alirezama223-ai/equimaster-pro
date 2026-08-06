@@ -13,7 +13,9 @@ export type PipelineDeal = {
   buyerAvatar?: string;
   horseName: string;
   priceLabel: string;
-  dateLabel: string;
+  dateAt?: string;
+  dateKey?: string;
+  demoIndex?: number;
   priority: PipelinePriority;
   stage: PipelineStage;
 };
@@ -25,17 +27,21 @@ export type CrmBuyer = {
   name: string;
   email: string;
   interestedHorse: string;
-  lastContactLabel: string;
+  lastContactAt?: string;
+  lastContactKey?: string;
+  demoIndex?: number;
   status: BuyerStatus;
 };
 
 export type CrmVisit = {
   id: string;
-  dateLabel: string;
+  dateAt: string;
   timeLabel: string;
   horseName: string;
+  demoHorseIndex?: number;
   buyerName: string;
-  location: string;
+  demoBuyerIndex?: number;
+  locationKey: string;
   isToday: boolean;
 };
 
@@ -49,25 +55,31 @@ export type CrmNotificationType =
 export type CrmNotification = {
   id: string;
   type: CrmNotificationType;
-  title: string;
-  description: string;
-  timeLabel: string;
+  titleKey: string;
+  descriptionKey: string;
+  descriptionValues?: Record<string, string | number>;
+  timeAt?: string;
+  timeKey?: string;
+  timeValues?: Record<string, string | number>;
   unread: boolean;
 };
 
 export type CrmPerformanceSnapshot = {
   bestPerformingHorse: string;
+  bestPerformingFallbackKey?: string;
   mostViewedHorse: string;
+  mostViewedFallbackKey?: string;
   mostViewedCount: number;
   highestSavedHorse: string;
+  highestSavedFallbackKey?: string;
   highestSavedCount: number;
-  averageResponseLabel: string;
-  conversionLabel: string;
+  averageResponseKey: string;
+  conversionKey: string;
+  conversionValues?: Record<string, string | number>;
 };
 
 export type CrmAiRecommendation = {
   id: string;
-  label: string;
   impact: "high" | "medium";
 };
 

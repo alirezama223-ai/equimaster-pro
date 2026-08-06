@@ -42,6 +42,16 @@ function PerformanceCard({
 function SellerCrmPerformance({ performance }: Props) {
   const t = useTranslations("dashboard");
 
+  const bestPerformingValue = performance.bestPerformingFallbackKey
+    ? t(performance.bestPerformingFallbackKey)
+    : performance.bestPerformingHorse;
+  const mostViewedValue = performance.mostViewedFallbackKey
+    ? t(performance.mostViewedFallbackKey)
+    : performance.mostViewedHorse;
+  const highestSavedValue = performance.highestSavedFallbackKey
+    ? t(performance.highestSavedFallbackKey)
+    : performance.highestSavedHorse;
+
   return (
     <DashboardCard
       eyebrow={t("crm.performance.eyebrow")}
@@ -51,29 +61,29 @@ function SellerCrmPerformance({ performance }: Props) {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <PerformanceCard
           label={t("crm.performance.bestPerformingHorse")}
-          value={performance.bestPerformingHorse}
+          value={bestPerformingValue}
           accent="blue"
         />
         <PerformanceCard
           label={t("crm.performance.mostViewed")}
-          value={performance.mostViewedHorse}
+          value={mostViewedValue}
           detail={t("crm.performance.viewsCount", { count: performance.mostViewedCount })}
           accent="violet"
         />
         <PerformanceCard
           label={t("crm.performance.highestSaved")}
-          value={performance.highestSavedHorse}
+          value={highestSavedValue}
           detail={t("crm.performance.favoritesCount", { count: performance.highestSavedCount })}
           accent="rose"
         />
         <PerformanceCard
           label={t("crm.performance.averageResponse")}
-          value={performance.averageResponseLabel}
+          value={t(performance.averageResponseKey)}
           accent="emerald"
         />
         <PerformanceCard
           label={t("crm.performance.conversion")}
-          value={performance.conversionLabel}
+          value={t(performance.conversionKey, performance.conversionValues)}
           accent="amber"
         />
       </div>

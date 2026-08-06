@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import DashboardCard from "@/app/components/shared/DashboardCard";
 import SellerDashboardEmptyState from "@/app/components/seller-dashboard/SellerDashboardEmptyState";
 import type { CrmVisit } from "@/app/components/seller-dashboard/crm/seller-crm-types";
@@ -9,6 +9,28 @@ import type { CrmVisit } from "@/app/components/seller-dashboard/crm/seller-crm-
 type Props = {
   visits: CrmVisit[];
 };
+
+function resolveVisitHorseName(visit: CrmVisit, t: ReturnType<typeof useTranslations>) {
+  if (visit.demoHorseIndex != null) {
+    return t(`crm.demo.mockHorses.${visit.demoHorseIndex}`);
+  }
+  return visit.horseName;
+}
+
+function resolveVisitBuyerName(visit: CrmVisit, t: ReturnType<typeof useTranslations>) {
+  if (visit.demoBuyerIndex != null) {
+    return t(`crm.demo.mockBuyers.${visit.demoBuyerIndex}.name`);
+  }
+  return visit.buyerName;
+}
+
+function formatVisitDate(dateAt: string, locale: string) {
+  return new Date(dateAt).toLocaleDateString(locale, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 function SellerCrmCalendar({ visits }: Props) {
   const t = useTranslations("dashboard");
@@ -79,6 +101,12 @@ function VisitCard({
   highlight?: boolean;
   t: ReturnType<typeof useTranslations>;
 }) {
+  const locale = useLocale();
+  const horseName = resolveVisitHorseName(visit, t);
+  const buyerName = resolveVisitBuyerName(visit, t);
+  const dateLabel = formatVisitDate(visit.dateAt, locale);
+  const location = t(visit.locationKey);
+
   return (
     <article
       className={`rounded-2xl border p-4 ${
@@ -89,7 +117,7 @@ function VisitCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-white">{visit.dateLabel}</p>
+          <p className="text-sm font-semibold text-white">{dateLabel}</p>
           <p className="text-xs text-gray-500">{visit.timeLabel}</p>
         </div>
         {highlight ? (
@@ -99,9 +127,9 @@ function VisitCard({
         ) : null}
       </div>
       <div className="mt-4 space-y-1">
-        <p className="font-medium text-white">{visit.horseName}</p>
-        <p className="text-sm text-gray-400">{visit.buyerName}</p>
-        <p className="text-xs text-gray-500">{visit.location}</p>
+        <p className="font-medium text-white">{horseName}</p>
+        <p className="text-sm text-gray-400">{buyerName}</p>
+        <p className="text-xs text-gray-500">{location}</p>
       </div>
       <button
         type="button"

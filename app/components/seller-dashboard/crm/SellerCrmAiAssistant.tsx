@@ -53,7 +53,9 @@ function SellerCrmAiAssistant({ recommendations }: Props) {
                 →
               </span>
               <div className="min-w-0">
-                <p className="text-sm leading-relaxed text-white">{item.label}</p>
+                <p className="text-sm leading-relaxed text-white">
+                  {t(`crm.ai.recommendations.${item.id}`)}
+                </p>
                 <p className="mt-1 text-[11px] uppercase tracking-wide text-blue-300/70">
                   {item.impact === "high" ? t("crm.ai.impactHigh") : t("crm.ai.impactMedium")}
                 </p>
