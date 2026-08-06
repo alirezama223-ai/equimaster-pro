@@ -39,16 +39,22 @@ export type CrmVisit = {
   isToday: boolean;
 };
 
-export type CrmNotificationType = "inquiry";
+export type CrmNotificationType =
+  | "new_message"
+  | "listing_favorited"
+  | "listing_view_milestone"
+  | "new_inquiry"
+  | "listing_published"
+  | "listing_expiring";
 
 export type CrmNotification = {
   id: string;
   type: CrmNotificationType;
-  titleKey: string;
-  descriptionKey: string;
-  descriptionValues?: Record<string, string | number>;
+  title: string;
+  body: string;
   timeAt: string;
   unread: boolean;
+  entityId?: string | null;
 };
 
 export type CrmPerformanceSnapshot = {

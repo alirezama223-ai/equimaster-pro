@@ -1,21 +1,28 @@
 {
   "page": {
-    "loadingFallback": "Loading notifications..."
+    "loadingFallback": "Benachrichtigungen werden geladen..."
   },
   "center": {
-    "eyebrow": "Event Engine",
-    "title": "Notification Center",
-    "description": "Central feed of unresolved events published by Training, Health, Analytics, and the Rule Engine. Future AI providers can consume this stream instead of querying every module table.",
-    "unresolvedLabel": "Unresolved",
-    "alertsLabel": "Alerts",
-    "unresolved": "Unresolved: {count}",
-    "alerts": "Alerts: {count}",
-    "loading": "Loading notifications...",
-    "allClearTitle": "All clear",
-    "allClearDescription": "No unresolved events. Modules will publish here when rules or workflows detect something worth your attention."
+    "eyebrow": "Benachrichtigungen",
+    "title": "Benachrichtigungszentrale",
+    "description": "Bleiben Sie über Nachrichten, Favoriten, Listing-Meilensteine, Anfragen und Veröffentlichungen informiert.",
+    "unreadLabel": "Ungelesen",
+    "loading": "Benachrichtigungen werden geladen...",
+    "loadingMore": "Weitere werden geladen...",
+    "loadMore": "Weitere Benachrichtigungen laden",
+    "markAllRead": "Alle als gelesen markieren",
+    "allClearTitle": "Alles erledigt",
+    "allClearDescription": "Derzeit keine Benachrichtigungen. Aktivität zu Ihren Inseraten und Gesprächen erscheint hier."
+  },
+  "dropdown": {
+    "title": "Benachrichtigungen",
+    "subtitle": "Letzte Aktivität",
+    "emptyTitle": "Noch keine Benachrichtigungen",
+    "emptyMessage": "Neue Nachrichten, Favoriten und Listing-Updates erscheinen hier.",
+    "viewAll": "Alle Benachrichtigungen anzeigen"
   },
   "bell": {
-    "ariaLabel": "Notifications",
-    "ariaLabelWithCount": "Notifications, {count} unresolved"
+    "ariaLabel": "Benachrichtigungen",
+    "ariaLabelWithCount": "Benachrichtigungen, {count} ungelesen"
   }
 }

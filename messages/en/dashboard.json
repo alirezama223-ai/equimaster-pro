@@ -211,8 +211,9 @@
       "description": "Stay on top of buyer signals and marketplace activity.",
       "unreadBadge": "{count} unread",
       "emptyTitle": "All caught up",
-      "emptyMessage": "New inquiries will appear here when buyers contact you about your horses.",
-      "types": {
+    "emptyMessage": "New inquiries will appear here when buyers contact you about your horses.",
+    "viewAll": "View all",
+    "types": {
         "inquiry": {
           "title": "New inquiry",
           "description": "{buyer} asked about {horse}"

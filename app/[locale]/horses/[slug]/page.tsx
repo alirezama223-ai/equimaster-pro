@@ -36,7 +36,7 @@ import { loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getPedigreeSectionForListing } from "@/app/actions/pedigree";
-import { incrementListingViewCount } from "@/app/actions/horse-listings";
+import { recordListingView } from "@/app/actions/listing-views";
 import { getRelatedActiveListings } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import { createClient } from "@/app/lib/supabase/server";
@@ -103,8 +103,8 @@ export default async function PublicHorseListingPage({ params }: Props) {
   const { profile, isOwnerPreview } = result;
   const { listing, horse, pedigreeHorse, trainingSummary, healthSummary, publicUrl } = profile;
 
-  if (listing.status === "active") {
-    await incrementListingViewCount(slug);
+  if (listing.status === "active" && !isOwnerPreview) {
+    await recordListingView(listing.id);
   }
 
   const [favoriteListingIds, relatedResult, pedigreeSection] = await Promise.all([

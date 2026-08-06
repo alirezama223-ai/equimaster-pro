@@ -25,7 +25,7 @@ export default async function NotificationsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
+      <main className="min-h-screen overflow-x-hidden bg-[#081223] pt-28 pb-[calc(5rem+env(safe-area-inset-bottom))] text-white lg:pb-24">
         <div className="max-w-4xl mx-auto px-6">
           <Suspense fallback={<div className="py-12 text-sm text-gray-400">{t("page.loadingFallback")}</div>}>
             <NotificationCenterClient />

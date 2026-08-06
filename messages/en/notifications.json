@@ -3,19 +3,26 @@
     "loadingFallback": "Loading notifications..."
   },
   "center": {
-    "eyebrow": "Event Engine",
+    "eyebrow": "Notifications",
     "title": "Notification Center",
-    "description": "Central feed of unresolved events published by Training, Health, Analytics, and the Rule Engine. Future AI providers can consume this stream instead of querying every module table.",
-    "unresolvedLabel": "Unresolved",
-    "alertsLabel": "Alerts",
-    "unresolved": "Unresolved: {count}",
-    "alerts": "Alerts: {count}",
+    "description": "Stay on top of messages, favorites, listing milestones, inquiries, and publishing updates.",
+    "unreadLabel": "Unread",
     "loading": "Loading notifications...",
-    "allClearTitle": "All clear",
-    "allClearDescription": "No unresolved events. Modules will publish here when rules or workflows detect something worth your attention."
+    "loadingMore": "Loading more...",
+    "loadMore": "Load more notifications",
+    "markAllRead": "Mark all as read",
+    "allClearTitle": "All caught up",
+    "allClearDescription": "You have no notifications right now. Activity about your listings and conversations will appear here."
+  },
+  "dropdown": {
+    "title": "Notifications",
+    "subtitle": "Recent activity",
+    "emptyTitle": "No notifications yet",
+    "emptyMessage": "New messages, favorites, and listing updates will appear here.",
+    "viewAll": "View all notifications"
   },
   "bell": {
     "ariaLabel": "Notifications",
-    "ariaLabelWithCount": "Notifications, {count} unresolved"
+    "ariaLabelWithCount": "Notifications, {count} unread"
   }
 }

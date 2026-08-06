@@ -3,9 +3,11 @@
 import { getTranslations } from "next-intl/server";
 import { getMyHorseListings, getSellerListingStats } from "@/app/actions/horse-listings";
 import { getSellerConversationsWithMessages } from "@/app/actions/messaging";
+import { getRecentNotifications } from "@/app/actions/user-notifications";
 import {
   buildSellerCrmConversations,
   buildSellerCrmData,
+  mapUserNotificationsToCrm,
 } from "@/app/components/seller-dashboard/crm/seller-crm-data";
 import { createClient } from "@/app/lib/supabase/server";
 import type { HorseListingRow } from "@/app/types/horse-listing";
@@ -30,10 +32,11 @@ export async function getSellerDashboardData(): Promise<{
     return { dashboard: null, unauthenticated: true };
   }
 
-  const [listingsResult, statsResult, messagingResult] = await Promise.all([
+  const [listingsResult, statsResult, messagingResult, notificationsResult] = await Promise.all([
     getMyHorseListings(),
     getSellerListingStats(),
     getSellerConversationsWithMessages(),
+    getRecentNotifications(10),
   ]);
 
   if (listingsResult.error) {
@@ -111,6 +114,7 @@ export async function getSellerDashboardData(): Promise<{
         listings: listings as HorseListingRow[],
         metricsByListingId,
         conversations: crmConversations,
+        notifications: mapUserNotificationsToCrm(notificationsResult.notifications),
         stats,
         priceOnRequestLabel: tCommon("priceOnRequest"),
       }),

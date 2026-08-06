@@ -1,21 +1,28 @@
 {
   "page": {
-    "loadingFallback": "Loading notifications..."
+    "loadingFallback": "Cargando notificaciones..."
   },
   "center": {
-    "eyebrow": "Event Engine",
-    "title": "Notification Center",
-    "description": "Central feed of unresolved events published by Training, Health, Analytics, and the Rule Engine. Future AI providers can consume this stream instead of querying every module table.",
-    "unresolvedLabel": "Unresolved",
-    "alertsLabel": "Alerts",
-    "unresolved": "Unresolved: {count}",
-    "alerts": "Alerts: {count}",
-    "loading": "Loading notifications...",
-    "allClearTitle": "All clear",
-    "allClearDescription": "No unresolved events. Modules will publish here when rules or workflows detect something worth your attention."
+    "eyebrow": "Notificaciones",
+    "title": "Centro de notificaciones",
+    "description": "Manténgase al día con mensajes, favoritos, hitos de visitas, consultas y publicaciones.",
+    "unreadLabel": "Sin leer",
+    "loading": "Cargando notificaciones...",
+    "loadingMore": "Cargando más...",
+    "loadMore": "Cargar más notificaciones",
+    "markAllRead": "Marcar todo como leído",
+    "allClearTitle": "Todo al día",
+    "allClearDescription": "No hay notificaciones ahora. La actividad sobre sus anuncios aparecerá aquí."
+  },
+  "dropdown": {
+    "title": "Notificaciones",
+    "subtitle": "Actividad reciente",
+    "emptyTitle": "Aún no hay notificaciones",
+    "emptyMessage": "Los nuevos mensajes, favoritos y actualizaciones de anuncios aparecerán aquí.",
+    "viewAll": "Ver todas las notificaciones"
   },
   "bell": {
-    "ariaLabel": "Notifications",
-    "ariaLabelWithCount": "Notifications, {count} unresolved"
+    "ariaLabel": "Notificaciones",
+    "ariaLabelWithCount": "Notificaciones, {count} sin leer"
   }
 }

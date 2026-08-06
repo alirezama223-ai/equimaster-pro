@@ -120,21 +120,6 @@ function buildBuyersFromConversations(conversations: SellerCrmConversation[]): C
   });
 }
 
-function buildNotifications(conversations: SellerCrmConversation[]): CrmNotification[] {
-  return conversations.slice(0, 10).map((conversation) => ({
-    id: `notif-conversation-${conversation.id}`,
-    type: "inquiry" as const,
-    titleKey: "crm.notifications.types.inquiry.title",
-    descriptionKey: "crm.notifications.types.inquiry.description",
-    descriptionValues: {
-      buyer: conversation.buyer_display_name,
-      horse: conversation.horse_name,
-    },
-    timeAt: conversation.last_message_at ?? conversation.updated_at,
-    unread: conversation.unread_count > 0,
-  }));
-}
-
 function computeAverageResponseMs(conversations: SellerCrmConversation[]): number | null {
   const durations: number[] = [];
 
@@ -252,6 +237,7 @@ type BuildArgs = {
   listings: HorseListingRow[];
   metricsByListingId: Record<string, { viewCount: number; favoriteCount: number }>;
   conversations: SellerCrmConversation[];
+  notifications: CrmNotification[];
   stats: {
     total: number;
     active: number;
@@ -267,6 +253,7 @@ export function buildSellerCrmData({
   listings,
   metricsByListingId,
   conversations,
+  notifications,
   stats,
   priceOnRequestLabel,
 }: BuildArgs): SellerCrmData {
@@ -274,7 +261,7 @@ export function buildSellerCrmData({
     pipeline: buildPipelineFromConversations(conversations, listings, priceOnRequestLabel),
     buyers: buildBuyersFromConversations(conversations),
     visits: [] as CrmVisit[],
-    notifications: buildNotifications(conversations),
+    notifications: notifications.slice(0, 10),
     performance: buildPerformance(listings, metricsByListingId, conversations, stats),
     aiRecommendations: buildAiRecommendations(listings, conversations),
   };
@@ -320,4 +307,18 @@ export function buildSellerCrmConversations(
   messages: MessageRow[]
 ): SellerCrmConversation[] {
   return attachMessagesToConversations(conversations, messages);
+}
+
+export function mapUserNotificationsToCrm(
+  notifications: import("@/app/types/user-notification").NotificationRow[]
+): CrmNotification[] {
+  return notifications.map((notification) => ({
+    id: notification.id,
+    type: notification.type,
+    title: notification.title,
+    body: notification.body,
+    timeAt: notification.created_at,
+    unread: notification.read_at === null,
+    entityId: notification.entity_id,
+  }));
 }
