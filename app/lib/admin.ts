@@ -1,5 +1,6 @@
 import { createClient } from "@/app/lib/supabase/server";
 import { getProfileForUser, isAdminRole } from "@/app/lib/profiles";
+export { formatOwnerReference } from "@/app/lib/format-owner-reference";
 
 export async function isCurrentUserAdmin(): Promise<boolean> {
   const supabase = await createClient();
@@ -45,15 +46,6 @@ export async function requireAdmin() {
     user,
     supabase,
   };
-}
-
-export function formatOwnerReference(ownerId: string): string {
-  const normalized = ownerId.trim();
-  if (normalized.length <= 12) {
-    return normalized;
-  }
-
-  return `${normalized.slice(0, 8)}…`;
 }
 
 export type AdminVerificationFilter = "all" | "verified" | "pending";

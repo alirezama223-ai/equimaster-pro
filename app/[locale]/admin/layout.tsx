@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import AdminLayoutShell from "@/app/components/admin/AdminLayoutShell";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { createClient } from "@/app/lib/supabase/server";
 import { isCurrentUserAdmin } from "@/app/lib/admin";
@@ -24,5 +25,5 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/account");
   }
 
-  return children;
+  return <AdminLayoutShell>{children}</AdminLayoutShell>;
 }

@@ -3,21 +3,60 @@
   "adminEyebrow": "Admin",
   "dashboard": {
     "title": "Admin Dashboard",
-    "subtitle": "Manage verification for stud farms and stallions. More moderation tools can be added here later.",
+    "subtitle": "Monitor marketplace health, manage users and listings, and review catalog verification from one control center.",
     "backToAccount": "Back to Account",
     "loadError": "Unable to load admin dashboard.",
     "reviewBreedersTitle": "Review Breeders",
     "reviewBreedersSubtitle": "Verify or unverify stud farm profiles before they appear trusted in the directory.",
     "reviewStallionsTitle": "Review Stallions",
-    "reviewStallionsSubtitle": "Manage stallion verification badges across the public stallion directory."
+    "reviewStallionsSubtitle": "Manage stallion verification badges across the public stallion directory.",
+    "quickLinks": {
+      "usersTitle": "User Management",
+      "usersSubtitle": "Review roles, seller verification, and listing activity across accounts.",
+      "listingsTitle": "Listing Moderation",
+      "listingsSubtitle": "Approve drafts, archive listings, and manage verified badges.",
+      "sellersTitle": "Seller Verification",
+      "sellersSubtitle": "Review sellers with active inventory and control marketplace trust status.",
+      "reportsTitle": "Reports",
+      "reportsSubtitle": "Export-ready marketplace summaries, status breakdowns, and top listings."
+    }
+  },
+  "shell": {
+    "title": "Admin Panel",
+    "subtitle": "Role-based marketplace control",
+    "openMenu": "Menu",
+    "closeMenu": "Close",
+    "sections": {
+      "platform": "Platform",
+      "catalog": "Catalog & Feedback"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
+    "users": "Users",
+    "listings": "Listings",
+    "sellers": "Sellers",
+    "reports": "Reports",
+    "settings": "Settings",
     "breeders": "Breeders",
     "stallions": "Stallions",
     "pedigree": "Pedigree",
     "traits": "Traits",
     "feedback": "Feedback"
+  },
+  "analytics": {
+    "totalUsers": "Total Users",
+    "totalListings": "Total Listings",
+    "activeListings": "Active Listings",
+    "draftListings": "Draft Listings",
+    "verifiedSellers": "Verified Sellers",
+    "openFeedback": "Open Feedback",
+    "conversations": "Conversations",
+    "listingViews": "Listing Views",
+    "published30Days": "Published (30d)",
+    "pendingBreeders": "Pending Breeders",
+    "pendingStallions": "Pending Stallions",
+    "pedigreeRecords": "Pedigree Records"
   },
   "stats": {
     "activeListings": "Active Horse Listings",
@@ -157,5 +196,140 @@
     "screenshot": "Screenshot",
     "screenshotAlt": "Feedback screenshot",
     "noScreenshot": "No screenshot attached"
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage account roles, seller verification, and listing activity. User emails are not exposed in this view.",
+    "empty": "No users match this filter.",
+    "filterLabel": "Filter users",
+    "filters": {
+      "all": "All users",
+      "admin": "Admins",
+      "seller": "Sellers with listings",
+      "verifiedSeller": "Verified sellers"
+    },
+    "columns": {
+      "user": "User ID",
+      "role": "Role",
+      "seller": "Seller status",
+      "listings": "Listings",
+      "joined": "Joined",
+      "actions": "Actions"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "User"
+    },
+    "sellerVerified": "Verified seller",
+    "sellerPending": "Not verified",
+    "listingCounts": "{total} total · {active} active",
+    "actions": {
+      "makeAdmin": "Make admin",
+      "revokeAdmin": "Revoke admin",
+      "verifySeller": "Verify seller",
+      "unverifySeller": "Unverify seller"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page}"
+    }
+  },
+  "listings": {
+    "title": "Listing Moderation",
+    "subtitle": "Review horse listings, approve drafts, archive inactive inventory, and manage verified badges.",
+    "empty": "No listings match your filters.",
+    "searchLabel": "Search listings",
+    "searchPlaceholder": "Search by name, seller, or breed…",
+    "searchAction": "Search",
+    "filterLabel": "Status filter",
+    "filters": {
+      "all": "All statuses",
+      "active": "Active",
+      "draft": "Draft",
+      "sold": "Sold",
+      "archived": "Archived"
+    },
+    "columns": {
+      "listing": "Listing",
+      "seller": "Seller",
+      "status": "Status",
+      "views": "Views",
+      "updated": "Updated",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "draft": "Draft",
+      "sold": "Sold",
+      "archived": "Archived"
+    },
+    "verifiedBadge": "Verified listing",
+    "viewPublic": "View public page →",
+    "actions": {
+      "approve": "Approve",
+      "archive": "Archive",
+      "restore": "Restore draft",
+      "verify": "Verify",
+      "unverify": "Unverify"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page}"
+    }
+  },
+  "sellers": {
+    "title": "Seller Verification",
+    "subtitle": "Review sellers with marketplace inventory and control seller trust badges.",
+    "empty": "No sellers with listings were found.",
+    "verified": "Verified",
+    "pending": "Pending",
+    "listingCounts": "{total} total · {active} active",
+    "columns": {
+      "seller": "Seller ID",
+      "status": "Verification",
+      "listings": "Listings",
+      "views": "Total views",
+      "joined": "Joined",
+      "actions": "Actions"
+    },
+    "actions": {
+      "verify": "Verify seller",
+      "unverify": "Unverify seller"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Marketplace activity summaries and operational breakdowns for admin review.",
+    "loadError": "Unable to load report summary.",
+    "generatedAt": "Generated {date}",
+    "totals": {
+      "users": "Users",
+      "listings": "Listings",
+      "activeListings": "Active listings",
+      "conversations": "Conversations",
+      "feedbackOpen": "Open feedback",
+      "listingViews": "Listing views"
+    },
+    "listingsByStatus": "Listings by status",
+    "feedbackByStatus": "Feedback by status",
+    "recentListings": "Recent listings",
+    "topViewedListings": "Top viewed listings",
+    "viewListing": "View →",
+    "viewCount": "{count} views"
+  },
+  "settings": {
+    "title": "System Settings",
+    "subtitle": "Configure marketplace-wide behavior and support defaults.",
+    "maintenanceMode": "Maintenance mode",
+    "maintenanceModeHelp": "When enabled, the marketplace can be restricted for non-admin users.",
+    "requireListingReview": "Require listing review",
+    "requireListingReviewHelp": "New listings remain in draft until an admin approves them.",
+    "supportEmail": "Support email",
+    "welcomeMessage": "Welcome message",
+    "save": "Save settings",
+    "saving": "Saving…",
+    "saved": "Settings saved successfully."
   }
 }

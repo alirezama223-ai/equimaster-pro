@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Navbar from "@/app/components/navbar/Navbar";
+import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
 import AdminTraitsClient from "@/app/components/admin/AdminTraitsClient";
 import { getAdminTraitAssessments, getAdminTraitStats } from "@/app/actions/traits";
 import { TraitSourceType } from "@/app/types/traits";
@@ -39,24 +39,19 @@ export default async function AdminTraitsPage({ searchParams }: Props) {
   ]);
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="mb-8">
-            <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("adminEyebrow")}</p>
-              <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">{tTraits("title")}</h1>
-            <p className="mt-3 text-gray-400">{tTraits("subtitle")}</p>
-          </div>
-          <AdminTraitsClient
-            filter={filter}
-            sourceType={sourceType}
-            pedigreeHorseId={pedigreeHorseId}
-            assessments={assessments}
-            stats={stats}
-          />
-        </div>
-      </main>
-    </>
+    <div className="space-y-8">
+      <AdminPageHeader
+        eyebrow={t("adminEyebrow")}
+        title={tTraits("title")}
+        description={tTraits("subtitle")}
+      />
+      <AdminTraitsClient
+        filter={filter}
+        sourceType={sourceType}
+        pedigreeHorseId={pedigreeHorseId}
+        assessments={assessments}
+        stats={stats}
+      />
+    </div>
   );
 }

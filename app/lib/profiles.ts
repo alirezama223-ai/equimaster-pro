@@ -5,6 +5,7 @@ export function rowToProfile(row: Record<string, unknown>): ProfileRow {
   return {
     user_id: String(row.user_id),
     role: row.role === "admin" ? "admin" : "user",
+    seller_verified: Boolean(row.seller_verified),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
   };
@@ -16,7 +17,7 @@ export async function getProfileForUser(
 ): Promise<ProfileRow | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("user_id, role, created_at, updated_at")
+    .select("user_id, role, seller_verified, created_at, updated_at")
     .eq("user_id", userId)
     .maybeSingle();
 
