@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { AdminReportSummary } from "@/app/types/admin-panel";
+import { ADMIN_PRIMARY_BUTTON_CLASS } from "@/app/components/admin/admin-styles";
 
 type Props = {
   report: AdminReportSummary;
@@ -22,11 +23,39 @@ export default function AdminReportsClient({ report }: Props) {
     });
   }
 
+  function exportCsv() {
+    const rows = [
+      ["Metric", "Value"],
+      [t("totals.users"), String(report.totals.users)],
+      [t("totals.listings"), String(report.totals.listings)],
+      [t("totals.activeListings"), String(report.totals.activeListings)],
+      [t("totals.conversations"), String(report.totals.conversations)],
+      [t("totals.feedbackOpen"), String(report.totals.feedbackOpen)],
+      [t("totals.listingViews"), String(report.totals.listingViews)],
+      [],
+      [t("listingsByStatus"), ""],
+      ...Object.entries(report.listingsByStatus).map(([status, count]) => [status, String(count)]),
+      [],
+      [t("feedbackByStatus"), ""],
+      ...Object.entries(report.feedbackByStatus).map(([status, count]) => [status, String(count)]),
+    ];
+
+    const csv = rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `equimaster-admin-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="space-y-8">
-      <p className="text-sm text-gray-500">
-        {t("generatedAt", { date: formatDate(report.generatedAt) })}
-      </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-gray-500">{t("generatedAt", { date: formatDate(report.generatedAt) })}</p>
+        <button type="button" onClick={exportCsv} className={ADMIN_PRIMARY_BUTTON_CLASS}>{t("exportCsv")}</button>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {[

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import AdminQuickLinks from "@/app/components/admin/AdminQuickLinks";
 import AdminBarChart from "@/app/components/admin/AdminBarChart";
 import AdminEnterpriseMetrics from "@/app/components/admin/AdminEnterpriseMetrics";
 import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
@@ -45,6 +46,12 @@ export default async function AdminDashboardPage() {
       />
 
       <AdminEnterpriseMetrics stats={stats} labels={metricLabels} />
+
+      <AdminQuickLinks
+        pendingListings={stats.pendingListings}
+        pendingSellers={stats.pendingSellers}
+        openFeedback={stats.openFeedbackReports}
+      />
 
       {charts && !chartsError ? (
         <div className="grid gap-6 xl:grid-cols-2">

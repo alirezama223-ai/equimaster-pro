@@ -4,18 +4,7 @@ import { revalidatePath } from "next/cache";
 import { formatOwnerReference, requireAdmin } from "@/app/lib/admin";
 import { formatListingRowPrice } from "@/app/lib/horse-listings";
 import type { HorseListingRow } from "@/app/types/horse-listing";
-import type {
-  AccountStatus,
-  AdminAnalyticsDetail,
-  AdminChartPoint,
-  AdminConversationListItem,
-  AdminDashboardCharts,
-  AdminEnterpriseStats,
-  AdminMessageListItem,
-  AdminSellerListItem,
-  BroadcastTarget,
-  SellerVerificationStatus,
-} from "@/app/types/admin-panel";
+import type { AccountStatus, AdminAnalyticsDetail, AdminChartPoint, AdminConversationListItem, AdminDashboardCharts, AdminEnterpriseStats, AdminExtendedFeedbackReport, AdminMessageListItem, AdminSellerListItem, BroadcastTarget, SellerVerificationStatus } from "@/app/types/admin-panel";
 import { getAdminDashboardStats } from "@/app/actions/admin";
 import { mapListingRow } from "@/app/lib/admin-listing-mapper";
 
@@ -593,6 +582,75 @@ export async function getAdminAnalyticsDetail(): Promise<{
       conversionRate,
     },
   };
+}
+
+export async function getAdminFeedbackReportsExtended(): Promise<{
+  reports: AdminExtendedFeedbackReport[];
+  error?: string;
+}> {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase) {
+    return { reports: [], error: auth.error ?? "Forbidden" };
+  }
+
+  const { data, error } = await auth.supabase
+    .from("feedback_reports")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return { reports: [], error: error.message };
+  }
+
+  const reports = (data ?? []).map((row) => ({
+    id: row.id as string,
+    userId: row.user_id as string,
+    userEmail: (row.reporter_email as string | null) ?? null,
+    category: row.category as string,
+    severity: row.severity as string,
+    description: row.description as string,
+    pagePath: row.page_path as string,
+    browser: row.browser as string,
+    os: row.os as string,
+    locale: row.locale as string,
+    screenshotUrl: (row.screenshot_url as string | null) ?? null,
+    status: row.status as string,
+    adminNotes: (row.admin_notes as string | null) ?? null,
+    adminReply: (row.admin_reply as string | null) ?? null,
+    assignedAdminId: (row.assigned_admin_id as string | null) ?? null,
+    assignedAdminReference: row.assigned_admin_id
+      ? formatOwnerReference(row.assigned_admin_id as string)
+      : null,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  }));
+
+  return { reports };
+}
+
+export async function assignFeedbackReportToSelf(reportId: string) {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase || !auth.user) {
+    return { error: auth.error ?? "Forbidden" };
+  }
+
+  return assignFeedbackReport(reportId, auth.user.id);
+}
+
+export async function closeFeedbackReport(reportId: string) {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase) {
+    return { error: auth.error ?? "Forbidden" };
+  }
+
+  const { error } = await auth.supabase
+    .from("feedback_reports")
+    .update({ status: "closed" })
+    .eq("id", reportId);
+
+  if (error) return { error: error.message };
+  revalidatePath("/admin/feedback");
+  return { success: true as const };
 }
 
 export async function assignFeedbackReport(reportId: string, adminId: string | null) {

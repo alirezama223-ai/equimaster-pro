@@ -181,3 +181,24 @@ export type AdminUserFilter =
 
 export type AdminUserSort = "newest" | "oldest" | "most_listings";
 export type AdminListingSort = "newest" | "oldest" | "most_views" | "updated";
+
+export type AdminExtendedFeedbackReport = {
+  id: string;
+  userId: string;
+  userEmail: string | null;
+  category: string;
+  severity: string;
+  description: string;
+  pagePath: string;
+  browser: string;
+  os: string;
+  locale: string;
+  screenshotUrl: string | null;
+  status: string;
+  adminNotes: string | null;
+  adminReply: string | null;
+  assignedAdminId: string | null;
+  assignedAdminReference: string | null;
+  createdAt: string;
+  updatedAt: string;
+};

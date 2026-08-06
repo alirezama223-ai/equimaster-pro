@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
-import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
 import AdminFeedbackClient from "@/app/components/admin/AdminFeedbackClient";
-import { getAdminFeedbackReports } from "@/app/actions/feedback";
+import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
+import { getAdminFeedbackReportsExtended } from "@/app/actions/admin-enterprise";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminFeedbackPage() {
   const t = await getTranslations("admin");
-  const { reports, error } = await getAdminFeedbackReports();
+  const { reports, error } = await getAdminFeedbackReportsExtended();
 
   return (
     <div className="space-y-8">

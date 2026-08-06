@@ -15,7 +15,10 @@ type NavKey =
   | "reports"
   | "notifications"
   | "analytics"
-  | "settings";
+  | "settings"
+  | "sellers"
+  | "pedigree"
+  | "traits";
 
 type NavItem = {
   href: string;
@@ -35,6 +38,12 @@ const navLinks: NavItem[] = [
   { href: "/admin/notifications", key: "notifications" },
   { href: "/admin/analytics", key: "analytics" },
   { href: "/admin/settings", key: "settings" },
+];
+
+const toolLinks: NavItem[] = [
+  { href: "/admin/sellers", key: "sellers" },
+  { href: "/admin/pedigree", key: "pedigree" },
+  { href: "/admin/traits", key: "traits" },
 ];
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -80,8 +89,14 @@ export default function AdminShell({ children }: Props) {
         <p className="mt-1 text-xs text-gray-500">{t("shell.subtitle")}</p>
       </div>
 
-      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
-        {navLinks.map(renderLink)}
+      <nav className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4">
+        <div className="space-y-1">{navLinks.map(renderLink)}</div>
+        <div className="space-y-1">
+          <p className="px-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">
+            {t("shell.sections.tools")}
+          </p>
+          {toolLinks.map(renderLink)}
+        </div>
       </nav>
 
       <div className="border-t border-white/10 p-4">

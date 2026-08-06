@@ -18,7 +18,11 @@
       "sellersTitle": "Seller Verification",
       "sellersSubtitle": "Review sellers with active inventory and control marketplace trust status.",
       "reportsTitle": "Reports",
-      "reportsSubtitle": "Export-ready marketplace summaries, status breakdowns, and top listings."
+      "reportsSubtitle": "Export-ready marketplace summaries, status breakdowns, and top listings.",
+      "feedbackTitle": "Feedback Queue",
+      "feedbackSubtitle": "Triage open bug reports, suggestions, and feature requests.",
+      "settingsTitle": "System Settings",
+      "settingsSubtitle": "Configure homepage content, feature flags, and marketplace behavior."
     }
   },
   "shell": {
@@ -28,8 +32,14 @@
     "closeMenu": "Close",
     "sections": {
       "platform": "Platform",
-      "catalog": "Catalog & Feedback"
+      "catalog": "Catalog & Feedback",
+      "tools": "Verification & Catalog Tools"
     }
+  },
+  "error": {
+    "title": "Admin panel error",
+    "description": "Something went wrong while loading this admin view.",
+    "retry": "Try again"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -42,7 +52,10 @@
     "reports": "Reports",
     "notifications": "Notifications",
     "analytics": "Analytics",
-    "settings": "System Settings"
+    "settings": "System Settings",
+    "sellers": "Seller Verification",
+    "pedigree": "Pedigree",
+    "traits": "Traits"
   },
   "enterprise": {
     "totalUsers": "Total Users",
@@ -253,8 +266,17 @@
     "searchPlaceholder": "Search description, page, reporter, browser…",
     "statusFilter": "Status",
     "categoryFilter": "Category",
+    "severityFilter": "Priority",
     "allStatuses": "All statuses",
     "allCategories": "All categories",
+    "allSeverities": "All priorities",
+    "assignToMe": "Assign to me",
+    "assignedAdmin": "Assigned",
+    "adminReply": "Admin reply",
+    "replyLabel": "Reply to reporter",
+    "replyPlaceholder": "Write a resolution or follow-up message…",
+    "sendReply": "Send reply",
+    "closeReport": "Close report",
     "reporter": "Reporter",
     "page": "Page",
     "environment": "Environment",
@@ -443,7 +465,8 @@
     "recentListings": "Recent listings",
     "topViewedListings": "Top viewed listings",
     "viewListing": "View →",
-    "viewCount": "{count} views"
+    "viewCount": "{count} views",
+    "exportCsv": "Export CSV"
   },
   "settings": {
     "title": "System Settings",
