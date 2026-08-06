@@ -1,3 +1,5 @@
+import type { HorseVerificationStatus } from "@/app/types/verification";
+
 export type ListingStatus = "active" | "draft" | "sold" | "archived";
 
 export type HorseListingImageMeta = {
@@ -37,6 +39,10 @@ export type HorseListingRow = {
   seller_phone: string;
   stable_name: string | null;
   verified: boolean;
+  horse_verification_status: HorseVerificationStatus;
+  horse_verified_at: string | null;
+  horse_verified_by: string | null;
+  owner_seller_verified: boolean;
   status: ListingStatus;
   pedigree_horse_id: string | null;
   slug: string;

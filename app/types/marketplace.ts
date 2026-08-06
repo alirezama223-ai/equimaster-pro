@@ -24,6 +24,8 @@ export type MarketplaceSearchParams = {
   studbook?: string;
   availability?: MarketplaceAvailabilityFilter;
   verified?: boolean;
+  verifiedSellers?: boolean;
+  verifiedHorses?: boolean;
   minPrice?: number;
   maxPrice?: number;
   minAge?: number;

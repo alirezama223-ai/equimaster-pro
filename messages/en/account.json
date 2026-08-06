@@ -6,7 +6,8 @@
     "newInquiry": "{count} new inquiry",
     "newInquiries": "{count} new inquiries",
     "createListing": "Create a Listing",
-    "openSellerDashboard": "Open full seller dashboard →"
+    "openSellerDashboard": "Open full seller dashboard →",
+    "openVerification": "Seller & horse verification →"
   },
   "sellerListings": {
     "eyebrow": "Seller Dashboard",

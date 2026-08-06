@@ -22,6 +22,8 @@ export type ConversationPreview = ConversationRow & {
   horse_name: string;
   horse_slug: string | null;
   horse_cover_image_url: string;
+  horse_verified: boolean;
+  other_user_seller_verified: boolean;
   other_user_id: string;
   other_user_name: string;
   last_message_body: string | null;

@@ -54,6 +54,7 @@
     "analytics": "Analytics",
     "settings": "System Settings",
     "sellers": "Seller Verification",
+    "verification": "Verification Queue",
     "pedigree": "Pedigree",
     "traits": "Traits"
   },
@@ -435,11 +436,10 @@
     "notesPlaceholder": "Internal notes or request for more information…",
     "listingCounts": "{total} total · {active} active",
     "verificationStatus": {
-      "none": "Not submitted",
+      "unverified": "Not submitted",
       "pending": "Pending review",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "more_info": "More info requested"
+      "verified": "Verified",
+      "rejected": "Rejected"
     },
     "actions": {
       "approve": "Approve",

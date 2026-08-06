@@ -10,6 +10,7 @@ import { findCountryByName } from "@/app/lib/constants/countries";
 import MarketplaceCardFavoriteButton from "@/app/components/marketplace/MarketplaceCardFavoriteButton";
 import MarketplaceCardShareButton from "@/app/components/marketplace/MarketplaceCardShareButton";
 import MarketplaceCompareButton from "@/app/components/marketplace/MarketplaceCompareButton";
+import VerifiedBadge from "@/app/components/verification/VerifiedBadge";
 
 type Props = {
   horse: Horse;
@@ -86,10 +87,7 @@ export default function MarketplaceListingCard({
                 ) : null}
                 {horse.verified ? (
                   <Badge title={verifiedLabel}>
-                    <span className="shrink-0 text-blue-400" aria-hidden="true">
-                      ✓
-                    </span>
-                    <span className="sr-only">{verifiedLabel}</span>
+                    <VerifiedBadge compact label="horse" className="shadow-none" />
                   </Badge>
                 ) : null}
               </div>
@@ -155,11 +153,11 @@ export default function MarketplaceListingCard({
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white">{sellerLabel}</p>
               <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                {horse.sellerVerified ? (
+                  <VerifiedBadge compact label="seller" />
+                ) : null}
                 {horse.verified ? (
-                  <span className="inline-flex min-w-0 max-w-[46%] shrink-0 items-center gap-1 text-[11px] font-medium text-blue-300 sm:max-w-none">
-                    <span aria-hidden="true">✓</span>
-                    <span className="truncate">{verifiedLabel}</span>
-                  </span>
+                  <VerifiedBadge compact label="horse" />
                 ) : null}
                 {country ? (
                   <span className="inline-flex min-w-0 items-center gap-1 truncate text-[11px] text-gray-400">

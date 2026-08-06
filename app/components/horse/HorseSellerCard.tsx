@@ -1,3 +1,4 @@
+import VerifiedBadge from "@/app/components/verification/VerifiedBadge";
 import { getTranslations } from "next-intl/server";
 import { Horse } from "@/app/data/horses";
 import { findCountryByName } from "@/app/lib/constants/countries";
@@ -68,11 +69,10 @@ export default async function HorseSellerCard({ horse, publishedAt, memberSince 
             ) : null}
           </div>
 
-          {horse.verified ? (
-            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-600/10 px-3 py-1 text-xs font-semibold text-blue-200">
-              <span aria-hidden="true">✓</span>
-              {t("info.verified")} Seller
-            </p>
+          {horse.sellerVerified ? (
+            <div className="mt-3">
+              <VerifiedBadge label="seller" />
+            </div>
           ) : null}
         </div>
       </div>

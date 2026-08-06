@@ -7,6 +7,7 @@ import { getSellerDashboardData } from "@/app/actions/marketplace-dashboard";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { createClient } from "@/app/lib/supabase/server";
+import { getProfileForUser } from "@/app/lib/profiles";
 
 export async function generateMetadata() {
   return createPageMetadata("sellerDashboard", MARKETPLACE_PATHS.sellerDashboard);
@@ -35,6 +36,8 @@ export default async function SellerDashboardPage() {
     result.dashboard?.listings[0]?.seller_name?.trim() ||
     tAccount("defaultName");
 
+  const profile = user ? await getProfileForUser(supabase, user.id) : null;
+
   if (!result.dashboard) {
     return (
       <>
@@ -53,7 +56,11 @@ export default async function SellerDashboardPage() {
       <Navbar />
       <main className="min-h-screen overflow-x-hidden bg-[#081223] pt-28 pb-[calc(5rem+env(safe-area-inset-bottom))] text-white lg:pb-24">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-5 lg:px-6">
-          <SellerDashboardClient dashboard={result.dashboard} sellerName={sellerName} />
+          <SellerDashboardClient
+            dashboard={result.dashboard}
+            sellerName={sellerName}
+            sellerVerified={Boolean(profile?.seller_verified)}
+          />
         </div>
       </main>
     </>

@@ -14,11 +14,10 @@ export function rowToProfile(row: Record<string, unknown>): ProfileRow {
     country: row.country ? String(row.country) : null,
     seller_verification_status:
       row.seller_verification_status === "pending" ||
-      row.seller_verification_status === "approved" ||
-      row.seller_verification_status === "rejected" ||
-      row.seller_verification_status === "more_info"
+      row.seller_verification_status === "verified" ||
+      row.seller_verification_status === "rejected"
         ? row.seller_verification_status
-        : "none",
+        : "unverified",
     seller_verification_documents: Array.isArray(documents)
       ? documents.map((doc) => ({
           name: String((doc as { name?: string }).name ?? "Document"),
@@ -29,6 +28,12 @@ export function rowToProfile(row: Record<string, unknown>): ProfileRow {
     seller_verification_notes: row.seller_verification_notes
       ? String(row.seller_verification_notes)
       : null,
+    phone_verified: Boolean(row.phone_verified),
+    seller_rejection_reason: row.seller_rejection_reason
+      ? String(row.seller_rejection_reason)
+      : null,
+    seller_verified_at: row.seller_verified_at ? String(row.seller_verified_at) : null,
+    seller_verified_by: row.seller_verified_by ? String(row.seller_verified_by) : null,
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
   };
@@ -41,7 +46,7 @@ export async function getProfileForUser(
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "user_id, role, seller_verified, account_status, country, seller_verification_status, seller_verification_documents, seller_verification_notes, created_at, updated_at"
+      "user_id, role, seller_verified, account_status, country, seller_verification_status, seller_verification_documents, seller_verification_notes, phone_verified, seller_rejection_reason, seller_verified_at, seller_verified_by, created_at, updated_at"
     )
     .eq("user_id", userId)
     .maybeSingle();

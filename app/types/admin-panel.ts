@@ -1,7 +1,9 @@
 import type { AdminDashboardStats } from "@/app/actions/admin";
+import type { SellerVerificationStatus } from "@/app/types/profile";
+
+export type { SellerVerificationStatus };
 
 export type AccountStatus = "active" | "suspended" | "banned";
-export type SellerVerificationStatus = "none" | "pending" | "approved" | "rejected" | "more_info";
 
 export type AdminEnterpriseStats = AdminDashboardStats & {
   totalUsers: number;

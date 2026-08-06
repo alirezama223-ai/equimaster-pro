@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
+import VerifiedBadge from "@/app/components/verification/VerifiedBadge";
 import type { PublicHealthSummarySnapshot } from "@/app/types/marketplace-public";
 import type { PedigreeHorse } from "@/app/types/pedigree";
 
 type Props = {
   verified: boolean;
+  sellerVerified?: boolean;
   healthSummary: PublicHealthSummarySnapshot | null;
   pedigreeHorseId: string | null;
   pedigreeHorse: PedigreeHorse | null;
@@ -13,21 +15,28 @@ type Props = {
 
 export default async function HorseTrustBadges({
   verified,
+  sellerVerified = false,
   healthSummary,
   pedigreeHorseId,
   pedigreeHorse,
   hasLegacyPedigree,
 }: Props) {
-  const tHorse = await getTranslations("horse");
   const tMarketplace = await getTranslations("marketplace");
   const tPedigree = await getTranslations("pedigree");
 
-  const badges: { key: string; label: string }[] = [];
+  const badges: { key: string; label: ReactNode }[] = [];
 
   if (verified) {
     badges.push({
-      key: "verified",
-      label: `${tHorse("info.verified")} Seller`,
+      key: "horse-verified",
+      label: <VerifiedBadge compact label="horse" />,
+    });
+  }
+
+  if (sellerVerified) {
+    badges.push({
+      key: "seller-verified",
+      label: <VerifiedBadge compact label="seller" />,
     });
   }
 

@@ -240,7 +240,10 @@ export default function MarketplaceBrowseClient({
         case "color":
           return t("browse.chips.color", { value: filters.color ?? "" });
         case "verified":
-          return t("browse.chips.verified");
+        case "verifiedHorses":
+          return t("browse.chips.verifiedHorses");
+        case "verifiedSellers":
+          return t("browse.chips.verifiedSellers");
         case "price":
           return t("browse.chips.price", {
             min: filters.minPrice ?? "",
@@ -660,11 +663,28 @@ const FilterPanel = memo(function FilterPanel({
           <span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer">
             <input
               type="checkbox"
-              checked={Boolean(localFilters.verified)}
-              onChange={(event) => updateFilters({ verified: event.target.checked })}
+              checked={Boolean(localFilters.verifiedHorses || localFilters.verified)}
+              onChange={(event) =>
+                updateFilters({
+                  verified: event.target.checked,
+                  verifiedHorses: event.target.checked,
+                })
+              }
               className="h-5 w-5"
             />
             <span className="text-sm">{t("browse.verifiedOnly")}</span>
+          </span>
+        </label>
+
+        <label className="flex items-end">
+          <span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={Boolean(localFilters.verifiedSellers)}
+              onChange={(event) => updateFilters({ verifiedSellers: event.target.checked })}
+              className="h-5 w-5"
+            />
+            <span className="text-sm">{t("browse.verifiedSellersOnly")}</span>
           </span>
         </label>
 

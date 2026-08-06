@@ -79,8 +79,12 @@ function applyListingFilters(query: ListingSearchQuery, params: MarketplaceSearc
     query = query.ilike("color", `%${sanitizeIlikePattern(params.color)}%`);
   }
 
-  if (params.verified) {
+  if (params.verified || params.verifiedHorses) {
     query = query.eq("verified", true);
+  }
+
+  if (params.verifiedSellers) {
+    query = query.eq("owner_seller_verified", true);
   }
 
   const availability = params.availability ?? "all";
@@ -365,7 +369,9 @@ export function parseMarketplaceSearchParams(
     studbook: read("studbook")?.trim() || undefined,
     availability:
       availability && ALLOWED_AVAILABILITY.includes(availability) ? availability : "all",
-    verified: read("verified") === "1",
+    verified: read("verified") === "1" || read("verifiedHorses") === "1",
+    verifiedHorses: read("verifiedHorses") === "1" || read("verified") === "1",
+    verifiedSellers: read("verifiedSellers") === "1",
     minPrice: parseNumber(read("minPrice")),
     maxPrice: parseNumber(read("maxPrice")),
     minAge: parseNumber(read("minAge")),
@@ -395,7 +401,8 @@ export function buildMarketplaceSearchQuery(
     query.set("availability", params.availability);
   }
   if (params.color?.trim()) query.set("color", params.color.trim());
-  if (params.verified) query.set("verified", "1");
+  if (params.verified || params.verifiedHorses) query.set("verifiedHorses", "1");
+  if (params.verifiedSellers) query.set("verifiedSellers", "1");
   if (params.minPrice != null) query.set("minPrice", String(params.minPrice));
   if (params.maxPrice != null) query.set("maxPrice", String(params.maxPrice));
   if (params.minAge != null) query.set("minAge", String(params.minAge));

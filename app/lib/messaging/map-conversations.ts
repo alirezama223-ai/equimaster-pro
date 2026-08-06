@@ -9,7 +9,14 @@ import type {
 
 type ListingMeta = Pick<
   HorseListingRow,
-  "id" | "name" | "slug" | "cover_image_url" | "image_urls" | "seller_name"
+  | "id"
+  | "name"
+  | "slug"
+  | "cover_image_url"
+  | "image_urls"
+  | "seller_name"
+  | "verified"
+  | "owner_seller_verified"
 >;
 
 export function mapConversationPreview(
@@ -35,6 +42,8 @@ export function mapConversationPreview(
     horse_name: listing?.name ?? "Listing",
     horse_slug: listing?.slug ?? null,
     horse_cover_image_url: horseCover,
+    horse_verified: Boolean(listing?.verified),
+    other_user_seller_verified: Boolean(listing?.owner_seller_verified),
     other_user_id: otherUserId,
     other_user_name: otherUserName || (isBuyer ? "Seller" : "Buyer"),
     last_message_body: lastMessage?.body ?? null,

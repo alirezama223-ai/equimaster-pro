@@ -22,6 +22,7 @@ import SellerDashboardMetricCard from "@/app/components/seller-dashboard/SellerD
 import SellerDashboardQuickActions from "@/app/components/seller-dashboard/SellerDashboardQuickActions";
 import SellerDashboardTasks from "@/app/components/seller-dashboard/SellerDashboardTasks";
 import SellerCrmHub from "@/app/components/seller-dashboard/crm/SellerCrmHub";
+import VerifiedBadge from "@/app/components/verification/VerifiedBadge";
 import { getGreetingPrefix, useDashboardRelativeTime } from "@/app/components/seller-dashboard/dashboard-i18n";
 import {
   buildAnalyticsSeries,
@@ -57,9 +58,10 @@ type Props = {
     crm: import("@/app/components/seller-dashboard/crm/seller-crm-types").SellerCrmData;
   };
   sellerName: string;
+  sellerVerified?: boolean;
 };
 
-function SellerDashboardClient({ dashboard, sellerName }: Props) {
+function SellerDashboardClient({ dashboard, sellerName, sellerVerified = false }: Props) {
   const t = useTranslations("dashboard");
   const tMarketplace = useTranslations("marketplace");
   const router = useRouter();
@@ -162,6 +164,11 @@ function SellerDashboardClient({ dashboard, sellerName }: Props) {
               <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
                 {getGreetingPrefix(t)}, {sellerName}
               </h1>
+              {sellerVerified ? (
+                <div className="mt-3">
+                  <VerifiedBadge label="seller" />
+                </div>
+              ) : null}
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
                 {activeView === "crm" ? t("header.crmSubtitle") : t("header.subtitle")}
               </p>

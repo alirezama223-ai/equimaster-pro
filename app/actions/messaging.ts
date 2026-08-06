@@ -28,7 +28,16 @@ import {
 
 type ListingMeta = Pick<
   HorseListingRow,
-  "id" | "name" | "slug" | "cover_image_url" | "image_urls" | "seller_name" | "user_id" | "status"
+  | "id"
+  | "name"
+  | "slug"
+  | "cover_image_url"
+  | "image_urls"
+  | "seller_name"
+  | "user_id"
+  | "status"
+  | "verified"
+  | "owner_seller_verified"
 >;
 
 function inboxPath() {
@@ -46,7 +55,9 @@ async function fetchListingMeta(
   const uniqueIds = [...new Set(listingIds)];
   const { data, error } = await supabase
     .from("horse_listings")
-    .select("id, name, slug, cover_image_url, image_urls, seller_name, user_id, status")
+    .select(
+      "id, name, slug, cover_image_url, image_urls, seller_name, user_id, status, verified, owner_seller_verified"
+    )
     .in("id", uniqueIds);
 
   if (error) {

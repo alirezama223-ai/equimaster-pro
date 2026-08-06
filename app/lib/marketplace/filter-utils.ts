@@ -92,7 +92,8 @@ export function countActiveMarketplaceFilters(
   if (filters.studbook?.trim()) count += 1;
   if (filters.availability && filters.availability !== "all") count += 1;
   if (filters.color?.trim()) count += 1;
-  if (filters.verified) count += 1;
+  if (filters.verified || filters.verifiedHorses) count += 1;
+  if (filters.verifiedSellers) count += 1;
   if (filters.minPrice != null || filters.maxPrice != null) count += 1;
   if (filters.minAge != null || filters.maxAge != null) count += 1;
   if (filters.minHeight != null || filters.maxHeight != null) count += 1;
@@ -135,8 +136,11 @@ export function getMarketplaceFilterChipDefinitions(
   if (filters.color?.trim()) {
     chips.push({ id: "color", removePatch: { color: undefined } });
   }
-  if (filters.verified) {
-    chips.push({ id: "verified", removePatch: { verified: false } });
+  if (filters.verified || filters.verifiedHorses) {
+    chips.push({ id: "verifiedHorses", removePatch: { verified: false, verifiedHorses: false } });
+  }
+  if (filters.verifiedSellers) {
+    chips.push({ id: "verifiedSellers", removePatch: { verifiedSellers: false } });
   }
   if (filters.minPrice != null || filters.maxPrice != null) {
     chips.push({

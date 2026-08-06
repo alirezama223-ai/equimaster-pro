@@ -62,7 +62,7 @@ export function formatListingRowPrice(
 
 export function listingRowToHorse(
   row: HorseListingRow,
-  options?: { priceOnRequestLabel?: string }
+  options?: { priceOnRequestLabel?: string; sellerVerified?: boolean }
 ): Horse {
   const images = getListingDisplayImages(row);
 
@@ -81,6 +81,9 @@ export function listingRowToHorse(
     level: row.level,
     price: formatListingRowPrice(row, options?.priceOnRequestLabel),
     verified: row.verified,
+    sellerVerified: options?.sellerVerified ?? row.owner_seller_verified ?? false,
+    horseVerificationStatus: row.horse_verification_status ?? "unverified",
+    horseVerifiedAt: row.horse_verified_at ?? null,
     description: row.description,
     sire: row.sire,
     dam: row.dam,

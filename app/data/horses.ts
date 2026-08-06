@@ -19,6 +19,10 @@ export type Horse = {
 
   price: string;
   verified: boolean;
+  sellerVerified?: boolean;
+  horseVerificationStatus?: import("@/app/types/verification").HorseVerificationStatus;
+  horseVerifiedAt?: string | null;
+  sellerVerifiedAt?: string | null;
 
   description: string;
 

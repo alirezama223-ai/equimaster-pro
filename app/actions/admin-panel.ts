@@ -46,6 +46,7 @@ function revalidateAdminPaths() {
   revalidatePath("/admin/users");
   revalidatePath("/admin/listings");
   revalidatePath("/admin/sellers");
+  revalidatePath("/admin/verification");
   revalidatePath("/admin/messages");
   revalidatePath("/admin/reports");
   revalidatePath("/admin/notifications");
@@ -142,11 +143,10 @@ export async function getAdminUsers(
       sellerVerified: Boolean(row.seller_verified),
       sellerVerificationStatus:
         row.seller_verification_status === "pending" ||
-        row.seller_verification_status === "approved" ||
-        row.seller_verification_status === "rejected" ||
-        row.seller_verification_status === "more_info"
+        row.seller_verification_status === "verified" ||
+        row.seller_verification_status === "rejected"
           ? row.seller_verification_status
-          : "none",
+          : "unverified",
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
       listingCount: counts.total,
@@ -388,11 +388,10 @@ export async function getAdminSellers(): Promise<{
       sellerVerified: Boolean(profile.seller_verified),
       sellerVerificationStatus:
         profile.seller_verification_status === "pending" ||
-        profile.seller_verification_status === "approved" ||
-        profile.seller_verification_status === "rejected" ||
-        profile.seller_verification_status === "more_info"
+        profile.seller_verification_status === "verified" ||
+        profile.seller_verification_status === "rejected"
           ? profile.seller_verification_status
-          : "none",
+          : "unverified",
       sellerVerificationNotes: (profile.seller_verification_notes as string | null) ?? null,
       sellerVerificationDocuments: Array.isArray(profile.seller_verification_documents)
         ? profile.seller_verification_documents

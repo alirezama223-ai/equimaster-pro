@@ -317,7 +317,7 @@ export async function getAdminSellerVerificationQueue(): Promise<{
     .select(
       "user_id, role, seller_verified, seller_verification_status, seller_verification_documents, seller_verification_notes, created_at"
     )
-    .in("seller_verification_status", ["pending", "more_info"])
+    .in("seller_verification_status", ["pending"])
     .order("updated_at", { ascending: false });
 
   if (error) return { sellers: [], error: error.message };
@@ -327,7 +327,7 @@ export async function getAdminSellerVerificationQueue(): Promise<{
     sellerReference: formatOwnerReference(profile.user_id as string),
     sellerVerified: Boolean(profile.seller_verified),
     sellerVerificationStatus: (profile.seller_verification_status ??
-      "none") as SellerVerificationStatus,
+      "unverified") as SellerVerificationStatus,
     sellerVerificationNotes: (profile.seller_verification_notes as string | null) ?? null,
     sellerVerificationDocuments: Array.isArray(profile.seller_verification_documents)
       ? profile.seller_verification_documents
@@ -347,27 +347,21 @@ export async function reviewSellerVerification(
   status: SellerVerificationStatus,
   notes?: string
 ) {
-  const auth = await requireAdmin();
-  if (auth.error || !auth.supabase) {
-    return { error: auth.error ?? "Forbidden" };
+  const { reviewSellerVerificationAdmin } = await import("@/app/actions/verification");
+
+  if (status === "verified") {
+    return reviewSellerVerificationAdmin(userId, "approve", notes);
   }
 
-  const patch: Record<string, unknown> = {
-    seller_verification_status: status,
-    seller_verification_notes: notes?.trim() || null,
-  };
-
-  if (status === "approved") {
-    patch.seller_verified = true;
-  } else if (status === "rejected") {
-    patch.seller_verified = false;
+  if (status === "rejected") {
+    return reviewSellerVerificationAdmin(userId, "reject", notes);
   }
 
-  const { error } = await auth.supabase.from("profiles").update(patch).eq("user_id", userId);
-  if (error) return { error: error.message };
+  if (status === "pending") {
+    return reviewSellerVerificationAdmin(userId, "request_info", notes);
+  }
 
-  revalidateEnterprisePaths();
-  return { success: true as const };
+  return { error: "Unsupported verification status." };
 }
 
 export async function getAdminConversations(): Promise<{
@@ -532,7 +526,7 @@ export async function getAdminAnalyticsDetail(): Promise<{
       userId: listing.user_id,
       sellerReference: formatOwnerReference(listing.user_id),
       sellerVerified: false,
-      sellerVerificationStatus: "none" as const,
+      sellerVerificationStatus: "unverified" as const,
       sellerVerificationNotes: null,
       sellerVerificationDocuments: [],
       role: "user" as const,

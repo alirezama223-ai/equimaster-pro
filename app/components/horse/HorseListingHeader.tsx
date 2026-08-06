@@ -66,6 +66,7 @@ export default async function HorseListingHeader({
 
         <HorseTrustBadges
           verified={horse.verified}
+          sellerVerified={horse.sellerVerified}
           healthSummary={healthSummary}
           pedigreeHorseId={pedigreeHorseId}
           pedigreeHorse={pedigreeHorse}

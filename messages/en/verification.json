@@ -1,0 +1,90 @@
+{
+  "badge": {
+    "generic": "Verified",
+    "seller": "Verified Seller",
+    "horse": "Verified Horse",
+    "verifiedBy": "Verified by EquiMaster"
+  },
+  "status": {
+    "unverified": "Unverified",
+    "pending": "Pending review",
+    "documents_submitted": "Documents submitted",
+    "verified": "Verified",
+    "rejected": "Rejected"
+  },
+  "buyer": {
+    "title": "Verification",
+    "sellerVerified": "This seller is verified by EquiMaster.",
+    "horseVerified": "This horse has verified documentation on file.",
+    "verifiedOn": "Verified on {date}",
+    "verifiedByEquiMaster": "Verified by EquiMaster"
+  },
+  "seller": {
+    "title": "Seller verification",
+    "subtitle": "Upload your identity documents to earn a verified seller badge across the marketplace.",
+    "statusLabel": "Status",
+    "rejectionReason": "Rejection reason",
+    "adminNotes": "Admin notes",
+    "requiredDocuments": "Required documents",
+    "optionalDocuments": "Optional documents",
+    "upload": "Upload",
+    "replace": "Replace",
+    "uploaded": "Uploaded",
+    "pendingReview": "Pending review",
+    "submit": "Submit for review",
+    "submitSuccess": "Verification submitted. Our team will review your documents shortly.",
+    "uploadSuccess": "Document uploaded.",
+    "documentTypes": {
+      "government_id": "Government ID",
+      "business_registration": "Business registration",
+      "address_proof": "Address proof",
+      "phone_verification": "Phone verification",
+      "selfie": "Selfie (optional)"
+    }
+  },
+  "horse": {
+    "title": "Horse verification",
+    "subtitle": "Upload passport, health, and ownership documents to earn a verified horse badge.",
+    "selectListing": "Select listing",
+    "submit": "Submit documents for review",
+    "documentTypes": {
+      "passport": "Passport",
+      "fei_id": "FEI ID",
+      "studbook": "Studbook",
+      "vaccination": "Vaccination records",
+      "vet_check": "Vet check",
+      "x_rays": "X-rays",
+      "ownership_proof": "Ownership proof"
+    }
+  },
+  "admin": {
+    "title": "Verification queue",
+    "subtitle": "Review seller and horse verification requests, preview private documents, and maintain the audit log.",
+    "filters": {
+      "subject": "Subject",
+      "status": "Status",
+      "all": "All",
+      "seller": "Sellers",
+      "horse": "Horses"
+    },
+    "tabs": {
+      "queue": "Queue",
+      "audit": "Audit log"
+    },
+    "preview": "Preview",
+    "download": "Download",
+    "noDocuments": "No documents uploaded.",
+    "auditEmpty": "No audit entries yet.",
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "requestInfo": "Request more info"
+    },
+    "reasonPlaceholder": "Reason or notes for the seller…",
+    "documentStatus": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import VerifiedBadge from "@/app/components/verification/VerifiedBadge";
 import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { getParticipantInitials } from "@/app/lib/messaging/display";
@@ -63,6 +64,12 @@ export default function ConversationListItem({ conversation, isActive, href }: P
               {conversation.other_user_name}
             </p>
             <p className="truncate text-sm text-blue-300">{conversation.horse_name}</p>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {conversation.other_user_seller_verified ? (
+                <VerifiedBadge compact label="seller" />
+              ) : null}
+              {conversation.horse_verified ? <VerifiedBadge compact label="horse" /> : null}
+            </div>
           </div>
           <div className="shrink-0 text-right">
             <p className="text-xs text-gray-500">

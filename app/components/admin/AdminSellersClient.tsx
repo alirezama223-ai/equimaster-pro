@@ -25,11 +25,11 @@ export default function AdminSellersClient({ sellers, error }: Props) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
 
-  function handleReview(userId: string, status: "approved" | "rejected" | "more_info") {
+  function handleReview(userId: string, status: "verified" | "rejected" | "pending") {
     setActionError(null);
     startTransition(async () => {
       const result = await reviewSellerVerification(userId, status, notes[userId]);
-      if (result.error) {
+      if ("error" in result) {
         setActionError(result.error);
         return;
       }
@@ -85,9 +85,9 @@ export default function AdminSellersClient({ sellers, error }: Props) {
                     disabled={isPending}
                   />
                   <div className="flex flex-wrap gap-2">
-                    <button type="button" className={ADMIN_BUTTON_CLASS} disabled={isPending} onClick={() => handleReview(seller.userId, "approved")}>{t("actions.approve")}</button>
+                    <button type="button" className={ADMIN_BUTTON_CLASS} disabled={isPending} onClick={() => handleReview(seller.userId, "verified")}>{t("actions.approve")}</button>
                     <button type="button" className={ADMIN_BUTTON_CLASS} disabled={isPending} onClick={() => handleReview(seller.userId, "rejected")}>{t("actions.reject")}</button>
-                    <button type="button" className={ADMIN_BUTTON_CLASS} disabled={isPending} onClick={() => handleReview(seller.userId, "more_info")}>{t("actions.requestInfo")}</button>
+                    <button type="button" className={ADMIN_BUTTON_CLASS} disabled={isPending} onClick={() => handleReview(seller.userId, "pending")}>{t("actions.requestInfo")}</button>
                   </div>
                 </div>
               </div>

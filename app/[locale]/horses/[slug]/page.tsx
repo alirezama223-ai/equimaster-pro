@@ -11,6 +11,7 @@ import HorseDescription from "@/app/components/horse/HorseDescription";
 import HorseVideo from "@/app/components/horse/HorseVideo";
 import HorseListingSidebar from "@/app/components/horse/HorseListingSidebar";
 import HorseSellerCard from "@/app/components/horse/HorseSellerCard";
+import BuyerVerificationInfo from "@/app/components/verification/BuyerVerificationInfo";
 import RelatedHorses from "@/app/components/horse/RelatedHorses";
 import HorseLocationSection from "@/app/components/horse/HorseLocationSection";
 import HorseDocumentsSection from "@/app/components/horse/HorseDocumentsSection";
@@ -36,6 +37,7 @@ import { loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getPedigreeSectionForListing } from "@/app/actions/pedigree";
+import { getPublicSellerVerification } from "@/app/actions/verification";
 import { recordListingView } from "@/app/actions/listing-views";
 import { getRelatedActiveListings } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
@@ -107,10 +109,11 @@ export default async function PublicHorseListingPage({ params }: Props) {
     await recordListingView(listing.id);
   }
 
-  const [favoriteListingIds, relatedResult, pedigreeSection] = await Promise.all([
+  const [favoriteListingIds, relatedResult, pedigreeSection, sellerVerification] = await Promise.all([
     getUserFavoriteListingIds(),
     getRelatedActiveListings(listing.id, listing.discipline),
     getPedigreeSectionForListing(listing),
+    getPublicSellerVerification(listing.user_id),
   ]);
 
   const isFavorited = favoriteListingIds.includes(listing.id);
@@ -263,6 +266,13 @@ export default async function PublicHorseListingPage({ params }: Props) {
                   memberSince={listing.created_at}
                 />
               </Suspense>
+
+              <BuyerVerificationInfo
+                sellerVerified={sellerVerification.sellerVerified}
+                horseVerified={horse.verified}
+                sellerVerifiedAt={sellerVerification.verifiedAt}
+                horseVerifiedAt={horse.horseVerifiedAt ?? null}
+              />
             </div>
           </div>
 
