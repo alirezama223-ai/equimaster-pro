@@ -13,7 +13,8 @@ type Props = {
   onNavigationStarted?: () => void;
 };
 
-function resolveLocalizedHref(href: string, locale: AppLocale): string {
+/** Localized href for mobile drawer anchors (testable, no Link wrapper). */
+export function resolveMobileMenuHref(href: string, locale: AppLocale): string {
   if (href === "#" || href.startsWith("#")) {
     return href;
   }
@@ -23,7 +24,7 @@ function resolveLocalizedHref(href: string, locale: AppLocale): string {
 
 /**
  * Mobile drawer nav item — native anchor + synchronous hard navigation only.
- * No next-intl Link, no ProtectedLink, no preventDefault-before-navigation.
+ * No next-intl Link, no ProtectedLink; single mechanism via window.location.assign.
  */
 export default function MobileMenuNavLink({
   href,
@@ -32,7 +33,7 @@ export default function MobileMenuNavLink({
   onNavigationStarted,
 }: Props) {
   const locale = useLocale() as AppLocale;
-  const localizedHref = resolveLocalizedHref(href, locale);
+  const localizedHref = resolveMobileMenuHref(href, locale);
   const isHashLink = localizedHref === "#" || localizedHref.startsWith("#");
 
   function startNavigation() {
