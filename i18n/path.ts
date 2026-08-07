@@ -18,13 +18,15 @@ export function getPathnameWithoutLocale(pathname: string): string {
 }
 
 export function localizePath(pathname: string, locale: AppLocale): string {
+  const pathWithoutLocale = getPathnameWithoutLocale(pathname);
+
   if (locale === routing.defaultLocale) {
-    return pathname;
+    return pathWithoutLocale;
   }
 
-  if (pathname === "/") {
+  if (pathWithoutLocale === "/") {
     return `/${locale}`;
   }
 
-  return `/${locale}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+  return `/${locale}${pathWithoutLocale.startsWith("/") ? pathWithoutLocale : `/${pathWithoutLocale}`}`;
 }

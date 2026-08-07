@@ -29,6 +29,11 @@ export function buildLocalizedPath(pathname: string, locale: AppLocale): string 
   return localizePath(getSafeNextPath(pathname), locale);
 }
 
+/** Locale-free path for client i18n router navigation. */
+export function getRouterPushPath(pathname: string): string {
+  return getSafeNextPath(pathname);
+}
+
 export function buildAuthCallbackUrl(origin: string, nextPath: string): string {
   const safeNext = getSafeNextPath(nextPath);
   return `${origin}${AUTH_CALLBACK_PATH}?next=${encodeURIComponent(safeNext)}`;
