@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AppLocale } from "@/i18n/routing";
-import { localizePath } from "@/i18n/path";
-import { getRouterPushPath, waitForAuthSession } from "@/app/lib/auth/redirect";
+import { navigateToProtectedRoute } from "@/app/lib/auth/navigate-protected";
+import { waitForAuthSession } from "@/app/lib/auth/redirect";
 
 export async function completePostAuthRedirect(
   supabase: SupabaseClient,
@@ -14,10 +14,14 @@ export async function completePostAuthRedirect(
     return false;
   }
 
-  const targetPath = localizePath(getRouterPushPath(nextPath), locale);
+  const result = await navigateToProtectedRoute({
+    path: nextPath,
+    locale,
+    isAuthenticated: true,
+    currentPathname: window.location.pathname,
+    waitForSession: false,
+    supabase,
+  });
 
-  // Full document navigation avoids Mobile Safari cookie/middleware redirect loops
-  // that client-side router.push + refresh can trigger before cookies are visible.
-  window.location.replace(targetPath);
-  return true;
+  return result === "navigated" || result === "noop";
 }

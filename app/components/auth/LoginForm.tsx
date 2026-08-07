@@ -14,6 +14,7 @@ import {
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
+import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -91,6 +92,7 @@ export default function LoginForm() {
       footerHref={`/signup${nextPath !== "/account" ? `?next=${encodeURIComponent(nextPath)}` : ""}`}
       footerLinkLabel={t("login.footerLink")}
     >
+      <AuthSessionResume nextPath={nextPath} />
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email" className={authLabelClassName}>

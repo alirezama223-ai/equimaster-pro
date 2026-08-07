@@ -2,14 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import ProtectedLink from "@/app/components/auth/ProtectedLink";
 import NavbarAuthControls from "@/app/components/navbar/NavbarAuthControls";
 import NavbarDesktopMenu from "@/app/components/navbar/NavbarDesktopMenu";
 import NavbarMobileMenu from "@/app/components/navbar/NavbarMobileMenu";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
-import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
 import {
   DESKTOP_INLINE_NAV_LINKS,
   navLinkClassName,
@@ -19,11 +18,9 @@ export default function Navbar() {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const { brandShort } = useNavbarBrandLabels();
-  const { user, isLoading } = useNavbarAuthUser();
-  const mobileSellHref = !isLoading && !user ? loginRedirectPath("/sell") : "/sell";
 
   return (
-    <header className="glass-surface fixed top-0 left-0 z-50 w-full border-b border-white/10">
+    <header className="glass-surface fixed top-0 left-0 z-50 isolate w-full border-b border-white/10">
       <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 md:hidden">
         <Link
           href="/"
@@ -33,14 +30,9 @@ export default function Navbar() {
         </Link>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Link
-            href={mobileSellHref}
+          <ProtectedLink
+            href="/sell"
             aria-label={t("sellAHorse")}
-            onClick={(event) => {
-              if (isLoading) {
-                event.preventDefault();
-              }
-            }}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500"
           >
             <svg
@@ -53,7 +45,7 @@ export default function Navbar() {
             >
               <path strokeLinecap="round" d="M12 5v14M5 12h14" />
             </svg>
-          </Link>
+          </ProtectedLink>
 
           <NavbarMobileMenu />
         </div>
@@ -95,7 +87,7 @@ export default function Navbar() {
             <NavbarDesktopMenu />
           </div>
 
-          <Link
+          <ProtectedLink
             href="/sell"
             aria-label={t("sellAHorse")}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500 sm:h-auto sm:w-auto sm:px-3 sm:py-2.5 lg:px-4 lg:py-2.5 2xl:px-5 2xl:py-3"
@@ -112,7 +104,7 @@ export default function Navbar() {
             </svg>
             <span className="hidden sm:inline lg:hidden">{t("sell")}</span>
             <span className="hidden lg:inline">{t("sellAHorse")}</span>
-          </Link>
+          </ProtectedLink>
 
           <div className="hidden sm:block">
             <NotificationBell />

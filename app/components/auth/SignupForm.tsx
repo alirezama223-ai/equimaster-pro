@@ -12,10 +12,11 @@ import {
   validateSignupForm,
 } from "@/app/lib/auth-validation";
 import { createClient } from "@/app/lib/supabase/client";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
-import { getSupabaseEnv } from "@/app/lib/supabase/env";
+import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
+import { buildProtectedLoginUrl } from "@/app/lib/auth/navigate-protected";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
+import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import {
   buildAuthCallbackUrl,
 } from "@/app/lib/auth/redirect";
@@ -114,9 +115,13 @@ export default function SignupForm() {
       title={t("signup.title")}
       subtitle={t("signup.subtitle")}
       footerText={t("signup.footerText")}
-      footerHref={loginRedirectPath(nextPath !== "/account" ? nextPath : undefined)}
+      footerHref={buildProtectedLoginUrl(
+        nextPath !== "/account" ? nextPath : "/account",
+        locale
+      )}
       footerLinkLabel={t("signup.footerLink")}
     >
+      <AuthSessionResume nextPath={nextPath} />
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="fullName" className={authLabelClassName}>

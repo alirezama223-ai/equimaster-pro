@@ -5,25 +5,9 @@ import {
   resolveAppLocale,
 } from "@/app/lib/auth/redirect";
 import { getSafeNextPath, LOGIN_PATH } from "@/app/lib/auth/paths";
+import { isProtectedPath } from "@/app/lib/auth/protected-routes";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import { getPathnameWithoutLocale, localizePath } from "@/i18n/path";
-
-const protectedRoutes = [
-  "/account",
-  "/sell",
-  "/admin",
-  "/dashboard/seller",
-  "/favorites",
-  "/training",
-  "/notifications",
-  "/inbox",
-];
-
-function isProtectedPath(pathname: string) {
-  return protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  );
-}
 
 function isAuthPath(pathname: string) {
   return (
@@ -33,23 +17,51 @@ function isAuthPath(pathname: string) {
   );
 }
 
-function buildLoginRedirect(request: NextRequest, returnPath: string) {
+function buildLoginRedirect(
+  request: NextRequest,
+  returnPath: string,
+  fallback: NextResponse
+) {
+  const pathname = getPathnameWithoutLocale(request.nextUrl.pathname);
+  const safeNext = getSafeNextPath(getPathnameWithoutLocale(returnPath));
   const locale = resolveAppLocale(
     request.nextUrl.pathname,
     request.cookies.get("NEXT_LOCALE")?.value
   );
+
+  if (pathname === LOGIN_PATH) {
+    const existingNext = getSafeNextPath(
+      request.nextUrl.searchParams.get("next")
+    );
+    if (existingNext === safeNext) {
+      return fallback;
+    }
+  }
+
   const redirectUrl = new URL(localizePath(LOGIN_PATH, locale), request.url);
-  redirectUrl.searchParams.set("next", getSafeNextPath(returnPath));
+  redirectUrl.searchParams.set("next", safeNext);
   return NextResponse.redirect(redirectUrl);
 }
 
-function buildPostAuthRedirect(request: NextRequest, nextPath: string) {
+function buildPostAuthRedirect(
+  request: NextRequest,
+  nextPath: string,
+  fallback: NextResponse
+) {
+  const pathname = getPathnameWithoutLocale(request.nextUrl.pathname);
+  const target = getSafeNextPath(nextPath);
   const locale = resolveAppLocale(
     request.nextUrl.pathname,
     request.cookies.get("NEXT_LOCALE")?.value
   );
+  const localizedTarget = localizePath(target, locale);
+
+  if (pathname === target || request.nextUrl.pathname === localizedTarget) {
+    return fallback;
+  }
+
   const redirectUrl = request.nextUrl.clone();
-  redirectUrl.pathname = localizePath(getSafeNextPath(nextPath), locale);
+  redirectUrl.pathname = localizedTarget;
   redirectUrl.search = "";
   return NextResponse.redirect(redirectUrl);
 }
@@ -116,7 +128,7 @@ export async function updateSession(
   const isAuthenticated = !error && Boolean(data?.claims);
 
   if (!isAuthenticated && isProtectedPath(pathname)) {
-    return buildLoginRedirect(request, request.nextUrl.pathname);
+    return buildLoginRedirect(request, request.nextUrl.pathname, supabaseResponse);
   }
 
   if (isAuthenticated && isAuthPath(pathname)) {
@@ -125,7 +137,13 @@ export async function updateSession(
     }
 
     const nextFromQuery = request.nextUrl.searchParams.get("next");
-    return buildPostAuthRedirect(request, nextFromQuery ?? "/account");
+
+    // Client completes protected navigation after cookies stabilize (Mobile Safari).
+    if (nextFromQuery) {
+      return supabaseResponse;
+    }
+
+    return buildPostAuthRedirect(request, "/account", supabaseResponse);
   }
 
   return supabaseResponse;

@@ -7,8 +7,8 @@ import { createPortal } from "react-dom";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LogoutButton from "@/app/components/auth/LogoutButton";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
+import ProtectedLink from "@/app/components/auth/ProtectedLink";
 import { openMobileFeedbackMenu } from "@/app/components/feedback/FeedbackWidget";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { setMobileDrawerOpen } from "@/app/components/navbar/mobileDrawerState";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
 import { FULL_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
@@ -23,7 +23,6 @@ export default function NavbarMobileMenu() {
   const [mounted, setMounted] = useState(false);
   const menuId = useId();
   const { user, isAdmin, isLoading } = useNavbarAuthUser();
-  const mobileSellHref = !isLoading && !user ? loginRedirectPath("/sell") : "/sell";
 
   useEffect(() => {
     setMounted(true);
@@ -102,7 +101,7 @@ export default function NavbarMobileMenu() {
         <div className="scroll-touch min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
           <nav className="grid gap-1" aria-label={t("primaryNav")}>
             {FULL_NAV_LINKS.map((link) => (
-              <Link
+              <ProtectedLink
                 key={`mobile-${link.href}-${link.labelKey}`}
                 href={link.href}
                 role="menuitem"
@@ -110,7 +109,7 @@ export default function NavbarMobileMenu() {
                 className={`min-h-11 px-3 py-2.5 text-sm font-medium text-white ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
               >
                 {t(link.labelKey)}
-              </Link>
+              </ProtectedLink>
             ))}
           </nav>
 
@@ -128,20 +127,14 @@ export default function NavbarMobileMenu() {
           <div className="my-3 border-t border-slate-800" aria-hidden="true" />
 
           <div className="grid gap-2">
-            <Link
-              href={mobileSellHref}
+            <ProtectedLink
+              href="/sell"
               role="menuitem"
-              onClick={(event) => {
-                if (isLoading) {
-                  event.preventDefault();
-                  return;
-                }
-                closeMenu();
-              }}
+              onClick={closeMenu}
               className={`${actionLinkClass} bg-blue-600 hover:bg-blue-500`}
             >
               {t("sellAHorse")}
-            </Link>
+            </ProtectedLink>
 
             {isLoading ? (
               <div className="h-11 animate-pulse rounded-xl bg-slate-800" aria-hidden="true" />
@@ -171,23 +164,23 @@ export default function NavbarMobileMenu() {
             {!isLoading && user ? (
               <>
                 {isAdmin ? (
-                  <Link
+                  <ProtectedLink
                     href="/admin"
                     role="menuitem"
                     onClick={closeMenu}
                     className={`${actionLinkClass} border border-blue-500/40 text-blue-200 hover:bg-blue-500/10`}
                   >
                     {t("admin")}
-                  </Link>
+                  </ProtectedLink>
                 ) : null}
-                <Link
+                <ProtectedLink
                   href="/account"
                   role="menuitem"
                   onClick={closeMenu}
                   className={`${actionLinkClass} border border-slate-800 hover:bg-slate-900`}
                 >
                   {t("account")}
-                </Link>
+                </ProtectedLink>
                 <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
                   <LogoutButton variant="menu" />
                 </div>

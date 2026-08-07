@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import FloatingPortal from "@/app/components/shared/FloatingPortal";
+import ProtectedLink from "@/app/components/auth/ProtectedLink";
 import { FULL_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
 import { isFloatingOverlayNode } from "@/app/lib/floating-position";
 
@@ -84,7 +84,7 @@ export default function NavbarDesktopMenu() {
           >
             <nav className="grid gap-1">
               {FULL_NAV_LINKS.map((link) => (
-                <Link
+                <ProtectedLink
                   key={`${link.href}-${link.labelKey}`}
                   href={link.href}
                   role="menuitem"
@@ -92,7 +92,7 @@ export default function NavbarDesktopMenu() {
                   className={`rounded-xl px-3 py-2.5 text-sm font-medium text-gray-200 ${navLinkClassName(link, "block")}`}
                 >
                   {t(link.labelKey)}
-                </Link>
+                </ProtectedLink>
               ))}
             </nav>
           </div>

@@ -1,11 +1,13 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import FeedbackModal from "@/app/components/feedback/FeedbackModal";
 import { detectBrowserName, detectOperatingSystem } from "@/app/lib/feedback/client-env";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
+import { buildProtectedLoginUrl } from "@/app/lib/auth/navigate-protected";
+import { getPathnameWithoutLocale } from "@/i18n/path";
+import type { AppLocale } from "@/i18n/routing";
 import { subscribeMobileDrawerOpen } from "@/app/components/navbar/mobileDrawerState";
 
 type Props = {
@@ -57,9 +59,8 @@ function useMobileDrawerOpen() {
 
 export default function FeedbackWidget({ isAuthenticated }: Props) {
   const t = useTranslations("feedback");
-  const locale = useLocale();
+  const locale = useLocale() as AppLocale;
   const pathname = usePathname();
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const heroVisible = useHomeHeroVisible();
   const drawerOpen = useMobileDrawerOpen();
@@ -80,12 +81,16 @@ export default function FeedbackWidget({ isAuthenticated }: Props) {
 
   const handleOpen = useCallback(() => {
     if (!isAuthenticated) {
-      router.push(loginRedirectPath(pathname));
+      const loginUrl = buildProtectedLoginUrl(
+        getPathnameWithoutLocale(pathname),
+        locale
+      );
+      window.location.assign(loginUrl);
       return;
     }
 
     setIsOpen(true);
-  }, [isAuthenticated, pathname, router]);
+  }, [isAuthenticated, locale, pathname]);
 
   useEffect(() => {
     registerMobileFeedbackOpenHandler(handleOpen);
