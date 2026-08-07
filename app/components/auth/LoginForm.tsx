@@ -14,12 +14,14 @@ import {
 } from "@/app/lib/auth-validation";
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
+import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
+import { getSafeNextPath } from "@/app/lib/auth/paths";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = searchParams.get("next") || "/account";
+  const nextPath = getSafeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
@@ -65,8 +67,11 @@ export default function LoginForm() {
         return;
       }
 
-      router.push(nextPath);
-      router.refresh();
+      const redirected = await completePostAuthRedirect(supabase, router, nextPath);
+
+      if (!redirected) {
+        setFormError(t("login.genericError"));
+      }
     } catch {
       setFormError(t("login.genericError"));
     } finally {

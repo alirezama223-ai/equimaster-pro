@@ -15,12 +15,17 @@ import {
 import { createClient } from "@/app/lib/supabase/client";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
+import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
+import { getSafeNextPath } from "@/app/lib/auth/paths";
+import {
+  buildAuthCallbackUrl,
+} from "@/app/lib/auth/redirect";
 
 export default function SignupForm() {
   const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = searchParams.get("next") || "/account";
+  const nextPath = getSafeNextPath(searchParams.get("next"));
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -60,7 +65,7 @@ export default function SignupForm() {
 
     try {
       const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+      const redirectTo = buildAuthCallbackUrl(window.location.origin, nextPath);
 
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
@@ -84,8 +89,15 @@ export default function SignupForm() {
       }
 
       if (data.session) {
-        router.push(nextPath);
-        router.refresh();
+        const redirected = await completePostAuthRedirect(
+          supabase,
+          router,
+          nextPath
+        );
+
+        if (!redirected) {
+          setFormError(t("signup.genericError"));
+        }
         return;
       }
 

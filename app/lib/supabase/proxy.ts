@@ -1,8 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
+import {
+  getLocaleFromPathname,
+  resolveAppLocale,
+} from "@/app/lib/auth/redirect";
+import { getSafeNextPath, LOGIN_PATH } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
-import { getPathnameWithoutLocale } from "@/i18n/path";
+import { getPathnameWithoutLocale, localizePath } from "@/i18n/path";
 
 const protectedRoutes = [
   "/account",
@@ -29,6 +33,27 @@ function isAuthPath(pathname: string) {
   );
 }
 
+function buildLoginRedirect(request: NextRequest, returnPath: string) {
+  const locale = resolveAppLocale(
+    request.nextUrl.pathname,
+    request.cookies.get("NEXT_LOCALE")?.value
+  );
+  const redirectUrl = new URL(localizePath(LOGIN_PATH, locale), request.url);
+  redirectUrl.searchParams.set("next", getSafeNextPath(returnPath));
+  return NextResponse.redirect(redirectUrl);
+}
+
+function buildPostAuthRedirect(request: NextRequest, nextPath: string) {
+  const locale = resolveAppLocale(
+    request.nextUrl.pathname,
+    request.cookies.get("NEXT_LOCALE")?.value
+  );
+  const redirectUrl = request.nextUrl.clone();
+  redirectUrl.pathname = localizePath(getSafeNextPath(nextPath), locale);
+  redirectUrl.search = "";
+  return NextResponse.redirect(redirectUrl);
+}
+
 export async function updateSession(
   request: NextRequest,
   response: NextResponse = NextResponse.next({ request })
@@ -38,8 +63,14 @@ export async function updateSession(
 
   if (!isConfigured) {
     if (isProtectedPath(pathname)) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = loginRedirectPath(request.nextUrl.pathname);
+      const redirectUrl = new URL(
+        localizePath(LOGIN_PATH, getLocaleFromPathname(request.nextUrl.pathname)),
+        request.url
+      );
+      redirectUrl.searchParams.set(
+        "next",
+        getSafeNextPath(request.nextUrl.pathname)
+      );
       redirectUrl.searchParams.set("error", "supabase_not_configured");
       return NextResponse.redirect(redirectUrl);
     }
@@ -85,16 +116,16 @@ export async function updateSession(
   const isAuthenticated = !error && Boolean(data?.claims);
 
   if (!isAuthenticated && isProtectedPath(pathname)) {
-    return NextResponse.redirect(
-      new URL(loginRedirectPath(request.nextUrl.pathname), request.url)
-    );
+    return buildLoginRedirect(request, request.nextUrl.pathname);
   }
 
   if (isAuthenticated && isAuthPath(pathname)) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/account";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
+    if (pathname.startsWith("/auth/callback")) {
+      return supabaseResponse;
+    }
+
+    const nextFromQuery = request.nextUrl.searchParams.get("next");
+    return buildPostAuthRedirect(request, nextFromQuery ?? "/account");
   }
 
   return supabaseResponse;
