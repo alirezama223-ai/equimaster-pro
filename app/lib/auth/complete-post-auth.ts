@@ -1,15 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppLocale } from "@/i18n/routing";
+import { localizePath } from "@/i18n/path";
 import { getRouterPushPath, waitForAuthSession } from "@/app/lib/auth/redirect";
-
-type AuthRouter = {
-  push: (href: string) => void;
-  refresh: () => void;
-};
 
 export async function completePostAuthRedirect(
   supabase: SupabaseClient,
-  router: AuthRouter,
-  nextPath: string
+  nextPath: string,
+  locale: AppLocale
 ): Promise<boolean> {
   const sessionReady = await waitForAuthSession(supabase);
 
@@ -17,11 +14,10 @@ export async function completePostAuthRedirect(
     return false;
   }
 
-  const targetPath = getRouterPushPath(nextPath);
+  const targetPath = localizePath(getRouterPushPath(nextPath), locale);
 
-  // Push first so the i18n router adds the locale exactly once.
-  // Refreshing on /login would race with middleware and can double-prefix locales.
-  router.push(targetPath);
-  router.refresh();
+  // Full document navigation avoids Mobile Safari cookie/middleware redirect loops
+  // that client-side router.push + refresh can trigger before cookies are visible.
+  window.location.replace(targetPath);
   return true;
 }

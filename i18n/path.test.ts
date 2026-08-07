@@ -22,4 +22,10 @@ describe("getPathnameWithoutLocale", () => {
     expect(getPathnameWithoutLocale("/de/dashboard/seller")).toBe("/dashboard/seller");
     expect(getPathnameWithoutLocale("/dashboard/seller")).toBe("/dashboard/seller");
   });
+
+  it("strips repeated locale prefixes", () => {
+    expect(getPathnameWithoutLocale("/de/de/dashboard/seller")).toBe(
+      "/dashboard/seller"
+    );
+  });
 });

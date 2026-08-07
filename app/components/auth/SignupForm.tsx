@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
@@ -20,10 +19,11 @@ import { getSafeNextPath } from "@/app/lib/auth/paths";
 import {
   buildAuthCallbackUrl,
 } from "@/app/lib/auth/redirect";
+import type { AppLocale } from "@/i18n/routing";
 
 export default function SignupForm() {
   const t = useTranslations("auth");
-  const router = useRouter();
+  const locale = useLocale() as AppLocale;
   const searchParams = useSearchParams();
   const nextPath = getSafeNextPath(searchParams.get("next"));
 
@@ -91,8 +91,8 @@ export default function SignupForm() {
       if (data.session) {
         const redirected = await completePostAuthRedirect(
           supabase,
-          router,
-          nextPath
+          nextPath,
+          locale
         );
 
         if (!redirected) {

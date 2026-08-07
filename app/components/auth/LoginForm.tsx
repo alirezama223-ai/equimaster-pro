@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
@@ -16,10 +15,11 @@ import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
+import type { AppLocale } from "@/i18n/routing";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
-  const router = useRouter();
+  const locale = useLocale() as AppLocale;
   const searchParams = useSearchParams();
   const nextPath = getSafeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
@@ -67,7 +67,11 @@ export default function LoginForm() {
         return;
       }
 
-      const redirected = await completePostAuthRedirect(supabase, router, nextPath);
+      const redirected = await completePostAuthRedirect(
+        supabase,
+        nextPath,
+        locale
+      );
 
       if (!redirected) {
         setFormError(t("login.genericError"));
