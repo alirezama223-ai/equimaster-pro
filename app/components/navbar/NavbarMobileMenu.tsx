@@ -7,8 +7,16 @@ import NotificationBell from "@/app/components/events/NotificationBell";
 import LogoutButton from "@/app/components/auth/LogoutButton";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import MobileMenuNavLink from "@/app/components/navbar/MobileMenuNavLink";
+import MobileNavExceptionProbe from "@/app/components/navbar/MobileNavExceptionProbe";
+import MobileNavDebugBox from "@/app/components/navbar/MobileNavDebugBox";
 import { openMobileFeedbackMenu } from "@/app/components/feedback/FeedbackWidget";
 import { setMobileDrawerOpen } from "@/app/components/navbar/mobileDrawerState";
+import {
+  logMobileNavDrawerClose,
+  logMobileNavDrawerState,
+  runMobileNavInstrumented,
+} from "@/app/lib/debug/mobile-nav-diagnostics";
+import type { MobileNavSessionSnapshot } from "@/app/lib/debug/mobile-nav-diagnostics";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
 import { FULL_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
 import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
@@ -22,6 +30,13 @@ export default function NavbarMobileMenu() {
   const [mounted, setMounted] = useState(false);
   const menuId = useId();
   const { user, isAdmin, isLoading } = useNavbarAuthUser();
+
+  const sessionSnapshot: MobileNavSessionSnapshot = {
+    userId: user?.id ?? null,
+    isLoading,
+    isAdmin,
+    drawerOpen: open,
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -46,13 +61,23 @@ export default function NavbarMobileMenu() {
   }, [open]);
 
   useEffect(() => {
+    logMobileNavDrawerState("drawer-state-effect", open, sessionSnapshot);
+  }, [open, isAdmin, isLoading, user?.id]);
+
+  useEffect(() => {
     if (!open) {
       return;
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setOpen(false);
+        runMobileNavInstrumented(
+          "NavbarMobileMenu.escape",
+          () => {
+            closeDrawer();
+          },
+          { drawerOpen: open, href: null }
+        );
       }
     }
 
@@ -63,8 +88,13 @@ export default function NavbarMobileMenu() {
   const actionLinkClass =
     "flex min-h-11 items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition";
 
-  function closeDrawerAfterNavigationStarted() {
+  function closeDrawer() {
+    logMobileNavDrawerClose();
     setOpen(false);
+  }
+
+  function closeDrawerAfterNavigationStarted() {
+    closeDrawer();
   }
 
   const drawer =
@@ -81,7 +111,15 @@ export default function NavbarMobileMenu() {
           <button
             type="button"
             aria-label={t("closeMenu")}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              runMobileNavInstrumented(
+                "NavbarMobileMenu.close-button",
+                () => {
+                  closeDrawer();
+                },
+                { drawerOpen: open, href: null }
+              );
+            }}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-white transition hover:bg-slate-800"
           >
             <svg
@@ -103,6 +141,8 @@ export default function NavbarMobileMenu() {
               <MobileMenuNavLink
                 key={`mobile-${link.href}-${link.labelKey}`}
                 href={link.href}
+                diagLabel={`mobile-nav:${link.labelKey}`}
+                diagSession={sessionSnapshot}
                 onNavigationStarted={closeDrawerAfterNavigationStarted}
                 className={`min-h-11 px-3 py-2.5 text-sm font-medium text-white ${navLinkClassName(link, "flex items-center rounded-xl transition")}`}
               >
@@ -127,6 +167,8 @@ export default function NavbarMobileMenu() {
           <div className="grid gap-2">
             <MobileMenuNavLink
               href="/sell"
+              diagLabel="mobile-nav:sellAHorse-action"
+              diagSession={sessionSnapshot}
               onNavigationStarted={closeDrawerAfterNavigationStarted}
               className={`${actionLinkClass} bg-blue-600 hover:bg-blue-500`}
             >
@@ -141,6 +183,8 @@ export default function NavbarMobileMenu() {
               <>
                 <MobileMenuNavLink
                   href="/login"
+                  diagLabel="mobile-nav:login"
+                  diagSession={sessionSnapshot}
                   onNavigationStarted={closeDrawerAfterNavigationStarted}
                   className={`${actionLinkClass} bg-slate-900 hover:bg-slate-800`}
                 >
@@ -148,6 +192,8 @@ export default function NavbarMobileMenu() {
                 </MobileMenuNavLink>
                 <MobileMenuNavLink
                   href="/signup"
+                  diagLabel="mobile-nav:signup"
+                  diagSession={sessionSnapshot}
                   onNavigationStarted={closeDrawerAfterNavigationStarted}
                   className={`${actionLinkClass} border border-slate-800 hover:bg-slate-900`}
                 >
@@ -161,6 +207,8 @@ export default function NavbarMobileMenu() {
                 {isAdmin ? (
                   <MobileMenuNavLink
                     href="/admin"
+                    diagLabel="mobile-nav:admin"
+                    diagSession={sessionSnapshot}
                     onNavigationStarted={closeDrawerAfterNavigationStarted}
                     className={`${actionLinkClass} border border-blue-500/40 text-blue-200 hover:bg-blue-500/10`}
                   >
@@ -169,6 +217,8 @@ export default function NavbarMobileMenu() {
                 ) : null}
                 <MobileMenuNavLink
                   href="/account"
+                  diagLabel="mobile-nav:account"
+                  diagSession={sessionSnapshot}
                   onNavigationStarted={closeDrawerAfterNavigationStarted}
                   className={`${actionLinkClass} border border-slate-800 hover:bg-slate-900`}
                 >
@@ -184,8 +234,14 @@ export default function NavbarMobileMenu() {
               type="button"
               role="menuitem"
               onClick={() => {
-                setOpen(false);
-                openMobileFeedbackMenu();
+                runMobileNavInstrumented(
+                  "NavbarMobileMenu.feedback",
+                  () => {
+                    closeDrawer();
+                    openMobileFeedbackMenu();
+                  },
+                  { drawerOpen: open, href: null }
+                );
               }}
               className={`${actionLinkClass} border border-blue-500/40 text-blue-100 hover:bg-blue-500/10`}
             >
@@ -211,7 +267,15 @@ export default function NavbarMobileMenu() {
         aria-expanded={open}
         aria-controls={menuId}
         aria-haspopup="dialog"
-        onClick={() => setOpen((current) => !current)}
+        onClick={() =>
+          runMobileNavInstrumented(
+            "NavbarMobileMenu.toggle",
+            () => {
+              setOpen((current) => !current);
+            },
+            { drawerOpen: open, href: null }
+          )
+        }
         className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
       >
         <span className="sr-only">{open ? t("closeMenu") : t("openMenu")}</span>
@@ -236,6 +300,8 @@ export default function NavbarMobileMenu() {
       </button>
 
       {mounted && drawer ? createPortal(drawer, document.body) : null}
+      {mounted ? <MobileNavExceptionProbe session={sessionSnapshot} /> : null}
+      <MobileNavDebugBox />
     </div>
   );
 }
