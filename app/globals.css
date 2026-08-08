@@ -91,6 +91,10 @@ body {
   will-change: opacity, transform;
 }
 
+.fade-up:not(.fade-up-visible) {
+  pointer-events: none;
+}
+
 .fade-up-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
