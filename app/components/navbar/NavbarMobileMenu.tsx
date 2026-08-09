@@ -211,7 +211,11 @@ export default function NavbarMobileMenu() {
         aria-expanded={open}
         aria-controls={menuId}
         aria-haspopup="dialog"
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => {
+          setTimeout(() => {
+            setOpen((current) => !current);
+          }, 0);
+        }}
         className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
       >
         <span className="sr-only">{open ? t("closeMenu") : t("openMenu")}</span>
