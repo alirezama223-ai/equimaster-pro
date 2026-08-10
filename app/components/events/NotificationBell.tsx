@@ -8,8 +8,13 @@ import {
   markNotificationRead,
 } from "@/app/actions/user-notifications";
 import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
-import { useNotificationsRealtime } from "@/app/hooks/useNotificationsRealtime";
+import {
+  scheduleAfterInteractive,
+  useNotificationsRealtime,
+} from "@/app/hooks/useNotificationsRealtime";
 import { getNotificationHref } from "@/app/lib/notifications/routes";
+import { createClient } from "@/app/lib/supabase/client";
+import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import type { NotificationRow } from "@/app/types/user-notification";
 import { NOTIFICATION_TYPE_ICONS } from "@/app/types/user-notification";
 
@@ -17,6 +22,8 @@ type RecentNotificationsResult = Awaited<ReturnType<typeof getRecentNotification
 
 let recentNotificationsInFlight: Promise<RecentNotificationsResult> | null = null;
 let recentNotificationsUserId: string | null = null;
+let unreadCountInFlight: Promise<number> | null = null;
+let unreadCountUserId: string | null = null;
 
 function fetchRecentNotificationsDeduped(userId: string, limit: number) {
   if (recentNotificationsInFlight && recentNotificationsUserId === userId) {
@@ -29,6 +36,36 @@ function fetchRecentNotificationsDeduped(userId: string, limit: number) {
   });
 
   return recentNotificationsInFlight;
+}
+
+async function fetchUnreadCountClient(userId: string) {
+  if (unreadCountInFlight && unreadCountUserId === userId) {
+    return unreadCountInFlight;
+  }
+
+  unreadCountUserId = userId;
+  unreadCountInFlight = (async () => {
+    if (!getSupabaseEnv().isConfigured) {
+      return 0;
+    }
+
+    const supabase = createClient();
+    const { count, error } = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("read_at", null);
+
+    if (error || count === null) {
+      return 0;
+    }
+
+    return count;
+  })().finally(() => {
+    unreadCountInFlight = null;
+  });
+
+  return unreadCountInFlight;
 }
 
 function formatRelativeTime(value: string, locale: string) {
@@ -60,6 +97,16 @@ export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const unreadCountScheduledForUserIdRef = useRef<string | null>(null);
+
+  const refreshUnreadCount = useCallback(async () => {
+    if (!userId) {
+      setUnreadCount(0);
+      return;
+    }
+
+    setUnreadCount(await fetchUnreadCountClient(userId));
+  }, [userId]);
 
   const refreshNotifications = useCallback(async () => {
     if (!userId) {
@@ -76,13 +123,45 @@ export default function NotificationBell() {
   }, [userId]);
 
   useEffect(() => {
+    if (!userId) {
+      unreadCountScheduledForUserIdRef.current = null;
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
+    if (unreadCountScheduledForUserIdRef.current === userId) {
+      return;
+    }
+
+    unreadCountScheduledForUserIdRef.current = userId;
+    scheduleAfterInteractive(() => {
+      if (unreadCountScheduledForUserIdRef.current !== userId) {
+        return;
+      }
+
+      void refreshUnreadCount();
+    });
+  }, [userId, refreshUnreadCount]);
+
+  useEffect(() => {
+    if (!open || !userId) {
+      return;
+    }
+
     void refreshNotifications();
-  }, [refreshNotifications]);
+  }, [open, userId, refreshNotifications]);
 
   useNotificationsRealtime({
     userId,
+    eager: open,
     onChange: () => {
-      void refreshNotifications();
+      if (open) {
+        void refreshNotifications();
+        return;
+      }
+
+      void refreshUnreadCount();
     },
   });
 
