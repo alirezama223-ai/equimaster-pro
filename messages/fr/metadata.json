@@ -137,13 +137,13 @@
       "twitterDescription": "Alertes et mises à jour de votre activité EquiMaster Pro."
     },
     "training": {
-      "title": "Tableau de bord entraînement",
-      "description": "Suivez séances, plans et performances avec les outils d'entraînement EquiMaster Pro.",
-      "keywords": "tableau de bord entraînement, plans entraînement, suivi séances",
-      "openGraphTitle": "Tableau de bord entraînement | EquiMaster Pro",
-      "openGraphDescription": "Suivez séances, plans et performances équestres.",
-      "twitterTitle": "Tableau de bord entraînement | EquiMaster Pro",
-      "twitterDescription": "Suivez séances, plans et performances équestres."
+      "title": "Tableau de bord d'entraînement",
+      "description": "Suivez les séances, plans et performances des chevaux avec les outils d'entraînement EquiMaster Pro.",
+      "keywords": "tableau de bord entraînement cheval, plans d'entraînement, suivi de séances équestres",
+      "openGraphTitle": "Tableau de bord d'entraînement | EquiMaster Pro",
+      "openGraphDescription": "Suivez les séances, plans et performances des chevaux.",
+      "twitterTitle": "Tableau de bord d'entraînement | EquiMaster Pro",
+      "twitterDescription": "Suivez les séances, plans et performances des chevaux."
     },
     "admin": {
       "title": "Administration",

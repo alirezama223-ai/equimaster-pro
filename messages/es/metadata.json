@@ -138,12 +138,12 @@
     },
     "training": {
       "title": "Panel de entrenamiento",
-      "description": "Siga sesiones, planes y rendimiento con las herramientas de entrenamiento EquiMaster Pro.",
-      "keywords": "panel entrenamiento caballos, planes entrenamiento, seguimiento sesiones",
+      "description": "Registre sesiones, planes y rendimiento del caballo con las herramientas de entrenamiento de EquiMaster Pro.",
+      "keywords": "panel entrenamiento caballos, planes de entrenamiento, seguimiento sesiones ecuestres",
       "openGraphTitle": "Panel de entrenamiento | EquiMaster Pro",
-      "openGraphDescription": "Siga sesiones, planes y rendimiento ecuestre.",
+      "openGraphDescription": "Registre sesiones, planes y rendimiento del caballo.",
       "twitterTitle": "Panel de entrenamiento | EquiMaster Pro",
-      "twitterDescription": "Siga sesiones, planes y rendimiento ecuestre."
+      "twitterDescription": "Registre sesiones, planes y rendimiento del caballo."
     },
     "admin": {
       "title": "Administración",

@@ -137,13 +137,13 @@
       "twitterDescription": "Waarschuwingen en updates voor uw EquiMaster Pro-activiteit."
     },
     "training": {
-      "title": "Training dashboard",
-      "description": "Volg trainingssessies, plannen en paardenprestaties met EquiMaster Pro training-tools.",
-      "keywords": "training dashboard paarden, trainingsplannen, sessie tracking",
-      "openGraphTitle": "Training dashboard | EquiMaster Pro",
-      "openGraphDescription": "Volg trainingssessies, plannen en paardenprestaties.",
-      "twitterTitle": "Training dashboard | EquiMaster Pro",
-      "twitterDescription": "Volg trainingssessies, plannen en paardenprestaties."
+      "title": "Trainingsdashboard",
+      "description": "Volg trainingssessies, plannen en paardprestaties met de EquiMaster Pro trainingstools.",
+      "keywords": "paardentraining dashboard, trainingsplannen, equiene sessie tracking",
+      "openGraphTitle": "Trainingsdashboard | EquiMaster Pro",
+      "openGraphDescription": "Volg trainingssessies, plannen en paardprestaties.",
+      "twitterTitle": "Trainingsdashboard | EquiMaster Pro",
+      "twitterDescription": "Volg trainingssessies, plannen en paardprestaties."
     },
     "admin": {
       "title": "Administratie",

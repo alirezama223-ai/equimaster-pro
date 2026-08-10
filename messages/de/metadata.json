@@ -137,13 +137,13 @@
       "twitterDescription": "Warnungen und Updates zu Ihrer EquiMaster Pro-Aktivität."
     },
     "training": {
-      "title": "Training-Dashboard",
-      "description": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung mit EquiMaster Pro Training-Tools.",
-      "keywords": "Pferdetraining Dashboard, Trainingspläne, Trainingseinheiten Tracking",
-      "openGraphTitle": "Training-Dashboard | EquiMaster Pro",
-      "openGraphDescription": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung.",
-      "twitterTitle": "Training-Dashboard | EquiMaster Pro",
-      "twitterDescription": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung."
+      "title": "Trainings-Dashboard",
+      "description": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung mit den EquiMaster Pro Trainings-Tools.",
+      "keywords": "Pferdetraining Dashboard, Trainingspläne, Equine Sitzungsverfolgung",
+      "openGraphTitle": "Trainings-Dashboard | EquiMaster Pro",
+      "openGraphDescription": "Trainingseinheiten, Pläne und Pferdeleistung verfolgen.",
+      "twitterTitle": "Trainings-Dashboard | EquiMaster Pro",
+      "twitterDescription": "Trainingseinheiten, Pläne und Pferdeleistung verfolgen."
     },
     "admin": {
       "title": "Administration",
