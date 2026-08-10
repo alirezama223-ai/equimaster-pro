@@ -7,6 +7,7 @@ import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
 } from "@/app/components/auth/AuthFormShell";
+import PasswordInput from "@/app/components/auth/PasswordInput";
 import {
   getAuthErrorMessage,
   validateSignupForm,
@@ -167,13 +168,11 @@ export default function SignupForm() {
           <label htmlFor="signup-password" className={authLabelClassName}>
             {t("signup.password")}
           </label>
-          <input
+          <PasswordInput
             id="signup-password"
-            type="password"
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={authInputClassName}
             placeholder={t("signup.passwordPlaceholder")}
           />
           {fieldErrors.password ? (
@@ -187,13 +186,11 @@ export default function SignupForm() {
           <label htmlFor="confirmPassword" className={authLabelClassName}>
             {t("signup.confirmPassword")}
           </label>
-          <input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             autoComplete="new-password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className={authInputClassName}
             placeholder={t("signup.confirmPasswordPlaceholder")}
           />
           {fieldErrors.confirmPassword ? (

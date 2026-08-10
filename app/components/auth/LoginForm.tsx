@@ -7,13 +7,15 @@ import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
 } from "@/app/components/auth/AuthFormShell";
+import PasswordInput from "@/app/components/auth/PasswordInput";
 import {
   getAuthErrorMessage,
   validateLoginForm,
 } from "@/app/lib/auth-validation";
+import { signInWithPasswordAction } from "@/app/actions/auth";
+import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
-import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import type { AppLocale } from "@/i18n/routing";
@@ -57,17 +59,14 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
+      const result = await signInWithPasswordAction(email.trim(), password);
 
-      if (error) {
-        setFormError(t(`errors.${getAuthErrorMessage(error.message)}`));
+      if (!result.ok) {
+        setFormError(t(`errors.${getAuthErrorMessage(result.message)}`));
         return;
       }
 
+      const supabase = createClient();
       const redirected = await completePostAuthRedirect(
         supabase,
         nextPath,
@@ -118,13 +117,11 @@ export default function LoginForm() {
           <label htmlFor="password" className={authLabelClassName}>
             {t("login.password")}
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={authInputClassName}
             placeholder={t("login.passwordPlaceholder")}
           />
           {fieldErrors.password ? (
