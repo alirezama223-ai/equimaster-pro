@@ -12,10 +12,9 @@ import {
   getAuthErrorMessage,
   validateLoginForm,
 } from "@/app/lib/auth-validation";
-import { signInWithPasswordAction } from "@/app/actions/auth";
-import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
+import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import type { AppLocale } from "@/i18n/routing";
@@ -59,14 +58,17 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const result = await signInWithPasswordAction(email.trim(), password);
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
 
-      if (!result.ok) {
-        setFormError(t(`errors.${getAuthErrorMessage(result.message)}`));
+      if (error) {
+        setFormError(t(`errors.${getAuthErrorMessage(error.message)}`));
         return;
       }
 
-      const supabase = createClient();
       const redirected = await completePostAuthRedirect(
         supabase,
         nextPath,
