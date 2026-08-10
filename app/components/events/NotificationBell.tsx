@@ -7,12 +7,29 @@ import {
   getRecentNotifications,
   markNotificationRead,
 } from "@/app/actions/user-notifications";
+import { useNavbarAuthUser } from "@/app/components/navbar/useNavbarAuthUser";
 import { useNotificationsRealtime } from "@/app/hooks/useNotificationsRealtime";
 import { getNotificationHref } from "@/app/lib/notifications/routes";
-import { createClient } from "@/app/lib/supabase/client";
-import { getSupabaseEnv } from "@/app/lib/supabase/env";
 import type { NotificationRow } from "@/app/types/user-notification";
 import { NOTIFICATION_TYPE_ICONS } from "@/app/types/user-notification";
+
+type RecentNotificationsResult = Awaited<ReturnType<typeof getRecentNotifications>>;
+
+let recentNotificationsInFlight: Promise<RecentNotificationsResult> | null = null;
+let recentNotificationsUserId: string | null = null;
+
+function fetchRecentNotificationsDeduped(userId: string, limit: number) {
+  if (recentNotificationsInFlight && recentNotificationsUserId === userId) {
+    return recentNotificationsInFlight;
+  }
+
+  recentNotificationsUserId = userId;
+  recentNotificationsInFlight = getRecentNotifications(limit).finally(() => {
+    recentNotificationsInFlight = null;
+  });
+
+  return recentNotificationsInFlight;
+}
 
 function formatRelativeTime(value: string, locale: string) {
   const date = new Date(value);
@@ -36,8 +53,9 @@ export default function NotificationBell() {
   const t = useTranslations("notifications");
   const locale = useLocale();
   const router = useRouter();
+  const { user } = useNavbarAuthUser();
+  const userId = user?.id ?? null;
   const [open, setOpen] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<NotificationRow[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -51,28 +69,11 @@ export default function NotificationBell() {
     }
 
     setLoading(true);
-    const result = await getRecentNotifications(8);
+    const result = await fetchRecentNotificationsDeduped(userId, 8);
     setNotifications(result.notifications);
     setUnreadCount(result.unreadCount);
     setLoading(false);
   }, [userId]);
-
-  useEffect(() => {
-    if (!getSupabaseEnv().isConfigured) return;
-
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setUserId(data.user?.id ?? null);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserId(session?.user?.id ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     void refreshNotifications();
