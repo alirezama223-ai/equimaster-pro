@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import ProtectedLink from "@/app/components/auth/ProtectedLink";
 import NavbarAuthControls from "@/app/components/navbar/NavbarAuthControls";
 import NavbarDesktopMenu from "@/app/components/navbar/NavbarDesktopMenu";
-import NavbarMobileMenu from "@/app/components/navbar/NavbarMobileMenu";
+import MobileMenu from "@/app/components/navbar/MobileMenu";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
@@ -47,7 +47,7 @@ export default function Navbar() {
             </svg>
           </ProtectedLink>
 
-          <NavbarMobileMenu />
+          <MobileMenu />
         </div>
       </div>
 
