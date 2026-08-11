@@ -66,6 +66,17 @@
     "activeFilters": "{count, plural, =1 {1 actief filter} other {# actieve filters}}",
     "noActiveFilters": "Geen filters toegepast",
     "removeFilter": "Filter verwijderen: {filter}",
+    "searchRadius": "Zoekradius",
+    "radiusLabel": "Afstand",
+    "radiusUnlimited": "Onbeperkt",
+    "radiusKmOption": "{km} km",
+    "radiusNearMe": "Mijn locatie gebruiken",
+    "radiusLocating": "Locatie bepalen…",
+    "radiusOriginSet": "Zoekcentrum ingesteld op basis van uw locatie.",
+    "radiusOriginRequired": "Stel uw locatie in om een afstandsfilter toe te passen.",
+    "radiusLocationUnavailable": "Locatie is niet beschikbaar in deze browser.",
+    "radiusLocationDenied": "Locatietoegang geweigerd. Schakel dit in om advertenties in de buurt te zoeken.",
+    "radiusActiveHint": "Alleen advertenties met kaartcoördinaten verschijnen in radiusresultaten.",
     "chips": {
       "search": "Zoeken: {value}",
       "breed": "Ras: {value}",
@@ -79,7 +90,8 @@
       "height": "Hoogte: {min}-{max} cm",
       "level": "Niveau: {value}",
       "studbook": "Studbook: {value}",
-      "availability": "Beschikbaarheid: {value}"
+      "availability": "Beschikbaarheid: {value}",
+      "radius": "Binnen {value} km"
     }
   },
   "home": {
@@ -112,6 +124,7 @@
     "gender": "Geslacht",
     "level": "Niveau",
     "location": "Locatie",
+    "distanceAway": "{km} km verderop",
     "view": "Bekijken →",
     "imageAlt": "{name} — advertentiefoto",
     "genderUnknown": "Onbekend"

@@ -5,6 +5,42 @@ import { HorseListingImageMeta } from "@/app/types/horse-listing";
 
 export const HORSE_IMAGES_BUCKET = "horse-images";
 
+export type SerializedUploadedListingImage = {
+  storagePath: string;
+  publicUrl: string;
+  isCover: boolean;
+  name: string;
+  size: number;
+  type: string;
+};
+
+export function isListingImageStoragePathOwnedByUser(
+  storagePath: string,
+  userId: string,
+  listingId: string
+): boolean {
+  const prefix = `${userId}/${listingId}/`;
+  return storagePath.startsWith(prefix) && !storagePath.includes("..");
+}
+
+export function serializedImagesToUploaded(
+  images: SerializedUploadedListingImage[]
+): UploadedListingImage[] {
+  return images.map((image) => ({
+    storagePath: image.storagePath,
+    publicUrl: image.publicUrl,
+    isCover: image.isCover,
+    meta: {
+      name: image.name,
+      isCover: image.isCover,
+      size: image.size,
+      type: image.type,
+      storagePath: image.storagePath,
+      publicUrl: image.publicUrl,
+    },
+  }));
+}
+
 export function extractHorseImageStoragePath(publicUrl: string): string | null {
   const marker = `/storage/v1/object/public/${HORSE_IMAGES_BUCKET}/`;
   const index = publicUrl.indexOf(marker);

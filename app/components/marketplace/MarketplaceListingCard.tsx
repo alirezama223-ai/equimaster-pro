@@ -128,16 +128,23 @@ export default function MarketplaceListingCard({
             <InfoRow
               label={t("horseCard.location")}
               value={
-                country ? (
-                  <span className="inline-flex min-w-0 items-center gap-1.5">
-                    <span className="shrink-0" aria-hidden="true">
-                      {country.flag}
+                <span className="inline-flex min-w-0 flex-col gap-0.5">
+                  {country ? (
+                    <span className="inline-flex min-w-0 items-center gap-1.5">
+                      <span className="shrink-0" aria-hidden="true">
+                        {country.flag}
+                      </span>
+                      <span className="truncate">{horse.country}</span>
                     </span>
+                  ) : (
                     <span className="truncate">{horse.country}</span>
-                  </span>
-                ) : (
-                  horse.country
-                )
+                  )}
+                  {horse.distanceKm != null ? (
+                    <span className="text-xs font-medium text-blue-300">
+                      {t("horseCard.distanceAway", { km: horse.distanceKm })}
+                    </span>
+                  ) : null}
+                </span>
               }
               className="col-span-2"
             />

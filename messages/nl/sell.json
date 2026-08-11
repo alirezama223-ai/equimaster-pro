@@ -52,7 +52,11 @@
     "height": "Schofthoogte (cm)",
     "heightPlaceholder": "167",
     "country": "Land",
-    "countryPlaceholder": "Landen zoeken …"
+    "countryPlaceholder": "Landen zoeken …",
+    "city": "Plaats",
+    "cityPlaceholder": "Amsterdam",
+    "postalCode": "Postcode",
+    "postalCodePlaceholder": "1012 AB"
   },
   "sportInfo": {
     "title": "Sportgegevens",

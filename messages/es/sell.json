@@ -52,7 +52,11 @@
     "height": "Altura (cm)",
     "heightPlaceholder": "167",
     "country": "País",
-    "countryPlaceholder": "Buscar países …"
+    "countryPlaceholder": "Buscar países …",
+    "city": "Ciudad",
+    "cityPlaceholder": "Amsterdam",
+    "postalCode": "Código postal",
+    "postalCodePlaceholder": "1012 AB"
   },
   "sportInfo": {
     "title": "Información deportiva",

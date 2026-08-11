@@ -37,6 +37,11 @@ import {
   type MarketplaceDraftInputs,
 } from "@/app/lib/marketplace/filter-utils";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
+import {
+  isValidCoordinate,
+  MARKETPLACE_RADIUS_KM_OPTIONS,
+  shouldUseRadiusSearch,
+} from "@/app/lib/marketplace/radius";
 import type { Horse } from "@/app/data/horses";
 import type {
   MarketplaceAvailabilityFilter,
@@ -107,6 +112,8 @@ export default function MarketplaceBrowseClient({
     draftInputsFromFilters(filters)
   );
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
   const skipDebouncedPushRef = useRef(false);
 
   useEffect(() => {
@@ -172,8 +179,34 @@ export default function MarketplaceBrowseClient({
     setLocalFilters(next);
     setDraftInputs(draftInputsFromFilters(next));
     setMobileFiltersOpen(false);
+    setGeoError(null);
     pushFilters(next);
   }, [pushFilters]);
+
+  const requestNearMeLocation = useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoError(t("browse.radiusLocationUnavailable"));
+      return;
+    }
+
+    setGeoLoading(true);
+    setGeoError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setGeoLoading(false);
+        updateFilters({
+          originLat: position.coords.latitude,
+          originLng: position.coords.longitude,
+        });
+      },
+      () => {
+        setGeoLoading(false);
+        setGeoError(t("browse.radiusLocationDenied"));
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
+    );
+  }, [t, updateFilters]);
 
   const activeFilterCount = useMemo(
     () => countActiveMarketplaceFilters(filters),
@@ -259,6 +292,8 @@ export default function MarketplaceBrowseClient({
             min: filters.minHeight ?? "",
             max: filters.maxHeight ?? "",
           });
+        case "radius":
+          return t("browse.chips.radius", { value: filters.radiusKm ?? "" });
         default:
           return chipId;
       }
@@ -315,6 +350,11 @@ export default function MarketplaceBrowseClient({
     isPending,
     clearAllFilters,
     activeFilterCount,
+    geoError,
+    geoLoading,
+    requestNearMeLocation,
+    hasSearchOrigin: isValidCoordinate(localFilters.originLat, localFilters.originLng),
+    radiusActive: shouldUseRadiusSearch(localFilters),
   };
 
   return (
@@ -499,6 +539,11 @@ type FilterPanelProps = {
   isPending: boolean;
   clearAllFilters: () => void;
   activeFilterCount: number;
+  geoError: string | null;
+  geoLoading: boolean;
+  requestNearMeLocation: () => void;
+  hasSearchOrigin: boolean;
+  radiusActive: boolean;
   layout: "desktop" | "mobile";
   onClose?: () => void;
 };
@@ -516,6 +561,11 @@ const FilterPanel = memo(function FilterPanel({
   isPending,
   clearAllFilters,
   activeFilterCount,
+  geoError,
+  geoLoading,
+  requestNearMeLocation,
+  hasSearchOrigin,
+  radiusActive,
   layout,
   onClose,
 }: FilterPanelProps) {
@@ -586,6 +636,50 @@ const FilterPanel = memo(function FilterPanel({
           placeholder={t("browse.allPlaceholder", { label: t("browse.country") })}
           onChange={(value) => updateFilters({ country: value })}
         />
+
+        <div className="grid gap-3 rounded-xl border border-white/10 bg-[#081223]/60 p-4">
+          <p className="text-xs uppercase tracking-wide text-gray-500">{t("browse.searchRadius")}</p>
+          <FilterSelect
+            label={t("browse.radiusLabel")}
+            value={
+              localFilters.radiusKm != null && localFilters.radiusKm > 0
+                ? String(localFilters.radiusKm)
+                : "unlimited"
+            }
+            options={["unlimited", ...MARKETPLACE_RADIUS_KM_OPTIONS.map(String)]}
+            labels={{
+              unlimited: t("browse.radiusUnlimited"),
+              ...Object.fromEntries(
+                MARKETPLACE_RADIUS_KM_OPTIONS.map((km) => [
+                  String(km),
+                  t("browse.radiusKmOption", { km }),
+                ])
+              ),
+            }}
+            onChange={(value) =>
+              updateFilters({
+                radiusKm: value === "unlimited" ? undefined : Number(value),
+              })
+            }
+          />
+          <button
+            type="button"
+            onClick={requestNearMeLocation}
+            disabled={geoLoading || isPending}
+            className="w-full rounded-xl border border-blue-500/40 bg-blue-600/10 px-4 py-3 text-sm font-semibold text-blue-300 transition hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {geoLoading ? t("browse.radiusLocating") : t("browse.radiusNearMe")}
+          </button>
+          {hasSearchOrigin ? (
+            <p className="text-xs text-emerald-300/90">{t("browse.radiusOriginSet")}</p>
+          ) : localFilters.radiusKm != null && localFilters.radiusKm > 0 ? (
+            <p className="text-xs text-amber-300/90">{t("browse.radiusOriginRequired")}</p>
+          ) : null}
+          {geoError ? <p className="text-xs text-red-300/90">{geoError}</p> : null}
+          {radiusActive ? (
+            <p className="text-xs text-gray-400">{t("browse.radiusActiveHint")}</p>
+          ) : null}
+        </div>
 
         <FilterSearchableSelect
           label={t("browse.breed")}

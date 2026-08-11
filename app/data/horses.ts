@@ -37,6 +37,8 @@ export type Horse = {
   sellerPhone?: string;
   stableName?: string;
   videoUrl?: string;
+  /** Present on radius search results when origin + listing coordinates are known. */
+  distanceKm?: number;
 };
 
 export const horses: Horse[] = [

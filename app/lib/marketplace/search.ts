@@ -3,6 +3,11 @@ import { getBreedNames } from "@/app/lib/breeds";
 import { buildBreedListingCounts } from "@/app/lib/marketplace/featured-breeds";
 import { COUNTRY_NAMES } from "@/app/lib/constants/countries";
 import { DISCIPLINE_LABELS } from "@/app/lib/constants/disciplines";
+import {
+  isValidCoordinate,
+  parseRadiusKmParam,
+  shouldUseRadiusSearch,
+} from "@/app/lib/marketplace/radius";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type {
   MarketplaceAvailabilityFilter,
@@ -173,6 +178,84 @@ async function resolveStudbookListingIds(
   return (data ?? []).map((row) => row.id as string);
 }
 
+function isMissingRadiusRpcError(message: string) {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("search_active_horse_listings_nearby") ||
+    (normalized.includes("could not find") && normalized.includes("function"))
+  );
+}
+
+type RadiusRpcPayload = {
+  total: number;
+  listings: HorseListingRow[];
+};
+
+async function searchActiveHorseListingsViaRpc(
+  supabase: SupabaseClient,
+  params: MarketplaceSearchParams,
+  studbookIds: string[] | null,
+  page: number,
+  pageSize: number
+): Promise<{ result: MarketplaceSearchResult; error?: string }> {
+  const sort = params.sort ?? "newest";
+  const availability = params.availability ?? "all";
+
+  const { data, error } = await supabase.rpc("search_active_horse_listings_nearby", {
+    p_origin_lat: params.originLat ?? null,
+    p_origin_lng: params.originLng ?? null,
+    p_radius_km: params.radiusKm ?? null,
+    p_q: params.q?.trim() || null,
+    p_breed: params.breed && params.breed !== "All" ? params.breed : null,
+    p_country: params.country && params.country !== "All" ? params.country : null,
+    p_gender: params.gender && params.gender !== "All" ? params.gender : null,
+    p_discipline: params.discipline && params.discipline !== "All" ? params.discipline : null,
+    p_level: params.level && params.level !== "All" ? params.level : null,
+    p_color: params.color?.trim() || null,
+    p_studbook: params.studbook?.trim() || null,
+    p_availability: availability,
+    p_verified_horses: Boolean(params.verified || params.verifiedHorses),
+    p_verified_sellers: Boolean(params.verifiedSellers),
+    p_min_price: params.minPrice ?? null,
+    p_max_price: params.maxPrice ?? null,
+    p_min_age: params.minAge ?? null,
+    p_max_age: params.maxAge ?? null,
+    p_min_height: params.minHeight ?? null,
+    p_max_height: params.maxHeight ?? null,
+    p_sort: sort,
+    p_page: page,
+    p_page_size: pageSize,
+    p_pedigree_horse_ids: studbookIds,
+  });
+
+  if (error) {
+    return {
+      result: {
+        listings: [],
+        total: 0,
+        page,
+        pageSize,
+        totalPages: 0,
+      },
+      error: error.message,
+    };
+  }
+
+  const payload = (data ?? { total: 0, listings: [] }) as RadiusRpcPayload;
+  const total = Number(payload.total) || 0;
+  const totalPages = total > 0 ? Math.ceil(total / pageSize) : 0;
+
+  return {
+    result: {
+      listings: (payload.listings ?? []) as HorseListingRow[],
+      total,
+      page,
+      pageSize,
+      totalPages,
+    },
+  };
+}
+
 export async function searchActiveHorseListings(
   supabase: SupabaseClient,
   params: MarketplaceSearchParams = {}
@@ -198,6 +281,20 @@ export async function searchActiveHorseListings(
         totalPages: 0,
       },
     };
+  }
+
+  if (shouldUseRadiusSearch(params)) {
+    const rpcResult = await searchActiveHorseListingsViaRpc(
+      supabase,
+      params,
+      studbookIds,
+      page,
+      pageSize
+    );
+
+    if (!rpcResult.error || !isMissingRadiusRpcError(rpcResult.error)) {
+      return rpcResult;
+    }
   }
 
   let query = supabase
@@ -355,6 +452,15 @@ export function parseMarketplaceSearchParams(
     return Number.isFinite(parsed) ? parsed : undefined;
   };
 
+  const parseCoordinate = (value: string | undefined) => {
+    const parsed = parseNumber(value);
+    return parsed;
+  };
+
+  const originLat = parseCoordinate(read("lat"));
+  const originLng = parseCoordinate(read("lng"));
+  const radiusKm = parseRadiusKmParam(read("radiusKm"));
+
   const sort = read("sort") as MarketplaceSortOption | undefined;
   const availability = read("availability") as MarketplaceAvailabilityFilter | undefined;
 
@@ -378,6 +484,9 @@ export function parseMarketplaceSearchParams(
     maxAge: parseNumber(read("maxAge")),
     minHeight: parseNumber(read("minHeight")),
     maxHeight: parseNumber(read("maxHeight")),
+    radiusKm,
+    originLat: isValidCoordinate(originLat, originLng) ? originLat : undefined,
+    originLng: isValidCoordinate(originLat, originLng) ? originLng : undefined,
     sort: sort && ALLOWED_SORT.includes(sort) ? sort : "newest",
     page: parseNumber(read("page")) ?? 1,
   };
@@ -409,6 +518,13 @@ export function buildMarketplaceSearchQuery(
   if (params.maxAge != null) query.set("maxAge", String(params.maxAge));
   if (params.minHeight != null) query.set("minHeight", String(params.minHeight));
   if (params.maxHeight != null) query.set("maxHeight", String(params.maxHeight));
+  if (params.radiusKm != null && params.radiusKm > 0) {
+    query.set("radiusKm", String(params.radiusKm));
+  }
+  if (params.originLat != null && params.originLng != null) {
+    query.set("lat", String(params.originLat));
+    query.set("lng", String(params.originLng));
+  }
   if (params.sort && params.sort !== "newest") query.set("sort", params.sort);
   if (params.page && params.page > 1) query.set("page", String(params.page));
 

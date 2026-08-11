@@ -112,6 +112,32 @@ export default function BasicInfoSection({ data, errors, onChange }: Props) {
             inputClassName={sellInputClassName}
           />
         </FormField>
+
+        <FormField label={t("basicInfo.city")} htmlFor="city" error={errors.city}>
+          <input
+            id="city"
+            value={data.city}
+            onChange={(e) => onChange("city", e.target.value)}
+            className={sellInputClassName}
+            placeholder={t("basicInfo.cityPlaceholder")}
+            autoComplete="address-level2"
+          />
+        </FormField>
+
+        <FormField
+          label={t("basicInfo.postalCode")}
+          htmlFor="postalCode"
+          error={errors.postalCode}
+        >
+          <input
+            id="postalCode"
+            value={data.postalCode}
+            onChange={(e) => onChange("postalCode", e.target.value)}
+            className={sellInputClassName}
+            placeholder={t("basicInfo.postalCodePlaceholder")}
+            autoComplete="postal-code"
+          />
+        </FormField>
       </div>
     </FormSection>
   );

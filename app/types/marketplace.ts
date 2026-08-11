@@ -32,6 +32,12 @@ export type MarketplaceSearchParams = {
   maxAge?: number;
   minHeight?: number;
   maxHeight?: number;
+  /** Search radius in km (25–500). Omit for unlimited. */
+  radiusKm?: number;
+  /** Search origin latitude (WGS84). Required with radiusKm. */
+  originLat?: number;
+  /** Search origin longitude (WGS84). Required with radiusKm. */
+  originLng?: number;
   sort?: MarketplaceSortOption;
   page?: number;
   pageSize?: number;

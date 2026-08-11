@@ -67,6 +67,17 @@
     "activeFilters": "{count, plural, =1 {1 active filter} other {# active filters}}",
     "noActiveFilters": "No filters applied",
     "removeFilter": "Remove filter: {filter}",
+    "searchRadius": "Search radius",
+    "radiusLabel": "Distance",
+    "radiusUnlimited": "Unlimited",
+    "radiusKmOption": "{km} km",
+    "radiusNearMe": "Use my location",
+    "radiusLocating": "Locating…",
+    "radiusOriginSet": "Search center set from your location.",
+    "radiusOriginRequired": "Set your location to apply a distance filter.",
+    "radiusLocationUnavailable": "Location is not available in this browser.",
+    "radiusLocationDenied": "Location access was denied. Enable it to search nearby listings.",
+    "radiusActiveHint": "Only listings with map coordinates appear in radius results.",
     "chips": {
       "search": "Search: {value}",
       "breed": "Breed: {value}",
@@ -82,7 +93,8 @@
       "height": "Height: {min}-{max} cm",
       "level": "Level: {value}",
       "studbook": "Studbook: {value}",
-      "availability": "Availability: {value}"
+      "availability": "Availability: {value}",
+      "radius": "Within {value} km"
     }
   },
   "home": {
@@ -115,6 +127,7 @@
     "gender": "Gender",
     "level": "Level",
     "location": "Location",
+    "distanceAway": "{km} km away",
     "view": "View →",
     "imageAlt": "{name} — listing photo",
     "genderUnknown": "Unknown"

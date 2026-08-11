@@ -105,3 +105,63 @@ export function revokeListingImages(images: ListingImage[]) {
     }
   });
 }
+
+export type ClientUploadedListingImage = {
+  storagePath: string;
+  publicUrl: string;
+  isCover: boolean;
+  name: string;
+  size: number;
+  type: string;
+};
+
+export async function uploadListingImagesFromClient(
+  supabase: import("@supabase/supabase-js").SupabaseClient,
+  userId: string,
+  listingId: string,
+  images: ListingImage[]
+): Promise<{ data?: ClientUploadedListingImage[]; error?: string }> {
+  const filesToUpload = images.filter((image): image is ListingImage & { file: File } =>
+    Boolean(image.file)
+  );
+
+  if (filesToUpload.length === 0) {
+    return { error: "Add at least one horse photo before submitting." };
+  }
+
+  if (filesToUpload.length !== images.length) {
+    return { error: "One or more selected images could not be uploaded. Please try again." };
+  }
+
+  const { uploadListingImagesToStorage } = await import("@/app/lib/horse-image-storage");
+
+  const uploadResult = await uploadListingImagesToStorage(
+    supabase,
+    userId,
+    listingId,
+    filesToUpload.map((image) => ({
+      file: image.file,
+      isCover: image.isCover,
+      name: image.file.name,
+      type: image.file.type,
+      size: image.file.size,
+    }))
+  );
+
+  if (uploadResult.error || !uploadResult.data?.length) {
+    return {
+      error: uploadResult.error ?? "Your listing was not saved because image upload failed.",
+    };
+  }
+
+  return {
+    data: uploadResult.data.map((image) => ({
+      storagePath: image.storagePath,
+      publicUrl: image.publicUrl,
+      isCover: image.isCover,
+      name: image.meta.name,
+      size: image.meta.size,
+      type: image.meta.type,
+    })),
+  };
+}

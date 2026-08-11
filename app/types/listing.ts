@@ -54,6 +54,8 @@ export type ListingFormData = {
   color: string;
   height: string;
   country: string;
+  city: string;
+  postalCode: string;
   discipline: string;
   level: string;
   price: string;
@@ -78,6 +80,8 @@ export const initialListingFormData: ListingFormData = {
   color: "",
   height: "",
   country: "",
+  city: "",
+  postalCode: "",
   discipline: DEFAULT_DISCIPLINE,
   level: "",
   price: "",

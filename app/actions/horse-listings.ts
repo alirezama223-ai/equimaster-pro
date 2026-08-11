@@ -4,14 +4,20 @@ import { revalidatePath } from "next/cache";
 import {
   buildListingImageFields,
   copyListingImagesForDuplicate,
+  isListingImageStoragePathOwnedByUser,
   removeAllListingImagesForListing,
   removeListingImagesFromStorage,
-  uploadListingImagesToStorage,
+  serializedImagesToUploaded,
+  type SerializedUploadedListingImage,
 } from "@/app/lib/horse-image-storage";
 import {
   buildCreateListingInput,
   buildListingFieldUpdates,
 } from "@/app/lib/horse-listings";
+import {
+  normalizeListingLocationFields,
+  resolveListingCoordinates,
+} from "@/app/lib/geocoding/resolve-listing-coordinates";
 import { buildListingSlug } from "@/app/lib/marketplace/slug";
 import { getPublicListingPath, getListingEditPath, MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
 import { refreshListingPublicSnapshots } from "@/app/lib/marketplace/listing-display";
@@ -28,29 +34,20 @@ import { isValidListingSlug } from "@/app/lib/security/path-validation";
 import { getClientIp } from "@/app/lib/security/request-context";
 import { checkRateLimit } from "@/app/lib/security/rate-limit";
 import { HorseListingRow, type ListingStatus } from "@/app/types/horse-listing";
-import { ListingFormData } from "@/app/types/listing";
+import { ListingFormData, MAX_LISTING_IMAGES, MAX_LISTING_IMAGE_BYTES } from "@/app/types/listing";
 import type { SellerListingStats } from "@/app/types/marketplace";
-
-type ListingImagePayload = {
-  isCover: boolean;
-  name: string;
-  size: number;
-  type: string;
-};
 
 type CreateListingPayload = {
   formData: ListingFormData;
-  images: ListingImagePayload[];
+  imageCount: number;
   hasVideoFile: boolean;
   publish?: boolean;
 };
 
 type UpdateImagePayload = {
   isCover: boolean;
-  isNew: boolean;
-  existingUrl?: string;
-  storagePath?: string;
-  newFileIndex?: number;
+  storagePath: string;
+  publicUrl: string;
   name: string;
   size: number;
   type: string;
@@ -193,60 +190,132 @@ function withDevError(
     .join(" | ");
 }
 
-function parseUpdateListingFormData(formData: FormData): UpdateListingPayload | null {
-  const payloadRaw = formData.get("payload");
-
-  if (typeof payloadRaw !== "string") {
-    return null;
+function validateSerializedListingImages(
+  images: SerializedUploadedListingImage[],
+  userId: string,
+  listingId: string
+): string | null {
+  if (images.length === 0) {
+    return "Add at least one horse photo before submitting.";
   }
 
-  try {
-    return JSON.parse(payloadRaw) as UpdateListingPayload;
-  } catch {
-    return null;
+  if (images.length > MAX_LISTING_IMAGES) {
+    return `You can upload up to ${MAX_LISTING_IMAGES} images.`;
   }
-}
 
-function parseNewListingImageFiles(formData: FormData, imageCount: number): File[] {
-  const files: File[] = [];
+  if (!images.some((image) => image.isCover)) {
+    return "Select a cover image.";
+  }
 
-  for (let index = 0; index < imageCount; index += 1) {
-    const value = formData.get(`image_new_${index}`);
-    if (!(value instanceof File) || value.size === 0) {
-      continue;
+  for (const image of images) {
+    if (image.size > MAX_LISTING_IMAGE_BYTES) {
+      return "One or more images exceed the 10 MB upload size limit.";
     }
-    files.push(value);
-  }
 
-  return files;
-}
-
-function parseCreateListingFormData(formData: FormData): CreateListingPayload | null {
-  const payloadRaw = formData.get("payload");
-
-  if (typeof payloadRaw !== "string") {
-    return null;
-  }
-
-  try {
-    return JSON.parse(payloadRaw) as CreateListingPayload;
-  } catch {
-    return null;
-  }
-}
-
-function parseListingImageFiles(formData: FormData, imageCount: number): File[] {
-  const files: File[] = [];
-
-  for (let index = 0; index < imageCount; index += 1) {
-    const value = formData.get(`image_${index}`);
-    if (!(value instanceof File) || value.size === 0) {
-      continue;
+    if (!isListingImageStoragePathOwnedByUser(image.storagePath, userId, listingId)) {
+      return "One or more uploaded images could not be verified.";
     }
-    files.push(value);
   }
 
-  return files;
+  return null;
+}
+
+function validateUpdateListingImages(
+  images: UpdateImagePayload[],
+  userId: string,
+  listingId: string
+): string | null {
+  if (images.length === 0) {
+    return "Add at least one horse photo before saving.";
+  }
+
+  if (images.length > MAX_LISTING_IMAGES) {
+    return `You can upload up to ${MAX_LISTING_IMAGES} images.`;
+  }
+
+  if (!images.some((image) => image.isCover)) {
+    return "Select a cover image.";
+  }
+
+  for (const image of images) {
+    if (image.size > MAX_LISTING_IMAGE_BYTES) {
+      return "One or more images exceed the 10 MB upload size limit.";
+    }
+
+    if (!image.publicUrl?.trim() || !image.storagePath?.trim()) {
+      return "One or more images could not be processed.";
+    }
+
+    if (!isListingImageStoragePathOwnedByUser(image.storagePath, userId, listingId)) {
+      return "One or more uploaded images could not be verified.";
+    }
+  }
+
+  return null;
+}
+
+async function finalizeCreatedListing(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  listingId: string,
+  shouldPublish: boolean
+): Promise<{
+  listingRow: HorseListingRow;
+  published: boolean;
+  publicUrl?: string;
+  error?: string;
+}> {
+  let listingRow =
+    (await fetchOwnerListing(supabase, listingId, userId)) ??
+    (null as unknown as HorseListingRow);
+
+  if (!listingRow) {
+    return {
+      listingRow: null as unknown as HorseListingRow,
+      published: false,
+      error: "Listing could not be loaded after saving images.",
+    };
+  }
+
+  await syncListingPedigreeFromRow(supabase, userId, listingRow);
+  listingRow = (await fetchOwnerListing(supabase, listingId, userId)) ?? listingRow;
+
+  let published = shouldPublish;
+
+  if (shouldPublish) {
+    if (!listingHasRequiredMedia(listingRow)) {
+      published = false;
+      await supabase
+        .from("horse_listings")
+        .update({ status: "draft", published_at: null })
+        .eq("id", listingId)
+        .eq("user_id", userId);
+      listingRow = (await fetchOwnerListing(supabase, listingId, userId)) ?? listingRow;
+    } else if (!listingRow.pedigree_horse_id) {
+      published = false;
+      await supabase
+        .from("horse_listings")
+        .update({ status: "draft", published_at: null })
+        .eq("id", listingId)
+        .eq("user_id", userId);
+      listingRow = (await fetchOwnerListing(supabase, listingId, userId)) ?? listingRow;
+    } else {
+      await refreshListingPublicSnapshots(supabase, userId, listingRow);
+      listingRow = (await fetchOwnerListing(supabase, listingId, userId)) ?? listingRow;
+    }
+  }
+
+  revalidateListingPaths(listingRow);
+
+  return {
+    listingRow,
+    published,
+    publicUrl: published && listingRow.slug ? getPublicListingPath(listingRow.slug) : undefined,
+    error:
+      shouldPublish && !published
+        ? "Listing saved as draft. Pedigree linkage is required before publishing."
+        : undefined,
+  };
 }
 
 async function rollbackCreatedListing(
@@ -265,7 +334,7 @@ async function rollbackCreatedListing(
     .eq("user_id", userId);
 }
 
-export async function createHorseListing(formData: FormData) {
+export async function createHorseListing(payload: CreateListingPayload) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -276,25 +345,24 @@ export async function createHorseListing(formData: FormData) {
     return { error: "You must be signed in to submit a listing." };
   }
 
-  const payload = parseCreateListingFormData(formData);
-
-  if (!payload) {
+  if (!payload?.formData) {
     return { error: "Invalid listing submission payload." };
   }
 
-  const imageFiles = parseListingImageFiles(formData, payload.images.length);
-
-  if (imageFiles.length === 0) {
+  if (payload.imageCount === 0) {
     return { error: "Add at least one horse photo before submitting." };
   }
 
-  if (imageFiles.length !== payload.images.length) {
-    return { error: "One or more selected images could not be uploaded. Please try again." };
+  if (payload.imageCount > MAX_LISTING_IMAGES) {
+    return { error: `You can upload up to ${MAX_LISTING_IMAGES} images.` };
   }
 
-  const input = buildCreateListingInput(payload.formData, payload.images, {
+  const input = buildCreateListingInput(payload.formData, [], {
     pendingVideoUpload: payload.hasVideoFile,
   });
+
+  const locationFields = normalizeListingLocationFields(payload.formData);
+  const coordinates = await resolveListingCoordinates(null, locationFields);
 
   const shouldPublish = payload.publish === true;
 
@@ -312,6 +380,10 @@ export async function createHorseListing(formData: FormData) {
   const insertPayload = {
     user_id: user.id,
     ...input,
+    city: locationFields.city,
+    postal_code: locationFields.postal_code,
+    latitude: coordinates.latitude,
+    longitude: coordinates.longitude,
     verified: false,
     status: (shouldPublish ? "active" : "draft") as ListingStatus,
     published_at: shouldPublish ? new Date().toISOString() : null,
@@ -354,31 +426,49 @@ export async function createHorseListing(formData: FormData) {
     };
   }
 
-  const uploadInputs = payload.images.map((image, index) => ({
-    file: imageFiles[index],
-    isCover: image.isCover,
-    name: image.name,
-    type: image.type,
-    size: image.size,
-  }));
+  const listingRow =
+    (await fetchOwnerListing(supabase, listingId, user.id)) ??
+    (listing as HorseListingRow);
 
-  const uploadResult = await uploadListingImagesToStorage(
-    supabase,
-    user.id,
-    listingId,
-    uploadInputs
-  );
+  return {
+    data: listingRow,
+    shouldPublish,
+  };
+}
 
-  if (uploadResult.error || !uploadResult.data?.length) {
-    await rollbackCreatedListing(supabase, listingId, user.id, []);
-    return {
-      error:
-        uploadResult.error ??
-        "Your listing was not saved because image upload failed.",
-    };
+export async function attachHorseListingImages(
+  listingId: string,
+  images: SerializedUploadedListingImage[],
+  options?: { publish?: boolean }
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { error: "You must be signed in to submit a listing." };
   }
 
-  const imageFields = buildListingImageFields(uploadResult.data);
+  const { data: existing, error: fetchError } = await supabase
+    .from("horse_listings")
+    .select("id, status, published_at")
+    .eq("id", listingId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (fetchError || !existing) {
+    return { error: "Listing not found or you do not have permission to edit it." };
+  }
+
+  const validationError = validateSerializedListingImages(images, user.id, listingId);
+  if (validationError) {
+    return { error: validationError };
+  }
+
+  const uploaded = serializedImagesToUploaded(images);
+  const imageFields = buildListingImageFields(uploaded);
 
   const { data: updatedListing, error: updateError } = await supabase
     .from("horse_listings")
@@ -389,13 +479,7 @@ export async function createHorseListing(formData: FormData) {
     .single();
 
   if (updateError || !updatedListing) {
-    await rollbackCreatedListing(
-      supabase,
-      listingId,
-      user.id,
-      uploadResult.data.map((image) => image.storagePath)
-    );
-    console.error("[createHorseListing] image reference update failed", {
+    console.error("[attachHorseListingImages] image reference update failed", {
       message: updateError?.message,
       code: updateError?.code,
       details: updateError?.details,
@@ -407,55 +491,26 @@ export async function createHorseListing(formData: FormData) {
     };
   }
 
-  let listingRow =
-    (await fetchOwnerListing(supabase, listingId, user.id)) ??
-    (updatedListing as HorseListingRow);
+  const shouldPublish =
+    options?.publish === true ||
+    (existing.status === "active" && existing.published_at != null);
 
-  await syncListingPedigreeFromRow(supabase, user.id, listingRow);
+  const finalized = await finalizeCreatedListing(
+    supabase,
+    user.id,
+    listingId,
+    shouldPublish
+  );
 
-  listingRow =
-    (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
-
-  let published = shouldPublish;
-
-  if (shouldPublish) {
-    if (!listingHasRequiredMedia(listingRow)) {
-      published = false;
-      await supabase
-        .from("horse_listings")
-        .update({ status: "draft", published_at: null })
-        .eq("id", listingId)
-        .eq("user_id", user.id);
-      listingRow =
-        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
-    } else if (!listingRow.pedigree_horse_id) {
-      published = false;
-      await supabase
-        .from("horse_listings")
-        .update({ status: "draft", published_at: null })
-        .eq("id", listingId)
-        .eq("user_id", user.id);
-      listingRow =
-        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
-    } else {
-      await refreshListingPublicSnapshots(supabase, user.id, listingRow);
-      listingRow =
-        (await fetchOwnerListing(supabase, listingId, user.id)) ?? listingRow;
-    }
+  if (finalized.error && !finalized.listingRow) {
+    return { error: finalized.error };
   }
 
-  revalidateListingPaths(listingRow);
-
   return {
-    data: listingRow,
-    published,
-    publicUrl: published && listingRow.slug
-      ? getPublicListingPath(listingRow.slug)
-      : undefined,
-    error:
-      shouldPublish && !published
-        ? "Listing saved as draft. Pedigree linkage is required before publishing."
-        : undefined,
+    data: finalized.listingRow,
+    published: finalized.published,
+    publicUrl: finalized.publicUrl,
+    error: finalized.error,
   };
 }
 
@@ -551,7 +606,7 @@ export async function getHorseListingForOwner(id: string) {
   return { data: data as HorseListingRow };
 }
 
-export async function updateHorseListing(formData: FormData) {
+export async function updateHorseListing(payload: UpdateListingPayload) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -562,15 +617,13 @@ export async function updateHorseListing(formData: FormData) {
     return { error: "You must be signed in to edit a listing." };
   }
 
-  const payload = parseUpdateListingFormData(formData);
-
-  if (!payload) {
+  if (!payload?.listingId || !payload.formData) {
     return { error: "Invalid listing update payload." };
   }
 
   const { data: existing, error: fetchError } = await supabase
     .from("horse_listings")
-    .select("id")
+    .select("id, city, postal_code, country, latitude, longitude")
     .eq("id", payload.listingId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -579,87 +632,43 @@ export async function updateHorseListing(formData: FormData) {
     return { error: "Listing not found or you do not have permission to edit it." };
   }
 
-  if (payload.images.length === 0) {
-    return { error: "Add at least one horse photo before saving." };
+  const imageValidationError = validateUpdateListingImages(
+    payload.images,
+    user.id,
+    payload.listingId
+  );
+
+  if (imageValidationError) {
+    return { error: imageValidationError };
   }
 
-  const expectedNewCount = payload.images.filter((image) => image.isNew).length;
-  const newFiles = parseNewListingImageFiles(formData, expectedNewCount);
-
-  if (newFiles.length !== expectedNewCount) {
-    return { error: "One or more new images could not be uploaded. Please try again." };
-  }
-
-  const newlyUploadedPaths: string[] = [];
-
-  const assembledImages: Array<{
-    storagePath: string;
-    publicUrl: string;
-    isCover: boolean;
+  const assembledImages = payload.images.map((item) => ({
+    storagePath: item.storagePath,
+    publicUrl: item.publicUrl,
+    isCover: item.isCover,
     meta: {
-      name: string;
-      isCover: boolean;
-      size: number;
-      type: string;
-      storagePath?: string;
-      publicUrl?: string;
-    };
-  }> = [];
-
-  for (const item of payload.images) {
-    if (!item.isNew) {
-      if (!item.existingUrl) continue;
-
-      assembledImages.push({
-        storagePath: item.storagePath ?? "",
-        publicUrl: item.existingUrl,
-        isCover: item.isCover,
-        meta: {
-          name: item.name,
-          isCover: item.isCover,
-          size: item.size,
-          type: item.type,
-          storagePath: item.storagePath,
-          publicUrl: item.existingUrl,
-        },
-      });
-      continue;
-    }
-
-    const file = newFiles[item.newFileIndex ?? -1];
-    if (!file) {
-      await removeListingImagesFromStorage(supabase, newlyUploadedPaths);
-      return { error: "One or more new images could not be processed." };
-    }
-
-    const uploadResult = await uploadListingImagesToStorage(
-      supabase,
-      user.id,
-      payload.listingId,
-      [
-        {
-          file,
-          isCover: item.isCover,
-          name: item.name,
-          type: item.type,
-          size: item.size,
-        },
-      ]
-    );
-
-    if (uploadResult.error || !uploadResult.data?.[0]) {
-      await removeListingImagesFromStorage(supabase, newlyUploadedPaths);
-      return {
-        error: uploadResult.error ?? "Your listing was not updated because image upload failed.",
-      };
-    }
-
-    newlyUploadedPaths.push(uploadResult.data[0].storagePath);
-    assembledImages.push(uploadResult.data[0]);
-  }
+      name: item.name,
+      isCover: item.isCover,
+      size: item.size,
+      type: item.type,
+      storagePath: item.storagePath,
+      publicUrl: item.publicUrl,
+    },
+  }));
 
   const imageFields = buildListingImageFields(assembledImages);
   const fieldUpdates = buildListingFieldUpdates(payload.formData);
+  const locationFields = normalizeListingLocationFields(payload.formData);
+  const coordinates = await resolveListingCoordinates(
+    existing as {
+      city: string | null;
+      postal_code: string | null;
+      country: string;
+      latitude: number | null;
+      longitude: number | null;
+    },
+    locationFields
+  );
 
   let videoFields: { video_url: string | null; video_file_name: string | null };
 
@@ -693,6 +702,10 @@ export async function updateHorseListing(formData: FormData) {
     .from("horse_listings")
     .update({
       ...fieldUpdates,
+      city: locationFields.city,
+      postal_code: locationFields.postal_code,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
       ...imageFields,
       ...videoFields,
     })
@@ -702,7 +715,6 @@ export async function updateHorseListing(formData: FormData) {
     .single();
 
   if (updateError || !updatedListing) {
-    await removeListingImagesFromStorage(supabase, newlyUploadedPaths);
     console.error("[updateHorseListing] failed", {
       message: updateError?.message,
       code: updateError?.code,

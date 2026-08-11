@@ -3,6 +3,7 @@ import type {
   MarketplaceSearchParams,
 } from "@/app/types/marketplace";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
+import { shouldUseRadiusSearch } from "@/app/lib/marketplace/radius";
 
 export type MarketplaceDraftInputs = {
   q: string;
@@ -97,6 +98,7 @@ export function countActiveMarketplaceFilters(
   if (filters.minPrice != null || filters.maxPrice != null) count += 1;
   if (filters.minAge != null || filters.maxAge != null) count += 1;
   if (filters.minHeight != null || filters.maxHeight != null) count += 1;
+  if (shouldUseRadiusSearch(filters)) count += 1;
 
   return count;
 }
@@ -158,6 +160,12 @@ export function getMarketplaceFilterChipDefinitions(
     chips.push({
       id: "height",
       removePatch: { minHeight: undefined, maxHeight: undefined },
+    });
+  }
+  if (shouldUseRadiusSearch(filters)) {
+    chips.push({
+      id: "radius",
+      removePatch: { radiusKm: undefined, originLat: undefined, originLng: undefined },
     });
   }
 

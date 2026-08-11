@@ -66,6 +66,17 @@
     "activeFilters": "{count, plural, =1 {1 filtro activo} other {# filtros activos}}",
     "noActiveFilters": "Sin filtros aplicados",
     "removeFilter": "Eliminar filtro: {filter}",
+    "searchRadius": "Radio de búsqueda",
+    "radiusLabel": "Distancia",
+    "radiusUnlimited": "Sin límite",
+    "radiusKmOption": "{km} km",
+    "radiusNearMe": "Usar mi ubicación",
+    "radiusLocating": "Localizando…",
+    "radiusOriginSet": "Centro de búsqueda establecido según su ubicación.",
+    "radiusOriginRequired": "Establezca su ubicación para aplicar un filtro de distancia.",
+    "radiusLocationUnavailable": "La ubicación no está disponible en este navegador.",
+    "radiusLocationDenied": "Se denegó el acceso a la ubicación. Actívelo para buscar anuncios cercanos.",
+    "radiusActiveHint": "Solo aparecen anuncios con coordenadas en los resultados por radio.",
     "chips": {
       "search": "Buscar: {value}",
       "breed": "Raza: {value}",
@@ -79,7 +90,8 @@
       "height": "Altura: {min}-{max} cm",
       "level": "Nivel: {value}",
       "studbook": "Libro genealógico: {value}",
-      "availability": "Disponibilidad: {value}"
+      "availability": "Disponibilidad: {value}",
+      "radius": "Dentro de {value} km"
     }
   },
   "home": {
@@ -112,6 +124,7 @@
     "gender": "Sexo",
     "level": "Nivel",
     "location": "Ubicación",
+    "distanceAway": "A {km} km",
     "view": "Ver →",
     "imageAlt": "{name} — foto del anuncio",
     "genderUnknown": "Desconocido"

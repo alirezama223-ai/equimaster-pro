@@ -18,6 +18,7 @@ import VerificationSection from "@/app/components/sell/VerificationSection";
 import UpgradeModal from "@/app/components/subscription/UpgradeModal";
 import {
   createHorseListing,
+  attachHorseListingImages,
   rollbackHorseListing,
   updateHorseListing,
   updateHorseListingVideo,
@@ -29,7 +30,7 @@ import {
   listingImagesFromRow,
   listingRowToFormData,
 } from "@/app/lib/horse-listings";
-import { revokeListingImages } from "@/app/lib/listing-media";
+import { revokeListingImages, uploadListingImagesFromClient } from "@/app/lib/listing-media";
 import { createClient } from "@/app/lib/supabase/client";
 import {
   extractHorseVideoStoragePath,
@@ -37,6 +38,7 @@ import {
   removeListingVideoFromStorage,
   uploadListingVideoToStorage,
 } from "@/app/lib/horse-video-storage";
+import { removeListingImagesFromStorage } from "@/app/lib/horse-image-storage";
 import {
   ListingFormErrors,
   validateListingForm,
@@ -179,27 +181,12 @@ export default function SellListingForm({
   }
 
   async function handleCreateSubmit(publish: boolean) {
-    const submission = new FormData();
-    submission.append(
-      "payload",
-      JSON.stringify({
-        formData,
-        images: images.map((image) => ({
-          isCover: image.isCover,
-          name: image.file!.name,
-          size: image.file!.size,
-          type: image.file!.type,
-        })),
-        hasVideoFile: Boolean(videoFile),
-        publish,
-      })
-    );
-
-    images.forEach((image, index) => {
-      submission.append(`image_${index}`, image.file!);
+    const result = await createHorseListing({
+      formData,
+      imageCount: images.length,
+      hasVideoFile: Boolean(videoFile),
+      publish,
     });
-
-    const result = await createHorseListing(submission);
 
     if (
       result.error &&
@@ -225,18 +212,50 @@ export default function SellListingForm({
       return;
     }
 
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      await rollbackHorseListing(newListingId);
+      setSubmitError(t("form.errors.sessionExpired"));
+      return;
+    }
+
+    const imageUpload = await uploadListingImagesFromClient(
+      supabase,
+      user.id,
+      newListingId,
+      images
+    );
+
+    if (imageUpload.error || !imageUpload.data?.length) {
+      await rollbackHorseListing(newListingId);
+      setSubmitError(
+        imageUpload.error ??
+          "Your listing was not saved because image upload failed."
+      );
+      return;
+    }
+
+    const attachResult = await attachHorseListingImages(
+      newListingId,
+      imageUpload.data,
+      { publish }
+    );
+
+    if (attachResult.error && !attachResult.data) {
+      await removeListingImagesFromStorage(
+        supabase,
+        imageUpload.data.map((image) => image.storagePath)
+      );
+      await rollbackHorseListing(newListingId);
+      setSubmitError(attachResult.error);
+      return;
+    }
+
     if (videoFile) {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        await rollbackHorseListing(newListingId);
-        setSubmitError(t("form.errors.sessionExpiredVideo"));
-        return;
-      }
-
       const videoUpload = await uploadListingVideoToStorage(
         supabase,
         user.id,
@@ -245,6 +264,10 @@ export default function SellListingForm({
       );
 
       if (videoUpload.error || !videoUpload.data) {
+        await removeListingImagesFromStorage(
+          supabase,
+          imageUpload.data.map((image) => image.storagePath)
+        );
         await rollbackHorseListing(newListingId);
         setSubmitError(videoUpload.error ?? t("form.errors.videoUploadFailed"));
         return;
@@ -257,6 +280,10 @@ export default function SellListingForm({
 
       if (videoUpdate.error) {
         await removeListingVideoFromStorage(supabase, videoUpload.data.storagePath);
+        await removeListingImagesFromStorage(
+          supabase,
+          imageUpload.data.map((image) => image.storagePath)
+        );
         await rollbackHorseListing(newListingId);
         setSubmitError(videoUpdate.error);
         return;
@@ -264,14 +291,14 @@ export default function SellListingForm({
     }
 
     setSavedListingId(newListingId);
-    setSavedListingPublished(Boolean(result.published));
+    setSavedListingPublished(Boolean(attachResult.published));
 
-    if (result.error) {
-      setSubmitError(result.error);
+    if (attachResult.error) {
+      setSubmitError(attachResult.error);
     }
 
-    if (result.publicUrl) {
-      router.push(result.publicUrl);
+    if (attachResult.publicUrl) {
+      router.push(attachResult.publicUrl);
       router.refresh();
       return;
     }
@@ -288,6 +315,7 @@ export default function SellListingForm({
 
     let newVideoStoragePath: string | null = null;
     let deleteVideoPath: string | null = null;
+    let newlyUploadedImagePaths: string[] = [];
 
     let videoPayload:
       | { action: "keep" }
@@ -299,17 +327,17 @@ export default function SellListingForm({
       ? buildExistingVideoState(initialListing)
       : null;
 
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setSubmitError(t("form.errors.sessionExpired"));
+      return;
+    }
+
     if (videoFile) {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setSubmitError(t("form.errors.sessionExpired"));
-        return;
-      }
-
       const videoUpload = await uploadListingVideoToStorage(
         supabase,
         user.id,
@@ -349,58 +377,85 @@ export default function SellListingForm({
       }
     }
 
-    let newFileIndex = 0;
+    const newImages = images.filter(
+      (image): image is ListingImage & { file: File } => Boolean(image.file)
+    );
+
+    let uploadedNewImages: Awaited<
+      ReturnType<typeof uploadListingImagesFromClient>
+    >["data"];
+
+    if (newImages.length > 0) {
+      const uploadResult = await uploadListingImagesFromClient(
+        supabase,
+        user.id,
+        listingId,
+        newImages
+      );
+
+      if (uploadResult.error || !uploadResult.data?.length) {
+        if (newVideoStoragePath) {
+          await removeListingVideoFromStorage(supabase, newVideoStoragePath);
+        }
+        setSubmitError(
+          uploadResult.error ??
+            "Your listing was not updated because image upload failed."
+        );
+        return;
+      }
+
+      uploadedNewImages = uploadResult.data;
+      newlyUploadedImagePaths = uploadResult.data.map((image) => image.storagePath);
+    }
+
+    let newImageUploadIndex = 0;
     const imagePayload = images.map((image) => {
       if (image.file) {
-        const index = newFileIndex;
-        newFileIndex += 1;
+        const uploaded = uploadedNewImages?.[newImageUploadIndex];
+        newImageUploadIndex += 1;
+
+        if (!uploaded) {
+          return null;
+        }
+
         return {
           isCover: image.isCover,
-          isNew: true,
-          newFileIndex: index,
-          name: image.file.name,
-          size: image.file.size,
-          type: image.file.type,
+          storagePath: uploaded.storagePath,
+          publicUrl: uploaded.publicUrl,
+          name: uploaded.name,
+          size: uploaded.size,
+          type: uploaded.type,
         };
+      }
+
+      if (!image.existingUrl || !image.storagePath) {
+        return null;
       }
 
       return {
         isCover: image.isCover,
-        isNew: false,
-        existingUrl: image.existingUrl,
         storagePath: image.storagePath,
-        name: image.existingUrl?.split("/").pop() ?? "existing-image.jpg",
+        publicUrl: image.existingUrl,
+        name: image.existingUrl.split("/").pop() ?? "existing-image.jpg",
         size: 0,
         type: "image/jpeg",
       };
+    }).filter((item): item is NonNullable<typeof item> => item !== null);
+
+    const result = await updateHorseListing({
+      listingId,
+      formData,
+      images: imagePayload,
+      removedImagePaths: getRemovedImagePaths(),
+      video: videoPayload,
+      deleteVideoPath,
     });
-
-    const submission = new FormData();
-    submission.append(
-      "payload",
-      JSON.stringify({
-        listingId,
-        formData,
-        images: imagePayload,
-        removedImagePaths: getRemovedImagePaths(),
-        video: videoPayload,
-        deleteVideoPath,
-      })
-    );
-
-    let uploadIndex = 0;
-    images.forEach((image) => {
-      if (image.file) {
-        submission.append(`image_new_${uploadIndex}`, image.file);
-        uploadIndex += 1;
-      }
-    });
-
-    const result = await updateHorseListing(submission);
 
     if (result.error) {
+      if (newlyUploadedImagePaths.length > 0) {
+        await removeListingImagesFromStorage(supabase, newlyUploadedImagePaths);
+      }
       if (newVideoStoragePath) {
-        const supabase = createClient();
         await removeListingVideoFromStorage(supabase, newVideoStoragePath);
       }
       setSubmitError(result.error);

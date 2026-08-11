@@ -66,6 +66,17 @@
     "activeFilters": "{count, plural, =1 {1 filtre actif} other {# filtres actifs}}",
     "noActiveFilters": "Aucun filtre appliqué",
     "removeFilter": "Supprimer le filtre : {filter}",
+    "searchRadius": "Rayon de recherche",
+    "radiusLabel": "Distance",
+    "radiusUnlimited": "Illimité",
+    "radiusKmOption": "{km} km",
+    "radiusNearMe": "Utiliser ma position",
+    "radiusLocating": "Localisation…",
+    "radiusOriginSet": "Centre de recherche défini à partir de votre position.",
+    "radiusOriginRequired": "Définissez votre position pour appliquer un filtre de distance.",
+    "radiusLocationUnavailable": "La géolocalisation n'est pas disponible dans ce navigateur.",
+    "radiusLocationDenied": "Accès à la position refusé. Activez-le pour rechercher des annonces à proximité.",
+    "radiusActiveHint": "Seules les annonces avec des coordonnées cartographiques apparaissent dans les résultats par rayon.",
     "chips": {
       "search": "Recherche : {value}",
       "breed": "Race : {value}",
@@ -79,7 +90,8 @@
       "height": "Taille : {min}-{max} cm",
       "level": "Niveau : {value}",
       "studbook": "Stud-book : {value}",
-      "availability": "Disponibilité : {value}"
+      "availability": "Disponibilité : {value}",
+      "radius": "Dans un rayon de {value} km"
     }
   },
   "home": {
@@ -112,6 +124,7 @@
     "gender": "Sexe",
     "level": "Niveau",
     "location": "Localisation",
+    "distanceAway": "À {km} km",
     "view": "Voir →",
     "imageAlt": "{name} — photo de l'annonce",
     "genderUnknown": "Inconnu"

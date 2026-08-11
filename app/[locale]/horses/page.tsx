@@ -3,6 +3,8 @@ import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import MarketplaceBrowseClient from "@/app/components/marketplace/MarketplaceBrowseClient";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { parseMarketplaceSearchParams } from "@/app/lib/marketplace/search";
+import { shouldUseRadiusSearch } from "@/app/lib/marketplace/radius";
+import { haversineKm } from "@/app/lib/geocoding/listing-location";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getTranslations } from "next-intl/server";
 
@@ -27,9 +29,23 @@ export default async function HorsesBrowsePage({ searchParams }: Props) {
     getUserFavoriteListingIds(),
   ]);
 
-  const horses = result.listings.map((row) =>
-    listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
-  );
+  const horses = result.listings.map((row) => {
+    const horse = listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") });
+
+    if (
+      shouldUseRadiusSearch(filters) &&
+      row.latitude != null &&
+      row.longitude != null &&
+      filters.originLat != null &&
+      filters.originLng != null
+    ) {
+      horse.distanceKm = Math.round(
+        haversineKm(filters.originLat, filters.originLng, row.latitude, row.longitude)
+      );
+    }
+
+    return horse;
+  });
 
   return (
     <MarketplaceBrowseClient

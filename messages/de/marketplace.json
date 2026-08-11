@@ -66,6 +66,17 @@
     "activeFilters": "{count, plural, =1 {1 aktiver Filter} other {# aktive Filter}}",
     "noActiveFilters": "Keine Filter angewendet",
     "removeFilter": "Filter entfernen: {filter}",
+    "searchRadius": "Suchradius",
+    "radiusLabel": "Entfernung",
+    "radiusUnlimited": "Unbegrenzt",
+    "radiusKmOption": "{km} km",
+    "radiusNearMe": "Meinen Standort verwenden",
+    "radiusLocating": "Standort wird ermittelt …",
+    "radiusOriginSet": "Suchmittelpunkt anhand Ihres Standorts gesetzt.",
+    "radiusOriginRequired": "Legen Sie Ihren Standort fest, um einen Entfernungsfilter anzuwenden.",
+    "radiusLocationUnavailable": "Standort ist in diesem Browser nicht verfügbar.",
+    "radiusLocationDenied": "Standortzugriff wurde verweigert. Aktivieren Sie ihn, um Inserate in der Nähe zu suchen.",
+    "radiusActiveHint": "Bei Radius-Suche erscheinen nur Inserate mit Kartenkoordinaten.",
     "chips": {
       "search": "Suche: {value}",
       "breed": "Rasse: {value}",
@@ -79,7 +90,8 @@
       "height": "Größe: {min}-{max} cm",
       "level": "Niveau: {value}",
       "studbook": "Studbook: {value}",
-      "availability": "Verfügbarkeit: {value}"
+      "availability": "Verfügbarkeit: {value}",
+      "radius": "Innerhalb von {value} km"
     }
   },
   "home": {
@@ -112,6 +124,7 @@
     "gender": "Geschlecht",
     "level": "Niveau",
     "location": "Standort",
+    "distanceAway": "{km} km entfernt",
     "view": "Ansehen →",
     "imageAlt": "{name} — Inseratsfoto",
     "genderUnknown": "Unbekannt"

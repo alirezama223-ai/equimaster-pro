@@ -21,6 +21,10 @@ export type HorseListingRow = {
   height: number;
   color: string;
   country: string;
+  city?: string | null;
+  postal_code?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   discipline: string;
   level: string;
   price: number | null;
@@ -62,6 +66,8 @@ export type CreateHorseListingInput = {
   height: number;
   color: string;
   country: string;
+  city?: string | null;
+  postal_code?: string | null;
   discipline: string;
   level: string;
   price: number | null;
