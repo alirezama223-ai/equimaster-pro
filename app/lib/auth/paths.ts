@@ -3,6 +3,8 @@ import { getPathnameWithoutLocale } from "@/i18n/path";
 /** Canonical authentication routes (App Router). */
 export const LOGIN_PATH = "/login";
 export const SIGNUP_PATH = "/signup";
+export const FORGOT_PASSWORD_PATH = "/forgot-password";
+export const UPDATE_PASSWORD_PATH = "/update-password";
 export const AUTH_CALLBACK_PATH = "/auth/callback";
 
 const AUTH_ROUTES = new Set([LOGIN_PATH, SIGNUP_PATH]);

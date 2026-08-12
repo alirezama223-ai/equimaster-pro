@@ -4,9 +4,10 @@ import {
   buildLocalizedPath,
   resolveAppLocale,
 } from "@/app/lib/auth/redirect";
-import { getSafeNextPath, LOGIN_PATH } from "@/app/lib/auth/paths";
+import { getSafeNextPath, LOGIN_PATH, UPDATE_PASSWORD_PATH } from "@/app/lib/auth/paths";
 import { createClient } from "@/app/lib/supabase/server";
 import { localizePath } from "@/i18n/path";
+import { appendPasswordRecoveryParam } from "@/app/lib/auth/password-reset";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -23,9 +24,13 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(
-        `${requestUrl.origin}${buildLocalizedPath(next, locale)}`
-      );
+      let destination = buildLocalizedPath(next, locale);
+
+      if (next === UPDATE_PASSWORD_PATH) {
+        destination = appendPasswordRecoveryParam(destination);
+      }
+
+      return NextResponse.redirect(`${requestUrl.origin}${destination}`);
     }
   }
 

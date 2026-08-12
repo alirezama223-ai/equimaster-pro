@@ -18,6 +18,42 @@ export function validateLoginForm(email: string, password: string) {
   return errors;
 }
 
+export function validateForgotPasswordForm(email: string) {
+  const errors: { email?: string } = {};
+
+  if (!email.trim()) {
+    errors.email = "emailRequired";
+  } else if (!emailPattern.test(email.trim())) {
+    errors.email = "emailInvalid";
+  }
+
+  return errors;
+}
+
+export function validateUpdatePasswordForm(
+  password: string,
+  confirmPassword: string
+) {
+  const errors: {
+    password?: string;
+    confirmPassword?: string;
+  } = {};
+
+  if (!password) {
+    errors.password = "passwordRequired";
+  } else if (password.length < 8) {
+    errors.password = "passwordMinLength";
+  }
+
+  if (!confirmPassword) {
+    errors.confirmPassword = "confirmPasswordRequired";
+  } else if (password !== confirmPassword) {
+    errors.confirmPassword = "passwordsMismatch";
+  }
+
+  return errors;
+}
+
 export function validateSignupForm(
   fullName: string,
   email: string,
@@ -88,6 +124,15 @@ export function getAuthErrorMessage(message: string) {
 
   if (normalized.includes("rate limit") || normalized.includes("too many requests")) {
     return "rateLimitExceeded";
+  }
+
+  if (
+    normalized.includes("otp expired") ||
+    normalized.includes("session expired") ||
+    normalized.includes("invalid refresh token") ||
+    normalized.includes("token has expired")
+  ) {
+    return "genericError";
   }
 
   if (normalized.includes("signup is disabled")) {

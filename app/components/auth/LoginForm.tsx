@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import AuthFormShell, {
   authInputClassName,
   authLabelClassName,
@@ -25,6 +26,7 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const nextPath = getSafeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
+  const resetSuccess = searchParams.get("reset") === "success";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -131,7 +133,21 @@ export default function LoginForm() {
               {t(`validation.${fieldErrors.password}`)}
             </p>
           ) : null}
+          <p className="mt-3 text-right">
+            <Link
+              href="/forgot-password"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-blue-400 hover:text-blue-300"
+            >
+              {t("login.forgotPasswordLink")}
+            </Link>
+          </p>
         </div>
+
+        {resetSuccess ? (
+          <div className="rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-200">
+            {t("login.passwordResetSuccess")}
+          </div>
+        ) : null}
 
         {formError ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
