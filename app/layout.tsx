@@ -14,13 +14,44 @@ const geistSans = Geist({
 });
 
 const PUBLIC_BRAND = "SHABDIZ";
+const SITE_DESCRIPTION = "Global equestrian marketplace";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteBaseUrl()),
   applicationName: PUBLIC_BRAND,
+  title: {
+    default: PUBLIC_BRAND,
+    template: `%s | ${PUBLIC_BRAND}`,
+  },
+  description: SITE_DESCRIPTION,
   authors: [{ name: PUBLIC_BRAND }],
   creator: PUBLIC_BRAND,
   publisher: PUBLIC_BRAND,
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg",
+  },
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    type: "website",
+    siteName: PUBLIC_BRAND,
+    title: PUBLIC_BRAND,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/brand/shabdiz-og.svg",
+        width: 1200,
+        height: 630,
+        alt: "SHABDIZ — Equine Marketplace",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: PUBLIC_BRAND,
+    description: SITE_DESCRIPTION,
+    images: ["/brand/shabdiz-og.svg"],
+  },
 };
 
 export default async function RootLayout({
