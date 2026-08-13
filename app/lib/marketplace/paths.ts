@@ -10,6 +10,10 @@ export function getListingEditPath(listingId: string): string {
   return `/dashboard/seller/listings/${listingId}/edit`;
 }
 
+export function getTraitEvidencePath(pedigreeHorseId: string): string {
+  return `/pedigree/${pedigreeHorseId}/traits`;
+}
+
 export const MARKETPLACE_PATHS = {
   home: "/marketplace",
   sellerDashboard: "/dashboard/seller",
