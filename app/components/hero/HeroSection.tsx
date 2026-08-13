@@ -40,7 +40,7 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-          <div className="flex min-w-0 justify-center"><div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none"><div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" /><Image src="/emi.jpg" alt={t("hero.imageAlt")} width={700} height={900} priority fetchPriority="high" sizes="(max-width: 1024px) 90vw, 700px" className="relative h-auto w-full rounded-[35px] object-cover shadow-2xl" /></div></div>
+          <div className="flex min-w-0 justify-center"><div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none"><div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" /><Image src="/shabdiz-hero.png" alt={t("hero.imageAlt")} width={700} height={900} priority fetchPriority="high" sizes="(max-width: 1024px) 90vw, 700px" className="relative h-auto w-full rounded-[35px] object-cover shadow-2xl" /></div></div>
         </div>
       </div>
     </section>
