@@ -1,23 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" role="img" aria-labelledby="title desc">
   <title id="title">SHABDIZ</title>
-  <desc id="desc">SHABDIZ equestrian marketplace logo with stylised horse and S mark</desc>
+  <desc id="desc">SHABDIZ luxury sport horse marketplace logo with a recognizable stylised horse head</desc>
   <defs>
     <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#F7E1A1"/>
-      <stop offset="0.5" stop-color="#D4A437"/>
-      <stop offset="1" stop-color="#B88316"/>
+      <stop offset="0" stop-color="#F8E7AE"/>
+      <stop offset="0.48" stop-color="#D9AA3A"/>
+      <stop offset="1" stop-color="#B77D12"/>
     </linearGradient>
   </defs>
-  <g transform="translate(22 12)">
-    <path d="M155 24c-31 1-61 18-80 43-16 21-24 46-24 74 0 15 4 29 11 42-2-27 4-50 19-69 15-20 36-35 62-42 17-5 32-15 44-30 8-10 13-19 16-29-14 7-28 10-48 11z" fill="#FFFFFF"/>
-    <path d="M150 26c-19 3-39 12-54 27-16 16-26 36-29 58 15-22 37-37 65-46 20-6 35-18 48-35-9-3-19-5-30-4z" fill="#F7F1E5"/>
-    <path d="M169 15c27 5 49 19 65 41 8 11 14 23 17 36-13-12-28-21-45-27-17-6-33-16-45-30-9-10-15-20-18-30 9 3 17 6 26 10z" fill="#FFFFFF"/>
-    <path d="M79 154c23-8 42-20 58-37 12-13 21-28 27-44 5-13 7-27 7-41 11 5 22 12 31 21-3 27-12 50-28 70-19 24-44 42-75 52-8 3-15 4-22 5 3-8 4-17 2-26z" fill="url(#gold)"/>
-    <path d="M97 174c20-3 40-11 57-23 25-18 43-42 53-70 4-12 6-24 6-36 9 9 15 19 19 30-3 32-16 61-38 84-25 26-58 42-96 48z" fill="#FFFFFF"/>
-    <path d="M52 135c-13 13-24 28-31 45 19-8 35-18 48-31 11-11 20-23 26-36-16 5-30 13-43 22z" fill="#FFFFFF"/>
-    <path d="M70 154c-12 15-20 31-24 49 17-8 31-18 43-31 8-9 15-19 20-30-15 2-28 6-39 12z" fill="#F7F1E5"/>
-    <circle cx="203" cy="65" r="4.5" fill="#0B1E3A"/>
-    <path d="M65 35C92 12 129 2 166 6c34 4 63 18 87 42" fill="none" stroke="url(#gold)" stroke-width="15" stroke-linecap="round"/>
+  <g transform="translate(18 16)">
+    <circle cx="104" cy="104" r="88" fill="none" stroke="url(#gold)" stroke-width="10"/>
+    <path d="M70 54 L83 16 L111 50 C129 57 143 70 151 89 L157 106 L151 120 L153 141 L140 158 L117 164 L98 153 L86 132 L79 107 L67 91 Z" fill="url(#gold)"/>
+    <path d="M70 54 L83 16 L94 55 L82 78 Z" fill="#F8E7AE"/>
+    <path d="M111 50 L129 18 L132 59 L122 70 Z" fill="#D9AA3A"/>
+    <path d="M84 80 C101 66 119 65 134 76 C143 83 149 94 151 107 C145 99 137 94 127 92 C116 90 106 94 98 101 L92 118 L99 134 L112 145 L101 148 L88 135 L81 112 L72 101 Z" fill="#0B132B"/>
+    <path d="M127 91 C136 90 144 94 151 102 L153 110 L146 117 L137 112 L131 103 Z" fill="#F8E7AE"/>
+    <circle cx="135" cy="83" r="4.5" fill="#0B132B"/>
+    <path d="M89 69 C76 77 67 91 63 108 C60 123 63 140 72 153" fill="none" stroke="#F8E7AE" stroke-width="9" stroke-linecap="round"/>
+    <path d="M76 151 C66 162 54 171 39 177 C53 159 60 142 63 124" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M93 57 C78 47 66 40 50 38" fill="none" stroke="#F8E7AE" stroke-width="6" stroke-linecap="round"/>
   </g>
-  <text x="318" y="145" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="76" font-weight="700" letter-spacing="3" fill="#FFFFFF">SHABDIZ</text>
+  <g transform="translate(226 62)">
+    <text x="0" y="72" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" letter-spacing="4" fill="#FFFFFF">SHABDIZ</text>
+    <path d="M3 96 H500" stroke="url(#gold)" stroke-width="3"/>
+    <text x="251" y="128" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" letter-spacing="7" fill="#D9AA3A">SPORT HORSES MARKETPLACE</text>
+  </g>
 </svg>
