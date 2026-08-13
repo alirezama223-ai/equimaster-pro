@@ -6,6 +6,8 @@ import SellListingForm from "@/app/components/sell/SellListingForm";
 import FadeUp from "@/app/components/animations/FadeUp";
 import { getHorseListingForOwner } from "@/app/actions/horse-listings";
 import { isListingUuid } from "@/app/lib/horse-listings";
+import { getTraitEvidencePath } from "@/app/lib/marketplace/paths";
+import { Link } from "@/i18n/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -31,6 +33,8 @@ export default async function EditSellerListingPage({ params }: Props) {
     notFound();
   }
 
+  const pedigreeHorseId = result.data.pedigree_horse_id;
+
   return (
     <>
       <Navbar />
@@ -47,6 +51,17 @@ export default async function EditSellerListingPage({ params }: Props) {
               <p className="mt-5 max-w-2xl mx-auto text-gray-400 text-lg">
                 {t("edit.subtitle")}
               </p>
+
+              {pedigreeHorseId ? (
+                <div className="mt-7 flex justify-center">
+                  <Link
+                    href={getTraitEvidencePath(pedigreeHorseId)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-500/40 bg-blue-500/10 px-5 py-3 text-sm font-semibold text-blue-300 transition hover:bg-blue-500/20 hover:text-white"
+                  >
+                    🧬 Manage Trait Evidence
+                  </Link>
+                </div>
+              ) : null}
             </div>
             <SellListingForm mode="edit" initialListing={result.data} />
           </FadeUp>
