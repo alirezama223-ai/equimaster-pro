@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,8 +13,14 @@ const geistSans = Geist({
   adjustFontFallback: true,
 });
 
+const PUBLIC_BRAND = "SHABDIZ";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://equimaster.pro"),
+  metadataBase: new URL(getSiteBaseUrl()),
+  applicationName: PUBLIC_BRAND,
+  authors: [{ name: PUBLIC_BRAND }],
+  creator: PUBLIC_BRAND,
+  publisher: PUBLIC_BRAND,
 };
 
 export default async function RootLayout({
