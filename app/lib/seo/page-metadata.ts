@@ -37,6 +37,17 @@ const NO_INDEX_PAGES = new Set<MetadataPageKey>([
   "inbox",
 ]);
 
+const PUBLIC_BRAND = "SHABDIZ";
+
+/**
+ * Centralizes the public brand during the rebrand transition.
+ * This keeps localized SEO dictionaries backward-compatible while ensuring
+ * every rendered title, description and social card uses the new brand.
+ */
+function brandify(value: string): string {
+  return value.replace(/EquiMaster Pro|EquiMaster/g, PUBLIC_BRAND);
+}
+
 function buildLanguageAlternates(pathname: string, baseUrl: string): Record<string, string> {
   const languages: Record<string, string> = {};
 
@@ -66,26 +77,26 @@ export async function createPageMetadata(
     (NO_INDEX_PAGES.has(pageKey) ? { index: false, follow: false } : { index: true, follow: true });
 
   return {
-    title: t(`${prefix}.title`),
-    description: t(`${prefix}.description`),
-    keywords: t(`${prefix}.keywords`),
+    title: brandify(t(`${prefix}.title`)),
+    description: brandify(t(`${prefix}.description`)),
+    keywords: brandify(t(`${prefix}.keywords`)),
     alternates: {
       canonical: canonicalUrl,
       languages: buildLanguageAlternates(pathname, baseUrl),
     },
     openGraph: {
-      title: t(`${prefix}.openGraphTitle`),
-      description: t(`${prefix}.openGraphDescription`),
+      title: brandify(t(`${prefix}.openGraphTitle`)),
+      description: brandify(t(`${prefix}.openGraphDescription`)),
       url: canonicalUrl,
-      siteName: t("site.name"),
+      siteName: PUBLIC_BRAND,
       type: "website",
       locale,
       alternateLocale: alternateLocales,
     },
     twitter: {
       card: "summary_large_image",
-      title: t(`${prefix}.twitterTitle`),
-      description: t(`${prefix}.twitterDescription`),
+      title: brandify(t(`${prefix}.twitterTitle`)),
+      description: brandify(t(`${prefix}.twitterDescription`)),
     },
     robots,
   };
@@ -96,22 +107,22 @@ export async function createSiteMetadata(locale: AppLocale): Promise<Metadata> {
 
   return {
     title: {
-      default: t("site.title"),
-      template: `%s | ${t("site.name")}`,
+      default: brandify(t("site.title")),
+      template: `%s | ${PUBLIC_BRAND}`,
     },
-    description: t("site.description"),
-    keywords: t("site.keywords"),
+    description: brandify(t("site.description")),
+    keywords: brandify(t("site.keywords")),
     openGraph: {
-      title: t("site.openGraphTitle"),
-      description: t("site.openGraphDescription"),
-      siteName: t("site.name"),
+      title: brandify(t("site.openGraphTitle")),
+      description: brandify(t("site.openGraphDescription")),
+      siteName: PUBLIC_BRAND,
       type: "website",
       locale,
     },
     twitter: {
       card: "summary_large_image",
-      title: t("site.twitterTitle"),
-      description: t("site.twitterDescription"),
+      title: brandify(t("site.twitterTitle")),
+      description: brandify(t("site.twitterDescription")),
     },
   };
 }
