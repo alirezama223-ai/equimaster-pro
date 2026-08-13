@@ -23,7 +23,7 @@ export default function HeroSection({ stats }: Props) {
         <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
           <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">{t("hero.eyebrow")}</p>
-            <h1 className="text-[42px] font-black leading-[1.0] md:text-6xl md:leading-tight lg:text-8xl lg:leading-[0.95]">
+            <h1 className="text-[42px] font-black leading-[1.0] md:text-6xl md:leading-tight lg:text-7xl lg:leading-[0.98]">
               {t("hero.title.line1")}<br />{t("hero.title.line2")}<br />{t("hero.title.line3")}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-[1.6] text-gray-300 md:mt-8 md:text-xl md:leading-9">{t("hero.subtitle")}</p>
