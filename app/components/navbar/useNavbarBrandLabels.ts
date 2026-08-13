@@ -2,8 +2,8 @@
 
 import { useMessages } from "next-intl";
 
-const FALLBACK_BRAND = "EquiMaster Pro";
-const FALLBACK_BRAND_SHORT = "EquiMaster";
+const FALLBACK_BRAND = "SHABDIZ";
+const FALLBACK_BRAND_SHORT = "SHABDIZ";
 
 function readCommonString(
   messages: Record<string, unknown>,
@@ -25,7 +25,7 @@ export function useNavbarBrandLabels() {
   const brandShort =
     readCommonString(messages, "brandShort") ??
     readCommonString(messages, "brand") ??
-    FALLBACK_BRAND;
+    FALLBACK_BRAND_SHORT;
 
   return { brand, brandShort };
 }
