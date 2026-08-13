@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { SHABDIZ_BRAND } from "@/app/lib/brand";
 
 type Props = {
   title: string;
@@ -25,8 +26,15 @@ export default function AuthFormShell({
   return (
     <section className="rounded-3xl bg-[#111C2E] border border-gray-800 shadow-2xl p-6 sm:p-10">
       <div className="text-center mb-8">
-        <p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">
-          {tCommon("brand")}
+        <div className="mb-4 flex justify-center">
+          <img
+            src={SHABDIZ_BRAND.mark}
+            alt={SHABDIZ_BRAND.name}
+            className="h-16 w-16 rounded-2xl"
+          />
+        </div>
+        <p className="uppercase tracking-[6px] text-[#D4A437] text-xs font-semibold">
+          {SHABDIZ_BRAND.name}
         </p>
         <h1 className="text-3xl sm:text-4xl font-black text-white mt-4">{title}</h1>
         <p className="mt-3 text-gray-400">{subtitle}</p>
