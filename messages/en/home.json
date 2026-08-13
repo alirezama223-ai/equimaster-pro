@@ -1,6 +1,6 @@
 {
   "hero": {
-    "eyebrow": "Welcome to EquiMaster Pro",
+    "eyebrow": "Welcome to SHABDIZ",
     "title": {
       "line1": "Sport",
       "line2": "Horses",
@@ -11,15 +11,9 @@
     "sellButton": "Sell Horse",
     "imageAlt": "Sport horse hero image",
     "stats": {
-      "sportHorses": {
-        "label": "Active Listings"
-      },
-      "breeders": {
-        "label": "Active Stallions"
-      },
-      "countries": {
-        "label": "Registered Breeders"
-      }
+      "sportHorses": {"label": "Active Listings"},
+      "breeders": {"label": "Active Stallions"},
+      "countries": {"label": "Registered Breeders"}
     }
   },
   "search": {
