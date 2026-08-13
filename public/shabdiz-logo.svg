@@ -1,5 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 891 249" role="img" aria-labelledby="title desc">
-  <title id="title">SHABDIZ Sport Horses Marketplace</title>
-  <desc id="desc">SHABDIZ logo with horse emblem and Sport Horses Marketplace text</desc>
-  <image href="data:image/png;base64,REPLACE_ME" width="891" height="249" preserveAspectRatio="xMidYMid meet"/>
+<title id="title">SHABDIZ Sport Horses Marketplace</title>
+<desc id="desc">SHABDIZ sport horses marketplace logo</desc>
+<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c39b50"/><stop offset=".5" stop-color="#e1c27b"/><stop offset="1" stop-color="#b8893f"/></linearGradient></defs>
+<g transform="translate(18 12)">
+<circle cx="110" cy="112" r="104" fill="#10284f" stroke="url(#gold)" stroke-width="8"/>
+<circle cx="110" cy="112" r="88" fill="none" stroke="url(#gold)" stroke-width="5"/>
+<path d="M67 174c-7-23-7-51 4-78 10-25 27-48 51-66-3 18 2 29 11 39 12 14 20 29 21 47 2 27-10 51-30 63-15 9-36 11-57-5z" fill="url(#gold)"/>
+<path d="M126 72c-4 20-2 33 7 45 6 8 10 18 9 28-2 15-12 27-27 32 12-12 14-26 10-39-5-15-17-27-18-44z" fill="#10284f"/>
+<path d="M81 92c-12 9-20 20-25 33 13-5 26-8 38-8" fill="none" stroke="#10284f" stroke-width="7" stroke-linecap="round"/>
+<path d="M91 137c12 8 25 10 39 7" fill="none" stroke="#10284f" stroke-width="6" stroke-linecap="round"/>
+<path d="M139 100l-5 7" stroke="#10284f" stroke-width="6" stroke-linecap="round"/>
+<path d="M52 58c17-16 38-26 60-29M57 181c18 13 39 19 61 19" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+</g>
+<text x="330" y="126" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="700" letter-spacing="8" fill="url(#gold)">SHABDIZ</text>
+<text x="333" y="175" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="600" letter-spacing="9" fill="#10284f">SPORT HORSES MARKETPLACE</text>
 </svg>
