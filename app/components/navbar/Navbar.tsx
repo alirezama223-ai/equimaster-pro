@@ -9,6 +9,7 @@ import MobileMenu from "@/app/components/navbar/MobileMenu";
 import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { useNavbarBrandLabels } from "@/app/components/navbar/useNavbarBrandLabels";
+import { SHABDIZ_BRAND } from "@/app/lib/brand";
 import {
   DESKTOP_INLINE_NAV_LINKS,
   navLinkClassName,
@@ -16,7 +17,6 @@ import {
 
 export default function Navbar() {
   const t = useTranslations("nav");
-  const tCommon = useTranslations("common");
   const { brandShort } = useNavbarBrandLabels();
 
   return (
@@ -24,9 +24,15 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 md:hidden">
         <Link
           href="/"
-          className="inline-flex min-h-11 min-w-0 shrink-0 items-center whitespace-nowrap text-base font-black text-white transition hover:text-blue-400"
+          aria-label={brandShort || SHABDIZ_BRAND.name}
+          className="inline-flex min-h-11 min-w-0 shrink-0 items-center whitespace-nowrap transition"
         >
-          {brandShort}
+          <img
+            src={SHABDIZ_BRAND.mark}
+            alt={SHABDIZ_BRAND.name}
+            className="h-10 w-10 object-contain"
+          />
+          <span className="sr-only">{SHABDIZ_BRAND.name}</span>
         </Link>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -54,10 +60,14 @@ export default function Navbar() {
       <div className="mx-auto hidden h-16 min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 md:flex lg:px-8">
         <Link
           href="/"
-          className="inline-flex min-h-11 min-w-0 max-w-[9.5rem] items-center truncate text-base font-black text-white transition hover:text-blue-400 sm:max-w-none sm:shrink-0 sm:text-lg 2xl:text-2xl"
+          aria-label={SHABDIZ_BRAND.name}
+          className="inline-flex min-h-11 min-w-0 items-center shrink-0 transition"
         >
-          <span className="sm:hidden">{tCommon("brandShort")}</span>
-          <span className="hidden sm:inline">{tCommon("brand")}</span>
+          <img
+            src={SHABDIZ_BRAND.logo}
+            alt={SHABDIZ_BRAND.name}
+            className="h-11 w-auto max-w-[12rem] object-contain sm:h-12 2xl:h-14"
+          />
         </Link>
 
         <nav
