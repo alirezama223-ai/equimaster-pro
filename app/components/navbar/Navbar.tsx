@@ -28,9 +28,9 @@ export default function Navbar() {
           className="inline-flex min-h-11 min-w-0 shrink-0 items-center whitespace-nowrap transition"
         >
           <img
-            src={SHABDIZ_BRAND.mark}
+            src={SHABDIZ_BRAND.logo}
             alt={SHABDIZ_BRAND.name}
-            className="h-10 w-10 object-contain"
+            className="h-10 w-auto max-w-[11rem] object-contain"
           />
           <span className="sr-only">{SHABDIZ_BRAND.name}</span>
         </Link>
@@ -66,7 +66,7 @@ export default function Navbar() {
           <img
             src={SHABDIZ_BRAND.logo}
             alt={SHABDIZ_BRAND.name}
-          className="h-14 w-auto max-w-[14rem] object-contain sm:h-14 2xl:h-16"
+            className="h-14 w-auto max-w-[14rem] object-contain sm:h-14 2xl:h-16"
           />
         </Link>
 
