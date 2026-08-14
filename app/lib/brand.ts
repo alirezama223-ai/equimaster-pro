@@ -3,7 +3,7 @@ export const SHABDIZ_BRAND = {
   descriptor: "EQUINE MARKETPLACE",
   tagline: "CONNECT · TRADE · BREED · GROW",
   description: "Global equestrian marketplace",
-  logo: "/shabdiz-logo.png.jpg",
+  logo: "/shabdiz-navbar.png",
   mark: "/shabdiz-logo.png.jpg",
   icon: "/icon.svg",
   appleIcon: "/apple-icon.svg",
