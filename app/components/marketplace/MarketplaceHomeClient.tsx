@@ -20,6 +20,9 @@ type Props = {
   favoriteListingIds: string[];
 };
 
+const HERO_VIDEO = "/happy-horse-1.1_The_horse_must_remain_entirely_within_the_right_40_percent_of_the_frame_througho-0%20(1).mp4";
+const HERO_POSTER = "/shabdiz-hero.png";
+
 export default function MarketplaceHomeClient({
   featuredHorses,
   newestHorses,
@@ -37,66 +40,85 @@ export default function MarketplaceHomeClient({
       <main className="min-h-screen overflow-x-hidden bg-[#081223] text-white pt-28 pb-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
           <FadeUp>
-            <section className="relative overflow-hidden rounded-3xl border border-[#D4A437]/25 bg-gradient-to-br from-[#111827] to-[#081223] p-5 sm:p-12 mb-12">
-              <div className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full border border-[#D4A437]/10" />
-              <div className="pointer-events-none absolute -right-4 -top-8 h-52 w-52 rounded-full border border-[#D4A437]/10" />
-              <div className="relative z-10">
-                <div className="mb-6 flex items-center gap-3">
-                  <img
-                    src={SHABDIZ_BRAND.mark}
-                    alt=""
-                    aria-hidden="true"
-                    className="h-11 w-11 rounded-xl"
-                  />
-                  <div>
-                    <p className="text-sm font-bold tracking-[0.22em] text-[#D4A437]">
-                      {SHABDIZ_BRAND.name}
-                    </p>
-                    <p className="mt-0.5 text-[10px] font-semibold tracking-[0.18em] text-gray-400">
-                      {SHABDIZ_BRAND.descriptor}
-                    </p>
+            <section className="relative isolate min-h-[620px] overflow-hidden rounded-3xl border border-[#D4A437]/25 bg-[#081223] mb-12">
+              <video
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={HERO_POSTER}
+                aria-hidden="true"
+              >
+                <source src={HERO_VIDEO} type="video/mp4" />
+              </video>
+
+              <div className="absolute inset-0 bg-gradient-to-r from-[#081223] via-[#081223]/90 via-45% to-[#081223]/15" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#081223]/55 via-transparent to-[#081223]/10" />
+
+              <div className="relative z-10 flex min-h-[620px] items-center px-6 py-12 sm:px-12 lg:px-16">
+                <div className="max-w-3xl">
+                  <div className="mb-7 flex items-center gap-3">
+                    <img
+                      src={SHABDIZ_BRAND.mark}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-11 w-11 rounded-xl object-contain"
+                    />
+                    <div>
+                      <p className="text-sm font-bold tracking-[0.22em] text-[#D4A437]">
+                        {SHABDIZ_BRAND.name}
+                      </p>
+                      <p className="mt-0.5 text-[10px] font-semibold tracking-[0.18em] text-gray-300/80">
+                        {SHABDIZ_BRAND.descriptor}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <p className="uppercase tracking-[0.2em] text-[#D4A437] text-xs font-semibold sm:tracking-[6px]">
-                  {t("home.eyebrow")}
-                </p>
-                <h1 className="text-3xl sm:text-6xl font-black mt-4 max-w-4xl">
-                  {t("home.title")}
-                </h1>
-                <p className="mt-5 max-w-2xl text-gray-400 text-lg">{t("home.subtitle")}</p>
 
-                <form
-                  action="/horses"
-                  method="get"
-                  className="mt-8 flex flex-col sm:flex-row gap-3 max-w-3xl"
-                >
-                  <input
-                    type="search"
-                    name="q"
-                    placeholder={t("home.searchPlaceholder")}
-                    className="flex-1 rounded-xl border border-white/10 bg-[#081223] px-4 py-4 text-white outline-none focus:border-[#D4A437]"
-                  />
-                  <button
-                    type="submit"
-                    className="min-h-11 rounded-xl bg-[#D4A437] px-6 py-4 font-bold text-[#081223] transition hover:bg-[#F7E1A1]"
-                  >
-                    {t("home.searchHorses")}
-                  </button>
-                </form>
+                  <p className="uppercase tracking-[0.2em] text-[#D4A437] text-xs font-semibold sm:tracking-[6px]">
+                    {t("home.eyebrow")}
+                  </p>
+                  <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.98] mt-4 max-w-4xl drop-shadow-[0_3px_18px_rgba(0,0,0,0.35)]">
+                    {t("home.title")}
+                  </h1>
+                  <p className="mt-6 max-w-2xl text-base sm:text-lg text-gray-200/90">
+                    {t("home.subtitle")}
+                  </p>
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href={MARKETPLACE_PATHS.createListing}
-                    className="rounded-xl border border-[#D4A437]/40 px-5 py-3 text-sm font-semibold hover:bg-[#D4A437]/10 transition"
+                  <form
+                    action="/horses"
+                    method="get"
+                    className="mt-8 flex flex-col sm:flex-row gap-3 max-w-3xl"
                   >
-                    {t("home.sellAHorse")}
-                  </Link>
-                  <Link
-                    href={MARKETPLACE_PATHS.sellerDashboard}
-                    className="rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold hover:bg-white/5 transition"
-                  >
-                    {t("home.sellerDashboard")}
-                  </Link>
+                    <input
+                      type="search"
+                      name="q"
+                      placeholder={t("home.searchPlaceholder")}
+                      className="flex-1 rounded-xl border border-white/15 bg-[#081223]/75 px-4 py-4 text-white backdrop-blur-sm outline-none placeholder:text-gray-400 focus:border-[#D4A437]"
+                    />
+                    <button
+                      type="submit"
+                      className="min-h-11 rounded-xl bg-[#D4A437] px-6 py-4 font-bold text-[#081223] transition hover:bg-[#F7E1A1]"
+                    >
+                      {t("home.searchHorses")}
+                    </button>
+                  </form>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link
+                      href={MARKETPLACE_PATHS.createListing}
+                      className="rounded-xl border border-[#D4A437]/50 bg-[#081223]/35 px-5 py-3 text-sm font-semibold backdrop-blur-sm hover:bg-[#D4A437]/10 transition"
+                    >
+                      {t("home.sellAHorse")}
+                    </Link>
+                    <Link
+                      href={MARKETPLACE_PATHS.sellerDashboard}
+                      className="rounded-xl border border-white/20 bg-[#081223]/30 px-5 py-3 text-sm font-semibold backdrop-blur-sm hover:bg-white/5 transition"
+                    >
+                      {t("home.sellerDashboard")}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </section>
