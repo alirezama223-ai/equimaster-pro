@@ -1,102 +1,104 @@
 {
-  "hero": {
-    "eyebrow": "Welcome to EquiMaster Pro",
-    "title": {
-      "line1": "Sport",
-      "line2": "Horses",
-      "line3": "Marketplace"
-    },
-    "subtitle": "Buy, sell and discover elite show jumping horses from trusted breeders across Europe.",
-    "browseButton": "Browse Horses",
-    "sellButton": "Sell Horse",
-    "imageAlt": "Sport horse hero image",
-    "stats": {
-      "sportHorses": {
-        "label": "Active Listings"
+  "content": {
+    "hero": {
+      "eyebrow": "Welcome to SHABDIZ",
+      "title": {
+        "line1": "Sport",
+        "line2": "Horses",
+        "line3": "Marketplace"
       },
-      "breeders": {
-        "label": "Active Stallions"
-      },
-      "countries": {
-        "label": "Registered Breeders"
+      "subtitle": "Buy, sell and discover elite show jumping horses from trusted breeders across Europe.",
+      "browseButton": "Browse Horses",
+      "sellButton": "Sell Horse",
+      "imageAlt": "Sport horse hero image",
+      "stats": {
+        "sportHorses": {
+          "label": "Active Listings"
+        },
+        "breeders": {
+          "label": "Active Stallions"
+        },
+        "countries": {
+          "label": "Registered Breeders"
+        }
       }
+    },
+    "search": {
+      "title": "Find Your Perfect Horse",
+      "subtitle": "Search and filter Europe's finest sport horses.",
+      "queryLabel": "Search",
+      "queryPlaceholder": "Search horse...",
+      "breed": "Breed",
+      "allBreeds": "All Breeds",
+      "allBreedsPlaceholder": "All breeds…",
+      "country": "Country",
+      "allCountries": "All Countries",
+      "allCountriesPlaceholder": "All countries…",
+      "gender": "Gender",
+      "allGenders": "All Genders",
+      "mare": "Mare",
+      "stallion": "Stallion",
+      "gelding": "Gelding",
+      "discipline": "Discipline",
+      "allDisciplines": "All Disciplines",
+      "allDisciplinesPlaceholder": "All disciplines…",
+      "verifiedOnly": "Verified Only",
+      "minPrice": "Min Price (€)",
+      "maxPrice": "Max Price (€)",
+      "minAge": "Min Age",
+      "maxAge": "Max Age",
+      "minHeight": "Min Height (cm)",
+      "maxHeight": "Max Height (cm)",
+      "yearsPlaceholder": "Years",
+      "cmPlaceholder": "cm",
+      "pricePlaceholderMin": "e.g. 30000",
+      "pricePlaceholderMax": "e.g. 60000",
+      "sortBy": "Sort By",
+      "sortDefault": "Default Order",
+      "sortPriceAsc": "Price: Low to High",
+      "sortPriceDesc": "Price: High to Low",
+      "sortAgeAsc": "Age: Youngest First",
+      "sortAgeDesc": "Age: Oldest First",
+      "sortHeightAsc": "Height: Low to High",
+      "sortHeightDesc": "Height: High to Low",
+      "resetFilters": "Reset Filters"
+    },
+    "featured": {
+      "eyebrow": "Premium Collection",
+      "title": "Featured Horses",
+      "subtitle": "Discover Europe's finest show jumping horses selected from trusted breeders and professional riders.",
+      "emptyIcon": "🐴",
+      "emptyTitle": "No horses found",
+      "emptyDescription": "Try changing your search."
+    },
+    "premium": {
+      "eyebrow": "Elite Genetics",
+      "title": "Premium Stallions",
+      "subtitle": "Discover the world's most successful breeding stallions.",
+      "browseDirectory": "Browse Stallion Directory →",
+      "age": "Age",
+      "studFee": "Stud Fee",
+      "viewStallion": "View Stallion",
+      "stallionImageAlt": "{name} — stallion photo"
+    },
+    "horseCard": {
+      "verified": "✔ VERIFIED",
+      "price": "Price",
+      "age": "Age",
+      "ageValue": "{age} yrs",
+      "height": "Height",
+      "heightValue": "{height} cm",
+      "gender": "Gender",
+      "level": "Level",
+      "location": "Location",
+      "view": "View →",
+      "imageAlt": "{name} — listing photo",
+      "genderUnknown": "Unknown"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageAria": "Page {page}"
     }
-  },
-  "search": {
-    "title": "Find Your Perfect Horse",
-    "subtitle": "Search and filter Europe's finest sport horses.",
-    "queryLabel": "Search",
-    "queryPlaceholder": "Search horse...",
-    "breed": "Breed",
-    "allBreeds": "All Breeds",
-    "allBreedsPlaceholder": "All breeds…",
-    "country": "Country",
-    "allCountries": "All Countries",
-    "allCountriesPlaceholder": "All countries…",
-    "gender": "Gender",
-    "allGenders": "All Genders",
-    "mare": "Mare",
-    "stallion": "Stallion",
-    "gelding": "Gelding",
-    "discipline": "Discipline",
-    "allDisciplines": "All Disciplines",
-    "allDisciplinesPlaceholder": "All disciplines…",
-    "verifiedOnly": "Verified Only",
-    "minPrice": "Min Price (€)",
-    "maxPrice": "Max Price (€)",
-    "minAge": "Min Age",
-    "maxAge": "Max Age",
-    "minHeight": "Min Height (cm)",
-    "maxHeight": "Max Height (cm)",
-    "yearsPlaceholder": "Years",
-    "cmPlaceholder": "cm",
-    "pricePlaceholderMin": "e.g. 30000",
-    "pricePlaceholderMax": "e.g. 60000",
-    "sortBy": "Sort By",
-    "sortDefault": "Default Order",
-    "sortPriceAsc": "Price: Low to High",
-    "sortPriceDesc": "Price: High to Low",
-    "sortAgeAsc": "Age: Youngest First",
-    "sortAgeDesc": "Age: Oldest First",
-    "sortHeightAsc": "Height: Low to High",
-    "sortHeightDesc": "Height: High to Low",
-    "resetFilters": "Reset Filters"
-  },
-  "featured": {
-    "eyebrow": "Premium Collection",
-    "title": "Featured Horses",
-    "subtitle": "Discover Europe's finest show jumping horses selected from trusted breeders and professional riders.",
-    "emptyIcon": "🐴",
-    "emptyTitle": "No horses found",
-    "emptyDescription": "Try changing your search."
-  },
-  "premium": {
-    "eyebrow": "Elite Genetics",
-    "title": "Premium Stallions",
-    "subtitle": "Discover the world's most successful breeding stallions.",
-    "browseDirectory": "Browse Stallion Directory →",
-    "age": "Age",
-    "studFee": "Stud Fee",
-    "viewStallion": "View Stallion",
-    "stallionImageAlt": "{name} — stallion photo"
-  },
-  "horseCard": {
-    "verified": "✔ VERIFIED",
-    "price": "Price",
-    "age": "Age",
-    "ageValue": "{age} yrs",
-    "height": "Height",
-    "heightValue": "{height} cm",
-    "gender": "Gender",
-    "level": "Level",
-    "location": "Location",
-    "view": "View →",
-    "imageAlt": "{name} — listing photo",
-    "genderUnknown": "Unknown"
-  },
-  "pagination": {
-    "previous": "Previous",
-    "next": "Next",
-    "pageAria": "Page {page}"
   }
 }
