@@ -26,7 +26,7 @@ export default function HeroSection({ stats }: Props) {
       <div className="relative mx-auto flex min-h-dvh w-full min-w-0 max-w-7xl items-center px-4 pb-16 pt-16 sm:px-6 sm:pb-20 md:pt-28 lg:px-8 lg:pt-32">
         <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
 
-          {/* LEFT — HERO CONTENT */}
+          {/* LEFT SIDE */}
           <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
               {t("hero.eyebrow")}
@@ -91,7 +91,7 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-          {/* RIGHT — HERO VIDEO */}
+          {/* RIGHT SIDE — VIDEO HERO */}
           <div className="flex min-w-0 justify-center">
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
@@ -103,11 +103,14 @@ export default function HeroSection({ stats }: Props) {
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
                 poster="/shabdiz-hero.png"
                 aria-label={t("hero.imageAlt")}
               >
-                <source src="/shabdiz-hero.mp4" type="video/mp4" />
+                <source
+                  src="/shabdiz-hero.mp4"
+                  type="video/mp4"
+                />
               </video>
 
             </div>
