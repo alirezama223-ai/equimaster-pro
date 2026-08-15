@@ -28,9 +28,9 @@ export default function AuthFormShell({
       <div className="text-center mb-8">
         <div className="mb-4 flex justify-center">
           <img
-            src={SHABDIZ_BRAND.mark}
+            src={SHABDIZ_BRAND.logo}
             alt={SHABDIZ_BRAND.name}
-            className="h-16 w-16 rounded-2xl"
+            className="h-16 w-auto max-w-[220px] object-contain"
           />
         </div>
         <p className="uppercase tracking-[6px] text-[#D4A437] text-xs font-semibold">
