@@ -22,6 +22,12 @@ function isStaticAsset(pathname: string) {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // API routes must bypass next-intl routing. The Shabdiz hero video is
+  // served by /api/hero-video and must reach the route handler unchanged.
+  if (pathname === "/api/hero-video" || pathname.startsWith("/api/hero-video/")) {
+    return NextResponse.next();
+  }
+
   // Never send static assets through next-intl or auth routing.
   // This is especially important for video files such as shabdiz-hero.mp4.
   if (isStaticAsset(pathname)) {
