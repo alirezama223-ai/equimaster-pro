@@ -90,12 +90,12 @@ export default function HeroSection({ stats }: Props) {
                 {!videoError && (
                   <video
                     className="absolute inset-0 block h-full w-full rounded-[35px] object-cover"
-                    src="/api/hero-video"
+                    src="/brand/shabdiz-hero.mp4"
                     autoPlay
                     muted
                     loop
                     playsInline
-                    preload="metadata"
+                    preload="auto"
                     poster="/emi.jpg"
                     onLoadedData={(event) => {
                       event.currentTarget.play().catch(() => undefined);
