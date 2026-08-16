@@ -91,30 +91,30 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-          {/* RIGHT SIDE — VIDEO HERO */}
-          <div className="flex min-w-0 justify-center">
-            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
+        {/* RIGHT SIDE — VIDEO HERO */}
+<div className="flex min-w-0 justify-center">
+  <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
-              <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
+    <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
-             <video
-  className="relative h-auto w-full rounded-[35px] object-cover shadow-2xl"
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  poster="/shabdiz-hero.png"
-  aria-label={t("hero.imageAlt")}
->
-  <source
-    src="/brand/shabdiz-hero.mp4"
-    type="video/mp4"
-  />
-</video>
+    <video
+      className="relative h-auto w-full rounded-[35px] object-cover shadow-2xl"
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      poster="/brand/shabdiz-hero.png"
+      aria-label={t("hero.imageAlt")}
+    >
+      <source
+        src="/brand/shabdiz-hero.mp4"
+        type="video/mp4"
+      />
+    </video>
 
-            </div>
-          </div>
+  </div>
+</div>
 
         </div>
       </div>
