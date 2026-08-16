@@ -3,8 +3,7 @@
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useEffect, useState } from "react";
-import { SHABDIZ_HERO_VIDEO } from "./hero-video";
+import { useState } from "react";
 
 type Props = {
   stats: HeroStats;
@@ -17,34 +16,7 @@ function formatStatCount(value: number, locale: string) {
 export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
   const locale = useLocale();
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [videoError, setVideoError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    let objectUrl: string | null = null;
-
-    fetch(SHABDIZ_HERO_VIDEO)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Hero video request failed: ${response.status}`);
-        }
-        return response.blob();
-      })
-      .then((blob) => {
-        if (cancelled) return;
-        objectUrl = URL.createObjectURL(blob);
-        setVideoSrc(objectUrl);
-      })
-      .catch(() => {
-        if (!cancelled) setVideoError(true);
-      });
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, []);
 
   return (
     <section
@@ -109,27 +81,27 @@ export default function HeroSection({ stats }: Props) {
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
               <div className="relative min-h-[320px] overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl sm:min-h-[420px] lg:min-h-[500px]">
-                {!videoError && videoSrc ? (
+                <img
+                  src="/emi.jpg"
+                  alt={t("hero.imageAlt")}
+                  className="absolute inset-0 h-full w-full rounded-[35px] object-cover"
+                />
+
+                {!videoError && (
                   <video
                     className="absolute inset-0 block h-full w-full rounded-[35px] object-cover"
-                    src={videoSrc}
+                    src="/api/hero-video"
                     autoPlay
                     muted
                     loop
                     playsInline
-                    preload="auto"
+                    preload="metadata"
                     poster="/emi.jpg"
                     onLoadedData={(event) => {
                       event.currentTarget.play().catch(() => undefined);
                     }}
                     onError={() => setVideoError(true)}
                     aria-label={t("hero.imageAlt")}
-                  />
-                ) : (
-                  <img
-                    src="/emi.jpg"
-                    alt={t("hero.imageAlt")}
-                    className="absolute inset-0 h-full w-full rounded-[35px] object-cover"
                   />
                 )}
               </div>
