@@ -2,10 +2,10 @@
 
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import ProtectedLink from "@/app/components/auth/ProtectedLink";
 
-type Props = { stats: HeroStats };
+type Props = {
+  stats: HeroStats;
+};
 
 function formatStatCount(value: number, locale: string) {
   return value.toLocaleString(locale);
@@ -21,6 +21,7 @@ export default function HeroSection({ stats }: Props) {
       data-home-hero=""
       className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white max-md:overflow-x-hidden"
     >
+      {/* Background glow */}
       <div className="absolute -left-40 top-40 h-64 w-64 rounded-full bg-[#D4A437]/10 blur-[140px] md:h-96 md:w-96" />
 
       <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#D4A437]/[0.06] blur-[180px] md:h-[500px] md:w-[500px]" />
@@ -28,7 +29,9 @@ export default function HeroSection({ stats }: Props) {
       <div className="relative mx-auto flex min-h-dvh w-full min-w-0 max-w-7xl items-center px-4 pb-16 pt-16 sm:px-6 sm:pb-20 md:pt-28 lg:px-8 lg:pt-32">
         <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
 
-          {/* LEFT SIDE */}
+          {/* =========================================================
+              LEFT SIDE
+          ========================================================= */}
           <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
               {t("hero.eyebrow")}
@@ -46,29 +49,33 @@ export default function HeroSection({ stats }: Props) {
               {t("hero.subtitle")}
             </p>
 
-            {/* HERO BUTTONS */}
+            {/* Buttons */}
             <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
-              <Link
-                href="/horses"
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
+              <button
+                type="button"
+                className="min-h-11 w-full rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.browseButton")}
-              </Link>
+              </button>
 
-              <ProtectedLink
-                href="/sell"
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
+              <button
+                type="button"
+                className="min-h-11 w-full rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.sellButton")}
-              </ProtectedLink>
+              </button>
             </div>
 
-            {/* STATS */}
+            {/* =========================================================
+                STATS
+            ========================================================= */}
             <div className="mt-8 grid grid-cols-2 gap-3 md:mt-16 md:flex md:flex-wrap md:gap-12">
+
               <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                 <h3 className="text-2xl font-bold md:text-4xl">
                   {formatStatCount(stats.activeListings, locale)}
                 </h3>
+
                 <p className="text-sm text-gray-400 md:text-base">
                   {t("hero.stats.sportHorses.label")}
                 </p>
@@ -78,6 +85,7 @@ export default function HeroSection({ stats }: Props) {
                 <h3 className="text-2xl font-bold md:text-4xl">
                   {formatStatCount(stats.activeStallions, locale)}
                 </h3>
+
                 <p className="text-sm text-gray-400 md:text-base">
                   {t("hero.stats.breeders.label")}
                 </p>
@@ -87,31 +95,45 @@ export default function HeroSection({ stats }: Props) {
                 <h3 className="text-2xl font-bold md:text-4xl">
                   {formatStatCount(stats.registeredBreeders, locale)}
                 </h3>
+
                 <p className="text-sm text-gray-400 md:text-base">
                   {t("hero.stats.countries.label")}
                 </p>
               </div>
+
             </div>
           </div>
 
-          {/* RIGHT SIDE — VIDEO HERO */}
+          {/* =========================================================
+              RIGHT SIDE — VIDEO HERO
+          ========================================================= */}
           <div className="flex min-w-0 justify-center">
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
+              {/* Golden glow behind media */}
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
+              {/* Video */}
               <video
                 className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
                 autoPlay
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
+                poster="/brand/shabdiz-hero.webp"
                 aria-label={t("hero.imageAlt")}
               >
                 <source
                   src="/brand/shabdiz-hero.mp4"
                   type="video/mp4"
+                />
+
+                {/* Browser fallback */}
+                <img
+                  src="/brand/shabdiz-hero.webp"
+                  alt={t("hero.imageAlt")}
+                  className="block h-auto w-full rounded-[35px] object-cover"
                 />
               </video>
 
