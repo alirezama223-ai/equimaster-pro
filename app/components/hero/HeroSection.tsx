@@ -92,24 +92,24 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-          {/* RIGHT SIDE — IMAGE HERO */}
-          <div className="flex min-w-0 justify-center">
-            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
+         {/* RIGHT SIDE — IMAGE HERO */}
+<div className="flex min-w-0 justify-center">
+  <div className="relative w-full max-w-lg sm:max-w-xl lg:max-w-none">
 
-              <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
+    <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
-              <Image
-                src="/brand/shabdiz-hero.webp"
-                alt={t("hero.imageAlt")}
-                width={1200}
-                height={900}
-                priority
-                sizes="(max-width: 1024px) 90vw, 600px"
-                className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
-              />
+    <Image
+      src="/brand/shabdiz-hero.webp"
+      alt={t("hero.imageAlt")}
+      width={1365}
+      height={768}
+      priority
+      sizes="(max-width: 1024px) 92vw, 700px"
+      className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
+    />
 
-            </div>
-          </div>
+  </div>
+</div>
 
         </div>
       </div>
