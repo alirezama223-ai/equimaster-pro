@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -91,26 +92,24 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-        {/* RIGHT SIDE — VIDEO HERO */}
-<div className="flex min-w-0 justify-center">
-  <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
+          {/* RIGHT SIDE — IMAGE HERO */}
+          <div className="flex min-w-0 justify-center">
+            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
-    <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
+              <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
-   <video
-  className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  aria-label={t("hero.imageAlt")}
->
-  <source
-    src="/brand/shabdiz-hero.mp4"
-    type="video/mp4"
-  />
-</video>
+              <Image
+                src="/brand/shabdiz-hero.webp"
+                alt={t("hero.imageAlt")}
+                width={1200}
+                height={900}
+                priority
+                sizes="(max-width: 1024px) 90vw, 600px"
+                className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
+              />
+
+            </div>
+          </div>
 
         </div>
       </div>
