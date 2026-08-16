@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import type { HeroStats } from "@/app/actions/home-stats";
-import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import ProtectedLink from "@/app/components/auth/ProtectedLink";
 
 type Props = { stats: HeroStats };
 
@@ -61,15 +62,21 @@ export default function HeroSection({ stats }: Props) {
             </div>
 
             {/* STATS */}
-            <div className="mt-8 grid grid-cols-2 gap-3 md:mt-16 md:flex md:flex-wrap md:gap-12">
-              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                <h3 className="text-2xl font-bold md:text-4xl">
-                  {formatStatCount(stats.activeListings, locale)}
-                </h3>
-                <p className="text-sm text-gray-400 md:text-base">
-                  {t("hero.stats.sportHorses.label")}
-                </p>
-              </div>
+            <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
+  <Link
+    href="/horses"
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
+  >
+    {t("hero.browseButton")}
+  </Link>
+
+  <ProtectedLink
+    href="/sell"
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
+  >
+    {t("hero.sellButton")}
+  </ProtectedLink>
+</div>
 
               <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                 <h3 className="text-2xl font-bold md:text-4xl">
