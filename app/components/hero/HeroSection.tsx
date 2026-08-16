@@ -2,6 +2,7 @@
 
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 
 type Props = {
   stats: HeroStats;
@@ -14,6 +15,7 @@ function formatStatCount(value: number, locale: string) {
 export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
   const locale = useLocale();
+  const [videoError, setVideoError] = useState(false);
 
   return (
     <section
@@ -33,6 +35,7 @@ export default function HeroSection({ stats }: Props) {
               LEFT SIDE
           ========================================================= */}
           <div className="min-w-0">
+
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
               {t("hero.eyebrow")}
             </p>
@@ -51,6 +54,7 @@ export default function HeroSection({ stats }: Props) {
 
             {/* Buttons */}
             <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
+
               <button
                 type="button"
                 className="min-h-11 w-full rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
@@ -64,6 +68,7 @@ export default function HeroSection({ stats }: Props) {
               >
                 {t("hero.sellButton")}
               </button>
+
             </div>
 
             {/* =========================================================
@@ -108,35 +113,49 @@ export default function HeroSection({ stats }: Props) {
               RIGHT SIDE — VIDEO HERO
           ========================================================= */}
           <div className="flex min-w-0 justify-center">
+
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
-              {/* Golden glow behind media */}
+              {/* Golden glow */}
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
-              {/* Video */}
-              <video
-                className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                poster="/brand/shabdiz-hero.webp"
-                aria-label={t("hero.imageAlt")}
-              >
-                <source
-                  src="/brand/shabdiz-hero.mp4"
-                  type="video/mp4"
-                />
+              {/* Media container */}
+              <div className="relative overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl">
 
-                {/* Browser fallback */}
+                {/* -------------------------------------------------
+                    FALLBACK IMAGE
+                    همیشه زیر ویدیو قرار دارد
+                ------------------------------------------------- */}
                 <img
                   src="/brand/shabdiz-hero.webp"
                   alt={t("hero.imageAlt")}
                   className="block h-auto w-full rounded-[35px] object-cover"
                 />
-              </video>
 
+                {/* -------------------------------------------------
+                    VIDEO
+                    فقط اگر خطا نداشته باشد نمایش داده می‌شود
+                ------------------------------------------------- */}
+                {!videoError && (
+                  <video
+                    className="absolute inset-0 block h-full w-full rounded-[35px] object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    poster="/brand/shabdiz-hero.webp"
+                    onError={() => setVideoError(true)}
+                    aria-label={t("hero.imageAlt")}
+                  >
+                    <source
+                      src="/brand/shabdiz-hero.mp4"
+                      type="video/mp4"
+                    />
+                  </video>
+                )}
+
+              </div>
             </div>
           </div>
 
