@@ -26,7 +26,7 @@ export default async function HorseListingHeader({
   return (
     <header className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4A437]">
           {horse.discipline}
         </p>
         <h1 className="mt-2 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
@@ -57,8 +57,8 @@ export default async function HorseListingHeader({
       </div>
 
       <div className="flex w-full shrink-0 flex-col items-stretch gap-4 lg:w-auto lg:min-w-[280px] lg:max-w-sm lg:items-end">
-        <div className="rounded-2xl border border-blue-500/25 bg-gradient-to-br from-[#132038] to-[#0f1729] px-5 py-4 text-left shadow-[0_8px_32px_rgba(37,99,235,0.12)] lg:text-right">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-300/90">
+        <div className="rounded-2xl border border-[#D4A437]/30 bg-gradient-to-br from-[#132038] to-[#0f1729] px-5 py-4 text-left shadow-[0_8px_32px_rgba(212,164,55,0.12)] lg:text-right">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#F7E1A1]">
             {t("info.askingPrice")}
           </p>
           <p className="mt-1 text-3xl font-black leading-none text-white sm:text-4xl">{horse.price}</p>

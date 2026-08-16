@@ -15,6 +15,12 @@ export type EntitySeoTemplates = {
   twitterDescription: string;
 };
 
+const PUBLIC_BRAND = "SHABDIZ";
+
+function brandify(value: string): string {
+  return value.replace(/EquiMaster Pro|EquiMaster/g, PUBLIC_BRAND);
+}
+
 function toAbsoluteUrl(url: string, baseUrl: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url;
@@ -24,7 +30,7 @@ function toAbsoluteUrl(url: string, baseUrl: string): string {
 }
 
 export function fillSeoTemplate(template: string, values: Record<string, string>): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
+  return brandify(template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? ""));
 }
 
 export function buildLanguageAlternates(pathname: string, baseUrl: string): Record<string, string> {
@@ -49,7 +55,7 @@ export function buildEntityMetadata(params: {
   twitterDescription: string;
   pathname: string;
   locale: AppLocale;
-  siteName: string;
+  siteName?: string;
   images?: string[];
   imageAlt?: string;
   robots?: Metadata["robots"];
@@ -61,21 +67,22 @@ export function buildEntityMetadata(params: {
   const absoluteImages = (params.images ?? [])
     .filter(Boolean)
     .map((url) => toAbsoluteUrl(url, baseUrl));
+  const siteName = PUBLIC_BRAND;
 
   return {
-    title: params.title,
-    description: params.description,
-    keywords: params.keywords,
+    title: brandify(params.title),
+    description: brandify(params.description),
+    keywords: brandify(params.keywords),
     alternates: {
       canonical: canonicalUrl,
       languages: buildLanguageAlternates(params.pathname, baseUrl),
     },
     openGraph: {
-      title: params.openGraphTitle,
-      description: params.openGraphDescription,
+      title: brandify(params.openGraphTitle),
+      description: brandify(params.openGraphDescription),
       type: "website",
       url: canonicalUrl,
-      siteName: params.siteName,
+      siteName,
       locale: params.locale,
       alternateLocale: alternateLocales,
       ...(absoluteImages.length > 0
@@ -89,8 +96,8 @@ export function buildEntityMetadata(params: {
     },
     twitter: {
       card: absoluteImages.length > 0 ? "summary_large_image" : "summary",
-      title: params.twitterTitle,
-      description: params.twitterDescription,
+      title: brandify(params.twitterTitle),
+      description: brandify(params.twitterDescription),
       ...(absoluteImages.length > 0 ? { images: [absoluteImages[0]] } : {}),
     },
     robots: params.robots ?? { index: true, follow: true },

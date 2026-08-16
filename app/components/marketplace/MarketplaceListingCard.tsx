@@ -61,7 +61,7 @@ export default function MarketplaceListingCard({
 
   return (
     <article className="group min-w-0 max-w-full">
-      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f1729] shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-[transform,box-shadow,border-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:border-blue-500/30 [@media(hover:hover)]:hover:shadow-[0_20px_48px_rgba(0,0,0,0.45),0_0_0_1px_rgba(59,130,246,0.12)]">
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0f1729] shadow-[0_8px_32px_rgba(0,0,0,0.35)] transition-[transform,box-shadow,border-color] duration-300 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:border-[#D4A437]/35 [@media(hover:hover)]:hover:shadow-[0_20px_48px_rgba(0,0,0,0.45),0_0_0_1px_rgba(212,164,55,0.12)]">
         <Link href={detailPath} className="relative block min-w-0 overflow-hidden">
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#1a2332]">
             <Image
@@ -79,7 +79,7 @@ export default function MarketplaceListingCard({
               <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
                 {featured ? (
                   <Badge title={t("browse.sortOptions.featured")}>
-                    <span className="mr-1 shrink-0 text-amber-400" aria-hidden="true">
+                    <span className="mr-1 shrink-0 text-[#D4A437]" aria-hidden="true">
                       ★
                     </span>
                     <span className="truncate">{t("browse.sortOptions.featured")}</span>
@@ -94,8 +94,8 @@ export default function MarketplaceListingCard({
             </div>
 
             <div className="absolute inset-x-0 bottom-0 flex items-end justify-end bg-gradient-to-t from-[#0f1729] via-[#0f1729]/85 to-transparent px-3 pb-3 pt-12 sm:px-4 sm:pb-4">
-              <p className="max-w-full rounded-xl border border-blue-400/35 bg-[#0f1729]/95 px-3 py-2 text-right shadow-[0_4px_24px_rgba(37,99,235,0.18)] backdrop-blur-md">
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-blue-300/90">
+              <p className="max-w-full rounded-xl border border-[#D4A437]/35 bg-[#0f1729]/95 px-3 py-2 text-right shadow-[0_4px_24px_rgba(212,164,55,0.12)] backdrop-blur-md">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#F7E1A1]">
                   {t("horseCard.price")}
                 </span>
                 <span className="block max-w-[220px] truncate text-lg font-bold leading-tight text-white sm:max-w-none sm:text-xl">
@@ -108,7 +108,7 @@ export default function MarketplaceListingCard({
 
         <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-5">
           <Link href={detailPath} className="min-w-0">
-            <h3 className="truncate text-xl font-bold leading-tight tracking-tight text-white transition-colors duration-200 [@media(hover:hover)]:group-hover:text-blue-300 sm:text-2xl">
+            <h3 className="truncate text-xl font-bold leading-tight tracking-tight text-white transition-colors duration-200 [@media(hover:hover)]:group-hover:text-[#F7E1A1] sm:text-2xl">
               {horse.name}
             </h3>
             <p className="mt-1 truncate text-sm text-gray-400">{horse.breed}</p>
@@ -140,7 +140,7 @@ export default function MarketplaceListingCard({
                     <span className="truncate">{horse.country}</span>
                   )}
                   {horse.distanceKm != null ? (
-                    <span className="text-xs font-medium text-blue-300">
+                    <span className="text-xs font-medium text-[#F7E1A1]">
                       {t("horseCard.distanceAway", { km: horse.distanceKm })}
                     </span>
                   ) : null}
@@ -152,7 +152,7 @@ export default function MarketplaceListingCard({
 
           <div className="mt-4 flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.06] bg-[#131d30]/80 px-3 py-2.5">
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600/80 to-blue-800/80 text-xs font-bold text-white ring-2 ring-white/10"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#0B1E3A] to-[#D4A437]/80 text-xs font-bold text-white ring-2 ring-[#D4A437]/15"
               aria-hidden="true"
             >
               {sellerInitials(sellerLabel)}
@@ -196,7 +196,7 @@ export default function MarketplaceListingCard({
 
           <Link
             href={detailPath}
-            className="mt-3 flex w-full min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 [@media(hover:hover)]:hover:bg-blue-500"
+            className="mt-3 flex w-full min-h-11 items-center justify-center rounded-xl bg-[#D4A437] px-4 py-2.5 text-sm font-bold text-[#081223] transition-colors duration-200 [@media(hover:hover)]:hover:bg-[#F7E1A1]"
           >
             {t("horseCard.view")}
           </Link>

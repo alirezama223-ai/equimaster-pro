@@ -12,10 +12,12 @@ import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 
 export type HorseListingSeoConfig = {
-  siteName: string;
+  siteName?: string;
   imageAltTemplate: string;
   templates?: EntitySeoTemplates;
 };
+
+const PUBLIC_BRAND = "SHABDIZ";
 
 function toAbsoluteUrl(url: string, baseUrl: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -35,7 +37,7 @@ export function buildHorseListingMetadata(
   locale: AppLocale = routing.defaultLocale,
   seoConfig?: HorseListingSeoConfig
 ): Metadata {
-  const siteName = seoConfig?.siteName ?? "EquiMaster Pro";
+  const siteName = PUBLIC_BRAND;
   const imageAltTemplate =
     seoConfig?.imageAltTemplate ?? "{name} — {discipline} sport horse for sale";
   const imageAlt = imageAltTemplate

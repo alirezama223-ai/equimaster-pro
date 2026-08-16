@@ -11,15 +11,9 @@
     "sellButton": "Sell Horse",
     "imageAlt": "Sport horse hero image",
     "stats": {
-      "sportHorses": {
-        "label": "Active Listings"
-      },
-      "breeders": {
-        "label": "Active Stallions"
-      },
-      "countries": {
-        "label": "Registered Breeders"
-      }
+      "sportHorses": {"label": "Active Listings"},
+      "breeders": {"label": "Active Stallions"},
+      "countries": {"label": "Registered Breeders"}
     }
   },
   "search": {

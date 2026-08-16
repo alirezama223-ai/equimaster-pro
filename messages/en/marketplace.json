@@ -204,20 +204,107 @@
     "listingCount": "{count, plural, =1 {1 listing} other {# listings}}",
     "metrics": "Views {views} · Favorites {favorites} · Inquiries {inquiries}",
     "sections": {
-      "drafts": {"title": "Drafts", "description": "Finish and publish listings when they are ready for buyers."},
-      "published": {"title": "Published", "description": "Live listings visible on the marketplace."},
-      "sold": {"title": "Sold", "description": "Completed sales kept for your records."},
-      "archived": {"title": "Archived", "description": "Hidden listings you can restore or delete."}
+      "drafts": {
+        "title": "Drafts",
+        "description": "Finish and publish listings when they are ready for buyers."
+      },
+      "published": {
+        "title": "Published",
+        "description": "Live listings visible on the marketplace."
+      },
+      "sold": {
+        "title": "Sold",
+        "description": "Completed sales kept for your records."
+      },
+      "archived": {
+        "title": "Archived",
+        "description": "Hidden listings you can restore or delete."
+      }
     },
-    "statusLabels": {"active": "Published", "draft": "Draft", "sold": "Sold", "archived": "Archived"},
-    "preview": {"eyebrow": "Listing Preview", "subtitle": "Review exactly how buyers will see this listing before publishing.", "backToEdit": "Back to edit", "publish": "Publish listing", "publishing": "Publishing...", "viewPublic": "View public page"},
-    "edit": {"eyebrow": "Seller Dashboard", "title": "Edit listing", "subtitle": "Update listing details, media, and seller information. Horse data syncs to the linked pedigree record."}
+    "statusLabels": {
+      "active": "Published",
+      "draft": "Draft",
+      "sold": "Sold",
+      "archived": "Archived"
+    },
+    "preview": {
+      "eyebrow": "Listing Preview",
+      "subtitle": "Review exactly how buyers will see this listing before publishing.",
+      "backToEdit": "Back to edit",
+      "publish": "Publish listing",
+      "publishing": "Publishing...",
+      "viewPublic": "View public page"
+    },
+    "edit": {
+      "eyebrow": "Seller Dashboard",
+      "title": "Edit listing",
+      "subtitle": "Update listing details, media, and seller information. Horse data syncs to the linked pedigree record."
+    }
   },
-  "actions": {"view": "View", "edit": "Edit", "duplicate": "Duplicate", "publish": "Publish", "unpublish": "Unpublish", "sold": "Mark as sold", "archive": "Archive", "restore": "Restore", "delete": "Delete", "manageListing": "Manage listing", "listingActions": "Listing actions", "closeActions": "Close actions", "close": "Close", "confirmDelete": "Delete this listing permanently? This cannot be undone.", "confirmDefault": "Are you sure?"},
-  "trainingSummary": {"title": "Training summary", "subtitle": "Verified platform training activity for this horse.", "empty": "No published training history is available for this horse yet.", "sessions": "Sessions", "completed": "Completed", "avgRating": "Average rating", "currentStreak": "Current streak", "streakDays": "{days} days", "lastSession": "Last session: {date}"},
-  "healthSummary": {"title": "Health summary", "subtitle": "Wellness overview captured at publish time.", "empty": "Health records have not been published for this listing yet.", "wellnessScore": "Wellness score", "status": "Status", "activeInjuries": "Active injuries", "overdueVaccines": "Overdue vaccines", "latestCheck": "Latest check: {date}"},
-  "share": {"label": "Share listing", "copied": "Link copied"},
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "sold": "Mark as sold",
+    "archive": "Archive",
+    "restore": "Restore",
+    "delete": "Delete",
+    "manageListing": "Manage listing",
+    "listingActions": "Listing actions",
+    "closeActions": "Close actions",
+    "close": "Close",
+    "confirmDelete": "Delete this listing permanently? This cannot be undone.",
+    "confirmDefault": "Are you sure?"
+  },
+  "trainingSummary": {
+    "title": "Training summary",
+    "subtitle": "Verified platform training activity for this horse.",
+    "empty": "No published training history is available for this horse yet.",
+    "sessions": "Sessions",
+    "completed": "Completed",
+    "avgRating": "Average rating",
+    "currentStreak": "Current streak",
+    "streakDays": "{days} days",
+    "lastSession": "Last session: {date}"
+  },
+  "healthSummary": {
+    "title": "Health summary",
+    "subtitle": "Wellness overview captured at publish time.",
+    "empty": "Health records have not been published for this listing yet.",
+    "wellnessScore": "Wellness score",
+    "status": "Status",
+    "activeInjuries": "Active injuries",
+    "overdueVaccines": "Overdue vaccines",
+    "latestCheck": "Latest check: {date}"
+  },
+  "share": {
+    "label": "Share listing",
+    "copied": "Link copied"
+  },
   "ownerPreview": "Owner preview · {status}",
-  "listingPage": {"breadcrumbMarketplace": "Marketplace", "breadcrumbHorses": "Horses", "defaultTitle": "Horse listing"},
-  "errors": {"notAuthenticated": "You must be signed in to perform this action.", "publishNotFound": "Listing not found or you do not have permission to publish it.", "publishNoPhotos": "Add at least one photo before publishing this listing.", "publishNoHorseRecord": "This listing must be linked to a horse record before publishing.", "publishFailed": "Publish failed. Please try again.", "publishQuotaExceeded": "You have reached your active listing limit. Upgrade your plan to publish more horses.", "unpublishFailed": "Unpublish failed. Please try again.", "markSoldFailed": "Unable to mark listing as sold.", "archiveFailed": "Archive failed. Please try again.", "restoreNotFound": "Listing not found or cannot be restored.", "duplicateNotFound": "Listing not found or you do not have permission to duplicate it.", "duplicatePhotosFailed": "Unable to duplicate listing photos.", "duplicateFinalizeFailed": "Unable to finalize duplicated listing.", "duplicateFailed": "Duplicate failed. Please try again.", "deleteFailed": "Delete failed. Please try again.", "generic": "Something went wrong. Please try again."}
+  "listingPage": {
+    "breadcrumbMarketplace": "Marketplace",
+    "breadcrumbHorses": "Horses",
+    "defaultTitle": "Horse listing"
+  },
+  "errors": {
+    "notAuthenticated": "You must be signed in to perform this action.",
+    "publishNotFound": "Listing not found or you do not have permission to publish it.",
+    "publishNoPhotos": "Add at least one photo before publishing this listing.",
+    "publishNoHorseRecord": "This listing must be linked to a horse record before publishing.",
+    "publishFailed": "Publish failed. Please try again.",
+    "publishQuotaExceeded": "You have reached your active listing limit. Upgrade your plan to publish more horses.",
+    "unpublishFailed": "Unpublish failed. Please try again.",
+    "markSoldFailed": "Unable to mark listing as sold.",
+    "archiveFailed": "Archive failed. Please try again.",
+    "restoreNotFound": "Listing not found or cannot be restored.",
+    "duplicateNotFound": "Listing not found or you do not have permission to duplicate it.",
+    "duplicatePhotosFailed": "Unable to duplicate listing photos.",
+    "duplicateFinalizeFailed": "Unable to finalize duplicated listing.",
+    "duplicateFailed": "Duplicate failed. Please try again.",
+    "deleteFailed": "Delete failed. Please try again.",
+    "generic": "Something went wrong. Please try again."
+  }
 }
