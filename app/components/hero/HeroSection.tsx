@@ -25,8 +25,7 @@ export default function HeroSection({ stats }: Props) {
       <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#D4A437]/[0.06] blur-[180px] md:h-[500px] md:w-[500px]" />
 
       <div className="relative mx-auto flex min-h-dvh w-full min-w-0 max-w-7xl items-center px-4 pb-16 pt-16 sm:px-6 sm:pb-20 md:pt-28 lg:px-8 lg:pt-32">
-        <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
-
+        <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
           {/* LEFT SIDE */}
           <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
@@ -92,11 +91,11 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-         {/* RIGHT SIDE — IMAGE HERO */}
-<div className="flex min-w-0 justify-center">
-  <div className="relative w-full max-w-lg sm:max-w-xl lg:max-w-none">
+        {/* RIGHT SIDE — IMAGE HERO */}
+<div className="flex min-w-0 justify-center lg:-mr-16">
+  <div className="relative w-full max-w-none">
 
-    <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
+    <div className="absolute inset-0 scale-105 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
     <Image
       src="/brand/shabdiz-hero.webp"
@@ -104,7 +103,7 @@ export default function HeroSection({ stats }: Props) {
       width={1365}
       height={768}
       priority
-      sizes="(max-width: 1024px) 92vw, 700px"
+      sizes="(max-width: 1024px) 100vw, 800px"
       className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
     />
 
