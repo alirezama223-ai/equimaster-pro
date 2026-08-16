@@ -68,7 +68,7 @@ export default function Navbar() {
           <img
             src="/brand/shabdiz-logo.jpg"
             alt={SHABDIZ_BRAND.name}
-            className="h-14 w-auto max-w-[14rem] object-contain sm:h-14 2xl:h-16"
+            className="h-16 w-auto max-w-[16rem] object-contain sm:h-16 2xl:h-[4.5rem]"
           />
         </Link>
 
