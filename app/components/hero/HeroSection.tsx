@@ -89,15 +89,18 @@ export default function HeroSection({ stats }: Props) {
                     loop
                     playsInline
                     preload="metadata"
+                    poster="/emi.jpg"
                     onError={() => setVideoError(true)}
                     aria-label={t("hero.imageAlt")}
                   >
                     <source src="/brand/shabdiz-hero.mp4" type="video/mp4" />
                   </video>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#081223] text-center text-[#F7E1A1]">
-                    <span className="px-8 text-sm font-medium opacity-80">{t("hero.imageAlt")}</span>
-                  </div>
+                  <img
+                    src="/emi.jpg"
+                    alt={t("hero.imageAlt")}
+                    className="absolute inset-0 h-full w-full rounded-[35px] object-cover"
+                  />
                 )}
               </div>
             </div>
