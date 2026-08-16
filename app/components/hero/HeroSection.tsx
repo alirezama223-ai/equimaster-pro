@@ -3,6 +3,7 @@
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useState } from "react";
 
 type Props = {
   stats: HeroStats;
@@ -15,6 +16,7 @@ function formatStatCount(value: number, locale: string) {
 export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
   const locale = useLocale();
+  const [videoError, setVideoError] = useState(false);
 
   return (
     <section
@@ -51,7 +53,6 @@ export default function HeroSection({ stats }: Props) {
               >
                 {t("hero.browseButton")}
               </Link>
-
               <Link
                 href="/sell"
                 className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
@@ -79,12 +80,25 @@ export default function HeroSection({ stats }: Props) {
           <div className="flex min-w-0 justify-center">
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl">
-                <img
-                  src="/emi.jpg"
-                  alt={t("hero.imageAlt")}
-                  className="block h-auto w-full rounded-[35px] object-cover"
-                />
+              <div className="relative min-h-[320px] overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl sm:min-h-[420px] lg:min-h-[500px]">
+                {!videoError ? (
+                  <video
+                    className="absolute inset-0 block h-full w-full rounded-[35px] object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    onError={() => setVideoError(true)}
+                    aria-label={t("hero.imageAlt")}
+                  >
+                    <source src="/brand/shabdiz-hero.mp4" type="video/mp4" />
+                  </video>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#081223] text-center text-[#F7E1A1]">
+                    <span className="px-8 text-sm font-medium opacity-80">{t("hero.imageAlt")}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
