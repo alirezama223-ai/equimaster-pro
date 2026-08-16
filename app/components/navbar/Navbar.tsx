@@ -21,6 +21,7 @@ export default function Navbar() {
 
   return (
     <header className="glass-surface fixed top-0 left-0 z-50 isolate w-full border-b border-white/10">
+      {/* MOBILE NAVBAR */}
       <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 md:hidden">
         <Link
           href="/"
@@ -28,7 +29,7 @@ export default function Navbar() {
           className="inline-flex min-h-11 min-w-0 shrink-0 items-center whitespace-nowrap transition"
         >
           <img
-            src={SHABDIZ_BRAND.logo}
+            src="/shabdiz-logo.png.jpg"
             alt={SHABDIZ_BRAND.name}
             className="h-10 w-auto max-w-[11rem] object-contain"
           />
@@ -57,6 +58,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* DESKTOP NAVBAR */}
       <div className="mx-auto hidden h-16 min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-20 sm:gap-4 sm:px-6 md:flex lg:px-8">
         <Link
           href="/"
@@ -64,7 +66,7 @@ export default function Navbar() {
           className="inline-flex min-h-11 min-w-0 items-center shrink-0 transition"
         >
           <img
-            src={SHABDIZ_BRAND.logo}
+            src="/shabdiz-logo.png.jpg"
             alt={SHABDIZ_BRAND.name}
             className="h-14 w-auto max-w-[14rem] object-contain sm:h-14 2xl:h-16"
           />
@@ -83,7 +85,11 @@ export default function Navbar() {
               {t(link.labelKey)}
             </Link>
           ))}
-          <Link href="#" className="text-sm font-medium text-gray-300 hover:text-white transition">
+
+          <Link
+            href="#"
+            className="text-sm font-medium text-gray-300 transition hover:text-white"
+          >
             {t("about")}
           </Link>
         </nav>
@@ -112,8 +118,14 @@ export default function Navbar() {
             >
               <path strokeLinecap="round" d="M12 5v14M5 12h14" />
             </svg>
-            <span className="hidden sm:inline lg:hidden">{t("sell")}</span>
-            <span className="hidden lg:inline">{t("sellAHorse")}</span>
+
+            <span className="hidden sm:inline lg:hidden">
+              {t("sell")}
+            </span>
+
+            <span className="hidden lg:inline">
+              {t("sellAHorse")}
+            </span>
           </ProtectedLink>
 
           <div className="hidden sm:block">
