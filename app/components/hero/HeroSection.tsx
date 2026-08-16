@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import type { HeroStats } from "@/app/actions/home-stats";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ProtectedLink from "@/app/components/auth/ProtectedLink";
 
@@ -26,7 +26,8 @@ export default function HeroSection({ stats }: Props) {
       <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#D4A437]/[0.06] blur-[180px] md:h-[500px] md:w-[500px]" />
 
       <div className="relative mx-auto flex min-h-dvh w-full min-w-0 max-w-7xl items-center px-4 pb-16 pt-16 sm:px-6 sm:pb-20 md:pt-28 lg:px-8 lg:pt-32">
-        <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
+        <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
+
           {/* LEFT SIDE */}
           <div className="min-w-0">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
@@ -45,38 +46,33 @@ export default function HeroSection({ stats }: Props) {
               {t("hero.subtitle")}
             </p>
 
+            {/* HERO BUTTONS */}
             <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
-              <button
-                type="button"
-                className="min-h-11 w-full rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
+              <Link
+                href="/horses"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.browseButton")}
-              </button>
+              </Link>
 
-              <button
-                type="button"
-                className="min-h-11 w-full rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
+              <ProtectedLink
+                href="/sell"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.sellButton")}
-              </button>
+              </ProtectedLink>
             </div>
 
             {/* STATS */}
-            <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
-  <Link
-    href="/horses"
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
-  >
-    {t("hero.browseButton")}
-  </Link>
-
-  <ProtectedLink
-    href="/sell"
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
-  >
-    {t("hero.sellButton")}
-  </ProtectedLink>
-</div>
+            <div className="mt-8 grid grid-cols-2 gap-3 md:mt-16 md:flex md:flex-wrap md:gap-12">
+              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                <h3 className="text-2xl font-bold md:text-4xl">
+                  {formatStatCount(stats.activeListings, locale)}
+                </h3>
+                <p className="text-sm text-gray-400 md:text-base">
+                  {t("hero.stats.sportHorses.label")}
+                </p>
+              </div>
 
               <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                 <h3 className="text-2xl font-bold md:text-4xl">
@@ -98,24 +94,29 @@ export default function HeroSection({ stats }: Props) {
             </div>
           </div>
 
-        {/* RIGHT SIDE — IMAGE HERO */}
-<div className="flex min-w-0 justify-center lg:-mr-16">
-  <div className="relative w-full max-w-none">
+          {/* RIGHT SIDE — VIDEO HERO */}
+          <div className="flex min-w-0 justify-center">
+            <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
 
-    <div className="absolute inset-0 scale-105 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
+              <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
 
-    <Image
-      src="/brand/shabdiz-hero.webp"
-      alt={t("hero.imageAlt")}
-      width={1365}
-      height={768}
-      priority
-      sizes="(max-width: 1024px) 100vw, 800px"
-      className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
-    />
+              <video
+                className="relative block h-auto w-full rounded-[35px] object-cover shadow-2xl"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                aria-label={t("hero.imageAlt")}
+              >
+                <source
+                  src="/brand/shabdiz-hero.mp4"
+                  type="video/mp4"
+                />
+              </video>
 
-  </div>
-</div>
+            </div>
+          </div>
 
         </div>
       </div>
