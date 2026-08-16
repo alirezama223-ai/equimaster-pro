@@ -1,5 +1,5 @@
 import createIntlMiddleware from "next-intl/middleware";
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 import { AUTH_CALLBACK_PATH } from "@/app/lib/auth/paths";
 import { updateSession } from "@/app/lib/supabase/proxy";
@@ -13,8 +13,22 @@ function isAuthCallbackPath(pathname: string) {
   );
 }
 
+function isStaticAsset(pathname: string) {
+  return /\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm|mov|avif|woff|woff2|ttf|otf)$/i.test(
+    pathname
+  );
+}
+
 export async function proxy(request: NextRequest) {
-  if (isAuthCallbackPath(request.nextUrl.pathname)) {
+  const pathname = request.nextUrl.pathname;
+
+  // Never send static assets through next-intl or auth routing.
+  // This is especially important for video files such as shabdiz-hero.mp4.
+  if (isStaticAsset(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (isAuthCallbackPath(pathname)) {
     return updateSession(request);
   }
 
@@ -29,6 +43,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm|mov|avif|woff|woff2|ttf|otf)$).*)",
   ],
 };
