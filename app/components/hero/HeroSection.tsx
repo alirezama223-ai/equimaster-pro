@@ -4,6 +4,7 @@ import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useState } from "react";
+import { SHABDIZ_HERO_VIDEO } from "./hero-video";
 
 type Props = {
   stats: HeroStats;
@@ -88,12 +89,12 @@ export default function HeroSection({ stats }: Props) {
                     muted
                     loop
                     playsInline
-                    preload="metadata"
+                    preload="auto"
                     poster="/emi.jpg"
                     onError={() => setVideoError(true)}
                     aria-label={t("hero.imageAlt")}
                   >
-                    <source src="/brand/shabdiz-hero.mp4" type="video/mp4" />
+                    <source src={SHABDIZ_HERO_VIDEO} type="video/mp4" />
                   </video>
                 ) : (
                   <img
