@@ -2,6 +2,7 @@
 
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 
 type Props = {
   stats: HeroStats;
@@ -14,6 +15,7 @@ function formatStatCount(value: number, locale: string) {
 export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
   const locale = useLocale();
+  const [videoError, setVideoError] = useState(false);
 
   return (
     <section
@@ -108,7 +110,7 @@ export default function HeroSection({ stats }: Props) {
           </div>
 
           {/* =========================================================
-              RIGHT SIDE — STATIC HERO IMAGE
+              RIGHT SIDE — VIDEO HERO
           ========================================================= */}
           <div className="flex min-w-0 justify-center">
 
@@ -119,13 +121,32 @@ export default function HeroSection({ stats }: Props) {
 
               {/* Media container */}
               <div className="relative overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl">
+
+                {/* Static fallback image */}
                 <img
                   src="/brand/shabdiz-hero.webp"
                   alt={t("hero.imageAlt")}
                   className="block h-auto w-full rounded-[35px] object-cover"
                 />
-              </div>
 
+                {/* Video overlay */}
+                {!videoError && (
+                  <video
+                    className="absolute inset-0 block h-full w-full rounded-[35px] object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    poster="/brand/shabdiz-hero.webp"
+                    onError={() => setVideoError(true)}
+                    aria-label={t("hero.imageAlt")}
+                  >
+                    <source src="/brand/shabdiz-hero.mp4" type="video/mp4" />
+                  </video>
+                )}
+
+              </div>
             </div>
           </div>
 
