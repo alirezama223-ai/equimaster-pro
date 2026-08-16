@@ -104,11 +104,11 @@ export default function HeroSection({ stats }: Props) {
                 loop
                 playsInline
                 preload="auto"
-                poster="/shabdiz-hero.png"
+                poster="/brand/shabdiz-hero.png"
                 aria-label={t("hero.imageAlt")}
               >
                 <source
-                  src="/shabdiz-hero.mp4"
+                src="/brand/shabdiz-hero.mp4"
                   type="video/mp4"
                 />
               </video>
