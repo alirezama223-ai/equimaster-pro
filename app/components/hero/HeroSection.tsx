@@ -2,6 +2,7 @@
 
 import type { HeroStats } from "@/app/actions/home-stats";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 
 type Props = {
@@ -55,19 +56,19 @@ export default function HeroSection({ stats }: Props) {
             {/* Buttons */}
             <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
 
-              <button
-                type="button"
-                className="min-h-11 w-full rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
+              <Link
+                href="/horses"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.browseButton")}
-              </button>
+              </Link>
 
-              <button
-                type="button"
-                className="min-h-11 w-full rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
+              <Link
+                href="/sell"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
               >
                 {t("hero.sellButton")}
-              </button>
+              </Link>
 
             </div>
 
