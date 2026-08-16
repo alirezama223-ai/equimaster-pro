@@ -106,7 +106,7 @@ export default function HeroSection({ stats }: Props) {
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 aria-label={t("hero.imageAlt")}
               >
                 <source
