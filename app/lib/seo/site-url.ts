@@ -4,5 +4,5 @@ export function getSiteBaseUrl(): string {
     return configured.replace(/\/$/, "");
   }
 
-  return "https://equimaster.pro";
+  return "https://www.shabdizhorse.com";
 }
