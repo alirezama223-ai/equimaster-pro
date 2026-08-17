@@ -121,7 +121,7 @@ export default function HeroSection({ stats }: Props) {
           <div className="flex min-w-0 justify-center">
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
-              <div className="relative min-h-[320px] overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl sm:min-h-[420px] lg:min-h-[500px]">
+              <div className="relative aspect-video w-full overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl">
                 <img
                   src="/emi.jpg"
                   alt={t("hero.imageAlt")}
