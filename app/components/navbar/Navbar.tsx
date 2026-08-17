@@ -11,7 +11,7 @@ import NotificationBell from "@/app/components/events/NotificationBell";
 import LocaleSwitcher from "@/app/components/navbar/LocaleSwitcher";
 import { DESKTOP_INLINE_NAV_LINKS, navLinkClassName } from "@/app/components/navbar/navLinks";
 
-const BRAND_LOGO_SRC = "/shabdiz-logo.svg";
+const BRAND_LOGO_SRC = "/brand/shabdiz-logo.png";
 
 export default function Navbar() {
   const t = useTranslations("nav");
