@@ -131,7 +131,7 @@ export default function HeroSection({ stats }: Props) {
                 <video
                   ref={videoRef}
                   className="absolute inset-0 z-10 block h-full w-full rounded-[35px] object-cover"
-                  src="/api/hero-video?v=20260817"
+                  src="/brand/shabdiz-hero.mp4"
                   autoPlay
                   muted
                   loop
