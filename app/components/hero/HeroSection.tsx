@@ -17,7 +17,23 @@ export default function HeroSection({ stats }: Props) {
   const t = useTranslations("home");
   const locale = useLocale();
   const [videoError, setVideoError] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const startPlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+
+    video.play().then(() => {
+      setVideoError(false);
+      setIsPlaying(true);
+    }).catch(() => {
+      setIsPlaying(false);
+    });
+  };
 
   useEffect(() => {
     const video = videoRef.current;
@@ -26,44 +42,79 @@ export default function HeroSection({ stats }: Props) {
     video.muted = true;
     video.defaultMuted = true;
 
-    const startPlayback = () => {
-      video.play().catch(() => {
-        // Chromium can delay autoplay until the element has completed loading.
-        // Retry once after the next event loop tick; the video is muted.
-        window.setTimeout(() => video.play().catch(() => undefined), 150);
-      });
-    };
+    const tryPlay = () => startPlayback();
 
     if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-      startPlayback();
-    } else {
-      video.addEventListener("canplay", startPlayback, { once: true });
+      tryPlay();
     }
 
-    return () => video.removeEventListener("canplay", startPlayback);
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("play", () => setIsPlaying(true));
+    video.addEventListener("pause", () => setIsPlaying(false));
+
+    return () => {
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("loadeddata", tryPlay);
+    };
   }, []);
 
   return (
-    <section id="home-hero" data-home-hero="" className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white max-md:overflow-x-hidden">
+    <section
+      id="home-hero"
+      data-home-hero=""
+      className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white max-md:overflow-x-hidden"
+    >
       <div className="absolute -left-40 top-40 h-64 w-64 rounded-full bg-[#D4A437]/10 blur-[140px] md:h-96 md:w-96" />
       <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#D4A437]/[0.06] blur-[180px] md:h-[500px] md:w-[500px]" />
 
       <div className="relative mx-auto flex min-h-dvh w-full min-w-0 max-w-7xl items-center px-4 pb-16 pt-16 sm:px-6 sm:pb-20 md:pt-28 lg:px-8 lg:pt-32">
         <div className="grid w-full min-w-0 items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-24">
           <div className="min-w-0">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">{t("hero.eyebrow")}</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#F7E1A1] sm:mb-6 sm:text-sm sm:tracking-[6px]">
+              {t("hero.eyebrow")}
+            </p>
+
             <h1 className="text-[42px] font-black leading-[1.0] md:text-6xl md:leading-tight lg:text-7xl lg:leading-[0.98]">
-              {t("hero.title.line1")}<br />{t("hero.title.line2")}<br />{t("hero.title.line3")}
+              {t("hero.title.line1")}
+              <br />
+              {t("hero.title.line2")}
+              <br />
+              {t("hero.title.line3")}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-[1.6] text-gray-300 md:mt-8 md:text-xl md:leading-9">{t("hero.subtitle")}</p>
+
+            <p className="mt-6 max-w-xl text-lg leading-[1.6] text-gray-300 md:mt-8 md:text-xl md:leading-9">
+              {t("hero.subtitle")}
+            </p>
+
             <div className="mt-8 flex w-full flex-col gap-4 md:mt-12 md:flex-row md:flex-wrap md:gap-5">
-              <Link href="/horses" className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg">{t("hero.browseButton")}</Link>
-              <Link href="/sell" className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg">{t("hero.sellButton")}</Link>
+              <Link
+                href="/horses"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#D4A437] px-5 py-3 text-base font-bold text-[#081223] shadow-[0_10px_30px_rgba(212,164,55,0.18)] transition hover:bg-[#F7E1A1] md:w-auto md:px-8 md:py-4 md:text-lg"
+              >
+                {t("hero.browseButton")}
+              </Link>
+              <Link
+                href="/sell"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4A437]/40 px-5 py-3 text-base font-semibold text-white transition hover:border-[#D4A437] hover:bg-[#D4A437]/10 md:w-auto md:px-8 md:py-4 md:text-lg"
+              >
+                {t("hero.sellButton")}
+              </Link>
             </div>
+
             <div className="mt-8 grid grid-cols-2 gap-3 md:mt-16 md:flex md:flex-wrap md:gap-12">
-              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0"><h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.activeListings, locale)}</h3><p className="text-sm text-gray-400 md:text-base">{t("hero.stats.sportHorses.label")}</p></div>
-              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0"><h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.activeStallions, locale)}</h3><p className="text-sm text-gray-400 md:text-base">{t("hero.stats.breeders.label")}</p></div>
-              <div className="col-span-2 flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:col-span-1 md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0"><h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.registeredBreeders, locale)}</h3><p className="text-sm text-gray-400 md:text-base">{t("hero.stats.countries.label")}</p></div>
+              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                <h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.activeListings, locale)}</h3>
+                <p className="text-sm text-gray-400 md:text-base">{t("hero.stats.sportHorses.label")}</p>
+              </div>
+              <div className="flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                <h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.activeStallions, locale)}</h3>
+                <p className="text-sm text-gray-400 md:text-base">{t("hero.stats.breeders.label")}</p>
+              </div>
+              <div className="col-span-2 flex min-h-[108px] flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-[18px] md:col-span-1 md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                <h3 className="text-2xl font-bold md:text-4xl">{formatStatCount(stats.registeredBreeders, locale)}</h3>
+                <p className="text-sm text-gray-400 md:text-base">{t("hero.stats.countries.label")}</p>
+              </div>
             </div>
           </div>
 
@@ -71,24 +122,40 @@ export default function HeroSection({ stats }: Props) {
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
               <div className="relative min-h-[320px] overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl sm:min-h-[420px] lg:min-h-[500px]">
-                <img src="/emi.jpg" alt={t("hero.imageAlt")} className="absolute inset-0 h-full w-full rounded-[35px] object-cover" />
-                {!videoError && (
-                  <video
-                    ref={videoRef}
-                    className="absolute inset-0 z-10 block h-full w-full rounded-[35px] object-cover"
-                    src="/api/hero-video?v=20260816"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    poster="/emi.jpg"
-                    onLoadedData={(event) => { event.currentTarget.play().catch(() => undefined); }}
-                    onCanPlay={(event) => { event.currentTarget.play().catch(() => undefined); }}
-                    onError={() => setVideoError(true)}
-                    onPlay={() => setVideoError(false)}
+                <img
+                  src="/emi.jpg"
+                  alt={t("hero.imageAlt")}
+                  className="absolute inset-0 h-full w-full rounded-[35px] object-cover"
+                />
+
+                <video
+                  ref={videoRef}
+                  className="absolute inset-0 z-10 block h-full w-full rounded-[35px] object-cover"
+                  src="/api/hero-video?v=20260817"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  poster="/emi.jpg"
+                  onLoadedData={startPlayback}
+                  onCanPlay={startPlayback}
+                  onError={() => {
+                    setVideoError(true);
+                    setIsPlaying(false);
+                  }}
+                  aria-label={t("hero.imageAlt")}
+                />
+
+                {(!isPlaying || videoError) && (
+                  <button
+                    type="button"
+                    onClick={startPlayback}
                     aria-label={t("hero.imageAlt")}
-                  />
+                    className="absolute left-1/2 top-1/2 z-20 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/45 text-2xl text-white shadow-2xl backdrop-blur transition hover:scale-105 hover:bg-black/60"
+                  >
+                    ▶
+                  </button>
                 )}
               </div>
             </div>
