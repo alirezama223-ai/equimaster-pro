@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import GoalTraitExplainList from "@/app/components/breeding-goals/GoalTraitExplainList";
+import { explainMatch } from "@/app/lib/breeding-recommendations/explain-match";
 import { GoalBasedRecommendationResult } from "@/app/lib/breeding-goals/recommendations";
 
 type Props = { result: GoalBasedRecommendationResult; marePedigreeId: string };
@@ -11,24 +12,51 @@ type Props = { result: GoalBasedRecommendationResult; marePedigreeId: string };
 export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
   const t = useTranslations("breeding");
   const [showEvidence, setShowEvidence] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
   const breedingLabUrl = `/breeding-lab?mare=${marePedigreeId}&stallion=${result.pedigreeHorseId}`;
   const isHighPedigreeRisk = result.pedigreeRiskLabel === "HIGH CONCERN";
   const finalScore = result.finalMatchScore;
+  const explanation = explainMatch(result);
 
   return (
     <article className="rounded-3xl border border-white/10 bg-[#111827] p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div><p className="text-sm text-gray-500">#{result.rank}</p><h3 className="text-2xl font-bold text-white">{result.name}</h3><p className="mt-1 text-sm text-gray-400">{result.studFeeLabel}</p></div>
         <div className="text-right">
-          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("recommendations.compatibilityScore")}</p>
-          {finalScore !== null ? <><p className="text-4xl font-black text-blue-400">{finalScore}/100</p><p className="text-xs text-gray-500">{t("recommendations.basedOnPedigree")}</p></> : <p className="text-2xl font-black text-gray-300">{t("insufficientData")}</p>}
+          <p className="text-xs uppercase tracking-[0.15em] text-gray-500">{t("recommendations.finalMatch")}</p>
+          {finalScore !== null ? <><p className="text-4xl font-black text-blue-400">{finalScore}/100</p><p className="text-xs text-gray-500">{t("recommendations.combinedScore")}</p></> : <p className="text-2xl font-black text-gray-300">{t("insufficientData")}</p>}
         </div>
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.goalMatch")}</p><p className="mt-1 text-xl font-bold text-emerald-400">{result.goalMatchScore !== null ? `${result.goalMatchScore}/100` : t("insufficientData")}</p><p className="text-xs text-gray-500">{result.finalMatchBreakdown.goalWeight}% weight</p></div>
-        <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.pedigreeScore")}</p><p className="mt-1 text-xl font-bold text-blue-300">{result.compatibilityScore !== null ? `${result.compatibilityScore}/100` : t("insufficientData")}</p><p className="text-xs text-gray-500">{result.finalMatchBreakdown.pedigreeWeight}% weight</p></div>
-        <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.pedigreeLabel", { label: "" })}</p><p className={`mt-1 text-sm font-bold ${isHighPedigreeRisk ? "text-red-300" : "text-emerald-300"}`}>{result.pedigreeRiskLabel}</p></div>
+        <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.pedigreeScoreShort")}</p><p className="mt-1 text-xl font-bold text-blue-300">{result.compatibilityScore !== null ? `${result.compatibilityScore}/100` : t("insufficientData")}</p><p className="text-xs text-gray-500">{result.finalMatchBreakdown.pedigreeWeight}% weight</p></div>
+        <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.pedigreeRisk")}</p><p className={`mt-1 text-sm font-bold ${isHighPedigreeRisk ? "text-red-300" : "text-emerald-300"}`}>{result.pedigreeRiskLabel}</p></div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.15em] text-blue-300">Why this match?</p>
+            <p className="mt-1 text-sm text-gray-200">{explanation.headline}</p>
+          </div>
+          <button type="button" onClick={() => setShowWhy((value) => !value)} className="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white transition">
+            {showWhy ? "Hide explanation" : "Explain this match"}
+          </button>
+        </div>
+        {showWhy ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-sm font-semibold text-white">Why it scores well</p>
+              <ul className="mt-2 space-y-1 text-sm text-gray-300">{explanation.positives.map((item) => <li key={item}>✓ {item}</li>)}</ul>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Watch-outs</p>
+              <ul className="mt-2 space-y-1 text-sm text-gray-300">{explanation.watchouts.map((item) => <li key={item}>• {item}</li>)}</ul>
+            </div>
+            <p className="text-xs text-gray-500 sm:col-span-2">Explanation confidence: {explanation.confidence}. This is decision support, not a prediction or guarantee.</p>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2"><span className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-gray-300">{t("recommendations.analysisConfidence", { level: result.goalMatchConfidence.replace(/_/g, " ") })}</span></div>
