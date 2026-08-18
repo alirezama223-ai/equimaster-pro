@@ -2,6 +2,7 @@
 
 import { fetchDemoEnvironmentSnapshot } from "@/app/lib/demo/queries";
 import { resetDemoEnvironment, setDemoModeEnabled } from "@/app/lib/demo/reset-demo";
+import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { seedDemoStallions } from "@/app/lib/demo/seed-demo-stallions";
 import { createClient } from "@/app/lib/supabase/server";
 import type { DemoEnvironmentSnapshot } from "@/app/types/demo";
@@ -41,7 +42,7 @@ export async function resetDemo(): Promise<{ error?: string }> {
   return resetDemoEnvironment(auth.supabase, auth.user.id, sellerName, sellerEmail);
 }
 
-/** Enables the demo environment when needed, then creates five isolated SHABDIZ demo stallions for testing Stallion Match. */
+/** Enables the demo environment, seeds five isolated SHABDIZ demo stallions, and repairs any older shallow demo records. */
 export async function seedDemoStallionMatch(): Promise<{ error?: string; marePedigreeId?: string }> {
   const auth = await requireAuthenticatedUser();
   if (!auth.user) return { error: auth.error };
@@ -56,5 +57,11 @@ export async function seedDemoStallionMatch(): Promise<{ error?: string; marePed
   );
   if (demoModeResult.error) return { error: demoModeResult.error };
 
-  return seedDemoStallions(auth.supabase, auth.user.id);
+  const seedResult = await seedDemoStallions(auth.supabase, auth.user.id);
+  if (seedResult.error) return seedResult;
+
+  const repairResult = await repairDemoStallionMatchData(auth.supabase, auth.user.id);
+  if (repairResult.error) return { error: repairResult.error, marePedigreeId: seedResult.marePedigreeId };
+
+  return seedResult;
 }
