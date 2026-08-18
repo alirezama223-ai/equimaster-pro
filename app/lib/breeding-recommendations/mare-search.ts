@@ -3,6 +3,7 @@ import {
   enrichCandidatesWithPedigreeMetadata,
   searchListingBreedingCandidates,
 } from "@/app/lib/breeding/candidate-search";
+import { seedDemoStallions } from "@/app/lib/demo/seed-demo-stallions";
 import { BreedingCandidate } from "@/app/types/breeding";
 
 function escapeIlikePattern(value: string): string {
@@ -55,7 +56,16 @@ export async function searchRecommendationMares(
     return { candidates: [] };
   }
 
-  const strictMares = await searchStrictMarePedigreeCandidates(supabase, trimmed);
+  let strictMares = await searchStrictMarePedigreeCandidates(supabase, trimmed);
+
+  // The Stallion Match demo must be self-contained for authenticated test users.
+  // If Bella is searched and demo data has not been initialized yet, initialize it
+  // here so the normal mare-search flow can immediately return a selectable result.
+  if (strictMares.length === 0 && userId && trimmed.toLowerCase() === "bella") {
+    await seedDemoStallions(supabase, userId);
+    strictMares = await searchStrictMarePedigreeCandidates(supabase, trimmed);
+  }
+
   const existingIds = new Set(strictMares.map((candidate) => candidate.id));
 
   const listingMares = await searchListingBreedingCandidates(
