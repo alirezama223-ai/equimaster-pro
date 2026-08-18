@@ -65,7 +65,7 @@ const DEMO_STALLIONS = [
     damSire: "Demo Dam Sire Delta",
     studFee: 2600,
     emphasis: { jumping_scope: 5, jumping_technique: 3, carefulness: 4, rideability: 2, temperament: 2 },
-    },
+  },
   {
     name: "SHABDIZ Demo Echo",
     breed: "BWP",
@@ -83,6 +83,8 @@ const DEMO_STALLIONS = [
     emphasis: { jumping_scope: 4, jumping_technique: 4, carefulness: 4, rideability: 4, temperament: 5 },
   },
 ] as const;
+
+const DEMO_PEDIGREE_DEPTH = 5;
 
 async function getOrCreateDemoBreeder(supabase: SupabaseClient, userId: string) {
   const { data: existing, error: findError } = await supabase
@@ -160,9 +162,9 @@ async function seedTraitEvidence(
     trait_key: traitKey,
     score,
     confidence: "high",
-    source_type: "breeder_reported",
-    source_note: "SHABDIZ demo evidence — test data only.",
-    verified: false,
+    source_type: "admin_assessed",
+    source_note: "SHABDIZ demo evidence — synthetic test data only.",
+    verified: true,
     created_by: userId,
   }));
 
@@ -170,10 +172,7 @@ async function seedTraitEvidence(
   return error ? error.message : undefined;
 }
 
-async function ensureDemoMare(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<{ id: string | null; sire_id: string | null; dam_id: string | null; error?: string }> {
+async function ensureDemoMare(supabase: SupabaseClient, userId: string) {
   const { data: existing, error: findError } = await supabase
     .from("pedigree_horses")
     .select("id, sire_id, dam_id")
@@ -197,9 +196,7 @@ async function ensureDemoMare(
     null,
     null
   );
-  if (created.error || !created.id) {
-    return { id: null, sire_id: null, dam_id: null, error: created.error ?? "Unable to create demo mare Bella." };
-  }
+  if (created.error || !created.id) return { id: null, sire_id: null, dam_id: null, error: created.error ?? "Unable to create demo mare Bella." };
 
   const traitError = await seedTraitEvidence(supabase, userId, created.id, {
     jumping_scope: 3,
@@ -211,6 +208,77 @@ async function ensureDemoMare(
   if (traitError) return { id: null, sire_id: null, dam_id: null, error: traitError };
 
   return { id: created.id, sire_id: null, dam_id: null };
+}
+
+async function ensurePedigreeDepth(
+  supabase: SupabaseClient,
+  userId: string,
+  rootId: string,
+  depth = DEMO_PEDIGREE_DEPTH,
+  visited = new Set<string>()
+): Promise<string | undefined> {
+  if (depth <= 0 || visited.has(rootId)) return undefined;
+  visited.add(rootId);
+
+  const { data: horse, error } = await supabase
+    .from("pedigree_horses")
+    .select("id, name, sex, birth_year, sire_id, dam_id")
+    .eq("id", rootId)
+    .maybeSingle();
+
+  if (error) return error.message;
+  if (!horse) return `Demo pedigree horse ${rootId} was not found.`;
+
+  let sireId = horse.sire_id as string | null;
+  let damId = horse.dam_id as string | null;
+  const baseYear = Number(horse.birth_year ?? new Date().getFullYear()) - 6;
+  const baseName = String(horse.name);
+
+  if (!sireId) {
+    const created = await createPedigreeHorse(
+      supabase,
+      userId,
+      `${baseName} · Sire G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
+      "stallion",
+      baseYear,
+      "Warmblood",
+      "Bay",
+      "Germany",
+      null,
+      null
+    );
+    if (created.error || !created.id) return created.error ?? `Unable to create sire for ${baseName}.`;
+    sireId = created.id;
+  }
+
+  if (!damId) {
+    const created = await createPedigreeHorse(
+      supabase,
+      userId,
+      `${baseName} · Dam G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
+      "mare",
+      baseYear + 1,
+      "Warmblood",
+      "Bay",
+      "Germany",
+      null,
+      null
+    );
+    if (created.error || !created.id) return created.error ?? `Unable to create dam for ${baseName}.`;
+    damId = created.id;
+  }
+
+  const update: Record<string, string> = {};
+  if (!horse.sire_id) update.sire_id = sireId;
+  if (!horse.dam_id) update.dam_id = damId;
+  if (Object.keys(update).length > 0) {
+    const { error: updateError } = await supabase.from("pedigree_horses").update(update).eq("id", rootId);
+    if (updateError) return updateError.message;
+  }
+
+  const sireError = await ensurePedigreeDepth(supabase, userId, sireId, depth - 1, visited);
+  if (sireError) return sireError;
+  return ensurePedigreeDepth(supabase, userId, damId, depth - 1, visited);
 }
 
 export async function seedDemoStallions(
@@ -243,9 +311,10 @@ export async function seedDemoStallions(
     if (error) return { error: error.message };
   }
 
+  const demoRootIds: string[] = [mare.id];
+
   for (let index = 0; index < DEMO_STALLIONS.length; index += 1) {
     const template = DEMO_STALLIONS[index];
-
     const { data: existing } = await supabase
       .from("stallions")
       .select("id, pedigree_horse_id")
@@ -253,7 +322,10 @@ export async function seedDemoStallions(
       .eq("name", template.name)
       .maybeSingle();
 
-    if (existing?.id) continue;
+    if (existing?.id && existing.pedigree_horse_id) {
+      demoRootIds.push(existing.pedigree_horse_id as string);
+      continue;
+    }
 
     const sireId = index === 0 ? sharedSireId : null;
     const sire = await createPedigreeHorse(
@@ -331,6 +403,14 @@ export async function seedDemoStallions(
 
     const traitError = await seedTraitEvidence(supabase, userId, subject.id, template.emphasis);
     if (traitError) return { error: traitError };
+    demoRootIds.push(subject.id);
+  }
+
+  // Make the demo ancestry deep enough for the same evidence-confidence rules
+  // used in production, rather than weakening the production scoring gate.
+  for (const rootId of demoRootIds) {
+    const error = await ensurePedigreeDepth(supabase, userId, rootId);
+    if (error) return { error };
   }
 
   return { marePedigreeId: mare.id };
