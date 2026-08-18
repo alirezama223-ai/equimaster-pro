@@ -1,7 +1,8 @@
 import Navbar from "@/app/components/navbar/Navbar";
 import BreedingLabClient from "@/app/components/breeding/BreedingLabClient";
-import { getSavedBreedingAnalyses, resolveBreedingLabPrefill } from "@/app/actions/breeding";
+import { getSavedBreedingAnalyses, resolveBreedingLabPrefill, getBreedingCandidateById } from "@/app/actions/breeding";
 import { createClient } from "@/app/lib/supabase/server";
+import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,16 @@ export default async function BreedingLabPage({ searchParams }: Props) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Keep the Demo/Test dataset consistent across Stallion Match and Breeding Lab.
+  // The repair is narrowly scoped to the SHABDIZ demo mare/stallions and is a no-op for real mares.
+  if (user && prefill.mareId) {
+    const mareResult = await getBreedingCandidateById(prefill.mareId);
+    if (mareResult.candidate?.name.trim().toLowerCase() === "bella") {
+      await repairDemoStallionMatchData(supabase, user.id);
+    }
+  }
+
   const saved = await getSavedBreedingAnalyses();
 
   return (
