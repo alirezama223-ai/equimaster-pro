@@ -14,17 +14,12 @@ export const COMPATIBILITY_SCORE_MAX =
   DATA_CONFIDENCE_WEIGHT +
   PEDIGREE_DIVERSITY_WEIGHT;
 
-/**
- * Minimum conservative pair coverage (min of mare & stallion completeness %)
- * required before absence-of-finding can contribute to a numeric Compatibility Score.
- *
- * Rationale: below ~15%, at least one side lacks enough ancestor slots for reliable
- * exclusion of close relationships, shared ancestors, or diversity assessment.
- * Phase 9 analyzes 5 generations (~62 expected ancestor slots per side).
- */
-export const MIN_SCOREABLE_PAIR_COVERAGE = 15;
+/** Final match weights are deliberately conservative: pedigree remains the safety gate,
+ * while explicit breeding goals have slightly more influence on the recommendation. */
+export const FINAL_MATCH_GOAL_WEIGHT = 60;
+export const FINAL_MATCH_PEDIGREE_WEIGHT = 40;
 
-/** Minimum multiplier applied to evidence-dependent dimensions at partial coverage. */
+export const MIN_SCOREABLE_PAIR_COVERAGE = 15;
 export const MIN_EVIDENCE_FACTOR = 0.35;
 
 export const CONFIDENCE_ORDER = {
