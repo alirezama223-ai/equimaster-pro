@@ -65,10 +65,10 @@ async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, ped
   const rows: Record<string, unknown>[] = [];
   for (let traitIndex = 0; traitIndex < TRAIT_CATALOG.length; traitIndex += 1) {
     const trait = TRAIT_CATALOG[traitIndex];
+    if (!trait.allowedSourceTypes.includes("owner_reported") && !trait.allowedSourceTypes.includes("breeder_reported")) continue;
     const missing = Math.max(0, MIN_DEMO_ASSESSMENTS_PER_TRAIT - (countByTrait.get(trait.key) ?? 0));
     for (let index = 0; index < missing; index += 1) {
-      const objectiveTrait = ["pedigree_strength", "proven_performance", "offspring_record"].includes(trait.key);
-      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: objectiveTrait ? "admin_assessed" : index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: false, created_by: userId });
+      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: false, created_by: userId });
     }
   }
   if (rows.length === 0) return undefined;
