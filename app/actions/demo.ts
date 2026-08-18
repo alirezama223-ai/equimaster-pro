@@ -41,9 +41,20 @@ export async function resetDemo(): Promise<{ error?: string }> {
   return resetDemoEnvironment(auth.supabase, auth.user.id, sellerName, sellerEmail);
 }
 
-/** Creates five isolated SHABDIZ demo stallions for testing Stallion Match. */
+/** Enables the demo environment when needed, then creates five isolated SHABDIZ demo stallions for testing Stallion Match. */
 export async function seedDemoStallionMatch(): Promise<{ error?: string; marePedigreeId?: string }> {
   const auth = await requireAuthenticatedUser();
   if (!auth.user) return { error: auth.error };
+
+  const { sellerName, sellerEmail } = sellerDetails(auth.user);
+  const demoModeResult = await setDemoModeEnabled(
+    auth.supabase,
+    auth.user.id,
+    true,
+    sellerName,
+    sellerEmail
+  );
+  if (demoModeResult.error) return { error: demoModeResult.error };
+
   return seedDemoStallions(auth.supabase, auth.user.id);
 }
