@@ -65,7 +65,7 @@ const DEMO_STALLIONS = [
     damSire: "Demo Dam Sire Delta",
     studFee: 2600,
     emphasis: { jumping_scope: 5, jumping_technique: 3, carefulness: 4, rideability: 2, temperament: 2 },
-  },
+    },
   {
     name: "SHABDIZ Demo Echo",
     breed: "BWP",
@@ -170,14 +170,11 @@ async function seedTraitEvidence(
   return error ? error.message : undefined;
 }
 
-export async function seedDemoStallions(
+async function ensureDemoMare(
   supabase: SupabaseClient,
   userId: string
-): Promise<{ error?: string; marePedigreeId?: string }> {
-  const breederResult = await getOrCreateDemoBreeder(supabase, userId);
-  if (breederResult.error || !breederResult.id) return { error: breederResult.error };
-
-  const { data: mare, error: mareError } = await supabase
+): Promise<{ id: string | null; sire_id: string | null; dam_id: string | null; error?: string }> {
+  const { data: existing, error: findError } = await supabase
     .from("pedigree_horses")
     .select("id, sire_id, dam_id")
     .eq("name", "Bella")
@@ -185,11 +182,48 @@ export async function seedDemoStallions(
     .eq("created_by", userId)
     .maybeSingle();
 
-  if (mareError || !mare?.id) {
-    return { error: mareError?.message ?? "Demo mare Bella was not found." };
+  if (findError) return { id: null, sire_id: null, dam_id: null, error: findError.message };
+  if (existing?.id) return { id: existing.id as string, sire_id: existing.sire_id as string | null, dam_id: existing.dam_id as string | null };
+
+  const created = await createPedigreeHorse(
+    supabase,
+    userId,
+    "Bella",
+    "mare",
+    new Date().getFullYear() - 11,
+    "Hanoverian",
+    "Black",
+    "Germany",
+    null,
+    null
+  );
+  if (created.error || !created.id) {
+    return { id: null, sire_id: null, dam_id: null, error: created.error ?? "Unable to create demo mare Bella." };
   }
 
-  let sharedSireId = mare.sire_id as string | null;
+  const traitError = await seedTraitEvidence(supabase, userId, created.id, {
+    jumping_scope: 3,
+    jumping_technique: 3,
+    carefulness: 3,
+    rideability: 4,
+    temperament: 4,
+  });
+  if (traitError) return { id: null, sire_id: null, dam_id: null, error: traitError };
+
+  return { id: created.id, sire_id: null, dam_id: null };
+}
+
+export async function seedDemoStallions(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ error?: string; marePedigreeId?: string }> {
+  const breederResult = await getOrCreateDemoBreeder(supabase, userId);
+  if (breederResult.error || !breederResult.id) return { error: breederResult.error };
+
+  const mare = await ensureDemoMare(supabase, userId);
+  if (mare.error || !mare.id) return { error: mare.error ?? "Demo mare Bella is unavailable." };
+
+  let sharedSireId = mare.sire_id;
   if (!sharedSireId) {
     const sharedSire = await createPedigreeHorse(
       supabase,
@@ -299,15 +333,5 @@ export async function seedDemoStallions(
     if (traitError) return { error: traitError };
   }
 
-  const mareTraitError = await seedTraitEvidence(supabase, userId, mare.id as string, {
-    jumping_scope: 3,
-    jumping_technique: 3,
-    carefulness: 3,
-    rideability: 4,
-    temperament: 4,
-  });
-
-  if (mareTraitError) return { error: mareTraitError };
-
-  return { marePedigreeId: mare.id as string };
+  return { marePedigreeId: mare.id };
 }
