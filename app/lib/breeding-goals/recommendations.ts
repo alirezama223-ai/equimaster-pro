@@ -3,31 +3,20 @@ import { analyzeBreedingCross } from "@/app/lib/breeding/analyze";
 import { loadPedigreeGraph } from "@/app/lib/breeding/ancestor-loader";
 import { BREEDING_MAX_GENERATIONS } from "@/app/lib/breeding/constants";
 import { fetchStallionRecommendationCandidates } from "@/app/lib/breeding-recommendations/candidates";
-import { RECOMMENDATION_DISCLAIMER } from "@/app/lib/breeding-recommendations/constants";
+import {
+  FINAL_MATCH_GOAL_WEIGHT,
+  FINAL_MATCH_PEDIGREE_WEIGHT,
+  RECOMMENDATION_DISCLAIMER,
+} from "@/app/lib/breeding-recommendations/constants";
 import { buildEmptyResultsReason } from "@/app/lib/breeding-recommendations/filters";
-import {
-  buildRecommendationReasons,
-  buildRecommendationWarnings,
-} from "@/app/lib/breeding-recommendations/explanations";
+import { buildRecommendationWarnings } from "@/app/lib/breeding-recommendations/explanations";
 import { isEligibleRecommendationMare } from "@/app/lib/breeding-recommendations/mare-search";
-import {
-  mapAnalysisConfidence,
-  passesMinimumConfidenceFilter,
-} from "@/app/lib/breeding-recommendations/rank";
-import {
-  classifyRecommendationRisk,
-  riskLevelLabel,
-  scorePedigreeCompatibility,
-} from "@/app/lib/breeding-recommendations/score";
+import { mapAnalysisConfidence, passesMinimumConfidenceFilter } from "@/app/lib/breeding-recommendations/rank";
+import { classifyRecommendationRisk, riskLevelLabel, scorePedigreeCompatibility } from "@/app/lib/breeding-recommendations/score";
 import { buildHorseTraitProfile } from "@/app/lib/traits/aggregate";
 import { BreedingCandidate } from "@/app/types/breeding";
 import { StallionRecommendationFilters } from "@/app/types/breeding-recommendations";
-import {
-  BreedingGoalAnalysisResult,
-  GoalMatchSortOption,
-  HorseTraitAssessmentRow,
-  MareBreedingGoals,
-} from "@/app/types/traits";
+import { BreedingGoalAnalysisResult, GoalMatchSortOption, HorseTraitAssessmentRow, MareBreedingGoals } from "@/app/types/traits";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type GoalBasedRecommendationResult = {
@@ -43,6 +32,16 @@ export type GoalBasedRecommendationResult = {
   goalMatchConfidence: string;
   goalAnalysis: BreedingGoalAnalysisResult;
   compatibilityScore: number | null;
+  finalMatchScore: number | null;
+  finalMatchBreakdown: {
+    available: boolean;
+    pedigreeScore: number | null;
+    goalMatchScore: number | null;
+    pedigreeWeight: number;
+    goalWeight: number;
+    finalScore: number | null;
+    reason: "both_available" | "pedigree_only" | "insufficient_data";
+  };
   pedigreeRiskLabel: string;
   pedigreeWarnings: string[];
   reportAvailable: boolean;
@@ -50,10 +49,7 @@ export type GoalBasedRecommendationResult = {
 
 export type GoalBasedRecommendationResponse = {
   mare: BreedingCandidate;
-  mareTraitProfileSummary: {
-    strengths: string[];
-    improvementAreas: string[];
-  };
+  mareTraitProfileSummary: { strengths: string[]; improvementAreas: string[] };
   analyzedCount: number;
   eligiblePoolCount: number;
   emptyResultsReason?: string;
@@ -61,17 +57,9 @@ export type GoalBasedRecommendationResponse = {
   disclaimer: string;
 };
 
-async function loadTraitRowsForHorses(
-  supabase: SupabaseClient,
-  pedigreeHorseIds: string[]
-): Promise<Map<string, HorseTraitAssessmentRow[]>> {
+async function loadTraitRowsForHorses(supabase: SupabaseClient, pedigreeHorseIds: string[]): Promise<Map<string, HorseTraitAssessmentRow[]>> {
   if (pedigreeHorseIds.length === 0) return new Map();
-
-  const { data } = await supabase
-    .from("horse_trait_assessments_public")
-    .select("*")
-    .in("pedigree_horse_id", pedigreeHorseIds);
-
+  const { data } = await supabase.from("horse_trait_assessments_public").select("*").in("pedigree_horse_id", pedigreeHorseIds);
   const map = new Map<string, HorseTraitAssessmentRow[]>();
   for (const row of (data ?? []) as HorseTraitAssessmentRow[]) {
     const list = map.get(row.pedigree_horse_id) ?? [];
@@ -81,28 +69,55 @@ async function loadTraitRowsForHorses(
   return map;
 }
 
-function sortGoalResults(
-  results: GoalBasedRecommendationResult[],
-  sort: GoalMatchSortOption
-): GoalBasedRecommendationResult[] {
+function buildFinalMatch(
+  goalMatchScore: number | null,
+  compatibilityScore: number | null
+): GoalBasedRecommendationResult["finalMatchBreakdown"] {
+  if (goalMatchScore !== null && compatibilityScore !== null) {
+    return {
+      available: true,
+      pedigreeScore: compatibilityScore,
+      goalMatchScore,
+      pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT,
+      goalWeight: FINAL_MATCH_GOAL_WEIGHT,
+      finalScore: Math.round(
+        (goalMatchScore * FINAL_MATCH_GOAL_WEIGHT + compatibilityScore * FINAL_MATCH_PEDIGREE_WEIGHT) / 100
+      ),
+      reason: "both_available",
+    };
+  }
+  if (goalMatchScore !== null) {
+    return {
+      available: true,
+      pedigreeScore: null,
+      goalMatchScore,
+      pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT,
+      goalWeight: FINAL_MATCH_GOAL_WEIGHT,
+      finalScore: goalMatchScore,
+      reason: "pedigree_only",
+    };
+  }
+  return {
+    available: false,
+    pedigreeScore: null,
+    goalMatchScore: null,
+    pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT,
+    goalWeight: FINAL_MATCH_GOAL_WEIGHT,
+    finalScore: null,
+    reason: "insufficient_data",
+  };
+}
+
+function sortGoalResults(results: GoalBasedRecommendationResult[], sort: GoalMatchSortOption): GoalBasedRecommendationResult[] {
   const sorted = [...results];
   sorted.sort((a, b) => {
-    const aScoreable = a.goalAnalysis.goalMatchScoreAvailable;
-    const bScoreable = b.goalAnalysis.goalMatchScoreAvailable;
-    if (aScoreable !== bScoreable) return aScoreable ? -1 : 1;
-
-    if (sort === "name") {
-      return a.name.localeCompare(b.name);
-    }
-
-    const scoreA = a.goalMatchScore ?? -1;
-    const scoreB = b.goalMatchScore ?? -1;
+    if (sort === "name") return a.name.localeCompare(b.name);
+    const scoreA = a.finalMatchScore ?? -1;
+    const scoreB = b.finalMatchScore ?? -1;
     if (scoreB !== scoreA) return scoreB - scoreA;
-
     const highRiskA = a.pedigreeRiskLabel === "HIGH CONCERN" ? 1 : 0;
     const highRiskB = b.pedigreeRiskLabel === "HIGH CONCERN" ? 1 : 0;
     if (highRiskA !== highRiskB) return highRiskA - highRiskB;
-
     return a.name.localeCompare(b.name);
   });
   return sorted.map((item, index) => ({ ...item, rank: index + 1 }));
@@ -115,16 +130,9 @@ export async function runGoalBasedRecommendations(
   filters: StallionRecommendationFilters,
   sort: GoalMatchSortOption = "best_goal_match"
 ): Promise<{ response: GoalBasedRecommendationResponse | null; error?: string }> {
-  if (!isEligibleRecommendationMare(mare)) {
-    return { response: null, error: "Selected mare is not eligible for Stallion Match." };
-  }
+  if (!isEligibleRecommendationMare(mare)) return { response: null, error: "Selected mare is not eligible for Stallion Match." };
 
-  const { candidates, eligiblePoolCount } = await fetchStallionRecommendationCandidates(
-    supabase,
-    mare.id,
-    filters
-  );
-
+  const { candidates, eligiblePoolCount } = await fetchStallionRecommendationCandidates(supabase, mare.id, filters);
   const mareTraitRows = await loadTraitRowsForHorses(supabase, [mare.id]);
   const mareProfile = buildHorseTraitProfile(mare.id, mareTraitRows.get(mare.id) ?? []);
 
@@ -147,28 +155,14 @@ export async function runGoalBasedRecommendations(
 
   const stallionIds = candidates.map((item) => item.pedigreeHorseId);
   const traitMap = await loadTraitRowsForHorses(supabase, stallionIds);
-  const graph = await loadPedigreeGraph(
-    supabase,
-    [mare.id, ...stallionIds],
-    BREEDING_MAX_GENERATIONS
-  );
-
+  const graph = await loadPedigreeGraph(supabase, [mare.id, ...stallionIds], BREEDING_MAX_GENERATIONS);
   const minimumConfidence = filters.minimumPedigreeConfidence ?? "any";
   const results: GoalBasedRecommendationResult[] = [];
 
   for (const candidate of candidates) {
-    const stallionProfile = buildHorseTraitProfile(
-      candidate.pedigreeHorseId,
-      traitMap.get(candidate.pedigreeHorseId) ?? []
-    );
+    const stallionProfile = buildHorseTraitProfile(candidate.pedigreeHorseId, traitMap.get(candidate.pedigreeHorseId) ?? []);
     const goalAnalysis = analyzeBreedingGoalsCross(mareProfile, stallionProfile, goals);
-
-    const { report } = await analyzeBreedingCross(
-      supabase,
-      mare.id,
-      candidate.pedigreeHorseId,
-      graph
-    );
+    const { report } = await analyzeBreedingCross(supabase, mare.id, candidate.pedigreeHorseId, graph);
 
     let compatibilityScore: number | null = null;
     let pedigreeRiskLabel = "INSUFFICIENT DATA";
@@ -180,12 +174,12 @@ export async function runGoalBasedRecommendations(
       const confidence = mapAnalysisConfidence(report.dataConfidence.level);
       pedigreeRiskLabel = riskLevelLabel(riskLevel);
       pedigreeWarnings = buildRecommendationWarnings(report);
-
       if (passesMinimumConfidenceFilter(confidence.level, minimumConfidence)) {
         compatibilityScore = scoreBreakdown.scoreAvailable ? scoreBreakdown.total : null;
-        buildRecommendationReasons(report, scoreBreakdown, riskLevel);
       }
     }
+
+    const finalMatchBreakdown = buildFinalMatch(goalAnalysis.goalMatchScore, compatibilityScore);
 
     results.push({
       rank: 0,
@@ -200,6 +194,8 @@ export async function runGoalBasedRecommendations(
       goalMatchConfidence: goalAnalysis.goalMatchConfidence.toUpperCase(),
       goalAnalysis,
       compatibilityScore,
+      finalMatchScore: finalMatchBreakdown.finalScore,
+      finalMatchBreakdown,
       pedigreeRiskLabel,
       pedigreeWarnings,
       reportAvailable: Boolean(report),
