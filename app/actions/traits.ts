@@ -5,6 +5,7 @@ import { requireAdmin } from "@/app/lib/admin";
 import { analyzeBreedingGoalsCross } from "@/app/lib/breeding-goals/analyze";
 import { runGoalBasedRecommendations } from "@/app/lib/breeding-goals/recommendations";
 import { getRecommendationMareById } from "@/app/actions/breeding-recommendations";
+import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { canManageTraitAssessments, resolveTraitSubmissionSourceType } from "@/app/lib/traits/access";
 import { buildHorseTraitProfile } from "@/app/lib/traits/aggregate";
 import { getTraitDefinition, isValidTraitKey } from "@/app/lib/traits/constants";
@@ -15,7 +16,6 @@ import {
   validateAdminUpdate,
   validateManagerSubmission,
 } from "@/app/lib/traits/validation";
-import { createClient } from "@/app/lib/supabase/server";
 import {
   BreedingGoalAnalysisResult,
   BreedingGoalEntry,
@@ -28,6 +28,7 @@ import {
   TraitKey,
   TraitSourceType,
 } from "@/app/types/traits";
+import { createClient } from "@/app/lib/supabase/server";
 import { StallionRecommendationFilters } from "@/app/types/breeding-recommendations";
 
 function rowToAssessment(row: Record<string, unknown>): HorseTraitAssessmentRow {
@@ -265,7 +266,6 @@ export async function submitAdminTraitAssessment(input: {
     confidence: input.confidence,
     source_type: input.sourceType,
     source_note: input.sourceNote?.trim() || null,
-    verified: false,
     created_by: auth.user.id,
   });
 
@@ -277,41 +277,6 @@ export async function submitAdminTraitAssessment(input: {
   revalidatePath("/breeding-lab");
   revalidatePath("/breeding-recommendations");
   return { success: true };
-}
-
-export async function searchAdminPedigreeHorsesForTraits(query: string): Promise<{
-  horses: Array<{ id: string; name: string; sex: string | null }>;
-  error?: string;
-}> {
-  const auth = await requireAdmin();
-  if (auth.error || !auth.supabase) {
-    return { horses: [], error: auth.error ?? "Forbidden" };
-  }
-
-  const trimmed = query.trim();
-  if (trimmed.length < 2) {
-    return { horses: [] };
-  }
-
-  const safeQuery = trimmed.replace(/[%_,]/g, "");
-  const normalizedPattern = safeQuery.replace(/\s+/g, "%");
-
-  const { data, error } = await auth.supabase
-    .from("pedigree_horses")
-    .select("id, name, sex")
-    .or(`name.ilike.%${safeQuery}%,normalized_name.ilike.%${normalizedPattern}%`)
-    .order("name", { ascending: true })
-    .limit(20);
-
-  if (error) return { horses: [], error: error.message };
-
-  return {
-    horses: (data ?? []).map((row) => ({
-      id: String(row.id),
-      name: String(row.name),
-      sex: (row.sex as string | null) ?? null,
-    })),
-  };
 }
 
 export async function adminUpdateTraitAssessment(input: {
@@ -596,6 +561,17 @@ export async function runGoalBasedRecommendationSearch(input: {
   };
 
   const supabase = await createClient();
+  const demoMare = mareResult.candidate.name.trim().toLowerCase() === "bella";
+  if (demoMare) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const repairResult = await repairDemoStallionMatchData(supabase, user.id);
+      if (repairResult.error) return { response: null, error: `Demo data repair failed: ${repairResult.error}` };
+    }
+  }
+
   return runGoalBasedRecommendations(
     supabase,
     mareResult.candidate,
