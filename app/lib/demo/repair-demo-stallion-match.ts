@@ -2,7 +2,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 import { TRAIT_CATALOG } from "@/app/lib/traits/catalog";
 
-const DEMO_DEPTH = 5;
+// Keep Demo pedigrees deep enough to exercise ancestor matching without generating
+// an unreadable wall of synthetic cards in the Breeding Lab.
+const DEMO_DEPTH = 3;
 const DEMO_STALLION_PREFIX = "SHABDIZ Demo ";
 const MIN_DEMO_ASSESSMENTS_PER_TRAIT = 2;
 const DEMO_BASE_SCORES: Record<string, number> = {
