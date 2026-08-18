@@ -1,5 +1,6 @@
 import Navbar from "@/app/components/navbar/Navbar";
 import StallionMatchClient from "@/app/components/breeding-recommendations/StallionMatchClient";
+import DemoStallionSeedButton from "@/app/components/breeding-recommendations/DemoStallionSeedButton";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,7 @@ export default function BreedingRecommendationsPage() {
       <main className="min-h-screen bg-[#081223] text-white pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <StallionMatchClient />
+          <DemoStallionSeedButton />
         </div>
       </main>
     </>
