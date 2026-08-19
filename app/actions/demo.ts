@@ -2,8 +2,8 @@
 
 import { fetchDemoEnvironmentSnapshot } from "@/app/lib/demo/queries";
 import { resetDemoEnvironment, setDemoModeEnabled } from "@/app/lib/demo/reset-demo";
-import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { normalizeDemoPedigree } from "@/app/lib/demo/normalize-demo-pedigree";
+import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { seedDemoStallions } from "@/app/lib/demo/seed-demo-stallions";
 import { createClient } from "@/app/lib/supabase/server";
 import type { DemoEnvironmentSnapshot } from "@/app/types/demo";
@@ -61,11 +61,11 @@ export async function seedDemoStallionMatch(): Promise<{ error?: string; marePed
   const seedResult = await seedDemoStallions(auth.supabase, auth.user.id);
   if (seedResult.error) return seedResult;
 
-  const repairResult = await repairDemoStallionMatchData(auth.supabase, auth.user.id);
-  if (repairResult.error) return { error: repairResult.error, marePedigreeId: seedResult.marePedigreeId };
-
   const pedigreeResult = await normalizeDemoPedigree(auth.supabase, auth.user.id);
   if (pedigreeResult.error) return { error: pedigreeResult.error, marePedigreeId: seedResult.marePedigreeId };
+
+  const repairResult = await repairDemoStallionMatchData(auth.supabase, auth.user.id);
+  if (repairResult.error) return { error: repairResult.error, marePedigreeId: seedResult.marePedigreeId };
 
   return seedResult;
 }
