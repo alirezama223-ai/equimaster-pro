@@ -393,9 +393,9 @@ export default function BreedingLabClient({
       {error ? <div className="rounded-2xl border border-red-500/30 bg-red-950/20 px-4 py-3 text-sm text-red-200">{error}</div> : null}
 
       <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={handleAnalyze} disabled={pending || !mare || (!stallion && !compareMode)} className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition disabled:opacity-50">{pending ? t("lab.analyzing") : t("lab.analyze")}</button>
+        <button type="button" onClick={handleAnalyze} disabled={pending || !mare || (!stallion && !compareMode)} className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition disabled:opacity-50">{pending ? t("lab.analyzing") : t("lab.generateAnalysis")}</button>
         <button type="button" onClick={handleSaveAnalysis} disabled={pending || !mare || !report || !isAuthenticated} className="rounded-xl border border-white/10 px-5 py-3 font-semibold text-white transition disabled:opacity-50">{t("lab.saveAnalysis")}</button>
-        {!isAuthenticated ? <span className="self-center text-xs text-gray-500"><Link href={`/login?redirect=${encodeURIComponent("/breeding-lab")}`} className="text-blue-400 hover:text-blue-300">{t("lab.loginToSave")}</Link></span> : null}
+        {!isAuthenticated ? <span className="self-center text-xs text-gray-500"><Link href={`/login?redirect=${encodeURIComponent("/breeding-lab")}`} className="text-blue-400 hover:text-blue-300">{`${t("lab.signInPrompt")} ${t("lab.signInSuffix")}`}</Link></span> : null}
       </div>
 
       {report ? (
@@ -408,11 +408,11 @@ export default function BreedingLabClient({
       ) : null}
 
       <div className="space-y-5">
-        <h2 className="text-2xl font-bold text-white">{t("lab.savedAnalyses")}</h2>
+        <h2 className="text-2xl font-bold text-white">{t("lab.savedAnalysesTitle")}</h2>
         {saved.length === 0 ? <div className="rounded-2xl border border-white/10 bg-[#111827] p-6 text-sm text-gray-400">{t("lab.noSavedAnalyses")}</div> : saved.map((item) => (
           <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#111827] p-4">
             <div><p className="font-semibold text-white">{item.title}</p><p className="mt-1 text-xs text-gray-500">{item.createdAt}</p></div>
-            <div className="flex gap-2"><button type="button" onClick={() => handleOpenSaved(item)} className="rounded-lg border border-white/10 px-3 py-2 text-sm text-gray-200">{t("lab.openSaved")}</button><button type="button" onClick={() => handleDeleteSaved(item.id)} className="rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-200">{t("lab.deleteSaved")}</button></div>
+            <div className="flex gap-2"><button type="button" onClick={() => handleOpenSaved(item)} className="rounded-lg border border-white/10 px-3 py-2 text-sm text-gray-200">{t("open")}</button><button type="button" onClick={() => handleDeleteSaved(item.id)} className="rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-200">{t("delete")}</button></div>
           </div>
         ))}
       </div>
