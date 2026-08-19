@@ -60,8 +60,17 @@ function demoScore(horseName: string, traitIndex: number): number {
 }
 
 async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, pedigreeHorseId: string, horseName: string) {
-  const { data: existing, error: selectError } = await supabase.from("horse_trait_assessments").select("id, trait_key").eq("pedigree_horse_id", pedigreeHorseId);
+  const { data: existing, error: selectError } = await supabase.from("horse_trait_assessments").select("id, trait_key, verified").eq("pedigree_horse_id", pedigreeHorseId);
   if (selectError) return selectError.message;
+
+  // Demo evidence is synthetic test data. Mark it verified so the same public
+  // evidence surface used by Breeding Goal Analysis can consume it.
+  const existingIds = (existing ?? []).map((row) => row.id).filter(Boolean);
+  if (existingIds.length > 0) {
+    const { error: verifyError } = await supabase.from("horse_trait_assessments").update({ verified: true }).in("id", existingIds);
+    if (verifyError) return verifyError.message;
+  }
+
   const countByTrait = new Map<string, number>();
   for (const row of existing ?? []) countByTrait.set(row.trait_key, (countByTrait.get(row.trait_key) ?? 0) + 1);
   const rows: Record<string, unknown>[] = [];
