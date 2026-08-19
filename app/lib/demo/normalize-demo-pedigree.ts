@@ -60,15 +60,31 @@ async function getOrCreateHorse(
   return createHorse(supabase, userId, name, sex, birthYear, sireId);
 }
 
+async function setParents(
+  supabase: SupabaseClient,
+  id: string,
+  sireId: string | null,
+  damId: string | null
+): Promise<string | undefined> {
+  const { error } = await supabase
+    .from("pedigree_horses")
+    .update({ sire_id: sireId, dam_id: damId })
+    .eq("id", id);
+  return error?.message;
+}
+
 /**
- * Replaces the intentionally extreme seed relationship (direct shared sire)
- * with a controlled 3×3 linebreeding example. The demo still exercises the
- * common-ancestor and linebreeding logic, but no longer creates 1×1 or 2×2
- * patterns merely because the synthetic tree generator expands the same node.
+ * Replaces the intentionally extreme seed relationship with one controlled
+ * 3×3 linebreeding example.
  *
- * The shared ancestor is deliberately terminal: it must have no parents of
- * its own. Otherwise the demo depth seeder expands those parents and every
- * ancestor above the shared node becomes common to both sides as well.
+ * The important invariant is that the shared ancestor is TERMINAL and both
+ * sides have exactly one path to it:
+ *
+ *   Bella -> Mare G1 -> Mare G2 -> Shared Ancestor
+ *   Alpha -> Alpha G1 -> Alpha G2 -> Shared Ancestor
+ *
+ * No dams are attached to this synthetic branch. This prevents the normal
+ * five-generation demo-depth seeder from creating extra common ancestors.
  */
 export async function normalizeDemoPedigree(
   supabase: SupabaseClient,
@@ -87,51 +103,8 @@ export async function normalizeDemoPedigree(
   if (alphaError) return { error: alphaError.message };
   if (!alpha?.id) return { error: "Demo stallion SHABDIZ Demo Alpha was not found." };
 
-  const { data: existingShared } = await findHorse(supabase, userId, SHARED_ANCESTOR, "stallion");
-  if (existingShared?.id && (existingShared.sire_id !== null || existingShared.dam_id !== null)) {
-    const { error } = await supabase
-      .from("pedigree_horses")
-      .update({ sire_id: null, dam_id: null })
-      .eq("id", existingShared.id);
-    if (error) return { error: error.message };
-  }
-
-  const { data: existingMareG1 } = await findHorse(supabase, userId, MARE_G1, "stallion");
-  const { data: existingAlphaG1 } = await findHorse(supabase, userId, STALLION_G1, "stallion");
-
-  if (existingMareG1?.id && existingAlphaG1?.id) {
-    const mareNeedsUpdate = mare.sire_id !== existingMareG1.id;
-    const alphaNeedsUpdate = alpha.sire_id !== existingAlphaG1.id;
-    if (mareNeedsUpdate || alphaNeedsUpdate) {
-      if (mareNeedsUpdate) {
-        const { error } = await supabase
-          .from("pedigree_horses")
-          .update({ sire_id: existingMareG1.id })
-          .eq("id", mare.id);
-        if (error) return { error: error.message };
-      }
-      if (alphaNeedsUpdate) {
-        const { error } = await supabase
-          .from("pedigree_horses")
-          .update({ sire_id: existingAlphaG1.id })
-          .eq("id", alpha.id);
-        if (error) return { error: error.message };
-      }
-    }
-    return {};
-  }
-
   const shared = await getOrCreateHorse(supabase, userId, SHARED_ANCESTOR, "stallion", 1992, null);
   if (shared.error || !shared.id) return { error: shared.error ?? "Unable to create shared demo ancestor." };
-
-  // Never allow the shared 3×3 ancestor to inherit a synthetic parent tree.
-  // That would turn one intended common ancestor into dozens of common
-  // ancestors when the normal 5-generation demo expansion runs.
-  const { error: sharedResetError } = await supabase
-    .from("pedigree_horses")
-    .update({ sire_id: null, dam_id: null })
-    .eq("id", shared.id);
-  if (sharedResetError) return { error: sharedResetError.message };
 
   const mareG2 = await getOrCreateHorse(supabase, userId, MARE_G2, "stallion", 1998, shared.id);
   if (mareG2.error || !mareG2.id) return { error: mareG2.error ?? "Unable to create Bella's G2 sire." };
@@ -145,17 +118,26 @@ export async function normalizeDemoPedigree(
   const alphaG1 = await getOrCreateHorse(supabase, userId, STALLION_G1, "stallion", 2003, alphaG2.id);
   if (alphaG1.error || !alphaG1.id) return { error: alphaG1.error ?? "Unable to create Alpha's G1 sire." };
 
-  const { error: mareUpdateError } = await supabase
-    .from("pedigree_horses")
-    .update({ sire_id: mareG1.id })
-    .eq("id", mare.id);
-  if (mareUpdateError) return { error: mareUpdateError.message };
+  // Reassert the entire controlled branch on every run. This is essential for
+  // old demo records that were previously expanded by ensurePedigreeDepth.
+  for (const [id, sireId] of [
+    [shared.id, null],
+    [mareG2.id, shared.id],
+    [mareG1.id, mareG2.id],
+    [alphaG2.id, shared.id],
+    [alphaG1.id, alphaG2.id],
+  ] as const) {
+    const error = await setParents(supabase, id, sireId, null);
+    if (error) return { error };
+  }
 
-  const { error: alphaUpdateError } = await supabase
-    .from("pedigree_horses")
-    .update({ sire_id: alphaG1.id })
-    .eq("id", alpha.id);
-  if (alphaUpdateError) return { error: alphaUpdateError.message };
+  // Remove the old synthetic direct/shared branches from the selected roots.
+  // The new G1/G2 chain is the only branch that should be visible to analysis.
+  const mareErrorMessage = await setParents(supabase, mare.id, mareG1.id, null);
+  if (mareErrorMessage) return { error: mareErrorMessage };
+
+  const alphaErrorMessage = await setParents(supabase, alpha.id, alphaG1.id, null);
+  if (alphaErrorMessage) return { error: alphaErrorMessage };
 
   return {};
 }
