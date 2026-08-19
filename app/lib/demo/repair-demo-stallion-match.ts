@@ -60,17 +60,8 @@ function demoScore(horseName: string, traitIndex: number): number {
 }
 
 async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, pedigreeHorseId: string, horseName: string) {
-  const { data: existing, error: selectError } = await supabase.from("horse_trait_assessments").select("id, trait_key, verified").eq("pedigree_horse_id", pedigreeHorseId);
+  const { data: existing, error: selectError } = await supabase.from("horse_trait_assessments").select("id, trait_key").eq("pedigree_horse_id", pedigreeHorseId);
   if (selectError) return selectError.message;
-
-  // Demo evidence is synthetic test data. Mark it verified so the same public
-  // evidence surface used by Breeding Goal Analysis can consume it.
-  const existingIds = (existing ?? []).map((row) => row.id).filter(Boolean);
-  if (existingIds.length > 0) {
-    const { error: verifyError } = await supabase.from("horse_trait_assessments").update({ verified: true }).in("id", existingIds);
-    if (verifyError) return verifyError.message;
-  }
-
   const countByTrait = new Map<string, number>();
   for (const row of existing ?? []) countByTrait.set(row.trait_key, (countByTrait.get(row.trait_key) ?? 0) + 1);
   const rows: Record<string, unknown>[] = [];
@@ -79,7 +70,7 @@ async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, ped
     if (!trait.allowedSourceTypes.includes("owner_reported") && !trait.allowedSourceTypes.includes("breeder_reported")) continue;
     const missing = Math.max(0, MIN_DEMO_ASSESSMENTS_PER_TRAIT - (countByTrait.get(trait.key) ?? 0));
     for (let index = 0; index < missing; index += 1) {
-      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: true, created_by: userId });
+      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: false, created_by: userId });
     }
   }
   if (rows.length === 0) return undefined;
