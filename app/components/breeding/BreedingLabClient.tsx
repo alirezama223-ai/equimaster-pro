@@ -12,13 +12,13 @@ import {
   runBreedingCompare,
   saveBreedingAnalysis,
 } from "@/app/actions/breeding";
+import { analyzeBreedingGoalCrossWithDemo } from "@/app/actions/demo-breeding-goals";
 import BreedingAnalysisReportView from "@/app/components/breeding/BreedingAnalysisReportView";
 import BreedingComparePanel from "@/app/components/breeding/BreedingComparePanel";
 import PedigreeHorseSelector from "@/app/components/breeding/PedigreeHorseSelector";
 import BreedingGoalAnalysisView from "@/app/components/breeding-goals/BreedingGoalAnalysisView";
 import BreedingGoalsPanel from "@/app/components/breeding-goals/BreedingGoalsPanel";
 import CombinedDecisionView from "@/app/components/breeding-goals/CombinedDecisionView";
-import { analyzeBreedingGoalCross } from "@/app/actions/traits";
 import {
   classifyRecommendationRisk,
   riskLevelLabel,
@@ -78,7 +78,7 @@ export default function BreedingLabClient({
             preserveTraits: breedingGoals.preserveTraits,
             avoidReinforcingWeaknesses: breedingGoals.avoidReinforcingWeaknesses,
           })
-        : 'none',
+        : "none",
     [breedingGoals]
   );
 
@@ -123,20 +123,14 @@ export default function BreedingLabClient({
       ]);
 
       if (!mareResult.candidate) {
-        setError(
-          mareResult.error ??
-            t("lab.errorMareLoadFailed")
-        );
+        setError(mareResult.error ?? t("lab.errorMareLoadFailed"));
         setReport(null);
         setCompareReports([]);
         return false;
       }
 
       if (!stallionResult.candidate) {
-        setError(
-          stallionResult.error ??
-            t("lab.errorStallionLoadFailed")
-        );
+        setError(stallionResult.error ?? t("lab.errorStallionLoadFailed"));
         setReport(null);
         setCompareReports([]);
         return false;
@@ -178,12 +172,13 @@ export default function BreedingLabClient({
         setCompareReports(response.reports);
         setReport(response.reports[0] ?? null);
         analyzedParamsRef.current = analysisKey;
-        const goalResult = await analyzeBreedingGoalCross({
+        const goalResult = await analyzeBreedingGoalCrossWithDemo({
           marePedigreeId,
           stallionPedigreeId: stallionPedigreeIds[0],
           goals: breedingGoals ?? undefined,
         });
         setGoalAnalysis(goalResult.analysis);
+        if (goalResult.error) setError(goalResult.error);
         if (options?.scroll !== false) scrollToAnalysisReport();
         return true;
       }
@@ -205,12 +200,13 @@ export default function BreedingLabClient({
       analyzedParamsRef.current = analysisKey;
 
       if (mareResult.candidate && stallionResult.candidate) {
-        const goalResult = await analyzeBreedingGoalCross({
-          marePedigreeId: marePedigreeId,
+        const goalResult = await analyzeBreedingGoalCrossWithDemo({
+          marePedigreeId,
           stallionPedigreeId: stallionPedigreeIds[0],
           goals: breedingGoals ?? undefined,
         });
         setGoalAnalysis(goalResult.analysis);
+        if (goalResult.error) setError(goalResult.error);
       } else {
         setGoalAnalysis(null);
       }
@@ -273,6 +269,13 @@ export default function BreedingLabClient({
         setCompareReports(response.reports);
         setReport(response.reports[0] ?? null);
         analyzedParamsRef.current = analysisKey;
+        const goalResult = await analyzeBreedingGoalCrossWithDemo({
+          marePedigreeId: mare.id,
+          stallionPedigreeId: stallionIds[0],
+          goals: breedingGoals ?? undefined,
+        });
+        setGoalAnalysis(goalResult.analysis);
+        if (goalResult.error) setError(goalResult.error);
         scrollToAnalysisReport();
         return;
       }
@@ -291,12 +294,13 @@ export default function BreedingLabClient({
       setReport(response.report);
       setCompareReports([]);
       analyzedParamsRef.current = analysisKey;
-      const goalResult = await analyzeBreedingGoalCross({
+      const goalResult = await analyzeBreedingGoalCrossWithDemo({
         marePedigreeId: mare.id,
         stallionPedigreeId: stallionIds[0],
         goals: breedingGoals ?? undefined,
       });
       setGoalAnalysis(goalResult.analysis);
+      if (goalResult.error) setError(goalResult.error);
       scrollToAnalysisReport();
     });
   }
@@ -343,55 +347,20 @@ export default function BreedingLabClient({
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
         <p className="text-sm uppercase tracking-[0.2em] text-blue-400">{t("lab.eyebrow")}</p>
         <h1 className="mt-2 text-4xl sm:text-5xl font-black text-white">{t("lab.title")}</h1>
-        <p className="mt-3 max-w-3xl text-gray-400">
-          {t("lab.subtitle")}
-        </p>
+        <p className="mt-3 max-w-3xl text-gray-400">{t("lab.subtitle")}</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={() => setCompareMode(false)}
-          className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-            !compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"
-          }`}
-        >
-          {t("lab.singleCross")}
-        </button>
-        <button
-          type="button"
-          onClick={() => setCompareMode(true)}
-          className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-            compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"
-          }`}
-        >
-          {t("lab.compareStallions")}
-        </button>
+        <button type="button" onClick={() => setCompareMode(false)} className={`rounded-xl px-4 py-2 text-sm font-semibold ${!compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"}`}>{t("lab.singleCross")}</button>
+        <button type="button" onClick={() => setCompareMode(true)} className={`rounded-xl px-4 py-2 text-sm font-semibold ${compareMode ? "bg-blue-600 text-white" : "border border-white/10 text-gray-300"}`}>{t("lab.compareStallions")}</button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <PedigreeHorseSelector
-          label={t("lab.leftColumn")}
-          sex="mare"
-          selected={mare}
-          onSelect={(candidate) => {
-            setMare(candidate);
-            setGoalAnalysis(null);
-          }}
-          initialId={initialMareId}
-        />
-        <PedigreeHorseSelector
-          label={t("lab.rightColumn")}
-          sex="stallion"
-          selected={stallion}
-          onSelect={setStallion}
-          initialId={initialStallionId}
-        />
+        <PedigreeHorseSelector label={t("lab.leftColumn")} sex="mare" selected={mare} onSelect={(candidate) => { setMare(candidate); setGoalAnalysis(null); }} initialId={initialMareId} />
+        <PedigreeHorseSelector label={t("lab.rightColumn")} sex="stallion" selected={stallion} onSelect={setStallion} initialId={initialStallionId} />
       </div>
 
-      {mare ? (
-        <BreedingGoalsPanel marePedigreeId={mare.id} onGoalsChange={setBreedingGoals} />
-      ) : null}
+      {mare ? <BreedingGoalsPanel marePedigreeId={mare.id} onGoalsChange={setBreedingGoals} /> : null}
 
       {compareMode ? (
         <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
@@ -412,120 +381,41 @@ export default function BreedingLabClient({
                   setCompareStallions((current) => {
                     const next = [...current];
                     next[index] = candidate;
-                    return next.slice(0, 2);
+                    return next;
                   });
                 }}
-                initialId={initialCompareStallionIds[index] ?? null}
               />
             ))}
           </div>
         </div>
       ) : null}
 
-      <div className="flex flex-wrap gap-4">
-        <button
-          type="button"
-          onClick={handleAnalyze}
-          disabled={pending}
-          className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
-        >
-          {pending ? t("analyzing") : t("lab.generateAnalysis")}
-        </button>
-        {report && isAuthenticated && !compareMode ? (
-          <button
-            type="button"
-            onClick={handleSaveAnalysis}
-            disabled={pending}
-            className="rounded-xl border border-white/15 px-6 py-3 font-semibold text-white hover:border-blue-500"
-          >
-            {t("lab.saveAnalysis")}
-          </button>
-        ) : null}
+      {error ? <div className="rounded-2xl border border-red-500/30 bg-red-950/20 px-4 py-3 text-sm text-red-200">{error}</div> : null}
+
+      <div className="flex flex-wrap gap-3">
+        <button type="button" onClick={handleAnalyze} disabled={pending || !mare || (!stallion && !compareMode)} className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition disabled:opacity-50">{pending ? t("lab.analyzing") : t("lab.analyze")}</button>
+        <button type="button" onClick={handleSaveAnalysis} disabled={pending || !mare || !report || !isAuthenticated} className="rounded-xl border border-white/10 px-5 py-3 font-semibold text-white transition disabled:opacity-50">{t("lab.saveAnalysis")}</button>
+        {!isAuthenticated ? <span className="self-center text-xs text-gray-500"><Link href={`/login?redirect=${encodeURIComponent("/breeding-lab")}`} className="text-blue-400 hover:text-blue-300">{t("lab.loginToSave")}</Link></span> : null}
       </div>
 
-      {error ? (
-        <div className="rounded-2xl border border-red-500/30 bg-red-950/20 px-5 py-4 text-red-200">{error}</div>
-      ) : null}
-
-      {compareMode && compareReports.length > 1 ? (
-        <BreedingComparePanel reports={compareReports} />
-      ) : null}
-
       {report ? (
-        <div id="breeding-analysis-report" className="space-y-6">
-          <CombinedDecisionView
-            report={report}
-            pedigreeScoreBreakdown={pedigreeScoreBreakdown}
-            pedigreeRiskLabel={
-              pedigreeScoreBreakdown
-                ? riskLevelLabel(classifyRecommendationRisk(report))
-                : t("lab.insufficientDataRisk")
-            }
-            pedigreeCompatibilityScore={
-              pedigreeScoreBreakdown?.scoreAvailable ? pedigreeScoreBreakdown.total : null
-            }
-            goalAnalysis={goalAnalysis}
-          />
-          <BreedingAnalysisReportView report={report} />
+        <div id="breeding-analysis-report" className="space-y-8">
+          <CombinedDecisionView report={report} goalAnalysis={goalAnalysis} />
           {goalAnalysis ? <BreedingGoalAnalysisView analysis={goalAnalysis} /> : null}
+          {compareMode && compareReports.length > 1 ? <BreedingComparePanel reports={compareReports} /> : null}
+          <BreedingAnalysisReportView report={report} />
         </div>
       ) : null}
 
-      {isAuthenticated ? (
-        <section className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-          <h3 className="text-2xl font-bold text-white">{t("lab.savedAnalysesTitle")}</h3>
-          <p className="mt-2 text-sm text-gray-400">
-            {t("lab.savedAnalysesSubtitle")}
-          </p>
-          {saved.length === 0 ? (
-            <p className="mt-4 text-gray-500">{t("lab.noSavedAnalyses")}</p>
-          ) : (
-            <div className="mt-4 space-y-3">
-              {saved.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#08111F] p-4"
-                >
-                  <div>
-                    <p className="font-semibold text-white">
-                      {item.title ?? `${item.mareName} × ${item.stallionName}`}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {item.mareName} × {item.stallionName}
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenSaved(item)}
-                      disabled={pending}
-                      className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-60"
-                    >
-                      {t("open")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteSaved(item.id)}
-                      className="rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-300"
-                    >
-                      {t("delete")}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      ) : (
-        <p className="text-sm text-gray-500">
-          <Link href={loginRedirectPath("/breeding-lab")} className="text-blue-400 hover:text-blue-300">
-            {t("lab.signInPrompt")}
-          </Link>{" "}
-          {t("lab.signInSuffix")}
-        </p>
-      )}
-
-      <p className="text-sm text-gray-500 leading-6">{t("disclaimer")}</p>
+      <div className="space-y-5">
+        <h2 className="text-2xl font-bold text-white">{t("lab.savedAnalyses")}</h2>
+        {saved.length === 0 ? <div className="rounded-2xl border border-white/10 bg-[#111827] p-6 text-sm text-gray-400">{t("lab.noSavedAnalyses")}</div> : saved.map((item) => (
+          <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#111827] p-4">
+            <div><p className="font-semibold text-white">{item.title}</p><p className="mt-1 text-xs text-gray-500">{item.createdAt}</p></div>
+            <div className="flex gap-2"><button type="button" onClick={() => handleOpenSaved(item)} className="rounded-lg border border-white/10 px-3 py-2 text-sm text-gray-200">{t("lab.openSaved")}</button><button type="button" onClick={() => handleDeleteSaved(item.id)} className="rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-200">{t("lab.deleteSaved")}</button></div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
