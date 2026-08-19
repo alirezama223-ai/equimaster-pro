@@ -3,8 +3,6 @@
 import { getBreedingCandidateById } from "@/app/actions/breeding";
 import { getHorseTraitProfile } from "@/app/actions/traits";
 import { analyzeBreedingGoalsCross } from "@/app/lib/breeding-goals/analyze";
-import { buildHorseTraitProfile } from "@/app/lib/traits/aggregate";
-import { createDemoGoalEvidence, isShabdizDemoHorseName } from "@/app/lib/demo/demo-goal-profile";
 import type { BreedingGoalAnalysisResult, HorseTraitProfile, MareBreedingGoals } from "@/app/types/traits";
 
 export async function analyzeBreedingGoalCrossWithDemo(input: {
@@ -24,30 +22,22 @@ export async function analyzeBreedingGoalCrossWithDemo(input: {
     getHorseTraitProfile(input.stallionPedigreeId),
   ]);
 
+  if (!mareCandidate.candidate || !stallionCandidate.candidate) {
+    return {
+      analysis: null,
+      mareProfile: mareTraits.profile,
+      stallionProfile: stallionTraits.profile,
+      error: mareCandidate.error ?? stallionCandidate.error ?? "One or both selected horses could not be loaded.",
+    };
+  }
+
   if (!mareTraits.profile || !stallionTraits.profile) {
     return {
       analysis: null,
       mareProfile: mareTraits.profile,
       stallionProfile: stallionTraits.profile,
-      error: mareTraits.error ?? stallionTraits.error,
+      error: mareTraits.error ?? stallionTraits.error ?? "Trait evidence is not available for one or both selected horses.",
     };
-  }
-
-  let mareProfile = mareTraits.profile;
-  let stallionProfile = stallionTraits.profile;
-
-  if (mareCandidate.candidate && isShabdizDemoHorseName(mareCandidate.candidate.name)) {
-    mareProfile = buildHorseTraitProfile(
-      input.marePedigreeId,
-      createDemoGoalEvidence(input.marePedigreeId, mareCandidate.candidate.name)
-    );
-  }
-
-  if (stallionCandidate.candidate && isShabdizDemoHorseName(stallionCandidate.candidate.name)) {
-    stallionProfile = buildHorseTraitProfile(
-      input.stallionPedigreeId,
-      createDemoGoalEvidence(input.stallionPedigreeId, stallionCandidate.candidate.name)
-    );
   }
 
   const goals = input.goals ?? {
@@ -58,8 +48,8 @@ export async function analyzeBreedingGoalCrossWithDemo(input: {
   } satisfies MareBreedingGoals;
 
   return {
-    analysis: analyzeBreedingGoalsCross(mareProfile, stallionProfile, goals),
-    mareProfile,
-    stallionProfile,
+    analysis: analyzeBreedingGoalsCross(mareTraits.profile, stallionTraits.profile, goals),
+    mareProfile: mareTraits.profile,
+    stallionProfile: stallionTraits.profile,
   };
 }
