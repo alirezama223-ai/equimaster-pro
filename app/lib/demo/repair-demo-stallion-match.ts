@@ -70,7 +70,7 @@ async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, ped
     if (!trait.allowedSourceTypes.includes("owner_reported") && !trait.allowedSourceTypes.includes("breeder_reported")) continue;
     const missing = Math.max(0, MIN_DEMO_ASSESSMENTS_PER_TRAIT - (countByTrait.get(trait.key) ?? 0));
     for (let index = 0; index < missing; index += 1) {
-      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: false, created_by: userId });
+      rows.push({ pedigree_horse_id: pedigreeHorseId, trait_key: trait.key, score: demoScore(horseName, traitIndex), confidence: "high", source_type: index === 0 ? "owner_reported" : "breeder_reported", source_note: "SHABDIZ demo evidence — synthetic test data only.", verified: true, created_by: userId });
     }
   }
   if (rows.length === 0) return undefined;
