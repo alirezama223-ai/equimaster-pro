@@ -21,6 +21,56 @@ function summarizeSide(
   };
 }
 
+/**
+ * A common ancestor is useful for linebreeding analysis only when it is a
+ * minimal shared ancestor: another shared ancestor must not be an ancestor of
+ * it on either selected side. Otherwise a single shared bloodline chain can
+ * be reported once for every node in that chain, inflating the result count
+ * and creating misleading repeated 4x4/5x5 patterns.
+ */
+function filterMinimalCommonAncestorIds(
+  graph: PedigreeGraph,
+  commonIds: string[],
+  stallionOccurrences: AncestorOccurrence[],
+  mareOccurrences: AncestorOccurrence[]
+): string[] {
+  const stallionById = groupOccurrencesByAncestor(stallionOccurrences);
+  const mareById = groupOccurrencesByAncestor(mareOccurrences);
+
+  const isAncestorOnSide = (ancestorId: string, descendantId: string): boolean => {
+    if (ancestorId === descendantId) return false;
+
+    const descendantOccurrences = [
+      ...(stallionById.get(descendantId) ?? []),
+      ...(mareById.get(descendantId) ?? []),
+    ];
+    const ancestorOccurrences = [
+      ...(stallionById.get(ancestorId) ?? []),
+      ...(mareById.get(ancestorId) ?? []),
+    ];
+
+    for (const descendant of descendantOccurrences) {
+      for (const ancestor of ancestorOccurrences) {
+        if (descendant.side !== ancestor.side) continue;
+        if (ancestor.generation <= descendant.generation) continue;
+        const prefix = descendant.path;
+        if (ancestor.path.length >= prefix.length && prefix.every((step, index) => ancestor.path[index] === step)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  return commonIds.filter((candidateId) => {
+    return !commonIds.some((otherId) => {
+      if (candidateId === otherId) return false;
+      return isAncestorOnSide(candidateId, otherId);
+    });
+  });
+}
+
 export function detectCommonAncestors(
   graph: PedigreeGraph,
   stallionOccurrences: AncestorOccurrence[],
@@ -30,8 +80,14 @@ export function detectCommonAncestors(
   const mareGrouped = groupOccurrencesByAncestor(mareOccurrences);
 
   const commonIds = [...stallionGrouped.keys()].filter((id) => mareGrouped.has(id));
+  const minimalCommonIds = filterMinimalCommonAncestorIds(
+    graph,
+    commonIds,
+    stallionOccurrences,
+    mareOccurrences
+  );
 
-  const results: CommonAncestorResult[] = commonIds.map((ancestorId) => {
+  const results: CommonAncestorResult[] = minimalCommonIds.map((ancestorId) => {
     const stallionSide = summarizeSide("stallion", stallionGrouped.get(ancestorId) ?? []);
     const mareSide = summarizeSide("mare", mareGrouped.get(ancestorId) ?? []);
     const record = graph.get(ancestorId);
