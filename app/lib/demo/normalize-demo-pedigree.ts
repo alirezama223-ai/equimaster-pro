@@ -81,7 +81,7 @@ export async function normalizeDemoPedigree(
   if (alphaError) return { error: alphaError.message };
   if (!alpha?.id) return { error: "Demo stallion SHABDIZ Demo Alpha was not found." };
 
-  const { data: existingMareG1 } = await findHorse(supabase, userId, MARE_G1, "mare");
+  const { data: existingMareG1 } = await findHorse(supabase, userId, MARE_G1, "stallion");
   const { data: existingAlphaG1 } = await findHorse(supabase, userId, STALLION_G1, "stallion");
 
   if (existingMareG1?.id && existingAlphaG1?.id) {
