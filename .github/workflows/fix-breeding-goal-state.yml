@@ -1,0 +1,80 @@
+name: Fix Breeding Lab goal analysis state
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-goal-state:
+    runs-on: ubuntu-latest
+    if: github.event.head_commit.message != 'Fix Breeding Lab goal state handling'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Patch goal analysis key handling
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('app/components/breeding/BreedingLabClient.tsx')
+          text = path.read_text()
+
+          old = '''  const compareIds = useMemo(\n    () =>\n      compareMode\n        ? [stallion, ...compareStallions].filter((item): item is BreedingCandidate => Boolean(item)).map((item) => item.id)\n        : [],\n    [compareMode, stallion, compareStallions]\n  );\n'''
+          new = '''  const compareIds = useMemo(\n    () =>\n      compareMode\n        ? [stallion, ...compareStallions].filter((item): item is BreedingCandidate => Boolean(item)).map((item) => item.id)\n        : [],\n    [compareMode, stallion, compareStallions]\n  );\n\n  const goalsKey = useMemo(\n    () =>\n      breedingGoals\n        ? JSON.stringify({\n            improveGoals: breedingGoals.improveGoals,\n            preserveTraits: breedingGoals.preserveTraits,\n            avoidReinforcingWeaknesses: breedingGoals.avoidReinforcingWeaknesses,\n          })\n        : 'none',\n    [breedingGoals]\n  );\n'''
+          if old not in text:
+              raise SystemExit('compareIds anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''      const useCompare = options?.compare ?? stallionPedigreeIds.length > 1;\n      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}`;\n'''
+          new = '''      const useCompare = options?.compare ?? stallionPedigreeIds.length > 1;\n      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}:${goalsKey}`;\n'''
+          if old not in text:
+              raise SystemExit('load analysis key anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''    [syncUrl, breedingGoals]\n  );\n'''
+          new = '''    [syncUrl, breedingGoals, goalsKey]\n  );\n'''
+          if old not in text:
+              raise SystemExit('load callback dependency anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''    const analysisKey = `${initialMareId}:${stallionPedigreeIds.join(",")}:${\n      initialCompareStallionIds.length > 0 ? "compare" : "single"\n    }`;\n'''
+          new = '''    const analysisKey = `${initialMareId}:${stallionPedigreeIds.join(",")}:${\n      initialCompareStallionIds.length > 0 ? "compare" : "single"\n    }:${goalsKey}`;\n'''
+          if old not in text:
+              raise SystemExit('initial analysis key anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross]);\n'''
+          new = '''  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross, goalsKey]);\n'''
+          if old not in text:
+              raise SystemExit('effect dependency anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}`;\n'''
+          new = '''      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}:${goalsKey}`;\n'''
+          if old not in text:
+              raise SystemExit('manual analysis key anchor not found')
+          text = text.replace(old, new, 1)
+
+          old = '''    });\n  }\n\n  function handleOpenSaved'''
+          new = '''    });\n  }\n\n  function handleOpenSaved'''
+          if old not in text:
+              raise SystemExit('final anchor not found')
+
+          path.write_text(text)
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/components/breeding/BreedingLabClient.tsx
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Fix Breeding Lab goal state handling"
+          git push
