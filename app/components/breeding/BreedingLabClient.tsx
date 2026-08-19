@@ -70,6 +70,18 @@ export default function BreedingLabClient({
     [compareMode, stallion, compareStallions]
   );
 
+  const goalsKey = useMemo(
+    () =>
+      breedingGoals
+        ? JSON.stringify({
+            improveGoals: breedingGoals.improveGoals,
+            preserveTraits: breedingGoals.preserveTraits,
+            avoidReinforcingWeaknesses: breedingGoals.avoidReinforcingWeaknesses,
+          })
+        : 'none',
+    [breedingGoals]
+  );
+
   const syncUrl = useCallback(
     (nextMareId: string | null, nextStallionIds: string[]) => {
       const params = new URLSearchParams();
@@ -99,7 +111,7 @@ export default function BreedingLabClient({
       options?: { compare?: boolean; scroll?: boolean }
     ) => {
       const useCompare = options?.compare ?? stallionPedigreeIds.length > 1;
-      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}`;
+      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}:${goalsKey}`;
 
       setError(null);
       setCompareMode(useCompare);
@@ -206,7 +218,7 @@ export default function BreedingLabClient({
       if (options?.scroll !== false) scrollToAnalysisReport();
       return true;
     },
-    [syncUrl, breedingGoals]
+    [syncUrl, breedingGoals, goalsKey]
   );
 
   useEffect(() => {
@@ -218,7 +230,7 @@ export default function BreedingLabClient({
         : [initialStallionId];
     const analysisKey = `${initialMareId}:${stallionPedigreeIds.join(",")}:${
       initialCompareStallionIds.length > 0 ? "compare" : "single"
-    }`;
+    }:${goalsKey}`;
 
     if (analyzedParamsRef.current === analysisKey) return;
 
@@ -228,7 +240,7 @@ export default function BreedingLabClient({
         scroll: false,
       });
     });
-  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross]);
+  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross, goalsKey]);
 
   function handleAnalyze() {
     if (!mare) {
@@ -244,7 +256,7 @@ export default function BreedingLabClient({
 
     setError(null);
     startTransition(async () => {
-      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}`;
+      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}:${goalsKey}`;
 
       if (compareMode && stallionIds.length > 1) {
         const response = await runBreedingCompare({
