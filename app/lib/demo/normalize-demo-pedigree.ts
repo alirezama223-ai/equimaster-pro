@@ -7,6 +7,8 @@ const MARE_G1 = "SHABDIZ Demo Bella Line G1";
 const STALLION_G2 = "SHABDIZ Demo Alpha Line G2";
 const STALLION_G1 = "SHABDIZ Demo Alpha Line G1";
 
+type HorseResult = { id: string | null; error?: string };
+
 async function findHorse(supabase: SupabaseClient, userId: string, name: string, sex?: "mare" | "stallion") {
   let query = supabase
     .from("pedigree_horses")
@@ -25,7 +27,7 @@ async function createHorse(
   sex: "mare" | "stallion",
   birthYear: number,
   sireId: string | null
-) {
+): Promise<HorseResult> {
   const id = randomUUID();
   const { error } = await supabase.from("pedigree_horses").insert({
     id,
@@ -51,7 +53,7 @@ async function getOrCreateHorse(
   sex: "mare" | "stallion",
   birthYear: number,
   sireId: string | null
-) {
+): Promise<HorseResult> {
   const existing = await findHorse(supabase, userId, name, sex);
   if (existing.error) return { id: null, error: existing.error.message };
   if (existing.data?.id) return { id: existing.data.id as string };
