@@ -222,13 +222,13 @@ async function ensurePedigreeDepth(
   if (depth <= 0 || visited.has(rootId)) return undefined;
   visited.add(rootId);
 
-  const { data: horse, error } = await supabase
+  const { data: rows, error } = await supabase
     .from("pedigree_horses")
     .select("id, name, sex, birth_year, sire_id, dam_id")
     .eq("id", rootId)
-    .maybeSingle();
-
+    .limit(1);
   if (error) return error.message;
+  const horse = rows?.[0];
   if (!horse) return `Demo pedigree horse ${rootId} was not found.`;
 
   let sireId = horse.sire_id as string | null;
@@ -238,16 +238,8 @@ async function ensurePedigreeDepth(
 
   if (!sireId) {
     const created = await createPedigreeHorse(
-      supabase,
-      userId,
-      `${baseName} · Sire G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
-      "stallion",
-      baseYear,
-      "Warmblood",
-      "Bay",
-      "Germany",
-      null,
-      null
+      supabase, userId, `${baseName} · Sire G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
+      "stallion", baseYear, "Warmblood", "Bay", "Germany", null, null
     );
     if (created.error || !created.id) return created.error ?? `Unable to create sire for ${baseName}.`;
     sireId = created.id;
@@ -255,16 +247,8 @@ async function ensurePedigreeDepth(
 
   if (!damId) {
     const created = await createPedigreeHorse(
-      supabase,
-      userId,
-      `${baseName} · Dam G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
-      "mare",
-      baseYear + 1,
-      "Warmblood",
-      "Bay",
-      "Germany",
-      null,
-      null
+      supabase, userId, `${baseName} · Dam G${DEMO_PEDIGREE_DEPTH - depth + 1}`,
+      "mare", baseYear + 1, "Warmblood", "Bay", "Germany", null, null
     );
     if (created.error || !created.id) return created.error ?? `Unable to create dam for ${baseName}.`;
     damId = created.id;
@@ -295,18 +279,7 @@ export async function seedDemoStallions(
 
   let sharedSireId = mare.sire_id;
   if (!sharedSireId) {
-    const sharedSire = await createPedigreeHorse(
-      supabase,
-      userId,
-      "SHABDIZ Demo Common Sire",
-      "stallion",
-      2008,
-      "Warmblood",
-      "Bay",
-      "Germany",
-      null,
-      null
-    );
+    const sharedSire = await createPedigreeHorse(supabase, userId, "SHABDIZ Demo Common Sire", "stallion", 2008, "Warmblood", "Bay", "Germany", null, null);
     if (sharedSire.error || !sharedSire.id) return { error: sharedSire.error };
     sharedSireId = sharedSire.id;
     const { error } = await supabase.from("pedigree_horses").update({ sire_id: sharedSireId }).eq("id", mare.id);
@@ -317,12 +290,13 @@ export async function seedDemoStallions(
 
   for (let index = 0; index < DEMO_STALLIONS.length; index += 1) {
     const template = DEMO_STALLIONS[index];
-    const { data: existingRows } = await supabase
+    const { data: existingRows, error: existingError } = await supabase
       .from("stallions")
       .select("id, pedigree_horse_id")
       .eq("owner_id", userId)
       .eq("name", template.name)
       .limit(1);
+    if (existingError) return { error: existingError.message };
 
     const existing = existingRows?.[0];
     if (existing?.id && existing.pedigree_horse_id) {
@@ -331,86 +305,29 @@ export async function seedDemoStallions(
     }
 
     const sireId = index === 0 ? sharedSireId : null;
-    const sire = await createPedigreeHorse(
-      supabase,
-      userId,
-      template.sire,
-      "stallion",
-      template.birthYear - 7,
-      template.breed,
-      "Bay",
-      template.country,
-      null,
-      null
-    );
+    const sire = await createPedigreeHorse(supabase, userId, template.sire, "stallion", template.birthYear - 7, template.breed, "Bay", template.country, null, null);
     if (sire.error || !sire.id) return { error: sire.error };
-
-    const dam = await createPedigreeHorse(
-      supabase,
-      userId,
-      template.dam,
-      "mare",
-      template.birthYear - 6,
-      template.breed,
-      "Bay",
-      template.country,
-      null,
-      null
-    );
+    const dam = await createPedigreeHorse(supabase, userId, template.dam, "mare", template.birthYear - 6, template.breed, "Bay", template.country, null, null);
     if (dam.error || !dam.id) return { error: dam.error };
-
-    const subject = await createPedigreeHorse(
-      supabase,
-      userId,
-      template.name,
-      "stallion",
-      template.birthYear,
-      template.breed,
-      template.color,
-      template.country,
-      sireId ?? sire.id,
-      dam.id
-    );
+    const subject = await createPedigreeHorse(supabase, userId, template.name, "stallion", template.birthYear, template.breed, template.color, template.country, sireId ?? sire.id, dam.id);
     if (subject.error || !subject.id) return { error: subject.error };
 
     const { error: stallionError } = await supabase.from("stallions").insert({
-      owner_id: userId,
-      breeder_id: breederResult.id,
-      name: template.name,
-      breed: template.breed,
-      studbook: template.studbook,
-      birth_year: template.birthYear,
-      color: template.color,
-      height: template.height,
-      country: template.country,
-      discipline: template.discipline,
-      competition_level: template.competitionLevel,
-      sire: template.sire,
-      dam: template.dam,
-      dam_sire: template.damSire,
-      stud_fee: template.studFee,
-      stud_fee_currency: "EUR",
-      availability: "available",
-      breeding_methods: ["fresh_semen", "chilled_semen", "frozen_semen"],
-      description: "SHABDIZ demo stallion — test data only.",
-      performance: "Synthetic performance profile for testing the matching engine.",
-      breeding_highlights: "Synthetic trait profile for testing goal alignment.",
-      image_urls: [],
-      cover_image_url: null,
-      verified: true,
-      status: "active",
-      pedigree_horse_id: subject.id,
+      owner_id: userId, breeder_id: breederResult.id, name: template.name, breed: template.breed,
+      studbook: template.studbook, birth_year: template.birthYear, color: template.color, height: template.height,
+      country: template.country, discipline: template.discipline, competition_level: template.competitionLevel,
+      sire: template.sire, dam: template.dam, dam_sire: template.damSire, stud_fee: template.studFee,
+      stud_fee_currency: "EUR", availability: "available", breeding_methods: ["fresh_semen", "chilled_semen", "frozen_semen"],
+      description: "SHABDIZ demo stallion — test data only.", performance: "Synthetic performance profile for testing the matching engine.",
+      breeding_highlights: "Synthetic trait profile for testing goal alignment.", image_urls: [], cover_image_url: null,
+      verified: true, status: "active", pedigree_horse_id: subject.id,
     });
-
     if (stallionError) return { error: stallionError.message };
-
     const traitError = await seedTraitEvidence(supabase, userId, subject.id, template.emphasis);
     if (traitError) return { error: traitError };
     demoRootIds.push(subject.id);
   }
 
-  // Make the demo ancestry deep enough for the same evidence-confidence rules
-  // used in production, rather than weakening the production scoring gate.
   for (const rootId of demoRootIds) {
     const error = await ensurePedigreeDepth(supabase, userId, rootId);
     if (error) return { error };
