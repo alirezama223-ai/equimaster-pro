@@ -27,8 +27,9 @@ async function createAncestor(supabase: SupabaseClient, userId: string, name: st
 async function ensureDepth(supabase: SupabaseClient, userId: string, rootId: string, depth = DEMO_DEPTH, visited = new Set<string>()): Promise<string | undefined> {
   if (depth <= 0 || visited.has(rootId)) return undefined;
   visited.add(rootId);
-  const { data: horse, error } = await supabase.from("pedigree_horses").select("id, name, sex, birth_year, sire_id, dam_id").eq("id", rootId).maybeSingle();
+  const { data: rows, error } = await supabase.from("pedigree_horses").select("id, name, sex, birth_year, sire_id, dam_id").eq("id", rootId).limit(1);
   if (error) return error.message;
+  const horse = rows?.[0];
   if (!horse) return `Demo pedigree root ${rootId} was not found.`;
   let sireId = horse.sire_id as string | null;
   let damId = horse.dam_id as string | null;
@@ -79,8 +80,9 @@ async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, ped
 }
 
 export async function repairDemoStallionMatchData(supabase: SupabaseClient, userId: string): Promise<{ error?: string }> {
-  const { data: mare, error: mareError } = await supabase.from("pedigree_horses").select("id, name, sex, birth_year, sire_id, dam_id").eq("name", "Bella").eq("sex", "mare").eq("created_by", userId).maybeSingle();
+  const { data: mareRows, error: mareError } = await supabase.from("pedigree_horses").select("id, name, sex, birth_year, sire_id, dam_id").eq("name", "Bella").eq("sex", "mare").eq("created_by", userId).limit(1);
   if (mareError) return { error: mareError.message };
+  const mare = mareRows?.[0];
   if (!mare) return { error: "Demo mare Bella was not found." };
   const { data: stallions, error: stallionError } = await supabase.from("stallions").select("pedigree_horse_id, name").eq("owner_id", userId).like("name", `${DEMO_STALLION_PREFIX}%`).not("pedigree_horse_id", "is", null);
   if (stallionError) return { error: stallionError.message };
