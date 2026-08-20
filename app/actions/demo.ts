@@ -6,6 +6,7 @@ import { normalizeDemoPedigree } from "@/app/lib/demo/normalize-demo-pedigree";
 import { repairDemoStallionMatchData } from "@/app/lib/demo/repair-demo-stallion-match";
 import { seedDemoStallions } from "@/app/lib/demo/seed-demo-stallions";
 import { createClient } from "@/app/lib/supabase/server";
+import { requireAdmin } from "@/app/lib/admin";
 import type { DemoEnvironmentSnapshot } from "@/app/types/demo";
 
 async function requireAuthenticatedUser() {
@@ -45,26 +46,28 @@ export async function resetDemo(): Promise<{ error?: string }> {
 
 /** Enables the demo environment, seeds five isolated SHABDIZ demo stallions, and repairs any older shallow demo records. */
 export async function seedDemoStallionMatch(): Promise<{ error?: string; marePedigreeId?: string }> {
-  const auth = await requireAuthenticatedUser();
-  if (!auth.user) return { error: auth.error };
+  const admin = await requireAdmin();
+  if (admin.error || !admin.supabase || !admin.user) {
+    return { error: admin.error ?? "Admin access required to load SHABDIZ demo data." };
+  }
 
-  const { sellerName, sellerEmail } = sellerDetails(auth.user);
+  const { sellerName, sellerEmail } = sellerDetails(admin.user);
   const demoModeResult = await setDemoModeEnabled(
-    auth.supabase,
-    auth.user.id,
+    admin.supabase,
+    admin.user.id,
     true,
     sellerName,
     sellerEmail
   );
   if (demoModeResult.error) return { error: demoModeResult.error };
 
-  const seedResult = await seedDemoStallions(auth.supabase, auth.user.id);
+  const seedResult = await seedDemoStallions(admin.supabase, admin.user.id);
   if (seedResult.error) return seedResult;
 
-  const pedigreeResult = await normalizeDemoPedigree(auth.supabase, auth.user.id);
+  const pedigreeResult = await normalizeDemoPedigree(admin.supabase, admin.user.id);
   if (pedigreeResult.error) return { error: pedigreeResult.error, marePedigreeId: seedResult.marePedigreeId };
 
-  const repairResult = await repairDemoStallionMatchData(auth.supabase, auth.user.id);
+  const repairResult = await repairDemoStallionMatchData(admin.supabase, admin.user.id);
   if (repairResult.error) return { error: repairResult.error, marePedigreeId: seedResult.marePedigreeId };
 
   return seedResult;
