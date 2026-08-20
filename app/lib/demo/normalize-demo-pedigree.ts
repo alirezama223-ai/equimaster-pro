@@ -16,7 +16,7 @@ async function findHorse(supabase: SupabaseClient, userId: string, name: string,
     .eq("name", name)
     .eq("created_by", userId);
   if (sex) query = query.eq("sex", sex);
-  const { data, error } = await query.maybeSingle();
+  const { data, error } = await query.limit(1).maybeSingle();
   return { data, error };
 }
 
