@@ -87,15 +87,16 @@ const DEMO_STALLIONS = [
 const DEMO_PEDIGREE_DEPTH = 5;
 
 async function getOrCreateDemoBreeder(supabase: SupabaseClient, userId: string) {
-  const { data: existing, error: findError } = await supabase
+  const { data: existingRows, error: findError } = await supabase
     .from("breeders")
     .select("id")
     .eq("owner_id", userId)
     .eq("name", "SHABDIZ Demo Stud Farm")
     .eq("status", "active")
-    .maybeSingle();
+    .limit(1);
 
   if (findError) return { id: null, error: findError.message };
+  const existing = existingRows?.[0];
   if (existing?.id) return { id: existing.id as string };
 
   const { data: created, error } = await supabase
@@ -173,15 +174,16 @@ async function seedTraitEvidence(
 }
 
 async function ensureDemoMare(supabase: SupabaseClient, userId: string) {
-  const { data: existing, error: findError } = await supabase
+  const { data: existingRows, error: findError } = await supabase
     .from("pedigree_horses")
     .select("id, sire_id, dam_id")
     .eq("name", "Bella")
     .eq("sex", "mare")
     .eq("created_by", userId)
-    .maybeSingle();
+    .limit(1);
 
   if (findError) return { id: null, sire_id: null, dam_id: null, error: findError.message };
+  const existing = existingRows?.[0];
   if (existing?.id) return { id: existing.id as string, sire_id: existing.sire_id as string | null, dam_id: existing.dam_id as string | null };
 
   const created = await createPedigreeHorse(
@@ -315,13 +317,14 @@ export async function seedDemoStallions(
 
   for (let index = 0; index < DEMO_STALLIONS.length; index += 1) {
     const template = DEMO_STALLIONS[index];
-    const { data: existing } = await supabase
+    const { data: existingRows } = await supabase
       .from("stallions")
       .select("id, pedigree_horse_id")
       .eq("owner_id", userId)
       .eq("name", template.name)
-      .maybeSingle();
+      .limit(1);
 
+    const existing = existingRows?.[0];
     if (existing?.id && existing.pedigree_horse_id) {
       demoRootIds.push(existing.pedigree_horse_id as string);
       continue;
