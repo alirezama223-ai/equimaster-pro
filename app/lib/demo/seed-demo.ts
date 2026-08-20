@@ -420,136 +420,141 @@ async function seedHealthForHorse(
   return {};
 }
 
-async function syncDemoEvents(
+async function seedSessionsForHorse(
   supabase: SupabaseClient,
   userId: string,
-  horses: SeededHorse[]
+  horse: SeededHorse,
+  systemExercises: SystemExercise[]
 ): Promise<{ error?: string }> {
-  for (const horse of horses) {
-    const analyticsResult = await fetchHorseTrainingAnalytics(
-      supabase,
-      userId,
-      horse.pedigreeId,
-      horse.template.name
-    );
+  const sessionDates = pickSessionDates(horse.template.sessionDensity);
 
-    const syncResult = await syncHorseEventsFromAnalytics(
-      supabase,
-      userId,
-      horse.pedigreeId,
-      horse.template.name,
-      analyticsResult.analytics
-    );
+  const disciplineExercises = systemExercises.filter(
+    (exercise) =>
+      exercise.discipline === horse.template.discipline ||
+      exercise.discipline === null
+  );
 
-    if (syncResult.error) {
-      return { error: syncResult.error };
-    }
+  const exercises =
+    disciplineExercises.length > 0 ? disciplineExercises : systemExercises;
+
+  const sessions = sessionDates.map((sessionDate, index) => ({
+    id: randomUUID(),
+    created_by: userId,
+    pedigree_horse_id: horse.pedigreeId,
+    training_plan_id: horse.planId,
+    session_date: sessionDate,
+    title: `${horse.template.discipline} session · ${horse.template.name}`,
+    notes:
+      index % 4 === 0
+        ? `${horse.template.name} stayed balanced and responsive through the main exercises.`
+        : null,
+    session_goal:
+      "Maintain rhythm, straightness, and quality transitions.",
+    energy_level:
+      horse.template.name === "Atlas" ? "high" : "moderate",
+    confidence: "high",
+    status: "completed",
+    duration_minutes: sessionDuration(
+      horse.template,
+      sessionDate
+    ),
+    rider_rating: sessionRating(
+      horse.template,
+      index,
+      sessionDate
+    ),
+    horse_feeling: sessionFeeling(
+      horse.template,
+      index,
+      sessionDate
+    ),
+    coach_notes:
+      index % 3 === 0
+        ? `Good progress on ${horse.template.discipline.toLowerCase()} fundamentals—keep the same warm-up routine before increasing intensity.`
+        : null,
+  }));
+
+  const { error: sessionError } = await supabase
+    .from("training_sessions")
+    .insert(sessions);
+
+  if (sessionError) {
+    return { error: sessionError.message };
   }
 
-  return {};
-}
-
-export async function seedDemoEnvironment(
-  supabase: SupabaseClient,
-  userId: string,
-  sellerName: string,
-  sellerEmail: string
-): Promise<{ result: SeedDemoResult | null; error?: string }> {
-  const exercisesResult = await fetchSystemExercises(supabase);
-  if (exercisesResult.error) {
-    return { result: null, error: exercisesResult.error };
+  if (exercises.length === 0) {
+    return {};
   }
 
-  const seededHorses: SeededHorse[] = [];
-  const horseIds: string[] = [];
-  const listingIds: string[] = [];
-  const planIds: string[] = [];
-  let primaryHorseId: string | null = null;
+  const sessionExercises = sessions.flatMap(
+    (session, sessionIndex) => {
+      const categories = ["warmup", "flatwork", "cooldown"];
 
-  for (const template of DEMO_HORSE_TEMPLATES) {
-    const pedigreeResult = await seedHorseListingAndPedigree(
-      supabase,
-      userId,
-      template,
-      sellerName,
-      sellerEmail
-    );
+      if (horse.template.discipline === "Show Jumping") {
+        categories.splice(2, 0, "polework", "jumping");
+      } else if (horse.template.discipline === "Eventing") {
+        categories.splice(2, 0, "conditioning", "jumping");
+      }
 
-    if (pedigreeResult.error) {
-      return { result: null, error: pedigreeResult.error };
+      const usedExerciseIds = new Set<string>();
+
+      return categories
+        .map((category, sortOrder) => {
+          /*
+           * First try to find an exercise matching the requested
+           * category that has not already been used in this session.
+           */
+          let exercise = exercises.find(
+            (item) =>
+              item.category === category &&
+              !usedExerciseIds.has(item.id)
+          );
+
+          /*
+           * If there is no category-specific exercise available,
+           * use the next unused exercise.
+           */
+          if (!exercise) {
+            exercise = exercises.find(
+              (item) => !usedExerciseIds.has(item.id)
+            );
+          }
+
+          /*
+           * No unused exercises remain.
+           * Skip this row rather than violating the unique
+           * exercise constraint.
+           */
+          if (!exercise) {
+            return null;
+          }
+
+          usedExerciseIds.add(exercise.id);
+
+          return {
+            id: randomUUID(),
+            training_session_id: session.id,
+            exercise_id: exercise.id,
+            sort_order: sortOrder,
+            duration_minutes: 10 + sortOrder * 5,
+            status: "completed",
+          };
+        })
+        .filter(
+          (row): row is NonNullable<typeof row> => row !== null
+        );
     }
+  );
 
-    const planResult = await seedTrainingPlan(
-      supabase,
-      userId,
-      template,
-      pedigreeResult.pedigreeId
-    );
-
-    if (planResult.error) {
-      return { result: null, error: planResult.error };
-    }
-
-    const seededHorse: SeededHorse = {
-      template,
-      pedigreeId: pedigreeResult.pedigreeId,
-      listingId: pedigreeResult.listingId,
-      planId: planResult.planId,
-    };
-
-    seededHorses.push(seededHorse);
-    horseIds.push(pedigreeResult.pedigreeId);
-    listingIds.push(pedigreeResult.listingId);
-    planIds.push(planResult.planId);
-
-    if (template.primary) {
-      primaryHorseId = pedigreeResult.pedigreeId;
-    }
+  if (sessionExercises.length === 0) {
+    return {};
   }
 
-  for (const horse of seededHorses) {
-    const sessionResult = await seedSessionsForHorse(
-      supabase,
-      userId,
-      horse,
-      exercisesResult.exercises
-    );
+  const { error: exerciseLinkError } = await supabase
+    .from("training_session_exercises")
+    .insert(sessionExercises);
 
-    if (sessionResult.error) {
-      return { result: null, error: sessionResult.error };
-    }
-
-    const healthResult = await seedHealthForHorse(supabase, userId, horse);
-    if (healthResult.error) {
-      return { result: null, error: healthResult.error };
-    }
-  }
-
-  const syncResult = await syncDemoEvents(supabase, userId, seededHorses);
-  if (syncResult.error) {
-    return { result: null, error: syncResult.error };
-  }
-
-  const stateResult = await upsertDemoUserState(supabase, userId, {
-    demoModeEnabled: true,
-    demoSeeded: true,
-    demoHorseIds: horseIds,
-    demoListingIds: listingIds,
-    demoPlanIds: planIds,
-    primaryDemoHorseId: primaryHorseId,
-    lastResetAt: new Date().toISOString(),
-  });
-
-  if (stateResult.error) {
-    return { result: null, error: stateResult.error };
-  }
-
-  return {
-    result: {
-      horseIds,
-      listingIds,
-      planIds,
-      primaryHorseId,
-    },
-  };
+  return exerciseLinkError
+    ? { error: exerciseLinkError.message }
+    : {};
 }
