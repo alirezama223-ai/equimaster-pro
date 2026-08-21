@@ -19,7 +19,7 @@ export type GoalBasedRecommendationResult = {
   rank: number; stallionDirectoryId: string; pedigreeHorseId: string; name: string; coverImageUrl: string; verified: boolean;
   studFeeLabel: string; availability: string; goalMatchScore: number | null; goalMatchConfidence: string;
   goalAnalysis: BreedingGoalAnalysisResult; compatibilityScore: number | null; finalMatchScore: number | null;
-  finalMatchBreakdown: { available: boolean; pedigreeScore: number | null; goalMatchScore: number | null; pedigreeWeight: number; goalWeight: number; finalScore: number | null; reason: "both_available" | "pedigree_only" | "insufficient_data" };
+  finalMatchBreakdown: { available: boolean; pedigreeScore: number | null; goalMatchScore: number | null; pedigreeWeight: number; goalWeight: number; finalScore: number | null; reason: "both_available" | "goal_only" | "insufficient_data" };
   pedigreeRiskLabel: string; pedigreeWarnings: string[]; reportAvailable: boolean;
 };
 export type GoalBasedRecommendationResponse = {
@@ -63,7 +63,7 @@ function injectDemoEvidence(map: Map<string, HorseTraitAssessmentRow[]>, horses:
 
 function buildFinalMatch(goalMatchScore: number | null, compatibilityScore: number | null): GoalBasedRecommendationResult["finalMatchBreakdown"] {
   if (goalMatchScore !== null && compatibilityScore !== null) return { available: true, pedigreeScore: compatibilityScore, goalMatchScore, pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT, goalWeight: FINAL_MATCH_GOAL_WEIGHT, finalScore: Math.round((goalMatchScore * FINAL_MATCH_GOAL_WEIGHT + compatibilityScore * FINAL_MATCH_PEDIGREE_WEIGHT) / 100), reason: "both_available" };
-  if (goalMatchScore !== null) return { available: true, pedigreeScore: null, goalMatchScore, pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT, goalWeight: FINAL_MATCH_GOAL_WEIGHT, finalScore: goalMatchScore, reason: "pedigree_only" };
+  if (goalMatchScore !== null) return { available: true, pedigreeScore: null, goalMatchScore, pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT, goalWeight: FINAL_MATCH_GOAL_WEIGHT, finalScore: goalMatchScore, reason: "goal_only" };
   return { available: false, pedigreeScore: null, goalMatchScore: null, pedigreeWeight: FINAL_MATCH_PEDIGREE_WEIGHT, goalWeight: FINAL_MATCH_GOAL_WEIGHT, finalScore: null, reason: "insufficient_data" };
 }
 
