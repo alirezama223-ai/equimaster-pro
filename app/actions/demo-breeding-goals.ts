@@ -1,7 +1,7 @@
 "use server";
 
 import { getBreedingCandidateById } from "@/app/actions/breeding";
-import { getHorseTraitProfile } from "@/app/actions/traits";
+import { getHorseTraitProfile, getMareBreedingGoals } from "@/app/actions/traits";
 import { analyzeBreedingGoalsCross } from "@/app/lib/breeding-goals/analyze";
 import type { BreedingGoalAnalysisResult, HorseTraitProfile, MareBreedingGoals } from "@/app/types/traits";
 
@@ -40,12 +40,28 @@ export async function analyzeBreedingGoalCrossWithDemo(input: {
     };
   }
 
-  const goals = input.goals ?? {
-    marePedigreeId: input.marePedigreeId,
-    improveGoals: [],
-    preserveTraits: [],
-    avoidReinforcingWeaknesses: true,
-  } satisfies MareBreedingGoals;
+  // The UI may start the cross-analysis before BreedingGoalsPanel has finished
+  // loading the persisted goals. When goals are not supplied by the client,
+  // load them here so analysis never silently falls back to an empty goal set.
+  let goals = input.goals;
+  if (!goals) {
+    const persisted = await getMareBreedingGoals(input.marePedigreeId);
+    if (persisted.error) {
+      return {
+        analysis: null,
+        mareProfile: mareTraits.profile,
+        stallionProfile: stallionTraits.profile,
+        error: persisted.error,
+      };
+    }
+
+    goals = persisted.goals ?? {
+      marePedigreeId: input.marePedigreeId,
+      improveGoals: [],
+      preserveTraits: [],
+      avoidReinforcingWeaknesses: true,
+    } satisfies MareBreedingGoals;
+  }
 
   return {
     analysis: analyzeBreedingGoalsCross(mareTraits.profile, stallionTraits.profile, goals),
