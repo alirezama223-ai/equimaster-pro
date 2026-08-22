@@ -18,6 +18,11 @@ function formatPrice(price: number | null, priceOnRequest: boolean) {
   return new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
 }
 
+function getFallbackHorseImage(index: number) {
+  // Stable demo images for seeded marketplace listings that do not yet have uploaded photos.
+  return `https://loremflickr.com/900/520/horse?lock=${700 + index}`;
+}
+
 export default async function HorseComparePage({ searchParams }: Props) {
   const resolved = await searchParams;
   const rawIds = firstParam(resolved.ids) ?? "";
@@ -55,12 +60,28 @@ export default async function HorseComparePage({ searchParams }: Props) {
                   <thead>
                     <tr className="border-b border-white/10">
                       <th className="w-44 p-5 text-left text-xs uppercase tracking-wider text-gray-500">Specification</th>
-                      {listings.map((horse) => {
-                        const image = horse.cover_image_url ?? horse.image_urls?.[0];
+                      {listings.map((horse, index) => {
+                        const storedImage = horse.cover_image_url ?? horse.image_urls?.[0];
+                        const fallbackImage = getFallbackHorseImage(index);
                         return (
                           <th key={horse.id} className="min-w-[250px] p-5 text-left align-top">
-                            <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#081223]">
-                              {image ? <img src={image} alt={horse.name} className="h-40 w-full object-cover" /> : <div className="flex h-40 items-center justify-center text-5xl">🐎</div>}
+                            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#081223]">
+                              <img
+                                src={storedImage || fallbackImage}
+                                alt={`${horse.name} - ${horse.breed}`}
+                                className="h-40 w-full object-cover"
+                                loading="eager"
+                                referrerPolicy="no-referrer"
+                                onError={(event) => {
+                                  const target = event.currentTarget;
+                                  if (target.src !== fallbackImage) target.src = fallbackImage;
+                                }}
+                              />
+                              {!storedImage && (
+                                <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+                                  Demo image
+                                </span>
+                              )}
                             </div>
                             <h2 className="mt-4 text-xl font-bold">{horse.name}</h2>
                             <p className="mt-1 text-sm text-gray-400">{horse.breed}</p>
