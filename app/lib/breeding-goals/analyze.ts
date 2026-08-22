@@ -153,19 +153,30 @@ function analyzePreserveGoal(
   };
 }
 
-function statusPoints(status: ComplementStatus): number {
-  switch (status) {
-    case "strong_complement":
-      return 100;
-    case "complement":
-      return 80;
-    case "neutral":
-      return 55;
-    case "potential_concern":
-      return 25;
-    default:
-      return 0;
+function clampStatusPoints(value: number): number {
+  return Math.max(0, Math.min(100, Math.round(value * 100) / 100));
+}
+
+/**
+ * Convert the actual evidence relationship into 0–100 status points.
+ *
+ * Improve goals are driven by the stallion-vs-mare evidence gap rather than
+ * by a fixed point value for the qualitative status label. A 1.0-point gap
+ * maps to 80 points, while larger/smaller gaps move the score continuously.
+ *
+ * Preserve goals use the weaker of the two horses because a preserve goal is
+ * only as strong as the side with the lower evidence score.
+ */
+function statusPoints(analysis: GoalTraitAnalysis): number {
+  if (analysis.mareScore == null || analysis.stallionScore == null) return 0;
+
+  if (analysis.goalType === "improve") {
+    const gap = analysis.stallionScore - analysis.mareScore;
+    return clampStatusPoints(50 + gap * 30);
   }
+
+  const weakerScore = Math.min(analysis.mareScore, analysis.stallionScore);
+  return clampStatusPoints(weakerScore * 20);
 }
 
 function confidenceMultiplier(level: TraitProfileConfidenceLevel): number {
@@ -185,7 +196,7 @@ function confidenceMultiplier(level: TraitProfileConfidenceLevel): number {
  * Breeding Goal Match Score (0–100), separate from Phase 10 pedigree compatibility.
  *
  * For each selected goal with assessable evidence on BOTH horses:
- *   contribution = statusPoints(status) × priorityWeight × avgConfidenceMultiplier
+ *   contribution = evidenceDrivenStatusPoints × priorityWeight × avgConfidenceMultiplier
  *
  * goalMatchScore = sum(contributions) / sum(maxPossibleContributions) × 100
  *
@@ -232,7 +243,7 @@ export function analyzeBreedingGoalsCross(
     const avgConfidence =
       confidenceMultiplier(analysis.mareConfidence) * 0.5 +
       confidenceMultiplier(analysis.stallionConfidence) * 0.5;
-    const points = statusPoints(analysis.status);
+    const points = statusPoints(analysis);
     const weightedContribution = points * avgConfidence * priority;
     const maxContribution = 100 * priority;
 
