@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { getMareBreedingGoals, saveMareBreedingGoals } from "@/app/actions/traits";
 import { getTraitsByCategory } from "@/app/lib/traits/constants";
@@ -17,13 +17,16 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const grouped = getTraitsByCategory();
+  const onGoalsChangeRef = useRef(onGoalsChange);
 
-  const notifyGoals = useCallback(
-    (next: MareBreedingGoals | null) => {
-      onGoalsChange?.(next);
-    },
-    [onGoalsChange]
-  );
+  // The parent may pass an inline callback. Keep the latest callback in a ref so
+  // changing the callback identity does not cause the persisted goals to reload
+  // and overwrite an unsaved selection.
+  onGoalsChangeRef.current = onGoalsChange;
+
+  const notifyGoals = useCallback((next: MareBreedingGoals | null) => {
+    onGoalsChangeRef.current?.(next);
+  }, []);
 
   useEffect(() => {
     if (!marePedigreeId) return;
