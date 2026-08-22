@@ -48,6 +48,18 @@ export default function GoalTraitExplainList({ analyses }: Props) {
                 : t("insufficientData")}
             </p>
           </div>
+          {item.weightedContribution !== undefined ? (
+            <div className="mt-3 rounded-xl border border-blue-400/10 bg-blue-400/5 px-3 py-2 text-xs text-gray-400">
+              <div className="flex flex-wrap gap-x-5 gap-y-1">
+                <span>Priority ×{item.priorityWeight}</span>
+                <span>Status {item.statusPoints}/100</span>
+                <span>Confidence ×{item.avgConfidenceMultiplier}</span>
+                <span className="font-semibold text-gray-200">
+                  Contribution {item.weightedContribution}/{item.maxContribution}
+                </span>
+              </div>
+            </div>
+          ) : null}
           {item.status === "insufficient_data" ? (
             <p className="mt-2 text-xs text-amber-200/90">
               {t("goalAnalysis.notScoredUntilEvidence")}
