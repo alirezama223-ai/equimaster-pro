@@ -155,6 +155,12 @@ export type GoalTraitAnalysis = {
   statusLabel: string;
   explanation: string;
   reinforcedWeakness: boolean;
+  /** Transparent scoring diagnostics used to explain the final Goal Match Score. */
+  priorityWeight?: number;
+  statusPoints?: number;
+  avgConfidenceMultiplier?: number;
+  weightedContribution?: number;
+  maxContribution?: number;
 };
 
 export type BreedingGoalAnalysisResult = {
