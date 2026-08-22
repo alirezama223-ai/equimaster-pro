@@ -331,81 +331,37 @@ export default function MarketplaceBrowseClient({
   );
 }
 
-type FilterPanelProps = {
-  t: ReturnType<typeof useTranslations<"marketplace">>;
-  localFilters: MarketplaceSearchParams;
-  draftInputs: MarketplaceDraftInputs;
-  setDraftInputs: Dispatch<SetStateAction<MarketplaceDraftInputs>>;
-  updateFilters: (patch: Partial<MarketplaceSearchParams>, options?: { resetPage?: boolean }) => void;
-  genderLabels: Record<string, string>;
-  availabilityLabels: Record<MarketplaceAvailabilityFilter, string>;
-  levelSelectOptions: ReturnType<typeof getCountrySelectOptions>;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  isPending: boolean;
-  clearAllFilters: () => void;
-  activeFilterCount: number;
-  geoError: string | null;
-  geoLoading: boolean;
-  requestNearMeLocation: () => void;
-  hasSearchOrigin: boolean;
-  radiusActive: boolean;
-  layout: "desktop" | "mobile";
-  onClose?: () => void;
-};
-
-const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, setDraftInputs, updateFilters, genderLabels, availabilityLabels, levelSelectOptions, onSubmit, isPending, clearAllFilters, activeFilterCount, geoError, geoLoading, requestNearMeLocation, hasSearchOrigin, radiusActive, layout, onClose }: FilterPanelProps) {
+const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, setDraftInputs, updateFilters, genderLabels, availabilityLabels, levelSelectOptions, onSubmit, isPending, clearAllFilters, activeFilterCount, geoError, geoLoading, requestNearMeLocation, hasSearchOrigin, radiusActive, layout, onClose }: any) {
   const inputClassName = "mt-2 w-full rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white outline-none focus:border-blue-500";
   return (
-    <>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <p className="text-sm text-gray-400">{activeFilterCount > 0 ? t("browse.activeFilters", { count: activeFilterCount }) : t("browse.noActiveFilters")}</p>
-        <div className="flex items-center gap-2">
-          {activeFilterCount > 0 ? <button type="button" onClick={clearAllFilters} disabled={isPending} className="rounded-xl border border-blue-500/40 bg-blue-600/10 px-3 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-600 hover:text-white transition disabled:opacity-60">{t("browse.clearAllFilters")}</button> : null}
-          {layout === "mobile" && onClose ? <button type="button" onClick={onClose} className="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-gray-300">{t("browse.closeFilters")}</button> : null}
-        </div>
+    <form onSubmit={onSubmit} className="space-y-4">
+      <SearchableSelect label={t("browse.breed")} value={localFilters.breed ?? "All"} options={breedOptions} emptyOption={{ value: "All", label: t("browse.allBreeds") }} placeholder={t("browse.allPlaceholder", { label: t("browse.breed") })} onChange={(value) => updateFilters({ breed: value })} />
+      <SearchableSelect label={t("browse.country")} value={localFilters.country ?? "All"} options={countryOptions} emptyOption={{ value: "All", label: t("browse.allCountries") }} placeholder={t("browse.allPlaceholder", { label: t("browse.country") })} onChange={(value) => updateFilters({ country: value })} />
+      <SearchableSelect label={t("browse.discipline")} value={localFilters.discipline ?? "All"} options={disciplineOptions} emptyOption={{ value: "All", label: t("browse.allDisciplines") }} placeholder={t("browse.allPlaceholder", { label: t("browse.discipline") })} onChange={(value) => updateFilters({ discipline: value })} />
+      <SearchableSelect label={t("browse.trainingLevel")} value={localFilters.level ?? "All"} options={levelSelectOptions} emptyOption={{ value: "All", label: t("browse.allTrainingLevels") }} placeholder={t("browse.allPlaceholder", { label: t("browse.trainingLevel") })} onChange={(value) => updateFilters({ level: value })} />
+      <FilterSelect label={t("browse.gender")} value={localFilters.gender ?? "All"} options={["All", "Mare", "Stallion", "Gelding"]} labels={genderLabels} onChange={(value) => updateFilters({ gender: value })} />
+      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.color")}</span><input type="text" value={draftInputs.color} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, color: event.target.value }))} placeholder={t("browse.colorPlaceholder")} className={inputClassName} /></label>
+      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} /></label>
+      <FilterSelect label={t("browse.availability")} value={localFilters.availability ?? "all"} options={[...availabilityOptions]} labels={availabilityLabels} onChange={(value) => updateFilters({ availability: value as MarketplaceAvailabilityFilter })} />
+      <FilterSelect label={t("browse.sort")} value={localFilters.sort ?? "newest"} options={[...sortOptions]} labels={Object.fromEntries(sortOptions.map((option) => [option, t(`browse.sortOptions.${option}`)]))} onChange={(value) => updateFilters({ sort: value as MarketplaceSortOption })} />
+      <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedHorses || localFilters.verified)} onChange={(event) => updateFilters({ verifiedHorses: event.target.checked, verified: undefined })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedHorses")}</span></span></label>
+      <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedSellers)} onChange={(event) => updateFilters({ verifiedSellers: event.target.checked })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedSellers")}</span></span></label>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minPrice")}</span><input type="number" min="0" value={draftInputs.minPrice} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minPrice: event.target.value }))} className={inputClassName} /></label>
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxPrice")}</span><input type="number" min="0" value={draftInputs.maxPrice} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxPrice: event.target.value }))} className={inputClassName} /></label>
       </div>
-      <form className="grid gap-4" onSubmit={onSubmit}>
-        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.searchLabel")}</span><input type="search" value={draftInputs.q} onChange={(event) => setDraftInputs((current) => ({ ...current, q: event.target.value }))} placeholder={t("browse.searchPlaceholder")} className={inputClassName} /></label>
-        <FilterSearchableSelect label={t("browse.discipline")} value={localFilters.discipline ?? "All"} options={disciplineOptions} emptyOption={{ value: "All", label: t("browse.allDisciplines") }} placeholder={t("browse.allPlaceholder", { label: t("browse.discipline") })} onChange={(value) => updateFilters({ discipline: value })} />
-        <FilterSearchableSelect label={t("browse.country")} value={localFilters.country ?? "All"} options={countryOptions} emptyOption={{ value: "All", label: t("browse.allCountries") }} placeholder={t("browse.allPlaceholder", { label: t("browse.country") })} onChange={(value) => updateFilters({ country: value })} />
-        <div className="grid gap-3 rounded-xl border border-white/10 bg-[#081223]/60 p-4">
-          <p className="text-xs uppercase tracking-wide text-gray-500">{t("browse.searchRadius")}</p>
-          <FilterSelect label={t("browse.radiusLabel")} value={localFilters.radiusKm != null && localFilters.radiusKm > 0 ? String(localFilters.radiusKm) : "unlimited"} options={["unlimited", ...MARKETPLACE_RADIUS_KM_OPTIONS.map(String)]} labels={{ unlimited: t("browse.radiusUnlimited"), ...Object.fromEntries(MARKETPLACE_RADIUS_KM_OPTIONS.map((km) => [String(km), t("browse.radiusKmOption", { km })])) }} onChange={(value) => updateFilters({ radiusKm: value === "unlimited" ? undefined : Number(value) })} />
-          <button type="button" onClick={requestNearMeLocation} disabled={geoLoading || isPending} className="w-full rounded-xl border border-blue-500/40 bg-blue-600/10 px-4 py-3 text-sm font-semibold text-blue-300 transition hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-60">{geoLoading ? t("browse.radiusLocating") : t("browse.radiusNearMe")}</button>
-          {hasSearchOrigin ? <p className="text-xs text-emerald-300/90">{t("browse.radiusOriginSet")}</p> : localFilters.radiusKm != null && localFilters.radiusKm > 0 ? <p className="text-xs text-amber-300/90">{t("browse.radiusOriginRequired")}</p> : null}
-          {geoError ? <p className="text-xs text-red-300/90">{geoError}</p> : null}
-          {radiusActive ? <p className="text-xs text-gray-400">{t("browse.radiusActiveHint")}</p> : null}
-        </div>
-        <FilterSearchableSelect label={t("browse.breed")} value={localFilters.breed ?? "All"} options={breedOptions} emptyOption={{ value: "All", label: t("browse.allBreeds") }} placeholder={t("browse.allPlaceholder", { label: t("browse.breed") })} onChange={(value) => updateFilters({ breed: value })} />
-        <FilterSearchableSelect label={t("browse.trainingLevel")} value={localFilters.level ?? "All"} options={levelSelectOptions} emptyOption={{ value: "All", label: t("browse.allTrainingLevels") }} placeholder={t("browse.allPlaceholder", { label: t("browse.trainingLevel") })} onChange={(value) => updateFilters({ level: value })} />
-        <FilterSelect label={t("browse.gender")} value={localFilters.gender ?? "All"} options={["All", "Mare", "Stallion", "Gelding"]} labels={genderLabels} onChange={(value) => updateFilters({ gender: value })} />
-        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.color")}</span><input type="text" value={draftInputs.color} onChange={(event) => setDraftInputs((current) => ({ ...current, color: event.target.value }))} placeholder={t("browse.colorPlaceholder")} className={inputClassName} /></label>
-        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} /></label>
-        <FilterSelect label={t("browse.availability")} value={localFilters.availability ?? "all"} options={[...availabilityOptions]} labels={availabilityLabels} onChange={(value) => updateFilters({ availability: value as MarketplaceAvailabilityFilter })} />
-        <FilterSelect label={t("browse.sort")} value={localFilters.sort ?? "newest"} options={[...sortOptions]} labels={Object.fromEntries(sortOptions.map((option) => [option, t(`browse.sortOptions.${option}`)]))} onChange={(value) => updateFilters({ sort: value as MarketplaceSortOption })} />
-        <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedHorses || localFilters.verified)} onChange={(event) => updateFilters({ verifiedHorses: event.target.checked, verified: undefined })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedHorses")}</span></span></label>
-        <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedSellers)} onChange={(event) => updateFilters({ verifiedSellers: event.target.checked })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedSellers")}</span></span></label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minPrice")}</span><input type="number" min="0" value={draftInputs.minPrice} onChange={(event) => setDraftInputs((current) => ({ ...current, minPrice: event.target.value }))} className={inputClassName} /></label>
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxPrice")}</span><input type="number" min="0" value={draftInputs.maxPrice} onChange={(event) => setDraftInputs((current) => ({ ...current, maxPrice: event.target.value }))} className={inputClassName} /></label>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minAge")}</span><input type="number" min="0" value={draftInputs.minAge} onChange={(event) => setDraftInputs((current) => ({ ...current, minAge: event.target.value }))} className={inputClassName} /></label>
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current) => ({ ...current, maxAge: event.target.value }))} className={inputClassName} /></label>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minHeight")}</span><input type="number" min="0" value={draftInputs.minHeight} onChange={(event) => setDraftInputs((current) => ({ ...current, minHeight: event.target.value }))} className={inputClassName} /></label>
-          <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxHeight")}</span><input type="number" min="0" value={draftInputs.maxHeight} onChange={(event) => setDraftInputs((current) => ({ ...current, maxHeight: event.target.value }))} className={inputClassName} /></label>
-        </div>
-        <button type="submit" disabled={isPending} className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50">{isPending ? t("browse.searching") : t("browse.applyFilters")}</button>
-      </form>
-    </>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minAge")}</span><input type="number" min="0" value={draftInputs.minAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minAge: event.target.value }))} className={inputClassName} /></label>
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxAge: event.target.value }))} className={inputClassName} /></label>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minHeight")}</span><input type="number" min="0" value={draftInputs.minHeight} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minHeight: event.target.value }))} className={inputClassName} /></label>
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxHeight")}</span><input type="number" min="0" value={draftInputs.maxHeight} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxHeight: event.target.value }))} className={inputClassName} /></label>
+      </div>
+      <button type="submit" disabled={isPending} className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50">{isPending ? t("browse.searching") : t("browse.applyFilters")}</button>
+    </form>
   );
 });
-
-function FilterSearchableSelect({ label, value, options, emptyOption, placeholder, onChange }: { label: string; value: string; options: ReturnType<typeof getBreedSelectOptions>; emptyOption: { value: string; label: string }; placeholder: string; onChange: (value: string) => void }) {
-  return <SearchableSelect label={label} value={value} options={options} emptyOption={emptyOption} placeholder={placeholder} onChange={onChange} />;
-}
 
 function FilterSelect({ label, value, options, labels, onChange }: { label: string; value: string; options: string[]; labels: Record<string, string>; onChange: (value: string) => void }) {
   return (
