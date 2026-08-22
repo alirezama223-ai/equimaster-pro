@@ -65,3 +65,32 @@ export async function getRelatedActiveListings(
 
   return { listings: (data ?? []) as HorseListingRow[] };
 }
+
+export async function getMarketplaceListingsByIds(
+  listingIds: string[]
+): Promise<{ listings: HorseListingRow[]; error?: string }> {
+  const ids = Array.from(
+    new Set(listingIds.filter((id) => /^[0-9a-f-]{36}$/i.test(id)))
+  ).slice(0, 3);
+
+  if (ids.length === 0) {
+    return { listings: [] };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("status", "active")
+    .in("id", ids);
+
+  if (error) {
+    return { listings: [], error: error.message };
+  }
+
+  const listings = ((data ?? []) as HorseListingRow[]).sort(
+    (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id)
+  );
+
+  return { listings };
+}
