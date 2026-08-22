@@ -1,6 +1,7 @@
 import { searchMarketplaceListings, getMarketplaceFilterOptions } from "@/app/actions/marketplace";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import MarketplaceBrowseClient from "@/app/components/marketplace/MarketplaceBrowseClient";
+import MarketplaceCompareBar from "@/app/components/marketplace/MarketplaceCompareBar";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { parseMarketplaceSearchParams } from "@/app/lib/marketplace/search";
 import { shouldUseRadiusSearch } from "@/app/lib/marketplace/radius";
@@ -48,13 +49,16 @@ export default async function HorsesBrowsePage({ searchParams }: Props) {
   });
 
   return (
-    <MarketplaceBrowseClient
-      horses={horses}
-      result={result}
-      filters={filters}
-      filterOptions={filterOptions}
-      favoriteListingIds={favoriteListingIds}
-      searchError={searchError}
-    />
+    <>
+      <MarketplaceBrowseClient
+        horses={horses}
+        result={result}
+        filters={filters}
+        filterOptions={filterOptions}
+        favoriteListingIds={favoriteListingIds}
+        searchError={searchError}
+      />
+      <MarketplaceCompareBar />
+    </>
   );
 }
