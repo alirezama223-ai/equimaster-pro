@@ -43,6 +43,13 @@ export default function CombinedDecisionView({
   const derivedCompatibilityScore =
     pedigreeCompatibilityScore ?? (derivedBreakdown.scoreAvailable ? derivedBreakdown.total : null);
 
+  const strongComplements = goalAnalysis?.traitAnalyses
+    .filter((item) => item.status === "strong_complement")
+    .map((item) => item.label) ?? [];
+  const complements = goalAnalysis?.traitAnalyses
+    .filter((item) => item.status === "complement")
+    .map((item) => item.label) ?? [];
+
   return (
     <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 space-y-5">
       <div>
@@ -88,7 +95,12 @@ export default function CombinedDecisionView({
               </p>
               <p className="mt-2 text-sm text-gray-400">{t("combined.goalCoverage", { percent: goalAnalysis.goalCoveragePercent })}</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
-                <ListBlock title={t("combined.strongComplements")} items={goalAnalysis.strongComplements} none={t("combined.none")} />
+                {strongComplements.length > 0 ? (
+                  <ListBlock title={t("combined.strongComplements")} items={strongComplements} none={t("combined.none")} />
+                ) : null}
+                {complements.length > 0 ? (
+                  <ListBlock title="Complements" items={complements} none={t("combined.none")} />
+                ) : null}
                 <ListBlock title={t("combined.strengthsPreserved")} items={goalAnalysis.strengthsPreserved} none={t("combined.none")} />
                 <ListBlock title={t("combined.potentialConcerns")} items={goalAnalysis.potentialConcerns} none={t("combined.none")} />
                 <ListBlock title={t("combined.unknowns")} items={goalAnalysis.unknowns} none={t("combined.none")} />
