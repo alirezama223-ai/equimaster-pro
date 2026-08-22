@@ -72,10 +72,6 @@ export default async function HorseComparePage({ searchParams }: Props) {
                                 className="h-40 w-full object-cover"
                                 loading="eager"
                                 referrerPolicy="no-referrer"
-                                onError={(event) => {
-                                  const target = event.currentTarget;
-                                  if (target.src !== fallbackImage) target.src = fallbackImage;
-                                }}
                               />
                               {!storedImage && (
                                 <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
