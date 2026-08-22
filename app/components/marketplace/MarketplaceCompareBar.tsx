@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { getMarketplaceListingsByIds } from "@/app/actions/marketplace";
 
 const STORAGE_KEY = "equimaster-compare-listings";
 const EVENT_NAME = "equimaster-compare-updated";
@@ -19,16 +20,44 @@ function readIds(): string[] {
   }
 }
 
+function writeIds(ids: string[]) {
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+  window.dispatchEvent(new CustomEvent(EVENT_NAME));
+}
+
 export default function MarketplaceCompareBar() {
   const router = useRouter();
   const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const sync = () => setIds(readIds());
-    sync();
+    let cancelled = false;
+
+    const sync = async () => {
+      const storedIds = readIds();
+      if (cancelled) return;
+      setIds(storedIds);
+
+      if (storedIds.length === 0) return;
+
+      // Demo data and listings can be recreated, which changes UUIDs. Validate
+      // persisted compare IDs against the current active marketplace records so
+      // stale localStorage entries never send the user to an empty compare page.
+      const { listings } = await getMarketplaceListingsByIds(storedIds);
+      if (cancelled) return;
+
+      const validIds = storedIds.filter((id) => listings.some((listing) => listing.id === id));
+      if (validIds.length !== storedIds.length) {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(validIds));
+        setIds(validIds);
+        window.dispatchEvent(new CustomEvent(EVENT_NAME));
+      }
+    };
+
+    void sync();
     window.addEventListener(EVENT_NAME, sync);
     window.addEventListener("storage", sync);
     return () => {
+      cancelled = true;
       window.removeEventListener(EVENT_NAME, sync);
       window.removeEventListener("storage", sync);
     };
@@ -40,8 +69,8 @@ export default function MarketplaceCompareBar() {
   }, [ids]);
 
   function clear() {
-    window.localStorage.removeItem(STORAGE_KEY);
-    window.dispatchEvent(new CustomEvent(EVENT_NAME));
+    writeIds([]);
+    setIds([]);
   }
 
   if (ids.length === 0) return null;
