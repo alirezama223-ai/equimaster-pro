@@ -43,11 +43,15 @@ export default function CombinedDecisionView({
   const derivedCompatibilityScore =
     pedigreeCompatibilityScore ?? (derivedBreakdown.scoreAvailable ? derivedBreakdown.total : null);
 
+  // Keep the summary semantically aligned with the goal type:
+  // - Improve goals can be Complement / Strong Complement.
+  // - Preserve goals belong under Strengths Preserved.
+  // A preserve goal with status="complement" must never appear as a generic complement.
   const strongComplements = goalAnalysis?.traitAnalyses
-    .filter((item) => item.status === "strong_complement")
+    .filter((item) => item.goalType === "improve" && item.status === "strong_complement")
     .map((item) => item.label) ?? [];
   const complements = goalAnalysis?.traitAnalyses
-    .filter((item) => item.status === "complement")
+    .filter((item) => item.goalType === "improve" && item.status === "complement")
     .map((item) => item.label) ?? [];
 
   return (
