@@ -229,11 +229,21 @@ export function analyzeBreedingGoalsCross(
 
   for (const analysis of assessableAnalyses) {
     const priority = priorityWeight(analysis.priority);
-    const avgConfidence = confidenceMultiplier(analysis.mareConfidence) * 0.5 +
+    const avgConfidence =
+      confidenceMultiplier(analysis.mareConfidence) * 0.5 +
       confidenceMultiplier(analysis.stallionConfidence) * 0.5;
-    const points = statusPoints(analysis.status) * avgConfidence;
-    weightedTotal += points * priority;
-    weightedMax += 100 * priority;
+    const points = statusPoints(analysis.status);
+    const weightedContribution = points * avgConfidence * priority;
+    const maxContribution = 100 * priority;
+
+    analysis.priorityWeight = priority;
+    analysis.statusPoints = points;
+    analysis.avgConfidenceMultiplier = Math.round(avgConfidence * 100) / 100;
+    analysis.weightedContribution = Math.round(weightedContribution * 100) / 100;
+    analysis.maxContribution = maxContribution;
+
+    weightedTotal += weightedContribution;
+    weightedMax += maxContribution;
   }
 
   const goalMatchScoreAvailable =
