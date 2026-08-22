@@ -12,7 +12,6 @@ const DEMO_BASE_SCORES: Record<string, number> = {
   "SHABDIZ Demo Bravo": 4,
   "SHABDIZ Demo Charlie": 3,
   "SHABDIZ Demo Delta": 5,
-  "SHABDIZ Demo Echo": 4,
   Bella: 3,
 };
 
@@ -80,13 +79,26 @@ async function ensureTraitEvidence(supabase: SupabaseClient, userId: string, ped
 }
 
 export async function repairDemoStallionMatchData(supabase: SupabaseClient, userId: string): Promise<{ error?: string }> {
-  const { data: mareRows, error: mareError } = await supabase.from("pedigree_horses").select("id, name, sex, birth_year, sire_id, dam_id").eq("name", "Bella").eq("sex", "mare").eq("created_by", userId).limit(1);
+  // There may be more than one Demo Bella row from earlier seed/repair runs.
+  // Repair every Demo Bella owned by this user so the currently selected
+  // pedigree ID cannot accidentally remain incomplete just because another
+  // duplicate Bella happened to be returned first.
+  const { data: mareRows, error: mareError } = await supabase
+    .from("pedigree_horses")
+    .select("id, name, sex, birth_year, sire_id, dam_id")
+    .eq("name", "Bella")
+    .eq("sex", "mare")
+    .eq("created_by", userId);
   if (mareError) return { error: mareError.message };
-  const mare = mareRows?.[0];
-  if (!mare) return { error: "Demo mare Bella was not found." };
+  const mares = (mareRows ?? []) as DemoRoot[];
+  if (mares.length === 0) return { error: "Demo mare Bella was not found." };
+
   const { data: stallions, error: stallionError } = await supabase.from("stallions").select("pedigree_horse_id, name").eq("owner_id", userId).like("name", `${DEMO_STALLION_PREFIX}%`).not("pedigree_horse_id", "is", null);
   if (stallionError) return { error: stallionError.message };
-  const roots: DemoRoot[] = [mare as DemoRoot, ...((stallions ?? []).map((item) => ({ id: item.pedigree_horse_id as string, name: item.name as string, sex: "stallion" as const, birth_year: null, sire_id: null, dam_id: null })) )];
+  const roots: DemoRoot[] = [
+    ...mares,
+    ...((stallions ?? []).map((item) => ({ id: item.pedigree_horse_id as string, name: item.name as string, sex: "stallion" as const, birth_year: null, sire_id: null, dam_id: null })) ),
+  ];
   for (const root of roots) {
     const pedigreeError = await ensureDepth(supabase, userId, root.id);
     if (pedigreeError) return { error: pedigreeError };
