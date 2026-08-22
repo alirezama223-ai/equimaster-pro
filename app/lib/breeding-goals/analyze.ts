@@ -129,7 +129,9 @@ function analyzePreserveGoal(
   if (minScore >= 4) {
     status = "strong_complement";
     explanation = `Both horses show strong available evidence for ${definition.label.toLowerCase()}, supporting a preserve-strength goal.`;
-  } else if (minScore >= 3.25) {
+  } else if (minScore >= 3) {
+    // A score of 3/5 is a valid average/acceptable evidence level, so a 3 + 4
+    // cross should be shown as reasonable preserve alignment rather than neutral.
     status = "complement";
     explanation = `Available evidence suggests reasonable alignment to preserve ${definition.label.toLowerCase()}.`;
   } else if (minScore <= 2.5) {
@@ -157,16 +159,6 @@ function clampStatusPoints(value: number): number {
   return Math.max(0, Math.min(100, Math.round(value * 100) / 100));
 }
 
-/**
- * Convert the actual evidence relationship into 0–100 status points.
- *
- * Improve goals are driven by the stallion-vs-mare evidence gap rather than
- * by a fixed point value for the qualitative status label. A 1.0-point gap
- * maps to 80 points, while larger/smaller gaps move the score continuously.
- *
- * Preserve goals use the weaker of the two horses because a preserve goal is
- * only as strong as the side with the lower evidence score.
- */
 function statusPoints(analysis: GoalTraitAnalysis): number {
   if (analysis.mareScore == null || analysis.stallionScore == null) return 0;
 
@@ -192,16 +184,6 @@ function confidenceMultiplier(level: TraitProfileConfidenceLevel): number {
   }
 }
 
-/**
- * Breeding Goal Match Score (0–100), separate from Phase 10 pedigree compatibility.
- *
- * For each selected goal with assessable evidence on BOTH horses:
- *   contribution = evidenceDrivenStatusPoints × priorityWeight × avgConfidenceMultiplier
- *
- * goalMatchScore = sum(contributions) / sum(maxPossibleContributions) × 100
- *
- * Returns null when selected goal coverage on both horses is below MIN_GOAL_COVERAGE_RATIO.
- */
 export function analyzeBreedingGoalsCross(
   mareProfile: HorseTraitProfile,
   stallionProfile: HorseTraitProfile,
@@ -232,8 +214,7 @@ export function analyzeBreedingGoalsCross(
 
   const selectedGoalCount = traitAnalyses.length;
   const assessableAnalyses = traitAnalyses.filter((item) => item.status !== "insufficient_data");
-  const goalCoveragePercent =
-    selectedGoalCount === 0 ? 0 : (assessableAnalyses.length / selectedGoalCount) * 100;
+  const goalCoveragePercent = selectedGoalCount === 0 ? 0 : (assessableAnalyses.length / selectedGoalCount) * 100;
 
   let weightedTotal = 0;
   let weightedMax = 0;
@@ -260,16 +241,13 @@ export function analyzeBreedingGoalsCross(
   const goalMatchScoreAvailable =
     selectedGoalCount > 0 && goalCoveragePercent / 100 >= MIN_GOAL_COVERAGE_RATIO && weightedMax > 0;
 
-  const goalMatchScore = goalMatchScoreAvailable
-    ? Math.round((weightedTotal / weightedMax) * 100)
-    : null;
+  const goalMatchScore = goalMatchScoreAvailable ? Math.round((weightedTotal / weightedMax) * 100) : null;
 
   const confidenceLevels = assessableAnalyses.flatMap((item) => [item.mareConfidence, item.stallionConfidence]);
   const avgConfidenceScore =
     confidenceLevels.length === 0
       ? 0
-      : confidenceLevels.reduce((sum, level) => sum + confidenceMultiplier(level), 0) /
-        confidenceLevels.length;
+      : confidenceLevels.reduce((sum, level) => sum + confidenceMultiplier(level), 0) / confidenceLevels.length;
 
   let goalMatchConfidence: TraitProfileConfidenceLevel = "insufficient_data";
   if (goalMatchScoreAvailable) {
@@ -287,7 +265,7 @@ export function analyzeBreedingGoalsCross(
     goalCoveragePercent: Math.round(goalCoveragePercent * 10) / 10,
     traitAnalyses,
     strongComplements: traitAnalyses
-      .filter((item) => item.status === "strong_complement")
+      .filter((item) => item.goalType === "improve" && item.status === "strong_complement")
       .map((item) => item.label),
     strengthsPreserved: traitAnalyses
       .filter((item) => item.goalType === "preserve" && (item.status === "strong_complement" || item.status === "complement"))
