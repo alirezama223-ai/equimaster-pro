@@ -3,7 +3,6 @@
 import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { loginRedirectPath } from "@/app/lib/auth/paths";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   deleteSavedBreedingAnalysis,
@@ -19,11 +18,6 @@ import PedigreeHorseSelector from "@/app/components/breeding/PedigreeHorseSelect
 import BreedingGoalAnalysisView from "@/app/components/breeding-goals/BreedingGoalAnalysisView";
 import BreedingGoalsPanel from "@/app/components/breeding-goals/BreedingGoalsPanel";
 import CombinedDecisionView from "@/app/components/breeding-goals/CombinedDecisionView";
-import {
-  classifyRecommendationRisk,
-  riskLevelLabel,
-  scorePedigreeCompatibility,
-} from "@/app/lib/breeding-recommendations/score";
 import { BreedingAnalysisReport, BreedingCandidate, SavedBreedingAnalysis } from "@/app/types/breeding";
 import { BreedingGoalAnalysisResult, MareBreedingGoals } from "@/app/types/traits";
 
@@ -56,16 +50,14 @@ export default function BreedingLabClient({
   const [goalAnalysis, setGoalAnalysis] = useState<BreedingGoalAnalysisResult | null>(null);
   const [breedingGoals, setBreedingGoals] = useState<MareBreedingGoals | null>(null);
   const analyzedParamsRef = useRef<string | null>(null);
-
-  const pedigreeScoreBreakdown = useMemo(
-    () => (report ? scorePedigreeCompatibility(report) : null),
-    [report]
-  );
+  const goalAnalysisRequestRef = useRef(0);
 
   const compareIds = useMemo(
     () =>
       compareMode
-        ? [stallion, ...compareStallions].filter((item): item is BreedingCandidate => Boolean(item)).map((item) => item.id)
+        ? [stallion, ...compareStallions]
+            .filter((item): item is BreedingCandidate => Boolean(item))
+            .map((item) => item.id)
         : [],
     [compareMode, stallion, compareStallions]
   );
@@ -111,9 +103,10 @@ export default function BreedingLabClient({
       options?: { compare?: boolean; scroll?: boolean }
     ) => {
       const useCompare = options?.compare ?? stallionPedigreeIds.length > 1;
-      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}:${goalsKey}`;
+      const analysisKey = `${marePedigreeId}:${stallionPedigreeIds.join(",")}:${useCompare ? "compare" : "single"}`;
 
       setError(null);
+      setGoalAnalysis(null);
       setCompareMode(useCompare);
       setCompareStallions([]);
 
@@ -172,13 +165,6 @@ export default function BreedingLabClient({
         setCompareReports(response.reports);
         setReport(response.reports[0] ?? null);
         analyzedParamsRef.current = analysisKey;
-        const goalResult = await analyzeBreedingGoalCrossWithDemo({
-          marePedigreeId,
-          stallionPedigreeId: stallionPedigreeIds[0],
-          goals: breedingGoals ?? undefined,
-        });
-        setGoalAnalysis(goalResult.analysis);
-        if (goalResult.error) setError(goalResult.error);
         if (options?.scroll !== false) scrollToAnalysisReport();
         return true;
       }
@@ -199,23 +185,39 @@ export default function BreedingLabClient({
       setCompareReports([]);
       analyzedParamsRef.current = analysisKey;
 
-      if (mareResult.candidate && stallionResult.candidate) {
-        const goalResult = await analyzeBreedingGoalCrossWithDemo({
-          marePedigreeId,
-          stallionPedigreeId: stallionPedigreeIds[0],
-          goals: breedingGoals ?? undefined,
-        });
-        setGoalAnalysis(goalResult.analysis);
-        if (goalResult.error) setError(goalResult.error);
-      } else {
-        setGoalAnalysis(null);
-      }
-
       if (options?.scroll !== false) scrollToAnalysisReport();
       return true;
     },
-    [syncUrl, breedingGoals, goalsKey]
+    [syncUrl, t]
   );
+
+  // Pedigree analysis and breeding-goal analysis are separate concerns.
+  // Changing a mare's goals must NOT rerun the pedigree analysis, because that
+  // can temporarily replace a stable safety result with an unrelated loading
+  // state. Recompute only the goal layer when the selected goals change.
+  useEffect(() => {
+    if (!report || !mare || !stallion) return;
+
+    const requestId = ++goalAnalysisRequestRef.current;
+    let cancelled = false;
+
+    (async () => {
+      const goalResult = await analyzeBreedingGoalCrossWithDemo({
+        marePedigreeId: mare.id,
+        stallionPedigreeId: stallion.id,
+        goals: breedingGoals ?? undefined,
+      });
+
+      if (cancelled || requestId !== goalAnalysisRequestRef.current) return;
+
+      setGoalAnalysis(goalResult.analysis);
+      if (goalResult.error) setError(goalResult.error);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [report, mare, stallion, breedingGoals, goalsKey]);
 
   useEffect(() => {
     if (!initialMareId || !initialStallionId) return;
@@ -226,7 +228,7 @@ export default function BreedingLabClient({
         : [initialStallionId];
     const analysisKey = `${initialMareId}:${stallionPedigreeIds.join(",")}:${
       initialCompareStallionIds.length > 0 ? "compare" : "single"
-    }:${goalsKey}`;
+    }`;
 
     if (analyzedParamsRef.current === analysisKey) return;
 
@@ -236,7 +238,7 @@ export default function BreedingLabClient({
         scroll: false,
       });
     });
-  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross, goalsKey]);
+  }, [initialMareId, initialStallionId, initialCompareStallionIds, loadAndAnalyzeCross]);
 
   function handleAnalyze() {
     if (!mare) {
@@ -252,7 +254,8 @@ export default function BreedingLabClient({
 
     setError(null);
     startTransition(async () => {
-      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}:${goalsKey}`;
+      const analysisKey = `${mare.id}:${stallionIds.join(",")}:${compareMode && stallionIds.length > 1 ? "compare" : "single"}`;
+      setGoalAnalysis(null);
 
       if (compareMode && stallionIds.length > 1) {
         const response = await runBreedingCompare({
@@ -269,13 +272,6 @@ export default function BreedingLabClient({
         setCompareReports(response.reports);
         setReport(response.reports[0] ?? null);
         analyzedParamsRef.current = analysisKey;
-        const goalResult = await analyzeBreedingGoalCrossWithDemo({
-          marePedigreeId: mare.id,
-          stallionPedigreeId: stallionIds[0],
-          goals: breedingGoals ?? undefined,
-        });
-        setGoalAnalysis(goalResult.analysis);
-        if (goalResult.error) setError(goalResult.error);
         scrollToAnalysisReport();
         return;
       }
@@ -294,13 +290,6 @@ export default function BreedingLabClient({
       setReport(response.report);
       setCompareReports([]);
       analyzedParamsRef.current = analysisKey;
-      const goalResult = await analyzeBreedingGoalCrossWithDemo({
-        marePedigreeId: mare.id,
-        stallionPedigreeId: stallionIds[0],
-        goals: breedingGoals ?? undefined,
-      });
-      setGoalAnalysis(goalResult.analysis);
-      if (goalResult.error) setError(goalResult.error);
       scrollToAnalysisReport();
     });
   }
@@ -357,7 +346,7 @@ export default function BreedingLabClient({
 
       <div className="grid gap-6 lg:grid-cols-2">
         <PedigreeHorseSelector label={t("lab.leftColumn")} sex="mare" selected={mare} onSelect={(candidate) => { setMare(candidate); setGoalAnalysis(null); }} initialId={initialMareId} />
-        <PedigreeHorseSelector label={t("lab.rightColumn")} sex="stallion" selected={stallion} onSelect={setStallion} initialId={initialStallionId} />
+        <PedigreeHorseSelector label={t("lab.rightColumn")} sex="stallion" selected={stallion} onSelect={(candidate) => { setStallion(candidate); setGoalAnalysis(null); }} initialId={initialStallionId} />
       </div>
 
       {mare ? <BreedingGoalsPanel marePedigreeId={mare.id} onGoalsChange={setBreedingGoals} /> : null}
