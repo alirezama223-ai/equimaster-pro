@@ -65,7 +65,10 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
           ...goals.improveGoals.filter((item) => item.traitKey !== traitKey),
           { traitKey, priority } satisfies BreedingGoalEntry,
         ];
-    const next = { ...goals, improveGoals };
+
+    // A trait can be either an improvement goal or a preserve goal, never both.
+    const preserveTraits = goals.preserveTraits.filter((item) => item !== traitKey);
+    const next = { ...goals, improveGoals, preserveTraits };
     setGoals(next);
     notifyGoals(next);
   }
@@ -75,7 +78,13 @@ export default function BreedingGoalsPanel({ marePedigreeId, onGoalsChange }: Pr
     const preserveTraits = goals.preserveTraits.includes(traitKey)
       ? goals.preserveTraits.filter((item) => item !== traitKey)
       : [...goals.preserveTraits, traitKey];
-    const next = { ...goals, preserveTraits };
+
+    // Selecting Preserve explicitly removes the same trait from Improve goals.
+    const improveGoals = preserveTraits.includes(traitKey)
+      ? goals.improveGoals.filter((item) => item.traitKey !== traitKey)
+      : goals.improveGoals;
+
+    const next = { ...goals, preserveTraits, improveGoals };
     setGoals(next);
     notifyGoals(next);
   }
