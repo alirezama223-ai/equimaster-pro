@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Navbar from "@/app/components/navbar/Navbar";
 import MarketplaceListingCard from "@/app/components/marketplace/MarketplaceListingCard";
+import MarketplaceCompareBar from "@/app/components/marketplace/MarketplaceCompareBar";
 import FadeUp from "@/app/components/animations/FadeUp";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { MARKETPLACE_PATHS } from "@/app/lib/marketplace/paths";
@@ -121,6 +122,8 @@ export default function MarketplaceHomeClient({
           </section>
         </div>
       </main>
+
+      <MarketplaceCompareBar />
     </>
   );
 }
