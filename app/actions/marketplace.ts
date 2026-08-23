@@ -5,6 +5,12 @@ import {
   fetchMarketplaceFilterOptions,
   searchActiveHorseListings,
 } from "@/app/lib/marketplace/search";
+import {
+  RELATED_CANDIDATE_POOL,
+  RELATED_LISTINGS_LIMIT,
+  rankRelatedListings,
+  type RelatedListingSeed,
+} from "@/app/lib/marketplace/related-listings";
 import { createClient } from "@/app/lib/supabase/server";
 import type { HorseListingRow } from "@/app/types/horse-listing";
 import type {
@@ -44,26 +50,45 @@ export async function getBreedListingCounts(): Promise<{
 }
 
 export async function getRelatedActiveListings(
-  listingId: string,
-  discipline: string,
-  limit = 3
+  seed: RelatedListingSeed,
+  limit = RELATED_LISTINGS_LIMIT
 ): Promise<{ listings: HorseListingRow[]; error?: string }> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("horse_listings")
-    .select("*")
-    .eq("status", "active")
-    .eq("discipline", discipline)
-    .neq("id", listingId)
-    .order("published_at", { ascending: false, nullsFirst: false })
-    .limit(limit);
+  // Two bounded queries (not N+1): discipline pool for strong matches + recent
+  // actives so weaker candidates can fill when the strong pool is thin.
+  const [disciplineResult, recentResult] = await Promise.all([
+    supabase
+      .from("horse_listings")
+      .select("*")
+      .eq("status", "active")
+      .eq("discipline", seed.discipline)
+      .neq("id", seed.id)
+      .limit(RELATED_CANDIDATE_POOL),
+    supabase
+      .from("horse_listings")
+      .select("*")
+      .eq("status", "active")
+      .neq("id", seed.id)
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(RELATED_CANDIDATE_POOL),
+  ]);
 
-  if (error) {
-    return { listings: [], error: error.message };
+  if (disciplineResult.error && recentResult.error) {
+    return {
+      listings: [],
+      error: disciplineResult.error.message || recentResult.error.message,
+    };
   }
 
-  return { listings: (data ?? []) as HorseListingRow[] };
+  const candidates: HorseListingRow[] = [
+    ...((disciplineResult.data ?? []) as HorseListingRow[]),
+    ...((recentResult.data ?? []) as HorseListingRow[]),
+  ];
+
+  return {
+    listings: rankRelatedListings(seed, candidates, limit),
+  };
 }
 
 export async function getMarketplaceListingsByIds(

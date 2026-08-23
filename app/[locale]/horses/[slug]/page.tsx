@@ -111,7 +111,16 @@ export default async function PublicHorseListingPage({ params }: Props) {
 
   const [favoriteListingIds, relatedResult, pedigreeSection, sellerVerification] = await Promise.all([
     getUserFavoriteListingIds(),
-    getRelatedActiveListings(listing.id, listing.discipline),
+    getRelatedActiveListings({
+      id: listing.id,
+      discipline: listing.discipline,
+      breed: listing.breed,
+      gender: listing.gender,
+      level: listing.level,
+      price: listing.price,
+      price_on_request: listing.price_on_request,
+      age: listing.age,
+    }),
     getPedigreeSectionForListing(listing),
     getPublicSellerVerification(listing.user_id),
   ]);
