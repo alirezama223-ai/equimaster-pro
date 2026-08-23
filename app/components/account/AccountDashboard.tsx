@@ -8,6 +8,7 @@ import MyStallionsSection from "@/app/components/account/MyStallionsSection";
 import InquiriesSection from "@/app/components/account/InquiriesSection";
 import BuyerInquiriesSection from "@/app/components/account/BuyerInquiriesSection";
 import DemoEnvironmentPanel from "@/app/components/account/DemoEnvironmentPanel";
+import { getUserSavedSearches } from "@/app/actions/saved-searches";
 import { HorseListingRow } from "@/app/types/horse-listing";
 import { BuyerInquiry, SellerInquiry } from "@/app/types/inquiry";
 import { BreederRow } from "@/app/types/breeder";
@@ -43,8 +44,11 @@ export default async function AccountDashboard({
   demoSnapshot,
 }: Props) {
   const t = await getTranslations("account.dashboard");
+  const savedSearchT = await getTranslations("savedSearch");
   const fullName =
     (user.user_metadata?.full_name as string | undefined) || t("defaultName");
+  const savedSearchesResult = await getUserSavedSearches();
+  const savedSearches = savedSearchesResult.searches;
 
   return (
     <div className="space-y-8">
@@ -79,6 +83,25 @@ export default async function AccountDashboard({
       <DemoEnvironmentPanel snapshot={demoSnapshot} />
 
       <SellerListingsDashboard listings={listings} stats={listingStats} />
+
+      {savedSearches.length > 0 ? (
+        <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-white">{savedSearchT("saveSearch")}</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {savedSearches.map((search) => (
+              <div
+                key={search.id}
+                className="rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-4"
+              >
+                <p className="text-xs uppercase tracking-wide text-gray-500">
+                  {savedSearchT("saveSearchName")}
+                </p>
+                <p className="mt-1 font-semibold text-white">{search.name}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
         <Link
