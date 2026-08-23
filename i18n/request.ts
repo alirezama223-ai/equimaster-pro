@@ -6,7 +6,7 @@ const namespaces = [
   "common", "nav", "auth", "metadata", "home", "marketplace", "dashboard", "sell", "account",
   "horse", "favorites", "training", "health", "admin", "breeding", "stallions",
   "breeders", "pedigree", "inquiries", "messaging", "notifications", "demo", "bloodlines",
-  "events", "traits", "feedback", "verification", "subscription",
+  "events", "traits", "feedback", "verification", "subscription", "savedSearch",
 ] as const;
 
 async function loadMessages(locale: string) {
