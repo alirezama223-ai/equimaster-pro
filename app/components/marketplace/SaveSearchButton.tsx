@@ -43,7 +43,7 @@ export default function SaveSearchButton({ filters }: Props) {
       </button>
 
       {open ? (
-        <div className="absolute right-0 z-30 mt-2 w-[min(320px,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-[#111827] p-4 shadow-2xl">
+        <div className="absolute bottom-full right-0 z-30 mb-2 w-[min(320px,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-[#111827] p-4 shadow-2xl">
           <label className="block text-sm font-semibold text-white" htmlFor="save-search-name">
             {t("saveSearchName")}
           </label>
