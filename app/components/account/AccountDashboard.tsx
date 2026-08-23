@@ -9,6 +9,7 @@ import InquiriesSection from "@/app/components/account/InquiriesSection";
 import BuyerInquiriesSection from "@/app/components/account/BuyerInquiriesSection";
 import DemoEnvironmentPanel from "@/app/components/account/DemoEnvironmentPanel";
 import { getUserSavedSearches } from "@/app/actions/saved-searches";
+import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { HorseListingRow } from "@/app/types/horse-listing";
 import { BuyerInquiry, SellerInquiry } from "@/app/types/inquiry";
 import { BreederRow } from "@/app/types/breeder";
@@ -92,12 +93,13 @@ export default async function AccountDashboard({
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {savedSearches.map((search) => (
-              <div
+              <Link
                 key={search.id}
-                className="rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-4"
+                href={`/horses${buildMarketplaceSearchQuery(search.filters)}`}
+                className="block rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-4 transition hover:border-blue-500/50 hover:bg-[#101B2D]"
               >
                 <p className="font-semibold text-white">{search.name}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
