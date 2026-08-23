@@ -8,7 +8,7 @@ import MyStallionsSection from "@/app/components/account/MyStallionsSection";
 import InquiriesSection from "@/app/components/account/InquiriesSection";
 import BuyerInquiriesSection from "@/app/components/account/BuyerInquiriesSection";
 import DemoEnvironmentPanel from "@/app/components/account/DemoEnvironmentPanel";
-import { getUserSavedSearches } from "@/app/actions/saved-searches";
+import { createClient } from "@/app/lib/supabase/server";
 import { HorseListingRow } from "@/app/types/horse-listing";
 import { BuyerInquiry, SellerInquiry } from "@/app/types/inquiry";
 import { BreederRow } from "@/app/types/breeder";
@@ -47,8 +47,14 @@ export default async function AccountDashboard({
   const savedSearchT = await getTranslations("savedSearch");
   const fullName =
     (user.user_metadata?.full_name as string | undefined) || t("defaultName");
-  const savedSearchesResult = await getUserSavedSearches();
-  const savedSearches = savedSearchesResult.searches;
+
+  const supabase = await createClient();
+  const { data: savedSearchRows } = await supabase
+    .from("saved_searches")
+    .select("id, name, filters, created_at, updated_at")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false });
+  const savedSearches = savedSearchRows ?? [];
 
   return (
     <div className="space-y-8">
