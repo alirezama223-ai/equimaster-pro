@@ -4,5 +4,6 @@
   "saveSearchPlaceholder": "e.g. Show jumping mares under €20,000",
   "saveSearchSuccess": "Search saved successfully.",
   "savingSearch": "Saving...",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "savedSearches": "Saved searches"
 }
