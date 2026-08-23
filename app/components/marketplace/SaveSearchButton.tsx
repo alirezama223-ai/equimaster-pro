@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function SaveSearchButton({ filters }: Props) {
-  const t = useTranslations("marketplace");
+  const t = useTranslations("savedSearch");
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function SaveSearchButton({ filters }: Props) {
         setMessage(result.error);
         return;
       }
-      setMessage(t("browse.saveSearchSuccess"));
+      setMessage(t("saveSearchSuccess"));
       setName("");
       setTimeout(() => setOpen(false), 700);
     });
@@ -39,13 +39,13 @@ export default function SaveSearchButton({ filters }: Props) {
         }}
         className="inline-flex min-h-10 items-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:bg-white/10"
       >
-        {t("browse.saveSearch")}
+        {t("saveSearch")}
       </button>
 
       {open ? (
         <div className="absolute right-0 z-30 mt-2 w-[min(320px,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-[#111827] p-4 shadow-2xl">
           <label className="block text-sm font-semibold text-white" htmlFor="save-search-name">
-            {t("browse.saveSearchName")}
+            {t("saveSearchName")}
           </label>
           <input
             id="save-search-name"
@@ -57,12 +57,12 @@ export default function SaveSearchButton({ filters }: Props) {
             maxLength={80}
             autoFocus
             className="mt-2 min-h-11 w-full rounded-xl border border-white/10 bg-[#081223] px-3 text-sm text-white outline-none focus:border-blue-500/60"
-            placeholder={t("browse.saveSearchPlaceholder")}
+            placeholder={t("saveSearchPlaceholder")}
           />
           {message ? <p className="mt-2 text-xs text-gray-400">{message}</p> : null}
           <div className="mt-3 flex justify-end gap-2">
             <button type="button" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 text-sm text-gray-400 hover:bg-white/5">
-              {t("browse.cancel")}
+              {t("cancel")}
             </button>
             <button
               type="button"
@@ -70,7 +70,7 @@ export default function SaveSearchButton({ filters }: Props) {
               onClick={save}
               className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
             >
-              {isPending ? t("browse.savingSearch") : t("browse.saveSearch")}
+              {isPending ? t("savingSearch") : t("saveSearch")}
             </button>
           </div>
         </div>
