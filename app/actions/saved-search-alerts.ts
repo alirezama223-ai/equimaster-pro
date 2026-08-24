@@ -9,6 +9,7 @@ type SavedSearchAlert = {
   lastCheckedAt: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function applySavedSearchFilters(query: any, filters: MarketplaceSearchParams) {
   if (filters.breed && filters.breed !== "All") query = query.eq("breed", filters.breed);
   if (filters.country && filters.country !== "All") query = query.eq("country", filters.country);
