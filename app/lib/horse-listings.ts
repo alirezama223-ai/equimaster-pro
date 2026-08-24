@@ -69,7 +69,7 @@ export function listingRowToHorse(
   return {
     id: listingUuidToDisplayId(row.id),
     listingUuid: row.id,
-    slug: row.slug ?? slugifyListingName(row.name),
+    slug: row.slug ?? buildListingSlug(row.name, row.id),
     name: row.name,
     breed: row.breed,
     age: row.age,
