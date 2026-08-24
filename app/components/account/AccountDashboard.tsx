@@ -8,7 +8,9 @@ import MyStallionsSection from "@/app/components/account/MyStallionsSection";
 import InquiriesSection from "@/app/components/account/InquiriesSection";
 import BuyerInquiriesSection from "@/app/components/account/BuyerInquiriesSection";
 import DemoEnvironmentPanel from "@/app/components/account/DemoEnvironmentPanel";
+import SavedSearchAlerts from "@/app/components/account/SavedSearchAlerts";
 import { getUserSavedSearches } from "@/app/actions/saved-searches";
+import { getSavedSearchAlerts } from "@/app/actions/saved-search-alerts";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
 import { HorseListingRow } from "@/app/types/horse-listing";
 import { BuyerInquiry, SellerInquiry } from "@/app/types/inquiry";
@@ -49,8 +51,14 @@ export default async function AccountDashboard({
   const fullName =
     (user.user_metadata?.full_name as string | undefined) || t("defaultName");
 
-  const savedSearchResult = await getUserSavedSearches();
+  const [savedSearchResult, savedSearchAlertsResult] = await Promise.all([
+    getUserSavedSearches(),
+    getSavedSearchAlerts(),
+  ]);
   const savedSearches = savedSearchResult.searches;
+  const alertById = new Map(
+    savedSearchAlertsResult.alerts.map((alert) => [alert.id, alert.count])
+  );
 
   return (
     <div className="space-y-8">
@@ -93,13 +101,14 @@ export default async function AccountDashboard({
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {savedSearches.map((search) => (
-              <Link
+              <SavedSearchAlerts
                 key={search.id}
+                searchId={search.id}
                 href={`/horses${buildMarketplaceSearchQuery(search.filters)}`}
-                className="block rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-4 transition hover:border-blue-500/50 hover:bg-[#101B2D]"
-              >
-                <p className="font-semibold text-white">{search.name}</p>
-              </Link>
+                name={search.name}
+                count={alertById.get(search.id) ?? 0}
+                newMatchesLabel={savedSearchT("newMatches")}
+              />
             ))}
           </div>
         </section>
