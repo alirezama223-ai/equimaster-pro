@@ -113,6 +113,7 @@ export default async function PublicHorseListingPage({ params }: Props) {
     getUserFavoriteListingIds(),
     getRelatedActiveListings({
       id: listing.id,
+      name: listing.name,
       discipline: listing.discipline,
       breed: listing.breed,
       gender: listing.gender,
