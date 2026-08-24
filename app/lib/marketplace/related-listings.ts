@@ -4,6 +4,7 @@ import type { HorseListingRow } from "@/app/types/horse-listing";
 export type RelatedListingSeed = Pick<
   HorseListingRow,
   | "id"
+  | "name"
   | "discipline"
   | "breed"
   | "gender"
@@ -75,23 +76,39 @@ function publishedAtTime(value: string | null): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function normalizeHorseName(value: string): string {
+  return value
+    .normalize("NFKC")
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 /**
- * Dedupes candidates, ranks by Smart Related score, then `published_at` (newer first).
- * Weaker / zero-score active listings remain available as fill-in fallbacks.
+ * Dedupes candidates, including duplicate marketplace records for the same
+ * displayed horse name, then ranks by Smart Related score and `published_at`.
+ * This prevents demo/legacy duplicate records such as two "Atlas" cards from
+ * occupying multiple slots in Similar Listings.
  */
 export function rankRelatedListings(
   seed: RelatedListingSeed,
   candidates: HorseListingRow[],
   limit = RELATED_LISTINGS_LIMIT
 ): HorseListingRow[] {
-  const seen = new Set<string>();
+  const seenIds = new Set<string>();
+  const seenHorseNames = new Set<string>([normalizeHorseName(seed.name)]);
   const unique: HorseListingRow[] = [];
 
   for (const candidate of candidates) {
     if (candidate.id === seed.id) continue;
     if (candidate.status !== "active") continue;
-    if (seen.has(candidate.id)) continue;
-    seen.add(candidate.id);
+    if (seenIds.has(candidate.id)) continue;
+
+    const horseNameKey = normalizeHorseName(candidate.name);
+    if (horseNameKey && seenHorseNames.has(horseNameKey)) continue;
+
+    seenIds.add(candidate.id);
+    if (horseNameKey) seenHorseNames.add(horseNameKey);
     unique.push(candidate);
   }
 
