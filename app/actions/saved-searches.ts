@@ -9,6 +9,7 @@ type SavedSearchRow = {
   filters: MarketplaceSearchParams;
   created_at: string;
   updated_at: string;
+  last_checked_at: string;
 };
 
 function isValidName(name: string) {
@@ -31,7 +32,7 @@ export async function getUserSavedSearches(): Promise<{
 
   const { data, error } = await supabase
     .from("saved_searches")
-    .select("id, name, filters, created_at, updated_at")
+    .select("id, name, filters, created_at, updated_at, last_checked_at")
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false });
 
@@ -67,7 +68,7 @@ export async function createSavedSearch(
       name: trimmedName,
       filters,
     })
-    .select("id, name, filters, created_at, updated_at")
+    .select("id, name, filters, created_at, updated_at, last_checked_at")
     .single();
 
   if (error) {
