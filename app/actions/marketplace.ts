@@ -55,8 +55,8 @@ export async function getRelatedActiveListings(
 ): Promise<{ listings: HorseListingRow[]; error?: string }> {
   const supabase = await createClient();
 
-  // Two bounded queries (not N+1): discipline pool for strong matches + recent
-  // actives so weaker candidates can fill when the strong pool is thin.
+  // Two bounded queries (not N+1): discipline pool for strong matches + a
+  // bounded active fallback pool so weaker candidates can fill thin results.
   const [disciplineResult, recentResult] = await Promise.all([
     supabase
       .from("horse_listings")
@@ -70,7 +70,6 @@ export async function getRelatedActiveListings(
       .select("*")
       .eq("status", "active")
       .neq("id", seed.id)
-      .order("published_at", { ascending: false, nullsFirst: false })
       .limit(RELATED_CANDIDATE_POOL),
   ]);
 
