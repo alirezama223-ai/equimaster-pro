@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/app/lib/supabase/server";
+import { searchActiveHorseListings } from "@/app/lib/marketplace/search";
 import type { MarketplaceSearchParams } from "@/app/types/marketplace";
 
 type SavedSearchAlert = {
@@ -9,47 +10,43 @@ type SavedSearchAlert = {
   lastCheckedAt: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function applySavedSearchFilters(query: any, filters: MarketplaceSearchParams) {
-  if (filters.breed && filters.breed !== "All") query = query.eq("breed", filters.breed);
-  if (filters.country && filters.country !== "All") query = query.eq("country", filters.country);
-  if (filters.gender && filters.gender !== "All") query = query.eq("gender", filters.gender);
-  if (filters.discipline && filters.discipline !== "All") query = query.eq("discipline", filters.discipline);
-  if (filters.level && filters.level !== "All") query = query.eq("level", filters.level);
-  if (filters.color?.trim()) query = query.ilike("color", `%${filters.color.trim()}%`);
-  if (filters.verified || filters.verifiedHorses) query = query.eq("verified", true);
-  if (filters.verifiedSellers) query = query.eq("owner_seller_verified", true);
-  if (filters.availability === "priced") query = query.eq("price_on_request", false);
-  if (filters.availability === "on_request") query = query.eq("price_on_request", true);
-  if (filters.minPrice != null) query = query.gte("price", filters.minPrice);
-  if (filters.maxPrice != null) query = query.lte("price", filters.maxPrice);
-  if (filters.minAge != null) query = query.gte("age", filters.minAge);
-  if (filters.maxAge != null) query = query.lte("age", filters.maxAge);
-  if (filters.minHeight != null) query = query.gte("height", filters.minHeight);
-  if (filters.maxHeight != null) query = query.lte("height", filters.maxHeight);
+const ALERT_PAGE_SIZE = 1000;
 
-  if (filters.q?.trim()) {
-    const value = filters.q.trim().replace(/[%_,]/g, " ").trim();
-    const pattern = `%${value}%`;
-    query = query.or(
-      [
-        `name.ilike.${pattern}`,
-        `breed.ilike.${pattern}`,
-        `discipline.ilike.${pattern}`,
-        `country.ilike.${pattern}`,
-        `level.ilike.${pattern}`,
-        `color.ilike.${pattern}`,
-        `description.ilike.${pattern}`,
-        `sire.ilike.${pattern}`,
-        `dam.ilike.${pattern}`,
-        `dam_sire.ilike.${pattern}`,
-        `seller_name.ilike.${pattern}`,
-        `stable_name.ilike.${pattern}`,
-      ].join(",")
-    );
+/**
+ * Count new matches through the same Marketplace search engine used by the UI.
+ * We intentionally filter published_at after retrieval for v1 so radius/studbook
+ * searches use their existing RPC path without maintaining a second filter engine.
+ */
+async function countNewMatches(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  filters: MarketplaceSearchParams,
+  lastCheckedAt: string
+): Promise<number> {
+  let page = 1;
+  let count = 0;
+
+  while (true) {
+    const { result, error } = await searchActiveHorseListings(supabase, {
+      ...filters,
+      page,
+      pageSize: ALERT_PAGE_SIZE,
+    });
+
+    if (error) {
+      throw new Error(error);
+    }
+
+    count += result.listings.filter((listing) => {
+      if (!listing.published_at) return false;
+      return new Date(listing.published_at).getTime() > new Date(lastCheckedAt).getTime();
+    }).length;
+
+    if (page >= result.totalPages || result.listings.length === 0) {
+      return count;
+    }
+
+    page += 1;
   }
-
-  return query;
 }
 
 export async function getSavedSearchAlerts(): Promise<{
@@ -57,7 +54,9 @@ export async function getSavedSearchAlerts(): Promise<{
   error?: string;
 }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { alerts: [] };
 
   const { data: searches, error } = await supabase
@@ -67,31 +66,33 @@ export async function getSavedSearchAlerts(): Promise<{
 
   if (error) return { alerts: [], error: error.message };
 
-  const alerts = await Promise.all(
-    (searches ?? []).map(async (search) => {
-      let query = supabase
-        .from("horse_listings")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "active")
-        .gt("published_at", search.last_checked_at);
-
-      query = applySavedSearchFilters(query, search.filters as MarketplaceSearchParams);
-      const result = await query;
-
-      return {
+  try {
+    const alerts = await Promise.all(
+      (searches ?? []).map(async (search) => ({
         id: search.id as string,
-        count: result.count ?? 0,
+        count: await countNewMatches(
+          supabase,
+          search.filters as MarketplaceSearchParams,
+          search.last_checked_at as string
+        ),
         lastCheckedAt: search.last_checked_at as string,
-      };
-    })
-  );
+      }))
+    );
 
-  return { alerts };
+    return { alerts };
+  } catch (alertError) {
+    return {
+      alerts: [],
+      error: alertError instanceof Error ? alertError.message : "Unable to load saved search alerts.",
+    };
+  }
 }
 
 export async function markSavedSearchChecked(id: string): Promise<{ ok: boolean }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { ok: false };
 
   const { error } = await supabase
