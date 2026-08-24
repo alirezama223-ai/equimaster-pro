@@ -4,5 +4,7 @@
   "saveSearchPlaceholder": "bijv. springmerries onder €20.000",
   "saveSearchSuccess": "Zoekopdracht succesvol opgeslagen.",
   "savingSearch": "Opslaan...",
-  "cancel": "Annuleren"
+  "cancel": "Annuleren",
+  "savedSearches": "Opgeslagen zoekopdrachten",
+  "newMatches": "nieuwe matches"
 }
