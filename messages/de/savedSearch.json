@@ -4,5 +4,7 @@
   "saveSearchPlaceholder": "z. B. Springstuten unter 20.000 €",
   "saveSearchSuccess": "Suche erfolgreich gespeichert.",
   "savingSearch": "Wird gespeichert...",
-  "cancel": "Abbrechen"
+  "cancel": "Abbrechen",
+  "savedSearches": "Gespeicherte Suchen",
+  "newMatches": "neue Treffer"
 }
