@@ -123,6 +123,10 @@ function applyListingFilters(query: ListingSearchQuery, params: MarketplaceSearc
     query = query.lte("height", params.maxHeight);
   }
 
+  if (params.publishedAfter) {
+    query = query.gte("published_at", params.publishedAfter);
+  }
+
   return query;
 }
 
@@ -226,6 +230,7 @@ async function searchActiveHorseListingsViaRpc(
     p_page: page,
     p_page_size: pageSize,
     p_pedigree_horse_ids: studbookIds,
+    p_published_after: params.publishedAfter ?? null,
   });
 
   if (error) {
