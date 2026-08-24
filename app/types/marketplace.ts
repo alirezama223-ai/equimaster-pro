@@ -41,6 +41,8 @@ export type MarketplaceSearchParams = {
   sort?: MarketplaceSortOption;
   page?: number;
   pageSize?: number;
+  /** Internal saved-search alert boundary; not exposed in marketplace URLs. */
+  publishedAfter?: string;
 };
 
 export type MarketplaceSearchResult = {
