@@ -88,6 +88,8 @@ export function buildPublicListingProfile(
     }
   }
 
+  const publicSlug = listing.slug?.trim() || buildListingSlug(listing.name, listing.id);
+
   return {
     listing,
     horse,
@@ -98,7 +100,7 @@ export function buildPublicListingProfile(
     healthSummary: parseHealthSnapshot(
       (listing as HorseListingRow & { public_health_summary?: unknown }).public_health_summary
     ),
-    publicUrl: getPublicListingPath(listing.slug),
+    publicUrl: getPublicListingPath(publicSlug),
   };
 }
 
