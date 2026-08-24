@@ -3,6 +3,7 @@ import type { Horse } from "@/app/data/horses";
 import { fetchHorseHealthDashboard } from "@/app/lib/health/horse-health";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getPublicListingPath } from "@/app/lib/marketplace/paths";
+import { buildListingSlug } from "@/app/lib/marketplace/slug";
 import { formatPedigreeSexLabel, rowToPedigreeHorse } from "@/app/lib/pedigree";
 import { fetchHorseTrainingAnalytics } from "@/app/lib/training/horse-analytics";
 import type { HorseListingRow } from "@/app/types/horse-listing";
@@ -160,6 +161,47 @@ export async function refreshListingPublicSnapshots(
   return error ? { error: error.message } : {};
 }
 
+async function findLegacyActiveListingByCanonicalSlug(
+  supabase: SupabaseClient,
+  slug: string
+): Promise<HorseListingRow | null> {
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("status", "active")
+    .is("slug", null)
+    .limit(100);
+
+  if (error) return null;
+
+  return (
+    ((data ?? []) as HorseListingRow[]).find(
+      (candidate) => buildListingSlug(candidate.name, candidate.id) === slug
+    ) ?? null
+  );
+}
+
+async function findLegacyOwnerListingByCanonicalSlug(
+  supabase: SupabaseClient,
+  slug: string,
+  ownerUserId: string
+): Promise<HorseListingRow | null> {
+  const { data, error } = await supabase
+    .from("horse_listings")
+    .select("*")
+    .eq("user_id", ownerUserId)
+    .is("slug", null)
+    .limit(100);
+
+  if (error) return null;
+
+  return (
+    ((data ?? []) as HorseListingRow[]).find(
+      (candidate) => buildListingSlug(candidate.name, candidate.id) === slug
+    ) ?? null
+  );
+}
+
 export async function buildPublicListingProfileBySlug(
   supabase: SupabaseClient,
   slug: string,
@@ -179,6 +221,12 @@ export async function buildPublicListingProfileBySlug(
   let listing = activeListing as HorseListingRow | null;
   let isOwnerPreview = false;
 
+  // Legacy rows can still have a null stored slug. Resolve the canonical
+  // fallback slug generated from name + listing id so old listings remain reachable.
+  if (!listing) {
+    listing = await findLegacyActiveListingByCanonicalSlug(supabase, slug);
+  }
+
   if (!listing && options?.ownerUserId) {
     const { data: ownerListing } = await supabase
       .from("horse_listings")
@@ -188,6 +236,11 @@ export async function buildPublicListingProfileBySlug(
       .maybeSingle();
 
     listing = (ownerListing as HorseListingRow | null) ?? null;
+
+    if (!listing) {
+      listing = await findLegacyOwnerListingByCanonicalSlug(supabase, slug, options.ownerUserId);
+    }
+
     isOwnerPreview = Boolean(listing && listing.status !== "active");
   }
 
