@@ -4,5 +4,7 @@
   "saveSearchPlaceholder": "p. ej. Yeguas de salto por menos de 20.000 €",
   "saveSearchSuccess": "Búsqueda guardada correctamente.",
   "savingSearch": "Guardando...",
-  "cancel": "Cancelar"
+  "cancel": "Cancelar",
+  "savedSearches": "Búsquedas guardadas",
+  "newMatches": "nuevos resultados"
 }
