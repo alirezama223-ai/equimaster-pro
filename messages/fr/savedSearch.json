@@ -4,5 +4,7 @@
   "saveSearchPlaceholder": "ex. Juments de saut à moins de 20 000 €",
   "saveSearchSuccess": "Recherche enregistrée avec succès.",
   "savingSearch": "Enregistrement...",
-  "cancel": "Annuler"
+  "cancel": "Annuler",
+  "savedSearches": "Recherches enregistrées",
+  "newMatches": "nouveaux résultats"
 }
