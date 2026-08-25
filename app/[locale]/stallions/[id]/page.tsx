@@ -13,7 +13,11 @@ import { getPedigreeSectionForStallion } from "@/app/actions/pedigree";
 import { getHorseTraitProfile } from "@/app/actions/traits";
 import { getCachedStallionById } from "@/app/lib/entity-profile-cache";
 import { availabilityBadgeClass, getStallionAge, isStallionUuid } from "@/app/lib/stallions";
-import { buildStallionMetadata, loadEntitySeoTemplates } from "@/app/lib/seo/entity-metadata";
+import {
+  buildStallionJsonLd,
+  buildStallionMetadata,
+  loadEntitySeoTemplates,
+} from "@/app/lib/seo/entity-metadata";
 import { type AppLocale, routing } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
