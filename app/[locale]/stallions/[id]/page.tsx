@@ -78,6 +78,12 @@ const stallionJsonLd = buildStallionJsonLd(stallion);
 
   return (
     <>
+      <script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify(stallionJsonLd),
+  }}
+/>
       <Navbar />
 
       <main className="bg-[#081223] min-h-screen text-white pt-28 pb-24">
