@@ -34,13 +34,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, locale } = await params;
 
   if (!isStallionUuid(id)) {
-    return { robots: { index: false, follow: false } };
+    return {
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 
   const { stallion } = await getCachedStallionById(id);
 
   if (!stallion) {
-    return { robots: { index: false, follow: false } };
+    return {
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 
   const tMeta = await getTranslations("metadata");
@@ -71,6 +81,8 @@ export default async function StallionDetailPage({ params }: Props) {
     notFound();
   }
 
+  const stallionJsonLd = buildStallionJsonLd(stallion);
+
   const age = getStallionAge(stallion.birthYear);
   const emptyValue = t("detail.emptyValue");
 
@@ -85,8 +97,6 @@ export default async function StallionDetailPage({ params }: Props) {
   const traitResult = pedigreeHorseId
     ? await getHorseTraitProfile(pedigreeHorseId)
     : null;
-
-  const stallionJsonLd = buildStallionJsonLd(stallion);
 
   return (
     <>
@@ -113,7 +123,9 @@ export default async function StallionDetailPage({ params }: Props) {
           <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10">
             <Image
               src={stallion.coverImageUrl}
-              alt={t("detail.coverAlt", { name: stallion.name })}
+              alt={t("detail.coverAlt", {
+                name: stallion.name,
+              })}
               fill
               priority
               className="object-cover"
@@ -153,7 +165,9 @@ export default async function StallionDetailPage({ params }: Props) {
               <div className="mt-8 grid grid-cols-2 gap-4">
                 <DetailItem
                   label={t("detail.birthYear")}
-                  value={stallion.birthYear?.toString() ?? emptyValue}
+                  value={
+                    stallion.birthYear?.toString() ?? emptyValue
+                  }
                 />
 
                 <DetailItem
@@ -193,7 +207,9 @@ export default async function StallionDetailPage({ params }: Props) {
 
                 <DetailItem
                   label={t("detail.competitionLevel")}
-                  value={stallion.competitionLevel || emptyValue}
+                  value={
+                    stallion.competitionLevel || emptyValue
+                  }
                 />
 
                 <DetailItem
@@ -357,8 +373,13 @@ function DetailItem({
 }) {
   return (
     <div className="rounded-2xl bg-[#111827] border border-white/10 p-4">
-      <p className="text-xs uppercase text-gray-500">{label}</p>
-      <p className="text-white font-semibold mt-1">{value}</p>
+      <p className="text-xs uppercase text-gray-500">
+        {label}
+      </p>
+
+      <p className="text-white font-semibold mt-1">
+        {value}
+      </p>
     </div>
   );
 }
