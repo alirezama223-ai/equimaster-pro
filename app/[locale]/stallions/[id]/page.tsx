@@ -18,6 +18,8 @@ import {
   buildStallionMetadata,
   loadEntitySeoTemplates,
 } from "@/app/lib/seo/entity-metadata";
+  loadEntitySeoTemplates,
+} from "@/app/lib/seo/entity-metadata";
 import { type AppLocale, routing } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
