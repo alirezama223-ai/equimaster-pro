@@ -377,9 +377,7 @@ function DetailItem({
         {label}
       </p>
 
-      <p className="text-white font-semibold mt-1">
-        {value}
-      </p>
+           <p className="text-white font-semibold mt-1">{value}</p>
     </div>
   );
 }
