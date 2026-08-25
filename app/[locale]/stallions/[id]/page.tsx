@@ -51,11 +51,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     loadEntitySeoTemplates(tMeta, "stallion")
   );
 }
-
-export default async function StallionDetailPage({ params }: Props) {
+const { stallion, pedigreeHorseId } = await getCachedStallionById(id);
   const { id } = await params;
   const t = await getTranslations("stallions");
-
+const stallionJsonLd = buildStallionJsonLd(stallion);
   if (!isStallionUuid(id)) {
     notFound();
   }
