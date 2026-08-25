@@ -329,16 +329,9 @@ export function buildStallionJsonLd(
         }
       : {}),
 
-    ...(stallion.availability
+        ...(stallion.availability
       ? {
           additionalProperty: [
-            ...(Array.isArray(
-              (
-                jsonLd.additionalProperty as unknown[]
-              ) ?? []
-            )
-              ? (jsonLd.additionalProperty as unknown[])
-              : []),
             {
               "@type": "PropertyValue",
               name: "Availability",
