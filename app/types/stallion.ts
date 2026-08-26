@@ -67,6 +67,7 @@ export type StallionCardData = {
   dam: string;
   damSire: string;
   studFee: number | null;
+  studFeeCurrency: string;
   studFeeLabel: string;
   availability: StallionAvailability;
   coverImageUrl: string;
