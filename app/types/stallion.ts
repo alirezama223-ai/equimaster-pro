@@ -36,6 +36,7 @@ export type StallionRow = {
   dam: string;
   dam_sire: string;
   stud_fee: number | null;
+  studFeeCurrency: string;
   stud_fee_currency: string;
   availability: StallionAvailability;
   breeding_methods: string[];
