@@ -124,7 +124,57 @@ export function buildEntityMetadata(params: {
     },
   };
 }
+export function buildStallionMetadata(
+  stallion: StallionDetail,
+  locale: AppLocale,
+  siteName: string,
+  templates: EntitySeoTemplates
+): Metadata {
+  const breeding =
+    stallion.breedingMethods.length > 0
+      ? stallion.breedingMethods.join(", ")
+      : stallion.discipline;
 
+  const vars: Record<string, string> = {
+    name: stallion.name,
+    breed: stallion.breed,
+    discipline: stallion.discipline,
+    country: stallion.country,
+    studFee: stallion.studFeeLabel,
+    breeding,
+    siteName,
+  };
+
+  const image =
+    stallion.coverImageUrl || stallion.images[0];
+
+  return buildEntityMetadata({
+    title: fillSeoTemplate(templates.title, vars),
+    description: fillSeoTemplate(templates.description, vars),
+    keywords: fillSeoTemplate(templates.keywords, vars),
+    openGraphTitle: fillSeoTemplate(
+      templates.openGraphTitle,
+      vars
+    ),
+    openGraphDescription: fillSeoTemplate(
+      templates.openGraphDescription,
+      vars
+    ),
+    twitterTitle: fillSeoTemplate(
+      templates.twitterTitle,
+      vars
+    ),
+    twitterDescription: fillSeoTemplate(
+      templates.twitterDescription,
+      vars
+    ),
+    pathname: `/stallions/${stallion.id}`,
+    locale,
+    siteName,
+    images: image ? [image] : undefined,
+    imageAlt: `${stallion.name} — ${stallion.breed} stallion`,
+  });
+}
 export function buildStallionJsonLd(
   stallion: StallionDetail
 ) {
