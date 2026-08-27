@@ -124,7 +124,6 @@ export function buildEntityMetadata(params: {
     },
   };
 }
-
 export function buildStallionMetadata(
   stallion: StallionDetail,
   locale: AppLocale,
@@ -176,14 +175,6 @@ export function buildStallionMetadata(
     imageAlt: `${stallion.name} — ${stallion.breed} stallion`,
   });
 }
-
-/**
- * Schema.org structured data for a stallion profile.
- *
- * A stallion is represented as an Animal with additional
- * breeding-related information where Schema.org provides a
- * suitable property.
- */
 export function buildStallionJsonLd(
   stallion: StallionDetail
 ) {
@@ -201,26 +192,136 @@ export function buildStallionJsonLd(
     stallion.description.trim() ||
     `${stallion.name} — ${stallion.breed} stallion.`;
 
-  const jsonLd: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "Animal",
+  const productId = `${pageUrl}#stallion`;
+  const pageId = `${pageUrl}#webpage`;
+  const offerId = `${pageUrl}#offer`;
+
+  const availabilityMap: Record<
+    StallionDetail["availability"],
+    string
+  > = {
+    available: "https://schema.org/InStock",
+    limited: "https://schema.org/LimitedAvailability",
+    booked: "https://schema.org/SoldOut",
+    retired: "https://schema.org/Discontinued",
+  };
+
+  const additionalProperties: Array<Record<string, unknown>> = [];
+
+  const addProperty = (
+    name: string,
+    value: string | number | null | undefined
+  ) => {
+    if (value === null || value === undefined || value === "") {
+      return;
+    }
+
+    additionalProperties.push({
+      "@type": "PropertyValue",
+      name,
+      value,
+    });
+  };
+
+  addProperty("Breed", stallion.breed);
+  addProperty("Gender", "Male");
+  addProperty("Birth date", stallion.birthYear
+    ? `${stallion.birthYear}-01-01`
+    : null);
+  addProperty("Country", stallion.country);
+  addProperty("Sire", stallion.sire);
+  addProperty("Dam", stallion.dam);
+  addProperty("Dam's sire", stallion.damSire);
+  addProperty("Discipline", stallion.discipline);
+  addProperty("Competition level", stallion.competitionLevel);
+  addProperty("Availability", stallion.availability);
+
+  if (stallion.studbook) {
+    addProperty("Studbook", stallion.studbook);
+  }
+
+  if (stallion.breedingMethods.length > 0) {
+    addProperty(
+      "Breeding methods",
+      stallion.breedingMethods.join(", ")
+    );
+  }
+
+  if (stallion.breeder) {
+    addProperty("Breeder", stallion.breeder.name);
+  }
+
+  const breederId = `${pageUrl}#breeder`;
+
+  const breeder = stallion.breeder
+    ? {
+        "@type": "Organization",
+        "@id": breederId,
+        name: stallion.breeder.name,
+        ...(stallion.breeder.website
+          ? {
+              url: stallion.breeder.website.startsWith("http")
+                ? stallion.breeder.website
+                : `https://${stallion.breeder.website}`,
+            }
+          : {}),
+        ...(stallion.breeder.country
+          ? {
+              address: {
+                "@type": "PostalAddress",
+                addressCountry: stallion.breeder.country,
+                ...(stallion.breeder.city
+                  ? {
+                      addressLocality: stallion.breeder.city,
+                    }
+                  : {}),
+              },
+            }
+          : {}),
+      }
+    : null;
+
+  const offer =
+    stallion.studFee !== null
+      ? {
+          "@type": "Offer",
+          "@id": offerId,
+          url: pageUrl,
+          price: stallion.studFee,
+          priceCurrency: stallion.studFeeCurrency,
+          ...(stallion.availability
+            ? {
+                availability:
+                  availabilityMap[stallion.availability],
+              }
+            : {}),
+          itemOffered: {
+            "@id": productId,
+          },
+          ...(breeder
+            ? {
+                offeredBy: {
+                  "@id": breederId,
+                },
+              }
+            : {}),
+        }
+      : null;
+
+  const product: Record<string, unknown> = {
+    "@type": "Product",
+    "@id": productId,
 
     name: stallion.name,
     url: pageUrl,
+    description: description.slice(0, 1000),
+
+    // Wikidata identifies Q726 as the horse concept.
+    additionalType: "https://www.wikidata.org/wiki/Q726",
 
     ...(imageUrls.length > 0
       ? {
           image: imageUrls,
-        }
-      : {}),
-
-    description: description.slice(0, 1000),
-
-    gender: "Male",
-
-    ...(stallion.breed
-      ? {
-          breed: stallion.breed,
         }
       : {}),
 
@@ -240,109 +341,45 @@ export function buildStallionJsonLd(
         }
       : {}),
 
-    ...(stallion.birthYear
+    ...(stallion.breed
       ? {
-          birthDate: `${stallion.birthYear}-01-01`,
+          category: stallion.breed,
         }
       : {}),
 
-    ...(stallion.country
+    identifier: stallion.id,
+
+    ...(additionalProperties.length > 0
       ? {
-          location: {
-            "@type": "Country",
-            name: stallion.country,
-          },
+          additionalProperty: additionalProperties,
         }
       : {}),
 
-    ...(stallion.sire
+    ...(offer
       ? {
-          parent: {
-            "@type": "Animal",
-            name: stallion.sire,
-            gender: "Male",
-          },
-        }
-      : {}),
-
-    ...(stallion.dam
-      ? {
-          additionalProperty: [
-            {
-              "@type": "PropertyValue",
-              name: "Dam",
-              value: stallion.dam,
-            },
-            ...(stallion.damSire
-              ? [
-                  {
-                    "@type": "PropertyValue",
-                    name: "Dam's sire",
-                    value: stallion.damSire,
-                  },
-                ]
-              : []),
-          ],
-        }
-      : {}),
-
-    ...(stallion.discipline
-      ? {
-          knowsAbout: stallion.discipline,
-        }
-      : {}),
-
-    ...(stallion.competitionLevel
-      ? {
-          award: stallion.competitionLevel,
-        }
-      : {}),
-
-    ...(stallion.breeder
-      ? {
-          breeder: {
-            "@type": "Organization",
-            name: stallion.breeder.name,
-            ...(stallion.breeder.website
-              ? {
-                  url: stallion.breeder.website.startsWith("http")
-                    ? stallion.breeder.website
-                    : `https://${stallion.breeder.website}`,
-                }
-              : {}),
-            ...(stallion.breeder.country
-              ? {
-                  address: {
-                    "@type": "PostalAddress",
-                    addressCountry:
-                      stallion.breeder.country,
-                    ...(stallion.breeder.city
-                      ? {
-                          addressLocality:
-                            stallion.breeder.city,
-                        }
-                      : {}),
-                  },
-                }
-              : {}),
-          },
-        }
-      : {}),
-
-        ...(stallion.availability
-      ? {
-          additionalProperty: [
-            {
-              "@type": "PropertyValue",
-              name: "Availability",
-              value: stallion.availability,
-            },
-          ],
+          offers: offer,
         }
       : {}),
   };
 
-  return jsonLd;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ItemPage",
+        "@id": pageId,
+        url: pageUrl,
+        name: `${stallion.name} — ${stallion.breed} stallion`,
+        mainEntity: {
+          "@id": productId,
+        },
+      },
+
+      product,
+
+      ...(breeder ? [breeder] : []),
+    ],
+  };
 }
 
 export function buildBreederMetadata(

@@ -110,6 +110,7 @@ export function stallionRowToCard(
     dam: row.dam,
     damSire: row.dam_sire,
     studFee: row.stud_fee,
+    studFeeCurrency: row.stud_fee_currency,
     studFeeLabel: formatStudFee(row),
     availability: row.availability,
     coverImageUrl: getStallionCoverUrl(row),
