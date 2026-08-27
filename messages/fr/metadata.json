@@ -2,7 +2,7 @@
   "site": {
     "name": "EquiMaster Pro",
     "title": "EquiMaster Pro",
-    "description": "Place de marché premium pour chevaux de sport avec annonces structurées, données généalogiques et outils professionnels pour vendeurs en Europe.",
+    "description": "Place de marché premium pour chevaux de sport avec annonces structurées, données généalogiques et outils professionnels pour vendeurs dans le monde entier.",
     "keywords": "chevaux de sport, chevaux de saut, marketplace équestre, chevaux à vendre, annonces équestres, pedigree, éleveurs, étalons",
     "openGraphTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
     "openGraphDescription": "Découvrez, achetez et vendez des chevaux de sport d'exception avec des annonces vérifiées, des données généalogiques et des outils professionnels.",
@@ -12,12 +12,12 @@
   "pages": {
     "home": {
       "title": "Marketplace de chevaux de sport",
-      "description": "Achetez, vendez et découvrez des chevaux de CSO et de dressage d'exception auprès d'éleveurs de confiance en Europe.",
-      "keywords": "chevaux de sport à vendre, marketplace équestre, chevaux de saut, annonces équestres europe",
+      "description": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs et de vendeurs de confiance dans le monde entier.",
+      "keywords": "chevaux de sport à vendre, marketplace équestre, chevaux de saut, annonces équestres mondiales",
       "openGraphTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
-      "openGraphDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs de confiance en Europe.",
+      "openGraphDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs et de vendeurs de confiance dans le monde entier.",
       "twitterTitle": "EquiMaster Pro — Marketplace de chevaux de sport",
-      "twitterDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs de confiance en Europe."
+      "twitterDescription": "Achetez, vendez et découvrez des chevaux de sport d'exception auprès d'éleveurs et de vendeurs de confiance dans le monde entier."
     },
     "marketplace": {
       "title": "Marketplace EquiMaster",
@@ -31,7 +31,7 @@
     "horses": {
       "title": "Parcourir les chevaux de sport à vendre",
       "description": "Recherchez et filtrez les annonces de chevaux de sport sur EquiMaster Pro par race, discipline, prix, âge et localisation.",
-      "keywords": "parcourir chevaux, recherche chevaux de sport, filtrer annonces, chevaux à vendre europe",
+      "keywords": "parcourir chevaux, recherche chevaux de sport, filtrer annonces, chevaux à vendre monde",
       "openGraphTitle": "Parcourir les chevaux de sport | EquiMaster Pro",
       "openGraphDescription": "Recherchez et filtrez les annonces par race, discipline, prix et localisation.",
       "twitterTitle": "Parcourir les chevaux de sport | EquiMaster Pro",
@@ -39,7 +39,7 @@
     },
     "stallions": {
       "title": "Répertoire d'étalons premium",
-      "description": "Explorez des étalons vérifiés pour l'élevage de chevaux de sport. Comparez pedigree, saillie et disponibilité en Europe.",
+      "description": "Explorez des étalons vérifiés pour l'élevage de chevaux de sport. Comparez pedigree, saillie et disponibilité dans le monde entier.",
       "keywords": "étalons, étalons reproducteurs, étalons sport, répertoire étalons",
       "openGraphTitle": "Répertoire d'étalons premium | EquiMaster Pro",
       "openGraphDescription": "Explorez des étalons vérifiés pour l'élevage avec détails pedigree et saillie.",
@@ -48,12 +48,12 @@
     },
     "breeders": {
       "title": "Répertoire d'éleveurs de chevaux de sport",
-      "description": "Trouvez des éleveurs de chevaux de sport de confiance en Europe. Parcourez haras, disciplines et chevaux disponibles.",
-      "keywords": "éleveurs chevaux, haras, éleveurs sport europe, répertoire éleveurs",
+      "description": "Trouvez des éleveurs de chevaux de sport de confiance dans le monde entier. Parcourez haras, disciplines et chevaux disponibles.",
+      "keywords": "éleveurs chevaux, haras, éleveurs sport monde, répertoire éleveurs",
       "openGraphTitle": "Répertoire d'éleveurs | EquiMaster Pro",
-      "openGraphDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance en Europe.",
+      "openGraphDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance dans le monde entier.",
       "twitterTitle": "Répertoire d'éleveurs | EquiMaster Pro",
-      "twitterDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance en Europe."
+      "twitterDescription": "Trouvez des éleveurs et haras de chevaux de sport de confiance dans le monde entier."
     },
     "bloodlines": {
       "title": "Recherche pedigree & lignées",

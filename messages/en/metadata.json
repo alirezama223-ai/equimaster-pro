@@ -2,7 +2,7 @@
   "site": {
     "name": "EquiMaster Pro",
     "title": "EquiMaster Pro",
-    "description": "Premium sport horse marketplace with structured listings, pedigree data, and professional seller tools across Europe.",
+    "description": "Premium sport horse marketplace with structured listings, pedigree data, and professional seller tools worldwide.",
     "keywords": "sport horses, show jumping horses, horse marketplace, horses for sale, equine listings, pedigree, breeders, stallions",
     "openGraphTitle": "EquiMaster Pro — Sport Horse Marketplace",
     "openGraphDescription": "Discover, buy, and sell elite sport horses with verified listings, pedigree insights, and professional seller tools.",
@@ -12,12 +12,12 @@
   "pages": {
     "home": {
       "title": "Sport Horse Marketplace",
-      "description": "Buy, sell, and discover elite show jumping and dressage horses from trusted breeders across Europe.",
-      "keywords": "sport horses for sale, horse marketplace, show jumping horses, european horse listings",
+      "description": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide.",
+      "keywords": "sport horses for sale, horse marketplace, show jumping horses, worldwide horse listings",
       "openGraphTitle": "EquiMaster Pro — Sport Horse Marketplace",
-      "openGraphDescription": "Buy, sell, and discover elite sport horses from trusted breeders across Europe.",
+      "openGraphDescription": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide.",
       "twitterTitle": "EquiMaster Pro — Sport Horse Marketplace",
-      "twitterDescription": "Buy, sell, and discover elite sport horses from trusted breeders across Europe."
+      "twitterDescription": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide."
     },
     "marketplace": {
       "title": "EquiMaster Marketplace",
@@ -31,7 +31,7 @@
     "horses": {
       "title": "Browse Sport Horses for Sale",
       "description": "Search and filter sport horse listings on EquiMaster Pro by breed, discipline, price, age, and location.",
-      "keywords": "browse horses, sport horse search, filter horse listings, horses for sale europe",
+      "keywords": "browse horses, sport horse search, filter horse listings, horses for sale worldwide",
       "openGraphTitle": "Browse Sport Horses for Sale | EquiMaster Pro",
       "openGraphDescription": "Search and filter sport horse listings by breed, discipline, price, and location.",
       "twitterTitle": "Browse Sport Horses for Sale | EquiMaster Pro",
@@ -39,7 +39,7 @@
     },
     "stallions": {
       "title": "Premium Stallions Directory",
-      "description": "Explore verified stallions for sport horse breeding. Compare pedigree, stud fees, and availability across Europe.",
+      "description": "Explore verified stallions for sport horse breeding. Compare pedigree, stud fees, and availability worldwide.",
       "keywords": "stallions, breeding stallions, sport horse stallions, stud directory",
       "openGraphTitle": "Premium Stallions Directory | EquiMaster Pro",
       "openGraphDescription": "Explore verified stallions for sport horse breeding with pedigree and stud fee details.",
@@ -48,12 +48,12 @@
     },
     "breeders": {
       "title": "Sport Horse Breeders Directory",
-      "description": "Find trusted sport horse breeders across Europe. Browse stud farms, disciplines, and available horses.",
-      "keywords": "horse breeders, stud farms, sport horse breeders europe, equine breeders directory",
+      "description": "Find trusted sport horse breeders worldwide. Browse stud farms, disciplines, and available horses.",
+      "keywords": "horse breeders, stud farms, sport horse breeders worldwide, equine breeders directory",
       "openGraphTitle": "Sport Horse Breeders Directory | EquiMaster Pro",
-      "openGraphDescription": "Find trusted sport horse breeders and stud farms across Europe.",
+      "openGraphDescription": "Find trusted sport horse breeders and stud farms worldwide.",
       "twitterTitle": "Sport Horse Breeders Directory | EquiMaster Pro",
-      "twitterDescription": "Find trusted sport horse breeders and stud farms across Europe."
+      "twitterDescription": "Find trusted sport horse breeders and stud farms worldwide."
     },
     "bloodlines": {
       "title": "Pedigree & Bloodlines Search",

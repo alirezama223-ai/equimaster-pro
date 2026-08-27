@@ -2,7 +2,7 @@
   "site": {
     "name": "EquiMaster Pro",
     "title": "EquiMaster Pro",
-    "description": "Premium-Pferdemarktplatz für Sportpferde mit strukturierten Inseraten, Pedigree-Daten und professionellen Verkäufer-Tools in ganz Europa.",
+    "description": "Premium-Pferdemarktplatz für Sportpferde mit strukturierten Inseraten, Pedigree-Daten und professionellen Verkäufer-Tools weltweit.",
     "keywords": "Sportpferde, Springpferde, Pferdemarktplatz, Pferde kaufen, Pferde verkaufen, Pedigree, Züchter, Hengste",
     "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
     "openGraphDescription": "Entdecken, kaufen und verkaufen Sie Spitzen-Sportpferde mit verifizierten Inseraten, Pedigree-Einblicken und professionellen Tools.",
@@ -12,12 +12,12 @@
   "pages": {
     "home": {
       "title": "Sportpferde-Marktplatz",
-      "description": "Kaufen, verkaufen und entdecken Sie elite Spring- und Dressurpferde von vertrauenswürdigen Züchtern in ganz Europa.",
-      "keywords": "Sportpferde kaufen, Pferdemarktplatz, Springpferde, Pferdeinserate Europa",
+      "description": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit.",
+      "keywords": "Sportpferde kaufen, Pferdemarktplatz, Springpferde, Pferdeinserate weltweit",
       "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
-      "openGraphDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern in Europa.",
+      "openGraphDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit.",
       "twitterTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
-      "twitterDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern in Europa."
+      "twitterDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit."
     },
     "marketplace": {
       "title": "EquiMaster Marktplatz",
@@ -31,7 +31,7 @@
     "horses": {
       "title": "Sportpferde durchsuchen",
       "description": "Suchen und filtern Sie Sportpferde-Inserate auf EquiMaster Pro nach Rasse, Disziplin, Preis, Alter und Standort.",
-      "keywords": "Pferde suchen, Sportpferde Filter, Pferdeinserate Europa, Pferde kaufen",
+      "keywords": "Pferde suchen, Sportpferde Filter, Pferdeinserate weltweit, Pferde kaufen",
       "openGraphTitle": "Sportpferde durchsuchen | EquiMaster Pro",
       "openGraphDescription": "Suchen und filtern Sie Sportpferde-Inserate nach Rasse, Disziplin, Preis und Standort.",
       "twitterTitle": "Sportpferde durchsuchen | EquiMaster Pro",
@@ -39,7 +39,7 @@
     },
     "stallions": {
       "title": "Premium-Hengstverzeichnis",
-      "description": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht. Vergleichen Sie Pedigree, Decktaxe und Verfügbarkeit in Europa.",
+      "description": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht. Vergleichen Sie Pedigree, Decktaxe und Verfügbarkeit weltweit.",
       "keywords": "Hengste, Deckhengste, Sportpferde Hengste, Hengstverzeichnis",
       "openGraphTitle": "Premium-Hengstverzeichnis | EquiMaster Pro",
       "openGraphDescription": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht mit Pedigree- und Decktaxe-Details.",
@@ -48,12 +48,12 @@
     },
     "breeders": {
       "title": "Sportpferde-Züchterverzeichnis",
-      "description": "Finden Sie vertrauenswürdige Sportpferdezüchter in Europa. Durchsuchen Sie Gestüte, Disziplinen und verfügbare Pferde.",
-      "keywords": "Pferdezüchter, Gestüte, Sportpferdezüchter Europa, Züchterverzeichnis",
+      "description": "Finden Sie vertrauenswürdige Sportpferdezüchter weltweit. Durchsuchen Sie Gestüte, Disziplinen und verfügbare Pferde.",
+      "keywords": "Pferdezüchter, Gestüte, Sportpferdezüchter weltweit, Züchterverzeichnis",
       "openGraphTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
-      "openGraphDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte in ganz Europa.",
+      "openGraphDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte weltweit.",
       "twitterTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
-      "twitterDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte in ganz Europa."
+      "twitterDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte weltweit."
     },
     "bloodlines": {
       "title": "Pedigree & Blutlinien-Suche",

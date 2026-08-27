@@ -2,7 +2,7 @@
   "site": {
     "name": "EquiMaster Pro",
     "title": "EquiMaster Pro",
-    "description": "Marketplace premium de caballos de deporte con anuncios estructurados, datos genealógicos y herramientas profesionales para vendedores en Europa.",
+    "description": "Marketplace premium de caballos de deporte con anuncios estructurados, datos genealógicos y herramientas profesionales para vendedores en todo el mundo.",
     "keywords": "caballos de deporte, caballos de salto, marketplace ecuestre, caballos en venta, anuncios ecuestres, pedigree, criadores, sementales",
     "openGraphTitle": "EquiMaster Pro — Marketplace de caballos de deporte",
     "openGraphDescription": "Descubra, compre y venda caballos de deporte de élite con anuncios verificados, datos genealógicos y herramientas profesionales.",
@@ -12,12 +12,12 @@
   "pages": {
     "home": {
       "title": "Marketplace de caballos de deporte",
-      "description": "Compre, venda y descubra caballos de salto y doma clásica de élite de criadores de confianza en toda Europa.",
-      "keywords": "caballos de deporte en venta, marketplace ecuestre, caballos de salto, anuncios ecuestres europa",
+      "description": "Compre, venda y descubra caballos de deporte de élite de criadores y vendedores de confianza en todo el mundo.",
+      "keywords": "caballos de deporte en venta, marketplace ecuestre, caballos de salto, anuncios ecuestres mundiales",
       "openGraphTitle": "EquiMaster Pro — Marketplace de caballos de deporte",
-      "openGraphDescription": "Compre, venda y descubra caballos de deporte de élite de criadores de confianza en Europa.",
+      "openGraphDescription": "Compre, venda y descubra caballos de deporte de élite de criadores y vendedores de confianza en todo el mundo.",
       "twitterTitle": "EquiMaster Pro — Marketplace de caballos de deporte",
-      "twitterDescription": "Compre, venda y descubra caballos de deporte de élite de criadores de confianza en Europa."
+      "twitterDescription": "Compre, venda y descubra caballos de deporte de élite de criadores y vendedores de confianza en todo el mundo."
     },
     "marketplace": {
       "title": "Marketplace EquiMaster",
@@ -31,7 +31,7 @@
     "horses": {
       "title": "Explorar caballos de deporte en venta",
       "description": "Busque y filtre anuncios de caballos de deporte en EquiMaster Pro por raza, disciplina, precio, edad y ubicación.",
-      "keywords": "buscar caballos, búsqueda caballos deporte, filtrar anuncios, caballos en venta europa",
+      "keywords": "buscar caballos, búsqueda caballos deporte, filtrar anuncios, caballos en venta mundo",
       "openGraphTitle": "Explorar caballos de deporte | EquiMaster Pro",
       "openGraphDescription": "Busque y filtre anuncios por raza, disciplina, precio y ubicación.",
       "twitterTitle": "Explorar caballos de deporte | EquiMaster Pro",
@@ -39,7 +39,7 @@
     },
     "stallions": {
       "title": "Directorio de sementales premium",
-      "description": "Explore sementales verificados para cría de caballos de deporte. Compare pedigree, tarifas de cubrición y disponibilidad en Europa.",
+      "description": "Explore sementales verificados para cría de caballos de deporte. Compare pedigree, tarifas de cubrición y disponibilidad en todo el mundo.",
       "keywords": "semenales, sementales de cría, sementales deporte, directorio sementales",
       "openGraphTitle": "Directorio de sementales premium | EquiMaster Pro",
       "openGraphDescription": "Explore sementales verificados para cría con detalles de pedigree y tarifas.",
@@ -48,12 +48,12 @@
     },
     "breeders": {
       "title": "Directorio de criadores de caballos de deporte",
-      "description": "Encuentre criadores de caballos de deporte de confianza en Europa. Explore yeguadas, disciplinas y caballos disponibles.",
-      "keywords": "criadores caballos, yeguadas, criadores deporte europa, directorio criadores",
+      "description": "Encuentre criadores de caballos de deporte de confianza en todo el mundo. Explore yeguadas, disciplinas y caballos disponibles.",
+      "keywords": "criadores caballos, yeguadas, criadores deporte mundial, directorio criadores",
       "openGraphTitle": "Directorio de criadores | EquiMaster Pro",
-      "openGraphDescription": "Encuentre criadores y yeguadas de caballos de deporte de confianza en Europa.",
+      "openGraphDescription": "Encuentre criadores y yeguadas de caballos de deporte de confianza en todo el mundo.",
       "twitterTitle": "Directorio de criadores | EquiMaster Pro",
-      "twitterDescription": "Encuentre criadores y yeguadas de caballos de deporte de confianza en Europa."
+      "twitterDescription": "Encuentre criadores y yeguadas de caballos de deporte de confianza en todo el mundo."
     },
     "bloodlines": {
       "title": "Búsqueda de pedigree y líneas sanguíneas",

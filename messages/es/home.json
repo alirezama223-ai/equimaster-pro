@@ -6,7 +6,7 @@
       "line2": "Deportivos",
       "line3": "Marketplace"
     },
-    "subtitle": "Compra, vende y descubre caballos de salto de élite de criadores de confianza en toda Europa.",
+    "subtitle": "Compra, vende y descubre caballos deportivos de élite de criadores y vendedores de confianza en todo el mundo.",
     "browseButton": "Explorar caballos",
     "sellButton": "Vender caballo",
     "imageAlt": "Caballo deportivo — imagen principal",
@@ -24,7 +24,7 @@
   },
   "search": {
     "title": "Encuentra tu caballo perfecto",
-    "subtitle": "Busca y filtra los mejores caballos deportivos de Europa.",
+    "subtitle": "Busca y filtra los mejores caballos deportivos del mundo.",
     "queryLabel": "Buscar",
     "queryPlaceholder": "Buscar caballo...",
     "breed": "Raza",
@@ -65,7 +65,7 @@
   "featured": {
     "eyebrow": "Colección Premium",
     "title": "Caballos destacados",
-    "subtitle": "Descubre los mejores caballos de salto de Europa, seleccionados por criadores y jinetes profesionales de confianza.",
+    "subtitle": "Descubre los mejores caballos deportivos del mundo, seleccionados por criadores y jinetes profesionales de confianza.",
     "emptyIcon": "🐴",
     "emptyTitle": "No se encontraron caballos",
     "emptyDescription": "Prueba a cambiar tu búsqueda."

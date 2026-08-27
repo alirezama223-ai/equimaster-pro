@@ -2,11 +2,11 @@
   "hero": {
     "eyebrow": "Willkommen bei EquiMaster Pro",
     "title": {
-      "line1": "Sportpferde",
-      "line2": "Marktplatz",
-      "line3": "Europa"
+      "line1": "Sport",
+      "line2": "Pferde",
+      "line3": "Marktplatz"
     },
-    "subtitle": "Kaufen, verkaufen und entdecken Sie Springpferde der Spitzenklasse von vertrauenswürdigen Züchtern in ganz Europa.",
+    "subtitle": "Kaufen, verkaufen und entdecken Sie Sportpferde der Spitzenklasse von vertrauenswürdigen Züchtern und Verkäufern weltweit.",
     "browseButton": "Pferde durchsuchen",
     "sellButton": "Pferd verkaufen",
     "imageAlt": "Sportpferd — Hero-Bild",
@@ -24,7 +24,7 @@
   },
   "search": {
     "title": "Finden Sie Ihr ideales Pferd",
-    "subtitle": "Suchen und filtern Sie Europas feinste Sportpferde.",
+    "subtitle": "Suchen und filtern Sie die besten Sportpferde der Welt.",
     "queryLabel": "Suche",
     "queryPlaceholder": "Pferd suchen...",
     "breed": "Rasse",
@@ -65,7 +65,7 @@
   "featured": {
     "eyebrow": "Premium-Kollektion",
     "title": "Empfohlene Pferde",
-    "subtitle": "Entdecken Sie Europas beste Springpferde — ausgewählt von vertrauenswürdigen Züchtern und Profi-Reitern.",
+    "subtitle": "Entdecken Sie die besten Sportpferde der Welt — ausgewählt von vertrauenswürdigen Züchtern und Profi-Reitern.",
     "emptyIcon": "🐴",
     "emptyTitle": "Keine Pferde gefunden",
     "emptyDescription": "Passen Sie Ihre Suche an."

@@ -6,7 +6,7 @@
       "line2": "de Sport",
       "line3": "Marketplace"
     },
-    "subtitle": "Achetez, vendez et découvrez des chevaux de jumping d'élite auprès d'éleveurs de confiance à travers l'Europe.",
+    "subtitle": "Achetez, vendez et découvrez des chevaux de sport d'élite auprès d'éleveurs et de vendeurs de confiance dans le monde entier.",
     "browseButton": "Parcourir les chevaux",
     "sellButton": "Vendre un cheval",
     "imageAlt": "Cheval de sport — image principale",
@@ -24,7 +24,7 @@
   },
   "search": {
     "title": "Trouvez votre cheval idéal",
-    "subtitle": "Recherchez et filtrez les meilleurs chevaux de sport d'Europe.",
+    "subtitle": "Recherchez et filtrez les meilleurs chevaux de sport du monde.",
     "queryLabel": "Recherche",
     "queryPlaceholder": "Rechercher un cheval...",
     "breed": "Race",
@@ -65,7 +65,7 @@
   "featured": {
     "eyebrow": "Collection Premium",
     "title": "Chevaux en vedette",
-    "subtitle": "Découvrez les meilleurs chevaux de jumping d'Europe, sélectionnés par des éleveurs et cavaliers professionnels de confiance.",
+    "subtitle": "Découvrez les meilleurs chevaux de sport du monde, sélectionnés par des éleveurs et cavaliers professionnels de confiance.",
     "emptyIcon": "🐴",
     "emptyTitle": "Aucun cheval trouvé",
     "emptyDescription": "Essayez de modifier votre recherche."

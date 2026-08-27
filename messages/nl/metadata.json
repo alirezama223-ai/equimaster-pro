@@ -2,7 +2,7 @@
   "site": {
     "name": "EquiMaster Pro",
     "title": "EquiMaster Pro",
-    "description": "Premium paardenmarktplaats voor sportpaarden met gestructureerde advertenties, stamboekgegevens en professionele verkopers-tools in heel Europa.",
+    "description": "Premium paardenmarktplaats voor sportpaarden met gestructureerde advertenties, stamboekgegevens en professionele verkopers-tools wereldwijd.",
     "keywords": "sportpaarden, springpaarden, paardenmarktplaats, paarden te koop, paardenadvertenties, stamboom, fokkers, hengsten",
     "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
     "openGraphDescription": "Ontdek, koop en verkoop top sportpaarden met geverifieerde advertenties, stamboekinzichten en professionele tools.",
@@ -12,12 +12,12 @@
   "pages": {
     "home": {
       "title": "Sportpaarden marktplaats",
-      "description": "Koop, verkoop en ontdek elite spring- en dressuurpaarden van betrouwbare fokkers in heel Europa.",
-      "keywords": "sportpaarden te koop, paardenmarktplaats, springpaarden, paardenadvertenties europa",
+      "description": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd.",
+      "keywords": "sportpaarden te koop, paardenmarktplaats, springpaarden, paardenadvertenties wereldwijd",
       "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
-      "openGraphDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers in Europa.",
+      "openGraphDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd.",
       "twitterTitle": "EquiMaster Pro — Sportpaarden marktplaats",
-      "twitterDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers in Europa."
+      "twitterDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd."
     },
     "marketplace": {
       "title": "EquiMaster Marktplaats",
@@ -31,7 +31,7 @@
     "horses": {
       "title": "Sportpaarden bekijken",
       "description": "Zoek en filter sportpaarden-advertenties op EquiMaster Pro op ras, discipline, prijs, leeftijd en locatie.",
-      "keywords": "paarden zoeken, sportpaarden filter, paardenadvertenties europa, paarden kopen",
+      "keywords": "paarden zoeken, sportpaarden filter, paardenadvertenties wereldwijd, paarden kopen",
       "openGraphTitle": "Sportpaarden bekijken | EquiMaster Pro",
       "openGraphDescription": "Zoek en filter sportpaarden-advertenties op ras, discipline, prijs en locatie.",
       "twitterTitle": "Sportpaarden bekijken | EquiMaster Pro",
@@ -39,7 +39,7 @@
     },
     "stallions": {
       "title": "Premium hengstenoverzicht",
-      "description": "Ontdek geverifieerde hengsten voor sportpaardenfokkerij. Vergelijk stamboom, dekprijs en beschikbaarheid in Europa.",
+      "description": "Ontdek geverifieerde hengsten voor sportpaardenfokkerij. Vergelijk stamboom, dekprijs en beschikbaarheid wereldwijd.",
       "keywords": "hengsten, dekhengsten, sportpaarden hengsten, hengstenoverzicht",
       "openGraphTitle": "Premium hengstenoverzicht | EquiMaster Pro",
       "openGraphDescription": "Ontdek geverifieerde hengsten voor fokkerij met stamboek- en dekprijsdetails.",
@@ -48,12 +48,12 @@
     },
     "breeders": {
       "title": "Sportpaarden fokkersoverzicht",
-      "description": "Vind betrouwbare sportpaardenfokkers in Europa. Bekijk stoeterijen, disciplines en beschikbare paarden.",
-      "keywords": "paardenfokkers, stoeterijen, sportpaarden fokkers europa, fokkersoverzicht",
+      "description": "Vind betrouwbare sportpaardenfokkers wereldwijd. Bekijk stoeterijen, disciplines en beschikbare paarden.",
+      "keywords": "paardenfokkers, stoeterijen, sportpaarden fokkers wereldwijd, fokkersoverzicht",
       "openGraphTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
-      "openGraphDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen in heel Europa.",
+      "openGraphDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen wereldwijd.",
       "twitterTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
-      "twitterDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen in heel Europa."
+      "twitterDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen wereldwijd."
     },
     "bloodlines": {
       "title": "Stamboom & bloedlijnen zoeken",

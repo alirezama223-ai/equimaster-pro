@@ -6,7 +6,7 @@
       "line2": "Horses",
       "line3": "Marketplace"
     },
-    "subtitle": "Buy, sell and discover elite show jumping horses from trusted breeders across Europe.",
+    "subtitle": "Buy, sell and discover elite sport horses from trusted breeders and sellers worldwide.",
     "browseButton": "Browse Horses",
     "sellButton": "Sell Horse",
     "imageAlt": "Sport horse hero image",
@@ -24,7 +24,7 @@
   },
   "search": {
     "title": "Find Your Perfect Horse",
-    "subtitle": "Search and filter Europe's finest sport horses.",
+    "subtitle": "Search and filter the world's finest sport horses.",
     "queryLabel": "Search",
     "queryPlaceholder": "Search horse...",
     "breed": "Breed",
@@ -65,7 +65,7 @@
   "featured": {
     "eyebrow": "Premium Collection",
     "title": "Featured Horses",
-    "subtitle": "Discover Europe's finest show jumping horses selected from trusted breeders and professional riders.",
+    "subtitle": "Discover the world's finest sport horses selected from trusted breeders and professional riders.",
     "emptyIcon": "🐴",
     "emptyTitle": "No horses found",
     "emptyDescription": "Try changing your search."

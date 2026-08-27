@@ -2,11 +2,11 @@
   "hero": {
     "eyebrow": "Welkom bij EquiMaster Pro",
     "title": {
-      "line1": "Sportpaarden",
-      "line2": "Marktplaats",
-      "line3": "Europa"
+      "line1": "Sport",
+      "line2": "Paarden",
+      "line3": "Marktplaats"
     },
-    "subtitle": "Koop, verkoop en ontdek elite springpaarden van betrouwbare fokkers door heel Europa.",
+    "subtitle": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd.",
     "browseButton": "Paarden bekijken",
     "sellButton": "Paard verkopen",
     "imageAlt": "Sportpaard — hero-afbeelding",
@@ -24,7 +24,7 @@
   },
   "search": {
     "title": "Vind uw perfecte paard",
-    "subtitle": "Zoek en filter de beste sportpaarden van Europa.",
+    "subtitle": "Zoek en filter de beste sportpaarden ter wereld.",
     "queryLabel": "Zoeken",
     "queryPlaceholder": "Paard zoeken...",
     "breed": "Ras",
@@ -65,7 +65,7 @@
   "featured": {
     "eyebrow": "Premiumcollectie",
     "title": "Uitgelichte paarden",
-    "subtitle": "Ontdek de beste springpaarden van Europa, geselecteerd door betrouwbare fokkers en professionele ruiters.",
+    "subtitle": "Ontdek de beste sportpaarden ter wereld, geselecteerd door betrouwbare fokkers en professionele ruiters.",
     "emptyIcon": "🐴",
     "emptyTitle": "Geen paarden gevonden",
     "emptyDescription": "Pas uw zoekopdracht aan."
