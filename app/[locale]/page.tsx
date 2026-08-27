@@ -3,9 +3,10 @@ import { getHeroStats } from "@/app/actions/home-stats";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
 import HomeClient from "@/app/components/home/HomeClient";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
+import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import dynamicImport from "next/dynamic";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 
 const PremiumStallions = dynamicImport(
   () => import("@/app/components/stallions/PremiumStallions"),
@@ -25,7 +26,34 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
+  const locale = await getLocale();
   const tCommon = await getTranslations("common");
+  const tMetadata = await getTranslations("metadata");
+  const baseUrl = getSiteBaseUrl();
+  const siteName = tMetadata("site.name");
+  const siteDescription = tMetadata("site.description");
+  const siteJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${baseUrl}/#organization`,
+        name: siteName,
+        url: baseUrl,
+        logo: `${baseUrl}/shabdiz-logo.svg`,
+        description: siteDescription,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website`,
+        name: siteName,
+        url: baseUrl,
+        inLanguage: locale,
+        publisher: { "@id": `${baseUrl}/#organization` },
+      },
+    ],
+  };
+
   const [{ data: listingRows }, favoriteListingIds, heroStats] = await Promise.all([
     getActiveHorseListings(100),
     getUserFavoriteListingIds(),
@@ -36,11 +64,17 @@ export default async function Home() {
   );
 
   return (
-    <HomeClient
-      marketplaceHorses={marketplaceHorses}
-      favoriteListingIds={favoriteListingIds}
-      heroStats={heroStats}
-      premiumStallions={<PremiumStallions />}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+      />
+      <HomeClient
+        marketplaceHorses={marketplaceHorses}
+        favoriteListingIds={favoriteListingIds}
+        heroStats={heroStats}
+        premiumStallions={<PremiumStallions />}
+      />
+    </>
   );
 }
