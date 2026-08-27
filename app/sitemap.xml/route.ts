@@ -40,7 +40,7 @@ function serializeAlternateLinks(languages: unknown): string[] {
     }
 
     return [
-      `<xhtml:link rel="alternate" hreflang="${escapeXml(hreflang)}" href="${escapeXml(hrefLang)}" />`,
+      `    <xhtml:link rel="alternate" hreflang="${escapeXml(hreflang)}" href="${escapeXml(hrefLang)}" />`,
     ];
   });
 }
@@ -51,29 +51,33 @@ function serializeUrlEntry(entry: MetadataRoute.Sitemap[number]): string | undef
   }
 
   const lastmod = toIsoLastmod(entry.lastModified);
-  const parts = [
-    "<url>",
-    `<loc>${escapeXml(entry.url.trim())}</loc>`,
-    lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : undefined,
-    ...serializeAlternateLinks(entry.alternates?.languages),
-    "</url>",
-  ].filter(isNonEmptyString);
+  const lines = [
+    "  <url>",
+    `    <loc>${escapeXml(entry.url.trim())}</loc>`,
+  ];
 
-  return parts.join("");
+  if (lastmod) {
+    lines.push(`    <lastmod>${escapeXml(lastmod)}</lastmod>`);
+  }
+
+  lines.push(...serializeAlternateLinks(entry.alternates?.languages));
+  lines.push("  </url>");
+
+  return lines.join("\n");
 }
 
 function buildSitemapXml(entries: MetadataRoute.Sitemap): string {
   const urls = entries
     .map(serializeUrlEntry)
     .filter(isNonEmptyString)
-    .join("");
+    .join("\n");
 
-  return (
-    `<?xml version="1.0" encoding="UTF-8"?>` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">` +
-    urls +
-    `</urlset>`
-  );
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    urls,
+    "</urlset>",
+  ].join("\n");
 }
 
 export async function GET() {
@@ -85,10 +89,13 @@ export async function GET() {
     entries = [];
   }
 
-  return new Response(buildSitemapXml(entries), {
+  const xml = buildSitemapXml(entries);
+
+  return new Response(xml, {
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }
