@@ -19,8 +19,8 @@ export async function GET() {
         : "";
 
       const alternates = entry.alternates?.languages
-        ? Object.values(entry.alternates.languages)
-            .map((url) => `<xhtml:link rel="alternate" hreflang="${escapeXml(Object.keys(entry.alternates!.languages!).find((key) => entry.alternates!.languages![key] === url) ?? "x-default")}" href="${escapeXml(url)}" />`)
+        ? Object.entries(entry.alternates.languages)
+            .map(([hreflang, url]) => `<xhtml:link rel="alternate" hreflang="${escapeXml(hreflang)}" href="${escapeXml(url)}" />`)
             .join("")
         : "";
 
