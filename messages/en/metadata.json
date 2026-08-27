@@ -1,148 +1,148 @@
 {
   "site": {
-    "name": "EquiMaster Pro",
-    "title": "EquiMaster Pro",
+    "name": "Shabdiz",
+    "title": "Shabdiz — Sport Horses Marketplace",
     "description": "Premium sport horse marketplace with structured listings, pedigree data, and professional seller tools worldwide.",
     "keywords": "sport horses, show jumping horses, horse marketplace, horses for sale, equine listings, pedigree, breeders, stallions",
-    "openGraphTitle": "EquiMaster Pro — Sport Horse Marketplace",
+    "openGraphTitle": "Shabdiz — Sport Horses Marketplace",
     "openGraphDescription": "Discover, buy, and sell elite sport horses with verified listings, pedigree insights, and professional seller tools.",
-    "twitterTitle": "EquiMaster Pro — Sport Horse Marketplace",
+    "twitterTitle": "Shabdiz — Sport Horses Marketplace",
     "twitterDescription": "Discover, buy, and sell elite sport horses with verified listings and pedigree data."
   },
   "pages": {
     "home": {
-      "title": "Sport Horse Marketplace",
+      "title": "Sport Horses Marketplace",
       "description": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide.",
       "keywords": "sport horses for sale, horse marketplace, show jumping horses, worldwide horse listings",
-      "openGraphTitle": "EquiMaster Pro — Sport Horse Marketplace",
+      "openGraphTitle": "Shabdiz — Sport Horses Marketplace",
       "openGraphDescription": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide.",
-      "twitterTitle": "EquiMaster Pro — Sport Horse Marketplace",
+      "twitterTitle": "Shabdiz — Sport Horses Marketplace",
       "twitterDescription": "Buy, sell, and discover elite sport horses from trusted breeders and sellers worldwide."
     },
     "marketplace": {
-      "title": "EquiMaster Marketplace",
-      "description": "Discover premium sport horses for sale. Search by discipline, breed, country, price, age, and height.",
+      "title": "Marketplace",
+      "description": "Discover elite sport horses from trusted breeders and sellers around the world. Search by discipline, breed, country, price, age, and height.",
       "keywords": "horse marketplace, sport horses for sale, buy horses online, equine classifieds",
-      "openGraphTitle": "EquiMaster Marketplace | EquiMaster Pro",
-      "openGraphDescription": "Professional horse marketplace with structured listings, pedigree data, and direct seller contact.",
-      "twitterTitle": "EquiMaster Marketplace | EquiMaster Pro",
-      "twitterDescription": "Professional horse marketplace with structured listings, pedigree data, and direct seller contact."
+      "openGraphTitle": "Shabdiz — Sport Horses Marketplace",
+      "openGraphDescription": "Discover elite sport horses from trusted breeders and sellers around the world. Search by discipline, breed, country, price, age, and height.",
+      "twitterTitle": "Shabdiz — Sport Horses Marketplace",
+      "twitterDescription": "Discover elite sport horses from trusted breeders and sellers around the world."
     },
     "horses": {
       "title": "Browse Sport Horses for Sale",
-      "description": "Search and filter sport horse listings on EquiMaster Pro by breed, discipline, price, age, and location.",
+      "description": "Search and filter sport horse listings on Shabdiz by breed, discipline, price, age, and location.",
       "keywords": "browse horses, sport horse search, filter horse listings, horses for sale worldwide",
-      "openGraphTitle": "Browse Sport Horses for Sale | EquiMaster Pro",
+      "openGraphTitle": "Browse Sport Horses for Sale | Shabdiz",
       "openGraphDescription": "Search and filter sport horse listings by breed, discipline, price, and location.",
-      "twitterTitle": "Browse Sport Horses for Sale | EquiMaster Pro",
+      "twitterTitle": "Browse Sport Horses for Sale | Shabdiz",
       "twitterDescription": "Search and filter sport horse listings by breed, discipline, price, and location."
     },
     "stallions": {
       "title": "Premium Stallions Directory",
       "description": "Explore verified stallions for sport horse breeding. Compare pedigree, stud fees, and availability worldwide.",
       "keywords": "stallions, breeding stallions, sport horse stallions, stud directory",
-      "openGraphTitle": "Premium Stallions Directory | EquiMaster Pro",
+      "openGraphTitle": "Premium Stallions Directory | Shabdiz",
       "openGraphDescription": "Explore verified stallions for sport horse breeding with pedigree and stud fee details.",
-      "twitterTitle": "Premium Stallions Directory | EquiMaster Pro",
+      "twitterTitle": "Premium Stallions Directory | Shabdiz",
       "twitterDescription": "Explore verified stallions for sport horse breeding with pedigree and stud fee details."
     },
     "breeders": {
       "title": "Sport Horse Breeders Directory",
       "description": "Find trusted sport horse breeders worldwide. Browse stud farms, disciplines, and available horses.",
       "keywords": "horse breeders, stud farms, sport horse breeders worldwide, equine breeders directory",
-      "openGraphTitle": "Sport Horse Breeders Directory | EquiMaster Pro",
+      "openGraphTitle": "Sport Horse Breeders Directory | Shabdiz",
       "openGraphDescription": "Find trusted sport horse breeders and stud farms worldwide.",
-      "twitterTitle": "Sport Horse Breeders Directory | EquiMaster Pro",
+      "twitterTitle": "Sport Horse Breeders Directory | Shabdiz",
       "twitterDescription": "Find trusted sport horse breeders and stud farms worldwide."
     },
     "bloodlines": {
       "title": "Pedigree & Bloodlines Search",
       "description": "Search sport horse pedigrees and bloodlines. Explore sire lines, dam lines, and breeding history.",
       "keywords": "horse pedigree, bloodlines, sire lines, dam lines, equine genealogy",
-      "openGraphTitle": "Pedigree & Bloodlines Search | EquiMaster Pro",
+      "openGraphTitle": "Pedigree & Bloodlines Search | Shabdiz",
       "openGraphDescription": "Search sport horse pedigrees, sire lines, and breeding bloodlines.",
-      "twitterTitle": "Pedigree & Bloodlines Search | EquiMaster Pro",
+      "twitterTitle": "Pedigree & Bloodlines Search | Shabdiz",
       "twitterDescription": "Search sport horse pedigrees, sire lines, and breeding bloodlines."
     },
     "breedingLab": {
       "title": "Breeding Lab",
       "description": "Compare pedigrees and analyse breeding combinations with professional sport horse breeding tools.",
       "keywords": "horse breeding tools, pedigree comparison, breeding analysis, sport horse breeding",
-      "openGraphTitle": "Breeding Lab | EquiMaster Pro",
+      "openGraphTitle": "Breeding Lab | Shabdiz",
       "openGraphDescription": "Compare pedigrees and analyse breeding combinations for sport horses.",
-      "twitterTitle": "Breeding Lab | EquiMaster Pro",
+      "twitterTitle": "Breeding Lab | Shabdiz",
       "twitterDescription": "Compare pedigrees and analyse breeding combinations for sport horses."
     },
     "breedingRecommendations": {
       "title": "Stallion Match & Breeding Recommendations",
       "description": "Get data-driven stallion recommendations matched to your mare's pedigree and breeding goals.",
       "keywords": "stallion match, breeding recommendations, mare stallion pairing, sport horse breeding",
-      "openGraphTitle": "Stallion Match | EquiMaster Pro",
+      "openGraphTitle": "Stallion Match | Shabdiz",
       "openGraphDescription": "Data-driven stallion recommendations matched to your mare and breeding goals.",
-      "twitterTitle": "Stallion Match | EquiMaster Pro",
+      "twitterTitle": "Stallion Match | Shabdiz",
       "twitterDescription": "Data-driven stallion recommendations matched to your mare and breeding goals."
     },
     "login": {
       "title": "Sign In",
-      "description": "Sign in to your EquiMaster Pro account to manage listings, favourites, and seller tools.",
-      "keywords": "equimaster login, horse marketplace account sign in",
-      "openGraphTitle": "Sign In | EquiMaster Pro",
-      "openGraphDescription": "Sign in to your EquiMaster Pro account.",
-      "twitterTitle": "Sign In | EquiMaster Pro",
-      "twitterDescription": "Sign in to your EquiMaster Pro account."
+      "description": "Sign in to your Shabdiz account to manage listings, favourites, and seller tools.",
+      "keywords": "shabdiz login, horse marketplace account sign in",
+      "openGraphTitle": "Sign In | Shabdiz",
+      "openGraphDescription": "Sign in to your Shabdiz account.",
+      "twitterTitle": "Sign In | Shabdiz",
+      "twitterDescription": "Sign in to your Shabdiz account."
     },
     "signup": {
       "title": "Create Account",
-      "description": "Create your EquiMaster Pro account to list horses, save favourites, and access breeding tools.",
-      "keywords": "equimaster register, horse marketplace sign up, create account",
-      "openGraphTitle": "Create Account | EquiMaster Pro",
-      "openGraphDescription": "Create your EquiMaster Pro account.",
-      "twitterTitle": "Create Account | EquiMaster Pro",
-      "twitterDescription": "Create your EquiMaster Pro account."
+      "description": "Create your Shabdiz account to list horses, save favourites, and access breeding tools.",
+      "keywords": "shabdiz register, horse marketplace sign up, create account",
+      "openGraphTitle": "Create Account | Shabdiz",
+      "openGraphDescription": "Create your Shabdiz account.",
+      "twitterTitle": "Create Account | Shabdiz",
+      "twitterDescription": "Create your Shabdiz account."
     },
     "account": {
       "title": "My Account",
-      "description": "Manage your EquiMaster Pro profile, listings, stallions, and breeder information.",
-      "keywords": "equimaster account, seller dashboard, manage horse listings",
-      "openGraphTitle": "My Account | EquiMaster Pro",
-      "openGraphDescription": "Manage your EquiMaster Pro profile and listings.",
-      "twitterTitle": "My Account | EquiMaster Pro",
-      "twitterDescription": "Manage your EquiMaster Pro profile and listings."
+      "description": "Manage your Shabdiz profile, listings, stallions, and breeder information.",
+      "keywords": "shabdiz account, seller dashboard, manage horse listings",
+      "openGraphTitle": "My Account | Shabdiz",
+      "openGraphDescription": "Manage your Shabdiz profile and listings.",
+      "twitterTitle": "My Account | Shabdiz",
+      "twitterDescription": "Manage your Shabdiz profile and listings."
     },
     "sell": {
       "title": "Sell a Horse",
-      "description": "List your sport horse for sale on EquiMaster Pro with photos, pedigree, and structured listing tools.",
+      "description": "List your sport horse for sale on Shabdiz with photos, pedigree, and structured listing tools.",
       "keywords": "sell a horse, list horse for sale, horse listing form, sport horse seller",
-      "openGraphTitle": "Sell a Horse | EquiMaster Pro",
+      "openGraphTitle": "Sell a Horse | Shabdiz",
       "openGraphDescription": "List your sport horse for sale with photos, pedigree, and seller tools.",
-      "twitterTitle": "Sell a Horse | EquiMaster Pro",
+      "twitterTitle": "Sell a Horse | Shabdiz",
       "twitterDescription": "List your sport horse for sale with photos, pedigree, and seller tools."
     },
     "favorites": {
       "title": "Saved Horses",
-      "description": "View and manage your saved sport horse listings on EquiMaster Pro.",
+      "description": "View and manage your saved sport horse listings on Shabdiz.",
       "keywords": "saved horses, horse favourites, wishlist horses",
-      "openGraphTitle": "Saved Horses | EquiMaster Pro",
+      "openGraphTitle": "Saved Horses | Shabdiz",
       "openGraphDescription": "View and manage your saved sport horse listings.",
-      "twitterTitle": "Saved Horses | EquiMaster Pro",
+      "twitterTitle": "Saved Horses | Shabdiz",
       "twitterDescription": "View and manage your saved sport horse listings."
     },
     "notifications": {
       "title": "Notifications",
-      "description": "View alerts and updates for your horses, listings, and EquiMaster Pro activity.",
-      "keywords": "equimaster notifications, horse alerts, listing updates",
-      "openGraphTitle": "Notifications | EquiMaster Pro",
-      "openGraphDescription": "View alerts and updates for your EquiMaster Pro activity.",
-      "twitterTitle": "Notifications | EquiMaster Pro",
-      "twitterDescription": "View alerts and updates for your EquiMaster Pro activity."
+      "description": "View alerts and updates for your horses, listings, and Shabdiz activity.",
+      "keywords": "shabdiz notifications, horse alerts, listing updates",
+      "openGraphTitle": "Notifications | Shabdiz",
+      "openGraphDescription": "View alerts and updates for your Shabdiz activity.",
+      "twitterTitle": "Notifications | Shabdiz",
+      "twitterDescription": "View alerts and updates for your Shabdiz activity."
     },
     "training": {
       "title": "Training Dashboard",
-      "description": "Track training sessions, plans, and horse performance with EquiMaster Pro training tools.",
+      "description": "Track training sessions, plans, and horse performance with Shabdiz training tools.",
       "keywords": "horse training dashboard, training plans, equine session tracking",
-      "openGraphTitle": "Training Dashboard | EquiMaster Pro",
+      "openGraphTitle": "Training Dashboard | Shabdiz",
       "openGraphDescription": "Track training sessions, plans, and horse performance.",
-      "twitterTitle": "Training Dashboard | EquiMaster Pro",
+      "twitterTitle": "Training Dashboard | Shabdiz",
       "twitterDescription": "Track training sessions, plans, and horse performance."
     },
     "admin": {
@@ -156,20 +156,20 @@
     },
     "sellerDashboard": {
       "title": "Seller Dashboard",
-      "description": "Manage your horse listings, previews, and seller activity on EquiMaster Pro.",
+      "description": "Manage your horse listings, previews, and seller activity on Shabdiz.",
       "keywords": "seller dashboard, manage listings, horse seller tools",
-      "openGraphTitle": "Seller Dashboard | EquiMaster Pro",
+      "openGraphTitle": "Seller Dashboard | Shabdiz",
       "openGraphDescription": "Manage your horse listings and seller activity.",
-      "twitterTitle": "Seller Dashboard | EquiMaster Pro",
+      "twitterTitle": "Seller Dashboard | Shabdiz",
       "twitterDescription": "Manage your horse listings and seller activity."
     },
     "inbox": {
       "title": "Inbox",
-      "description": "Buyer and seller conversations about horse listings on EquiMaster Pro.",
+      "description": "Buyer and seller conversations about horse listings on Shabdiz.",
       "keywords": "horse marketplace inbox, buyer seller messages",
-      "openGraphTitle": "Inbox | EquiMaster Pro",
+      "openGraphTitle": "Inbox | Shabdiz",
       "openGraphDescription": "Manage your horse marketplace conversations.",
-      "twitterTitle": "Inbox | EquiMaster Pro",
+      "twitterTitle": "Inbox | Shabdiz",
       "twitterDescription": "Manage your horse marketplace conversations."
     }
   },
@@ -203,7 +203,7 @@
     }
   },
   "listing": {
-    "siteName": "EquiMaster Pro",
+    "siteName": "Shabdiz",
     "imageAlt": "{name} — {discipline} sport horse for sale"
   }
 }

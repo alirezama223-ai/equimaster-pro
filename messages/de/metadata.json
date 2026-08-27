@@ -1,12 +1,12 @@
 {
   "site": {
-    "name": "EquiMaster Pro",
-    "title": "EquiMaster Pro",
+    "name": "Shabdiz",
+    "title": "Shabdiz — Sportpferde-Marktplatz",
     "description": "Premium-Pferdemarktplatz für Sportpferde mit strukturierten Inseraten, Pedigree-Daten und professionellen Verkäufer-Tools weltweit.",
     "keywords": "Sportpferde, Springpferde, Pferdemarktplatz, Pferde kaufen, Pferde verkaufen, Pedigree, Züchter, Hengste",
-    "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+    "openGraphTitle": "Shabdiz — Sportpferde-Marktplatz",
     "openGraphDescription": "Entdecken, kaufen und verkaufen Sie Spitzen-Sportpferde mit verifizierten Inseraten, Pedigree-Einblicken und professionellen Tools.",
-    "twitterTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+    "twitterTitle": "Shabdiz — Sportpferde-Marktplatz",
     "twitterDescription": "Entdecken, kaufen und verkaufen Sie Spitzen-Sportpferde mit verifizierten Inseraten und Pedigree-Daten."
   },
   "pages": {
@@ -14,135 +14,135 @@
       "title": "Sportpferde-Marktplatz",
       "description": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit.",
       "keywords": "Sportpferde kaufen, Pferdemarktplatz, Springpferde, Pferdeinserate weltweit",
-      "openGraphTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+      "openGraphTitle": "Shabdiz — Sportpferde-Marktplatz",
       "openGraphDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit.",
-      "twitterTitle": "EquiMaster Pro — Sportpferde-Marktplatz",
+      "twitterTitle": "Shabdiz — Sportpferde-Marktplatz",
       "twitterDescription": "Kaufen, verkaufen und entdecken Sie elite Sportpferde von vertrauenswürdigen Züchtern und Verkäufern weltweit."
     },
     "marketplace": {
-      "title": "EquiMaster Marktplatz",
-      "description": "Entdecken Sie Premium-Sportpferde zum Verkauf. Suchen Sie nach Disziplin, Rasse, Land, Preis, Alter und Stockmaß.",
+      "title": "Marktplatz",
+      "description": "Entdecken Sie Sportpferde von vertrauenswürdigen Züchtern und Verkäufern auf der ganzen Welt. Suchen Sie nach Disziplin, Rasse, Land, Preis, Alter und Stockmaß.",
       "keywords": "Pferdemarktplatz, Sportpferde kaufen, Pferde online kaufen, Pferdeinserate",
-      "openGraphTitle": "EquiMaster Marktplatz | EquiMaster Pro",
-      "openGraphDescription": "Professioneller Pferdemarktplatz mit strukturierten Inseraten, Pedigree-Daten und direktem Verkäuferkontakt.",
-      "twitterTitle": "EquiMaster Marktplatz | EquiMaster Pro",
-      "twitterDescription": "Professioneller Pferdemarktplatz mit strukturierten Inseraten, Pedigree-Daten und direktem Verkäuferkontakt."
+      "openGraphTitle": "Shabdiz — Sportpferde-Marktplatz",
+      "openGraphDescription": "Entdecken Sie Sportpferde von vertrauenswürdigen Züchtern und Verkäufern auf der ganzen Welt. Suchen Sie nach Disziplin, Rasse, Land, Preis, Alter und Stockmaß.",
+      "twitterTitle": "Shabdiz — Sportpferde-Marktplatz",
+      "twitterDescription": "Entdecken Sie Sportpferde von vertrauenswürdigen Züchtern und Verkäufern auf der ganzen Welt."
     },
     "horses": {
       "title": "Sportpferde durchsuchen",
-      "description": "Suchen und filtern Sie Sportpferde-Inserate auf EquiMaster Pro nach Rasse, Disziplin, Preis, Alter und Standort.",
+      "description": "Suchen und filtern Sie Sportpferde-Inserate auf Shabdiz nach Rasse, Disziplin, Preis, Alter und Standort.",
       "keywords": "Pferde suchen, Sportpferde Filter, Pferdeinserate weltweit, Pferde kaufen",
-      "openGraphTitle": "Sportpferde durchsuchen | EquiMaster Pro",
+      "openGraphTitle": "Sportpferde durchsuchen | Shabdiz",
       "openGraphDescription": "Suchen und filtern Sie Sportpferde-Inserate nach Rasse, Disziplin, Preis und Standort.",
-      "twitterTitle": "Sportpferde durchsuchen | EquiMaster Pro",
+      "twitterTitle": "Sportpferde durchsuchen | Shabdiz",
       "twitterDescription": "Suchen und filtern Sie Sportpferde-Inserate nach Rasse, Disziplin, Preis und Standort."
     },
     "stallions": {
       "title": "Premium-Hengstverzeichnis",
       "description": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht. Vergleichen Sie Pedigree, Decktaxe und Verfügbarkeit weltweit.",
       "keywords": "Hengste, Deckhengste, Sportpferde Hengste, Hengstverzeichnis",
-      "openGraphTitle": "Premium-Hengstverzeichnis | EquiMaster Pro",
+      "openGraphTitle": "Premium-Hengstverzeichnis | Shabdiz",
       "openGraphDescription": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht mit Pedigree- und Decktaxe-Details.",
-      "twitterTitle": "Premium-Hengstverzeichnis | EquiMaster Pro",
+      "twitterTitle": "Premium-Hengstverzeichnis | Shabdiz",
       "twitterDescription": "Entdecken Sie verifizierte Hengste für die Sportpferdezucht mit Pedigree- und Decktaxe-Details."
     },
     "breeders": {
       "title": "Sportpferde-Züchterverzeichnis",
       "description": "Finden Sie vertrauenswürdige Sportpferdezüchter weltweit. Durchsuchen Sie Gestüte, Disziplinen und verfügbare Pferde.",
       "keywords": "Pferdezüchter, Gestüte, Sportpferdezüchter weltweit, Züchterverzeichnis",
-      "openGraphTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
+      "openGraphTitle": "Sportpferde-Züchterverzeichnis | Shabdiz",
       "openGraphDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte weltweit.",
-      "twitterTitle": "Sportpferde-Züchterverzeichnis | EquiMaster Pro",
+      "twitterTitle": "Sportpferde-Züchterverzeichnis | Shabdiz",
       "twitterDescription": "Finden Sie vertrauenswürdige Sportpferdezüchter und Gestüte weltweit."
     },
     "bloodlines": {
       "title": "Pedigree & Blutlinien-Suche",
       "description": "Suchen Sie Sportpferde-Pedigrees und Blutlinien. Erkunden Sie Vater- und Mutterlinien sowie Zuchthistorie.",
       "keywords": "Pferdepedigree, Blutlinien, Vaterlinien, Mutterlinien, Pferdestammbaum",
-      "openGraphTitle": "Pedigree & Blutlinien-Suche | EquiMaster Pro",
+      "openGraphTitle": "Pedigree & Blutlinien-Suche | Shabdiz",
       "openGraphDescription": "Suchen Sie Sportpferde-Pedigrees, Vaterlinien und Zucht-Blutlinien.",
-      "twitterTitle": "Pedigree & Blutlinien-Suche | EquiMaster Pro",
+      "twitterTitle": "Pedigree & Blutlinien-Suche | Shabdiz",
       "twitterDescription": "Suchen Sie Sportpferde-Pedigrees, Vaterlinien und Zucht-Blutlinien."
     },
     "breedingLab": {
       "title": "Zucht-Labor",
       "description": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen mit professionellen Sportpferde-Zuchttools.",
       "keywords": "Pferdezucht Tools, Pedigree-Vergleich, Zuchtanalyse, Sportpferdezucht",
-      "openGraphTitle": "Zucht-Labor | EquiMaster Pro",
+      "openGraphTitle": "Zucht-Labor | Shabdiz",
       "openGraphDescription": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen für Sportpferde.",
-      "twitterTitle": "Zucht-Labor | EquiMaster Pro",
+      "twitterTitle": "Zucht-Labor | Shabdiz",
       "twitterDescription": "Vergleichen Sie Pedigrees und analysieren Sie Zuchtkombinationen für Sportpferde."
     },
     "breedingRecommendations": {
       "title": "Hengst-Match & Zuchtempfehlungen",
       "description": "Erhalten Sie datenbasierte Hengstempfehlungen abgestimmt auf das Pedigree und die Zuchtziele Ihrer Stute.",
       "keywords": "Hengst-Match, Zuchtempfehlungen, Stute Hengst Paarung, Sportpferdezucht",
-      "openGraphTitle": "Hengst-Match | EquiMaster Pro",
+      "openGraphTitle": "Hengst-Match | Shabdiz",
       "openGraphDescription": "Datenbasierte Hengstempfehlungen abgestimmt auf Ihre Stute und Zuchtziele.",
-      "twitterTitle": "Hengst-Match | EquiMaster Pro",
+      "twitterTitle": "Hengst-Match | Shabdiz",
       "twitterDescription": "Datenbasierte Hengstempfehlungen abgestimmt auf Ihre Stute und Zuchtziele."
     },
     "login": {
       "title": "Anmelden",
-      "description": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an, um Inserate, Favoriten und Verkäufer-Tools zu verwalten.",
-      "keywords": "EquiMaster Anmeldung, Pferdemarktplatz Konto Login",
-      "openGraphTitle": "Anmelden | EquiMaster Pro",
-      "openGraphDescription": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an.",
-      "twitterTitle": "Anmelden | EquiMaster Pro",
-      "twitterDescription": "Melden Sie sich bei Ihrem EquiMaster Pro-Konto an."
+      "description": "Melden Sie sich bei Ihrem Shabdiz-Konto an, um Inserate, Favoriten und Verkäufer-Tools zu verwalten.",
+      "keywords": "Shabdiz Anmeldung, Pferdemarktplatz Konto Login",
+      "openGraphTitle": "Anmelden | Shabdiz",
+      "openGraphDescription": "Melden Sie sich bei Ihrem Shabdiz-Konto an.",
+      "twitterTitle": "Anmelden | Shabdiz",
+      "twitterDescription": "Melden Sie sich bei Ihrem Shabdiz-Konto an."
     },
     "signup": {
       "title": "Konto erstellen",
-      "description": "Erstellen Sie Ihr EquiMaster Pro-Konto, um Pferde zu inserieren, Favoriten zu speichern und Zuchttools zu nutzen.",
-      "keywords": "EquiMaster Registrierung, Pferdemarktplatz Anmeldung, Konto erstellen",
-      "openGraphTitle": "Konto erstellen | EquiMaster Pro",
-      "openGraphDescription": "Erstellen Sie Ihr EquiMaster Pro-Konto.",
-      "twitterTitle": "Konto erstellen | EquiMaster Pro",
-      "twitterDescription": "Erstellen Sie Ihr EquiMaster Pro-Konto."
+      "description": "Erstellen Sie Ihr Shabdiz-Konto, um Pferde zu inserieren, Favoriten zu speichern und Zuchttools zu nutzen.",
+      "keywords": "Shabdiz Registrierung, Pferdemarktplatz Anmeldung, Konto erstellen",
+      "openGraphTitle": "Konto erstellen | Shabdiz",
+      "openGraphDescription": "Erstellen Sie Ihr Shabdiz-Konto.",
+      "twitterTitle": "Konto erstellen | Shabdiz",
+      "twitterDescription": "Erstellen Sie Ihr Shabdiz-Konto."
     },
     "account": {
       "title": "Mein Konto",
-      "description": "Verwalten Sie Ihr EquiMaster Pro-Profil, Inserate, Hengste und Züchterinformationen.",
-      "keywords": "EquiMaster Konto, Verkäufer-Dashboard, Pferdeinserate verwalten",
-      "openGraphTitle": "Mein Konto | EquiMaster Pro",
-      "openGraphDescription": "Verwalten Sie Ihr EquiMaster Pro-Profil und Ihre Inserate.",
-      "twitterTitle": "Mein Konto | EquiMaster Pro",
-      "twitterDescription": "Verwalten Sie Ihr EquiMaster Pro-Profil und Ihre Inserate."
+      "description": "Verwalten Sie Ihr Shabdiz-Profil, Inserate, Hengste und Züchterinformationen.",
+      "keywords": "Shabdiz Konto, Verkäufer-Dashboard, Pferdeinserate verwalten",
+      "openGraphTitle": "Mein Konto | Shabdiz",
+      "openGraphDescription": "Verwalten Sie Ihr Shabdiz-Profil und Ihre Inserate.",
+      "twitterTitle": "Mein Konto | Shabdiz",
+      "twitterDescription": "Verwalten Sie Ihr Shabdiz-Profil und Ihre Inserate."
     },
     "sell": {
       "title": "Pferd verkaufen",
-      "description": "Inserieren Sie Ihr Sportpferd auf EquiMaster Pro mit Fotos, Pedigree und strukturierten Listing-Tools.",
+      "description": "Inserieren Sie Ihr Sportpferd auf Shabdiz mit Fotos, Pedigree und strukturierten Listing-Tools.",
       "keywords": "Pferd verkaufen, Pferd inserieren, Verkaufsinserat, Sportpferde Verkäufer",
-      "openGraphTitle": "Pferd verkaufen | EquiMaster Pro",
+      "openGraphTitle": "Pferd verkaufen | Shabdiz",
       "openGraphDescription": "Inserieren Sie Ihr Sportpferd mit Fotos, Pedigree und Verkäufer-Tools.",
-      "twitterTitle": "Pferd verkaufen | EquiMaster Pro",
+      "twitterTitle": "Pferd verkaufen | Shabdiz",
       "twitterDescription": "Inserieren Sie Ihr Sportpferd mit Fotos, Pedigree und Verkäufer-Tools."
     },
     "favorites": {
       "title": "Gespeicherte Pferde",
-      "description": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate auf EquiMaster Pro.",
+      "description": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate auf Shabdiz.",
       "keywords": "gespeicherte Pferde, Pferde Favoriten, Merkliste Pferde",
-      "openGraphTitle": "Gespeicherte Pferde | EquiMaster Pro",
+      "openGraphTitle": "Gespeicherte Pferde | Shabdiz",
       "openGraphDescription": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate.",
-      "twitterTitle": "Gespeicherte Pferde | EquiMaster Pro",
+      "twitterTitle": "Gespeicherte Pferde | Shabdiz",
       "twitterDescription": "Sehen und verwalten Sie Ihre gespeicherten Sportpferde-Inserate."
     },
     "notifications": {
       "title": "Benachrichtigungen",
-      "description": "Sehen Sie Warnungen und Updates zu Ihren Pferden, Inseraten und EquiMaster Pro-Aktivitäten.",
-      "keywords": "EquiMaster Benachrichtigungen, Pferde Alerts, Inserat Updates",
-      "openGraphTitle": "Benachrichtigungen | EquiMaster Pro",
-      "openGraphDescription": "Warnungen und Updates zu Ihrer EquiMaster Pro-Aktivität.",
-      "twitterTitle": "Benachrichtigungen | EquiMaster Pro",
-      "twitterDescription": "Warnungen und Updates zu Ihrer EquiMaster Pro-Aktivität."
+      "description": "Sehen Sie Warnungen und Updates zu Ihren Pferden, Inseraten und Shabdiz-Aktivitäten.",
+      "keywords": "Shabdiz Benachrichtigungen, Pferde Alerts, Inserat Updates",
+      "openGraphTitle": "Benachrichtigungen | Shabdiz",
+      "openGraphDescription": "Warnungen und Updates zu Ihrer Shabdiz-Aktivität.",
+      "twitterTitle": "Benachrichtigungen | Shabdiz",
+      "twitterDescription": "Warnungen und Updates zu Ihrer Shabdiz-Aktivität."
     },
     "training": {
       "title": "Trainings-Dashboard",
-      "description": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung mit den EquiMaster Pro Trainings-Tools.",
+      "description": "Verfolgen Sie Trainingseinheiten, Pläne und Pferdeleistung mit den Shabdiz Trainings-Tools.",
       "keywords": "Pferdetraining Dashboard, Trainingspläne, Equine Sitzungsverfolgung",
-      "openGraphTitle": "Trainings-Dashboard | EquiMaster Pro",
+      "openGraphTitle": "Trainings-Dashboard | Shabdiz",
       "openGraphDescription": "Trainingseinheiten, Pläne und Pferdeleistung verfolgen.",
-      "twitterTitle": "Trainings-Dashboard | EquiMaster Pro",
+      "twitterTitle": "Trainings-Dashboard | Shabdiz",
       "twitterDescription": "Trainingseinheiten, Pläne und Pferdeleistung verfolgen."
     },
     "admin": {
@@ -156,11 +156,11 @@
     },
     "sellerDashboard": {
       "title": "Verkäufer-Dashboard",
-      "description": "Verwalten Sie Ihre Pferdeinserate, Vorschauen und Verkäuferaktivität auf EquiMaster Pro.",
+      "description": "Verwalten Sie Ihre Pferdeinserate, Vorschauen und Verkäuferaktivität auf Shabdiz.",
       "keywords": "Verkäufer Dashboard, Inserate verwalten, Pferde Verkäufer Tools",
-      "openGraphTitle": "Verkäufer-Dashboard | EquiMaster Pro",
+      "openGraphTitle": "Verkäufer-Dashboard | Shabdiz",
       "openGraphDescription": "Verwalten Sie Ihre Pferdeinserate und Verkäuferaktivität.",
-      "twitterTitle": "Verkäufer-Dashboard | EquiMaster Pro",
+      "twitterTitle": "Verkäufer-Dashboard | Shabdiz",
       "twitterDescription": "Verwalten Sie Ihre Pferdeinserate und Verkäuferaktivität."
     }
   },
@@ -194,7 +194,7 @@
     }
   },
   "listing": {
-    "siteName": "EquiMaster Pro",
+    "siteName": "Shabdiz",
     "imageAlt": "{name} — {discipline} Sportpferd zum Verkauf"
   }
 }

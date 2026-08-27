@@ -1,6 +1,6 @@
 {
   "browse": {
-    "eyebrow": "EquiMaster Marktplaats",
+    "eyebrow": "SHABDIZ Marktplaats",
     "title": "Sportpaarden te koop",
     "subtitle": "Zoek premium advertenties met gestructureerde stamboom, media en direct verkopercontact.",
     "searchLabel": "Zoeken",
@@ -95,7 +95,7 @@
     }
   },
   "home": {
-    "eyebrow": "EquiMaster Marktplaats",
+    "eyebrow": "SHABDIZ Marktplaats",
     "title": "Vind uw volgende sportpaard met geverifieerde stamboom en platformgegevens",
     "subtitle": "Bekijk professionele advertenties met gestructureerde paardenrecords, trainingssamenvattingen, gezondheidsinzichten en direct verkopercontact.",
     "searchPlaceholder": "Zoek op naam, ras, discipline, land...",
@@ -107,7 +107,7 @@
     "newestTitle": "Nieuwste advertenties",
     "newestSubtitle": "Vers toegevoegde paarden op de marktplaats.",
     "viewAllHorses": "Alle paarden bekijken →",
-    "noListings": "Nog geen gepubliceerde advertenties. Wees de eerste verkoper op EquiMaster.",
+    "noListings": "Nog geen gepubliceerde advertenties. Wees de eerste verkoper op SHABDIZ.",
     "browseByBreed": "Bladeren op ras",
     "browseByDiscipline": "Bladeren op discipline",
     "viewAllBreeds": "Alle rassen bekijken →",
@@ -130,7 +130,7 @@
     "genderUnknown": "Onbekend"
   },
   "hero": {
-    "eyebrow": "Welkom bij EquiMaster Pro",
+    "eyebrow": "Welkom bij SHABDIZ",
     "titleLine1": "Sport",
     "titleLine2": "Paarden",
     "titleLine3": "Marktplaats",

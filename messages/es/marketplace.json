@@ -1,6 +1,6 @@
 {
   "browse": {
-    "eyebrow": "EquiMaster Marketplace",
+    "eyebrow": "SHABDIZ Marketplace",
     "title": "Caballos deportivos en venta",
     "subtitle": "Busque anuncios premium con pedigree estructurado, medios y contacto directo con el vendedor.",
     "searchLabel": "Buscar",
@@ -95,7 +95,7 @@
     }
   },
   "home": {
-    "eyebrow": "EquiMaster Marketplace",
+    "eyebrow": "SHABDIZ Marketplace",
     "title": "Encuentre su próximo caballo deportivo con pedigree verificado y datos de plataforma",
     "subtitle": "Explore anuncios profesionales con registros estructurados de caballos, resúmenes de entrenamiento, información de salud y contacto directo con el vendedor.",
     "searchPlaceholder": "Buscar por nombre, raza, disciplina, país...",
@@ -107,7 +107,7 @@
     "newestTitle": "Anuncios más recientes",
     "newestSubtitle": "Caballos recién añadidos al marketplace.",
     "viewAllHorses": "Ver todos los caballos →",
-    "noListings": "Aún no hay anuncios publicados. Sea el primer vendedor en EquiMaster.",
+    "noListings": "Aún no hay anuncios publicados. Sea el primer vendedor en SHABDIZ.",
     "browseByBreed": "Explorar por raza",
     "browseByDiscipline": "Explorar por disciplina",
     "viewAllBreeds": "Ver todas las razas →",
@@ -130,7 +130,7 @@
     "genderUnknown": "Desconocido"
   },
   "hero": {
-    "eyebrow": "Bienvenido a EquiMaster Pro",
+    "eyebrow": "Bienvenido a SHABDIZ",
     "titleLine1": "Caballos",
     "titleLine2": "Deportivos",
     "titleLine3": "Marketplace",

@@ -1,12 +1,12 @@
 {
   "site": {
-    "name": "EquiMaster Pro",
-    "title": "EquiMaster Pro",
+    "name": "Shabdiz",
+    "title": "Shabdiz — Sportpaarden marktplaats",
     "description": "Premium paardenmarktplaats voor sportpaarden met gestructureerde advertenties, stamboekgegevens en professionele verkopers-tools wereldwijd.",
     "keywords": "sportpaarden, springpaarden, paardenmarktplaats, paarden te koop, paardenadvertenties, stamboom, fokkers, hengsten",
-    "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+    "openGraphTitle": "Shabdiz — Sportpaarden marktplaats",
     "openGraphDescription": "Ontdek, koop en verkoop top sportpaarden met geverifieerde advertenties, stamboekinzichten en professionele tools.",
-    "twitterTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+    "twitterTitle": "Shabdiz — Sportpaarden marktplaats",
     "twitterDescription": "Ontdek, koop en verkoop top sportpaarden met geverifieerde advertenties en stamboekgegevens."
   },
   "pages": {
@@ -14,135 +14,135 @@
       "title": "Sportpaarden marktplaats",
       "description": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd.",
       "keywords": "sportpaarden te koop, paardenmarktplaats, springpaarden, paardenadvertenties wereldwijd",
-      "openGraphTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+      "openGraphTitle": "Shabdiz — Sportpaarden marktplaats",
       "openGraphDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd.",
-      "twitterTitle": "EquiMaster Pro — Sportpaarden marktplaats",
+      "twitterTitle": "Shabdiz — Sportpaarden marktplaats",
       "twitterDescription": "Koop, verkoop en ontdek elite sportpaarden van betrouwbare fokkers en verkopers wereldwijd."
     },
     "marketplace": {
-      "title": "EquiMaster Marktplaats",
-      "description": "Ontdek premium sportpaarden te koop. Zoek op discipline, ras, land, prijs, leeftijd en maat.",
+      "title": "Marktplaats",
+      "description": "Ontdek elite sportpaarden van betrouwbare fokkers en verkopers over de hele wereld. Zoek op discipline, ras, land, prijs, leeftijd en stokmaat.",
       "keywords": "paardenmarktplaats, sportpaarden kopen, paarden online kopen, paardenadvertenties",
-      "openGraphTitle": "EquiMaster Marktplaats | EquiMaster Pro",
-      "openGraphDescription": "Professionele paardenmarktplaats met gestructureerde advertenties, stamboekgegevens en direct contact met verkopers.",
-      "twitterTitle": "EquiMaster Marktplaats | EquiMaster Pro",
-      "twitterDescription": "Professionele paardenmarktplaats met gestructureerde advertenties, stamboekgegevens en direct contact met verkopers."
+      "openGraphTitle": "Shabdiz — Sportpaarden marktplaats",
+      "openGraphDescription": "Ontdek elite sportpaarden van betrouwbare fokkers en verkopers over de hele wereld. Zoek op discipline, ras, land, prijs, leeftijd en stokmaat.",
+      "twitterTitle": "Shabdiz — Sportpaarden marktplaats",
+      "twitterDescription": "Ontdek elite sportpaarden van betrouwbare fokkers en verkopers over de hele wereld."
     },
     "horses": {
       "title": "Sportpaarden bekijken",
-      "description": "Zoek en filter sportpaarden-advertenties op EquiMaster Pro op ras, discipline, prijs, leeftijd en locatie.",
+      "description": "Zoek en filter sportpaarden-advertenties op Shabdiz op ras, discipline, prijs, leeftijd en locatie.",
       "keywords": "paarden zoeken, sportpaarden filter, paardenadvertenties wereldwijd, paarden kopen",
-      "openGraphTitle": "Sportpaarden bekijken | EquiMaster Pro",
+      "openGraphTitle": "Sportpaarden bekijken | Shabdiz",
       "openGraphDescription": "Zoek en filter sportpaarden-advertenties op ras, discipline, prijs en locatie.",
-      "twitterTitle": "Sportpaarden bekijken | EquiMaster Pro",
+      "twitterTitle": "Sportpaarden bekijken | Shabdiz",
       "twitterDescription": "Zoek en filter sportpaarden-advertenties op ras, discipline, prijs en locatie."
     },
     "stallions": {
       "title": "Premium hengstenoverzicht",
       "description": "Ontdek geverifieerde hengsten voor sportpaardenfokkerij. Vergelijk stamboom, dekprijs en beschikbaarheid wereldwijd.",
       "keywords": "hengsten, dekhengsten, sportpaarden hengsten, hengstenoverzicht",
-      "openGraphTitle": "Premium hengstenoverzicht | EquiMaster Pro",
+      "openGraphTitle": "Premium hengstenoverzicht | Shabdiz",
       "openGraphDescription": "Ontdek geverifieerde hengsten voor fokkerij met stamboek- en dekprijsdetails.",
-      "twitterTitle": "Premium hengstenoverzicht | EquiMaster Pro",
+      "twitterTitle": "Premium hengstenoverzicht | Shabdiz",
       "twitterDescription": "Ontdek geverifieerde hengsten voor fokkerij met stamboek- en dekprijsdetails."
     },
     "breeders": {
       "title": "Sportpaarden fokkersoverzicht",
       "description": "Vind betrouwbare sportpaardenfokkers wereldwijd. Bekijk stoeterijen, disciplines en beschikbare paarden.",
       "keywords": "paardenfokkers, stoeterijen, sportpaarden fokkers wereldwijd, fokkersoverzicht",
-      "openGraphTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
+      "openGraphTitle": "Sportpaarden fokkersoverzicht | Shabdiz",
       "openGraphDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen wereldwijd.",
-      "twitterTitle": "Sportpaarden fokkersoverzicht | EquiMaster Pro",
+      "twitterTitle": "Sportpaarden fokkersoverzicht | Shabdiz",
       "twitterDescription": "Vind betrouwbare sportpaardenfokkers en stoeterijen wereldwijd."
     },
     "bloodlines": {
       "title": "Stamboom & bloedlijnen zoeken",
       "description": "Zoek sportpaarden-stambomen en bloedlijnen. Verken vaderlijnen, moederlijnen en fokgeschiedenis.",
       "keywords": "paardenstamboom, bloedlijnen, vaderlijnen, stamboek paarden",
-      "openGraphTitle": "Stamboom & bloedlijnen | EquiMaster Pro",
+      "openGraphTitle": "Stamboom & bloedlijnen | Shabdiz",
       "openGraphDescription": "Zoek sportpaarden-stambomen, vaderlijnen en fokbloedlijnen.",
-      "twitterTitle": "Stamboom & bloedlijnen | EquiMaster Pro",
+      "twitterTitle": "Stamboom & bloedlijnen | Shabdiz",
       "twitterDescription": "Zoek sportpaarden-stambomen, vaderlijnen en fokbloedlijnen."
     },
     "breedingLab": {
       "title": "Foklab",
       "description": "Vergelijk stambomen en analyseer fokkombinaties met professionele sportpaarden-foktools.",
       "keywords": "foktools, stamboom vergelijken, fokanalyse, sportpaarden fokkerij",
-      "openGraphTitle": "Foklab | EquiMaster Pro",
+      "openGraphTitle": "Foklab | Shabdiz",
       "openGraphDescription": "Vergelijk stambomen en analyseer fokkombinaties voor sportpaarden.",
-      "twitterTitle": "Foklab | EquiMaster Pro",
+      "twitterTitle": "Foklab | Shabdiz",
       "twitterDescription": "Vergelijk stambomen en analyseer fokkombinaties voor sportpaarden."
     },
     "breedingRecommendations": {
       "title": "Hengstenmatch & fokadvies",
       "description": "Ontvang datagedreven hengstenaanbevelingen afgestemd op het stamboek en fokdoelen van uw merrie.",
       "keywords": "hengstenmatch, fokadvies, merrie hengst koppeling, sportpaarden fokkerij",
-      "openGraphTitle": "Hengstenmatch | EquiMaster Pro",
+      "openGraphTitle": "Hengstenmatch | Shabdiz",
       "openGraphDescription": "Datagedreven hengstenaanbevelingen voor uw merrie en fokdoelen.",
-      "twitterTitle": "Hengstenmatch | EquiMaster Pro",
+      "twitterTitle": "Hengstenmatch | Shabdiz",
       "twitterDescription": "Datagedreven hengstenaanbevelingen voor uw merrie en fokdoelen."
     },
     "login": {
       "title": "Inloggen",
-      "description": "Log in op uw EquiMaster Pro-account om advertenties, favorieten en verkopers-tools te beheren.",
-      "keywords": "equimaster inloggen, paardenmarktplaats account",
-      "openGraphTitle": "Inloggen | EquiMaster Pro",
-      "openGraphDescription": "Log in op uw EquiMaster Pro-account.",
-      "twitterTitle": "Inloggen | EquiMaster Pro",
-      "twitterDescription": "Log in op uw EquiMaster Pro-account."
+      "description": "Log in op uw Shabdiz-account om advertenties, favorieten en verkopers-tools te beheren.",
+      "keywords": "shabdiz inloggen, paardenmarktplaats account",
+      "openGraphTitle": "Inloggen | Shabdiz",
+      "openGraphDescription": "Log in op uw Shabdiz-account.",
+      "twitterTitle": "Inloggen | Shabdiz",
+      "twitterDescription": "Log in op uw Shabdiz-account."
     },
     "signup": {
       "title": "Account aanmaken",
-      "description": "Maak uw EquiMaster Pro-account aan om paarden te adverteren, favorieten op te slaan en foktools te gebruiken.",
-      "keywords": "equimaster registreren, account aanmaken paardenmarktplaats",
-      "openGraphTitle": "Account aanmaken | EquiMaster Pro",
-      "openGraphDescription": "Maak uw EquiMaster Pro-account aan.",
-      "twitterTitle": "Account aanmaken | EquiMaster Pro",
-      "twitterDescription": "Maak uw EquiMaster Pro-account aan."
+      "description": "Maak uw Shabdiz-account aan om paarden te adverteren, favorieten op te slaan en foktools te gebruiken.",
+      "keywords": "shabdiz registreren, account aanmaken paardenmarktplaats",
+      "openGraphTitle": "Account aanmaken | Shabdiz",
+      "openGraphDescription": "Maak uw Shabdiz-account aan.",
+      "twitterTitle": "Account aanmaken | Shabdiz",
+      "twitterDescription": "Maak uw Shabdiz-account aan."
     },
     "account": {
       "title": "Mijn account",
-      "description": "Beheer uw EquiMaster Pro-profiel, advertenties, hengsten en fokkerinformatie.",
-      "keywords": "equimaster account, verkopersdashboard, advertenties beheren",
-      "openGraphTitle": "Mijn account | EquiMaster Pro",
-      "openGraphDescription": "Beheer uw EquiMaster Pro-profiel en advertenties.",
-      "twitterTitle": "Mijn account | EquiMaster Pro",
-      "twitterDescription": "Beheer uw EquiMaster Pro-profiel en advertenties."
+      "description": "Beheer uw Shabdiz-profiel, advertenties, hengsten en fokkerinformatie.",
+      "keywords": "shabdiz account, verkopersdashboard, advertenties beheren",
+      "openGraphTitle": "Mijn account | Shabdiz",
+      "openGraphDescription": "Beheer uw Shabdiz-profiel en advertenties.",
+      "twitterTitle": "Mijn account | Shabdiz",
+      "twitterDescription": "Beheer uw Shabdiz-profiel en advertenties."
     },
     "sell": {
       "title": "Paard verkopen",
-      "description": "Plaats uw sportpaard te koop op EquiMaster Pro met foto's, stamboom en gestructureerde advertentietools.",
+      "description": "Plaats uw sportpaard te koop op Shabdiz met foto's, stamboom en gestructureerde advertentietools.",
       "keywords": "paard verkopen, paard adverteren, verkoopformulier, sportpaarden verkoper",
-      "openGraphTitle": "Paard verkopen | EquiMaster Pro",
+      "openGraphTitle": "Paard verkopen | Shabdiz",
       "openGraphDescription": "Plaats uw sportpaard te koop met foto's, stamboom en verkopers-tools.",
-      "twitterTitle": "Paard verkopen | EquiMaster Pro",
+      "twitterTitle": "Paard verkopen | Shabdiz",
       "twitterDescription": "Plaats uw sportpaard te koop met foto's, stamboom en verkopers-tools."
     },
     "favorites": {
       "title": "Opgeslagen paarden",
-      "description": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties op EquiMaster Pro.",
+      "description": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties op Shabdiz.",
       "keywords": "opgeslagen paarden, paarden favorieten, verlanglijst paarden",
-      "openGraphTitle": "Opgeslagen paarden | EquiMaster Pro",
+      "openGraphTitle": "Opgeslagen paarden | Shabdiz",
       "openGraphDescription": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties.",
-      "twitterTitle": "Opgeslagen paarden | EquiMaster Pro",
+      "twitterTitle": "Opgeslagen paarden | Shabdiz",
       "twitterDescription": "Bekijk en beheer uw opgeslagen sportpaarden-advertenties."
     },
     "notifications": {
       "title": "Meldingen",
-      "description": "Bekijk waarschuwingen en updates voor uw paarden, advertenties en EquiMaster Pro-activiteit.",
-      "keywords": "equimaster meldingen, paarden alerts, advertentie updates",
-      "openGraphTitle": "Meldingen | EquiMaster Pro",
-      "openGraphDescription": "Waarschuwingen en updates voor uw EquiMaster Pro-activiteit.",
-      "twitterTitle": "Meldingen | EquiMaster Pro",
-      "twitterDescription": "Waarschuwingen en updates voor uw EquiMaster Pro-activiteit."
+      "description": "Bekijk waarschuwingen en updates voor uw paarden, advertenties en Shabdiz-activiteit.",
+      "keywords": "shabdiz meldingen, paarden alerts, advertentie updates",
+      "openGraphTitle": "Meldingen | Shabdiz",
+      "openGraphDescription": "Waarschuwingen en updates voor uw Shabdiz-activiteit.",
+      "twitterTitle": "Meldingen | Shabdiz",
+      "twitterDescription": "Waarschuwingen en updates voor uw Shabdiz-activiteit."
     },
     "training": {
       "title": "Trainingsdashboard",
-      "description": "Volg trainingssessies, plannen en paardprestaties met de EquiMaster Pro trainingstools.",
+      "description": "Volg trainingssessies, plannen en paardprestaties met de Shabdiz trainingstools.",
       "keywords": "paardentraining dashboard, trainingsplannen, equiene sessie tracking",
-      "openGraphTitle": "Trainingsdashboard | EquiMaster Pro",
+      "openGraphTitle": "Trainingsdashboard | Shabdiz",
       "openGraphDescription": "Volg trainingssessies, plannen en paardprestaties.",
-      "twitterTitle": "Trainingsdashboard | EquiMaster Pro",
+      "twitterTitle": "Trainingsdashboard | Shabdiz",
       "twitterDescription": "Volg trainingssessies, plannen en paardprestaties."
     },
     "admin": {
@@ -156,11 +156,11 @@
     },
     "sellerDashboard": {
       "title": "Verkopersdashboard",
-      "description": "Beheer uw paardenadvertenties, previews en verkopersactiviteit op EquiMaster Pro.",
+      "description": "Beheer uw paardenadvertenties, previews en verkopersactiviteit op Shabdiz.",
       "keywords": "verkopersdashboard, advertenties beheren, paarden verkoper tools",
-      "openGraphTitle": "Verkopersdashboard | EquiMaster Pro",
+      "openGraphTitle": "Verkopersdashboard | Shabdiz",
       "openGraphDescription": "Beheer uw paardenadvertenties en verkopersactiviteit.",
-      "twitterTitle": "Verkopersdashboard | EquiMaster Pro",
+      "twitterTitle": "Verkopersdashboard | Shabdiz",
       "twitterDescription": "Beheer uw paardenadvertenties en verkopersactiviteit."
     }
   },
@@ -194,7 +194,7 @@
     }
   },
   "listing": {
-    "siteName": "EquiMaster Pro",
+    "siteName": "Shabdiz",
     "imageAlt": "{name} — {discipline} sportpaard te koop"
   }
 }
