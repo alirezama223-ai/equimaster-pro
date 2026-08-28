@@ -34,6 +34,13 @@ const EMPTY_SUMMARY: TrainingSummary = {
   lastSessionDateLabel: null,
 };
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isUuid(value: unknown): value is string {
+  return typeof value === "string" && UUID_PATTERN.test(value);
+}
+
 type DisciplineSource = {
   pedigree_horse_id: string;
   discipline: string | null;
@@ -73,7 +80,7 @@ async function collectDisciplineSources(
     sources.push(...((breederStallions ?? []) as DisciplineSource[]));
   }
 
-  return sources;
+  return sources.filter((source) => isUuid(source.pedigree_horse_id));
 }
 
 function buildDisciplineMap(sources: DisciplineSource[]): Map<string, string | null> {
@@ -109,16 +116,18 @@ export async function fetchManageableTrainingHorses(
         .not("pedigree_horse_id", "is", null),
     ]);
 
-  for (const row of createdHorses ?? []) horseIds.add(row.id as string);
+  for (const row of createdHorses ?? []) {
+    if (isUuid(row.id)) horseIds.add(row.id);
+  }
   for (const row of listingLinks ?? []) {
-    if (row.pedigree_horse_id) horseIds.add(row.pedigree_horse_id as string);
+    if (isUuid(row.pedigree_horse_id)) horseIds.add(row.pedigree_horse_id);
   }
   for (const row of ownedStallionLinks ?? []) {
-    if (row.pedigree_horse_id) horseIds.add(row.pedigree_horse_id as string);
+    if (isUuid(row.pedigree_horse_id)) horseIds.add(row.pedigree_horse_id);
   }
 
   for (const source of disciplineSources) {
-    if (source.pedigree_horse_id) horseIds.add(source.pedigree_horse_id);
+    if (isUuid(source.pedigree_horse_id)) horseIds.add(source.pedigree_horse_id);
   }
 
   if (horseIds.size === 0) {
