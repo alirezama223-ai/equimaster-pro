@@ -12,6 +12,7 @@ import DashboardCard from "@/app/components/shared/DashboardCard";
 import TrainingActivityChart from "@/app/components/training/TrainingActivityChart";
 import TrainingCalendar from "@/app/components/training/TrainingCalendar";
 import TrainingDashboardHeader from "@/app/components/training/TrainingDashboardHeader";
+import TrainingAiCoachPanel from "@/app/components/training/analytics/TrainingAiCoachPanel";
 import TodaysAlertsWidget from "@/app/components/events/TodaysAlertsWidget";
 import TrainingEmptyState from "@/app/components/training/TrainingEmptyState";
 import TrainingErrorState from "@/app/components/training/TrainingErrorState";
@@ -134,11 +135,16 @@ export default function TrainingDashboardClient() {
   }
 
   const hasSelectedHorse = Boolean(selectedHorseId);
+  const selectedHorseName = horses.find((horse) => horse.id === selectedHorseId)?.name ?? dashboard.summary.horseName;
   const canStartSession = hasSelectedHorse && !horsesLoading && !startingSession;
 
   return (
     <div className="space-y-8">
       <TrainingDashboardHeader />
+
+      {hasSelectedHorse ? (
+        <TrainingAiCoachPanel horseId={selectedHorseId} horseName={selectedHorseName} />
+      ) : null}
 
       {hasSelectedHorse ? (
         <DashboardCard
