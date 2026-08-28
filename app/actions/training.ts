@@ -49,6 +49,31 @@ async function requireAuthenticatedUser() {
   return { supabase, user, error: undefined };
 }
 
+async function fallbackTrainingHorses(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string
+): Promise<{ horses: TrainingHorse[]; error?: string }> {
+  const { data, error } = await supabase
+    .from("pedigree_horses")
+    .select("id, name, sex")
+    .eq("created_by", userId)
+    .order("name", { ascending: true });
+
+  if (error) return { horses: [], error: error.message };
+
+  const horses = (data ?? [])
+    .filter((row) => isUuid(row.id as string))
+    .map((row) => ({
+      id: row.id as string,
+      name: String(row.name ?? "Unknown horse"),
+      sex: String(row.sex ?? "unknown"),
+      discipline: "—",
+      subtitle: String(row.sex ?? "—"),
+    }));
+
+  return { horses };
+}
+
 export async function getTrainingHorses(): Promise<{
   horses: TrainingHorse[];
   error?: string;
@@ -58,7 +83,17 @@ export async function getTrainingHorses(): Promise<{
     return { horses: [], error: auth.error };
   }
 
-  return fetchManageableTrainingHorses(auth.supabase, auth.user.id);
+  const result = await fetchManageableTrainingHorses(auth.supabase, auth.user.id);
+  if (!result.error) return result;
+
+  // Fallback for accounts with legacy/orphaned horse links. The selector must not
+  // fail completely just because an unrelated linked record makes the aggregate
+  // query return a 400. Demo horses are created_by the current demo user, so this
+  // path also keeps the Training dashboard usable while those legacy links are fixed.
+  const fallback = await fallbackTrainingHorses(auth.supabase, auth.user.id);
+  if (fallback.horses.length > 0) return fallback;
+
+  return result;
 }
 
 export async function getTrainingHorseDashboard(pedigreeHorseId: string): Promise<{
