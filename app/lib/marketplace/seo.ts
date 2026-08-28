@@ -201,7 +201,7 @@ export function buildHorseListingMetadata(
 }
 
 export function buildHorseListingJsonLd(profile: PublicListingProfile, locale: AppLocale) {
-  const { listing, horse, publicUrl } = profile;
+  const { listing, horse, publicUrl, pedigreeHorse } = profile;
   const baseUrl = getSiteBaseUrl();
   const coverImage = getListingCoverImageUrl(listing);
   const images = (horse.images.length > 0 ? horse.images : listing.image_urls).filter(Boolean);
@@ -216,9 +216,39 @@ export function buildHorseListingJsonLd(profile: PublicListingProfile, locale: A
   const listingUrl = toLocalizedAbsoluteUrl(listingPath, locale, baseUrl);
   const color = horse.color.trim();
   const identifier = listing.slug?.trim() || listing.id;
+  const additionalProperty: Array<{ "@type": "PropertyValue"; name: string; value: string | number }> =
+    [
+      { "@type": "PropertyValue", name: "Age", value: `${horse.age} years` },
+      { "@type": "PropertyValue", name: "Height", value: `${horse.height} cm` },
+      { "@type": "PropertyValue", name: "Gender", value: horse.gender },
+      { "@type": "PropertyValue", name: "Level", value: horse.level },
+      { "@type": "PropertyValue", name: "Country", value: horse.country },
+    ];
+
+  const sire = horse.sire.trim();
+  if (sire) {
+    additionalProperty.push({ "@type": "PropertyValue", name: "Sire", value: sire });
+  }
+
+  const dam = horse.dam.trim();
+  if (dam) {
+    additionalProperty.push({ "@type": "PropertyValue", name: "Dam", value: dam });
+  }
+
+  const damSire = (horse.damSire ?? "").trim();
+  if (damSire) {
+    additionalProperty.push({ "@type": "PropertyValue", name: "Dam's sire", value: damSire });
+  }
+
+  const birthYear = pedigreeHorse?.birthYear;
+  if (typeof birthYear === "number" && Number.isFinite(birthYear)) {
+    additionalProperty.push({ "@type": "PropertyValue", name: "Birth year", value: birthYear });
+  }
 
   return {
     "@type": "Product",
+    "@id": `${listingUrl}#product`,
+    additionalType: "https://schema.org/Horse",
     name: horse.name,
     description: horse.description,
     url: listingUrl,
@@ -232,6 +262,7 @@ export function buildHorseListingJsonLd(profile: PublicListingProfile, locale: A
     },
     offers: {
       "@type": "Offer",
+      "@id": `${listingUrl}#offer`,
       ...(isPriced
         ? {
             price: numericPrice,
@@ -248,13 +279,7 @@ export function buildHorseListingJsonLd(profile: PublicListingProfile, locale: A
         name: horse.stableName ?? listing.stable_name ?? listing.seller_name,
       },
     },
-    additionalProperty: [
-      { "@type": "PropertyValue", name: "Age", value: `${horse.age} years` },
-      { "@type": "PropertyValue", name: "Height", value: `${horse.height} cm` },
-      { "@type": "PropertyValue", name: "Gender", value: horse.gender },
-      { "@type": "PropertyValue", name: "Level", value: horse.level },
-      { "@type": "PropertyValue", name: "Country", value: horse.country },
-    ],
+    additionalProperty,
   };
 }
 
@@ -304,10 +329,21 @@ export function buildHorseListingStructuredData(
   labels: HorseListingSeoLabels,
   locale: AppLocale
 ) {
+  const product = buildHorseListingJsonLd(profile, locale);
+  const listingUrl = product.url;
+
   return {
     "@context": "https://schema.org",
     "@graph": [
-      buildHorseListingJsonLd(profile, locale),
+      {
+        "@type": "ItemPage",
+        "@id": `${listingUrl}#webpage`,
+        url: listingUrl,
+        mainEntity: {
+          "@id": `${listingUrl}#product`,
+        },
+      },
+      product,
       buildHorseListingBreadcrumbJsonLd(profile, labels, locale),
     ],
   };
