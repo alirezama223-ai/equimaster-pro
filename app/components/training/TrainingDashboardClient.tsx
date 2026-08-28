@@ -135,7 +135,7 @@ export default function TrainingDashboardClient() {
   }
 
   const hasSelectedHorse = Boolean(selectedHorseId);
-  const selectedHorseName = horses.find((horse) => horse.id === selectedHorseId)?.name ?? dashboard.summary.horseName;
+  const selectedHorseName = horses.find((horse) => horse.id === selectedHorseId)?.name ?? "Horse";
   const canStartSession = hasSelectedHorse && !horsesLoading && !startingSession;
 
   return (
