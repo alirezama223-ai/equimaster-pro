@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   memo,
   useCallback,
@@ -27,6 +27,7 @@ import { useDebouncedValue } from "@/app/hooks/useDebouncedValue";
 import { getBreedSelectOptions } from "@/app/lib/breeds";
 import { getCountrySelectOptions } from "@/app/lib/constants/countries";
 import { getDisciplineSelectOptions } from "@/app/lib/constants/disciplines";
+import { localizeSearchOptionLabel } from "@/app/lib/i18n/localizeSearchOption";
 import {
   countActiveMarketplaceFilters,
   DEFAULT_MARKETPLACE_FILTERS,
@@ -104,6 +105,7 @@ export default function MarketplaceBrowseClient({
   searchError,
 }: Props) {
   const t = useTranslations("marketplace");
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [localFilters, setLocalFilters] = useState(filters);
@@ -112,6 +114,22 @@ export default function MarketplaceBrowseClient({
   const [geoError, setGeoError] = useState<string | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
   const skipDebouncedPushRef = useRef(false);
+
+  const localizedCountryOptions = useMemo(() => countryOptions.map((option) => ({
+    ...option,
+    label: localizeSearchOptionLabel(option.value, option.label, locale),
+    searchText: [option.label, localizeSearchOptionLabel(option.value, option.label, locale), option.value].join(" "),
+  })), [locale]);
+  const localizedDisciplineOptions = useMemo(() => disciplineOptions.map((option) => ({
+    ...option,
+    label: localizeSearchOptionLabel(option.value, option.label, locale),
+    searchText: [option.label, localizeSearchOptionLabel(option.value, option.label, locale), option.value].join(" "),
+  })), [locale]);
+  const localizedBreedOptions = useMemo(() => breedOptions.map((option) => ({
+    ...option,
+    searchText: [option.label, option.value].join(" "),
+  })), []);
+  const localizedLevelSelectOptions = useMemo(() => filterOptions.levels.map((level) => ({ value: level, label: level, searchText: level })), [filterOptions.levels]);
 
   useEffect(() => {
     skipDebouncedPushRef.current = true;
@@ -187,8 +205,8 @@ export default function MarketplaceBrowseClient({
   const activeFilterCount = useMemo(() => countActiveMarketplaceFilters(filters), [filters]);
   const filterChips = useMemo(() => getMarketplaceFilterChipDefinitions(filters), [filters]);
   const levelSelectOptions = useMemo(
-    () => filterOptions.levels.map((level) => ({ value: level, label: level, searchText: level })),
-    [filterOptions.levels]
+    () => localizedLevelSelectOptions,
+    [localizedLevelSelectOptions]
   );
   const genderLabels = useMemo(
     () => ({ All: t("advancedSearch.allGenders"), Mare: t("advancedSearch.mare"), Stallion: t("advancedSearch.stallion"), Gelding: t("advancedSearch.gelding") }),
@@ -203,9 +221,9 @@ export default function MarketplaceBrowseClient({
       switch (chipId) {
         case "q": return t("browse.chips.search", { value: filters.q ?? "" });
         case "breed": return t("browse.chips.breed", { value: filters.breed ?? "" });
-        case "country": return t("browse.chips.location", { value: filters.country ?? "" });
+        case "country": return t("browse.chips.location", { value: localizeSearchOptionLabel(filters.country ?? "", filters.country ?? "", locale) });
         case "gender": return t("browse.chips.gender", { value: genderLabels[filters.gender as keyof typeof genderLabels] ?? filters.gender ?? "" });
-        case "discipline": return t("browse.chips.discipline", { value: filters.discipline ?? "" });
+        case "discipline": return t("browse.chips.discipline", { value: localizeSearchOptionLabel(filters.discipline ?? "", filters.discipline ?? "", locale) });
         case "level": return t("browse.chips.level", { value: filters.level ?? "" });
         case "studbook": return t("browse.chips.studbook", { value: filters.studbook ?? "" });
         case "availability": return t("browse.chips.availability", { value: availabilityLabels[filters.availability ?? "all"] });
@@ -220,7 +238,7 @@ export default function MarketplaceBrowseClient({
         default: return chipId;
       }
     },
-    [availabilityLabels, filters, genderLabels, t]
+    [availabilityLabels, filters, genderLabels, locale, t]
   );
 
   const applyDraftFilters = useCallback(() => {
@@ -245,7 +263,8 @@ export default function MarketplaceBrowseClient({
   const favoriteIdSet = useMemo(() => new Set(favoriteListingIds), [favoriteListingIds]);
   const filterPanelProps = {
     t, localFilters, draftInputs, setDraftInputs, updateFilters, genderLabels,
-    availabilityLabels, levelSelectOptions, onSubmit: handleFilterSubmit, isPending,
+    availabilityLabels, levelSelectOptions, localizedCountryOptions, localizedDisciplineOptions, localizedBreedOptions,
+    onSubmit: handleFilterSubmit, isPending,
     clearAllFilters, activeFilterCount, geoError, geoLoading, requestNearMeLocation,
     hasSearchOrigin: isValidCoordinate(localFilters.originLat, localFilters.originLng),
     radiusActive: shouldUseRadiusSearch(localFilters),
@@ -331,17 +350,17 @@ export default function MarketplaceBrowseClient({
   );
 }
 
-const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, setDraftInputs, updateFilters, genderLabels, availabilityLabels, levelSelectOptions, onSubmit, isPending, clearAllFilters, activeFilterCount, geoError, geoLoading, requestNearMeLocation, hasSearchOrigin, radiusActive, layout, onClose }: any) {
+const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, setDraftInputs, updateFilters, genderLabels, availabilityLabels, levelSelectOptions, localizedCountryOptions, localizedDisciplineOptions, localizedBreedOptions, onSubmit, isPending, clearAllFilters, activeFilterCount, geoError, geoLoading, requestNearMeLocation, hasSearchOrigin, radiusActive, layout, onClose }: any) {
   const inputClassName = "mt-2 w-full rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white outline-none focus:border-blue-500";
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <SearchableSelect label={t("browse.breed")} value={localFilters.breed ?? "All"} options={breedOptions} emptyOption={{ value: "All", label: t("browse.allBreeds") }} placeholder={t("browse.allPlaceholder", { label: t("browse.breed") })} onChange={(value) => updateFilters({ breed: value })} />
-      <SearchableSelect label={t("browse.country")} value={localFilters.country ?? "All"} options={countryOptions} emptyOption={{ value: "All", label: t("browse.allCountries") }} placeholder={t("browse.allPlaceholder", { label: t("browse.country") })} onChange={(value) => updateFilters({ country: value })} />
-      <SearchableSelect label={t("browse.discipline")} value={localFilters.discipline ?? "All"} options={disciplineOptions} emptyOption={{ value: "All", label: t("browse.allDisciplines") }} placeholder={t("browse.allPlaceholder", { label: t("browse.discipline") })} onChange={(value) => updateFilters({ discipline: value })} />
+      <SearchableSelect label={t("browse.breed")} value={localFilters.breed ?? "All"} options={localizedBreedOptions} emptyOption={{ value: "All", label: t("browse.allBreeds") }} placeholder={t("browse.allPlaceholder", { label: t("browse.breed") })} onChange={(value) => updateFilters({ breed: value })} />
+      <SearchableSelect label={t("browse.country")} value={localFilters.country ?? "All"} options={localizedCountryOptions} emptyOption={{ value: "All", label: t("browse.allCountries") }} placeholder={t("browse.allPlaceholder", { label: t("browse.country") })} onChange={(value) => updateFilters({ country: value })} />
+      <SearchableSelect label={t("browse.discipline")} value={localFilters.discipline ?? "All"} options={localizedDisciplineOptions} emptyOption={{ value: "All", label: t("browse.allDisciplines") }} placeholder={t("browse.allPlaceholder", { label: t("browse.discipline") })} onChange={(value) => updateFilters({ discipline: value })} />
       <SearchableSelect label={t("browse.trainingLevel")} value={localFilters.level ?? "All"} options={levelSelectOptions} emptyOption={{ value: "All", label: t("browse.allTrainingLevels") }} placeholder={t("browse.allPlaceholder", { label: t("browse.trainingLevel") })} onChange={(value) => updateFilters({ level: value })} />
       <FilterSelect label={t("browse.gender")} value={localFilters.gender ?? "All"} options={["All", "Mare", "Stallion", "Gelding"]} labels={genderLabels} onChange={(value) => updateFilters({ gender: value })} />
       <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.color")}</span><input type="text" value={draftInputs.color} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, color: event.target.value }))} placeholder={t("browse.colorPlaceholder")} className={inputClassName} /></label>
-      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} /></label>
+      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} />
       <FilterSelect label={t("browse.availability")} value={localFilters.availability ?? "all"} options={[...availabilityOptions]} labels={availabilityLabels} onChange={(value) => updateFilters({ availability: value as MarketplaceAvailabilityFilter })} />
       <FilterSelect label={t("browse.sort")} value={localFilters.sort ?? "newest"} options={[...sortOptions]} labels={Object.fromEntries(sortOptions.map((option) => [option, t(`browse.sortOptions.${option}`)]))} onChange={(value) => updateFilters({ sort: value as MarketplaceSortOption })} />
       <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedHorses || localFilters.verified)} onChange={(event) => updateFilters({ verifiedHorses: event.target.checked, verified: undefined })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedHorses")}</span></span></label>
@@ -352,7 +371,7 @@ const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, se
       </div>
       <div className="grid grid-cols-2 gap-3">
         <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minAge")}</span><input type="number" min="0" value={draftInputs.minAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minAge: event.target.value }))} className={inputClassName} /></label>
-        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxAge: event.target.value }))} className={inputClassName} /></label>
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxAge: value="old" }))} className={inputClassName} /></label>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minHeight")}</span><input type="number" min="0" value={draftInputs.minHeight} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minHeight: event.target.value }))} className={inputClassName} /></label>
@@ -372,4 +391,4 @@ function FilterSelect({ label, value, options, labels, onChange }: { label: stri
       </select>
     </label>
   );
-}
+});
