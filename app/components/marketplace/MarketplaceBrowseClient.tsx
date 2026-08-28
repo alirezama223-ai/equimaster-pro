@@ -129,7 +129,6 @@ export default function MarketplaceBrowseClient({
     ...option,
     searchText: [option.label, option.value].join(" "),
   })), []);
-  const localizedLevelSelectOptions = useMemo(() => filterOptions.levels.map((level) => ({ value: level, label: level, searchText: level })), [filterOptions.levels]);
 
   useEffect(() => {
     skipDebouncedPushRef.current = true;
@@ -205,8 +204,8 @@ export default function MarketplaceBrowseClient({
   const activeFilterCount = useMemo(() => countActiveMarketplaceFilters(filters), [filters]);
   const filterChips = useMemo(() => getMarketplaceFilterChipDefinitions(filters), [filters]);
   const levelSelectOptions = useMemo(
-    () => localizedLevelSelectOptions,
-    [localizedLevelSelectOptions]
+    () => filterOptions.levels.map((level) => ({ value: level, label: level, searchText: level })),
+    [filterOptions.levels]
   );
   const genderLabels = useMemo(
     () => ({ All: t("advancedSearch.allGenders"), Mare: t("advancedSearch.mare"), Stallion: t("advancedSearch.stallion"), Gelding: t("advancedSearch.gelding") }),
@@ -360,7 +359,7 @@ const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, se
       <SearchableSelect label={t("browse.trainingLevel")} value={localFilters.level ?? "All"} options={levelSelectOptions} emptyOption={{ value: "All", label: t("browse.allTrainingLevels") }} placeholder={t("browse.allPlaceholder", { label: t("browse.trainingLevel") })} onChange={(value) => updateFilters({ level: value })} />
       <FilterSelect label={t("browse.gender")} value={localFilters.gender ?? "All"} options={["All", "Mare", "Stallion", "Gelding"]} labels={genderLabels} onChange={(value) => updateFilters({ gender: value })} />
       <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.color")}</span><input type="text" value={draftInputs.color} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, color: event.target.value }))} placeholder={t("browse.colorPlaceholder")} className={inputClassName} /></label>
-      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} />
+      <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.studbook")}</span><input type="text" value={draftInputs.studbook} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, studbook: event.target.value }))} placeholder={t("browse.studbookPlaceholder")} className={inputClassName} /></label>
       <FilterSelect label={t("browse.availability")} value={localFilters.availability ?? "all"} options={[...availabilityOptions]} labels={availabilityLabels} onChange={(value) => updateFilters({ availability: value as MarketplaceAvailabilityFilter })} />
       <FilterSelect label={t("browse.sort")} value={localFilters.sort ?? "newest"} options={[...sortOptions]} labels={Object.fromEntries(sortOptions.map((option) => [option, t(`browse.sortOptions.${option}`)]))} onChange={(value) => updateFilters({ sort: value as MarketplaceSortOption })} />
       <label className="flex items-end"><span className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#081223] px-4 py-3 text-white min-h-[50px] cursor-pointer"><input type="checkbox" checked={Boolean(localFilters.verifiedHorses || localFilters.verified)} onChange={(event) => updateFilters({ verifiedHorses: event.target.checked, verified: undefined })} className="h-4 w-4 accent-blue-600" /><span className="text-sm">{t("browse.verifiedHorses")}</span></span></label>
@@ -371,7 +370,7 @@ const FilterPanel = memo(function FilterPanel({ t, localFilters, draftInputs, se
       </div>
       <div className="grid grid-cols-2 gap-3">
         <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minAge")}</span><input type="number" min="0" value={draftInputs.minAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minAge: event.target.value }))} className={inputClassName} /></label>
-        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxAge: value="old" }))} className={inputClassName} /></label>
+        <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.maxAge")}</span><input type="number" min="0" value={draftInputs.maxAge} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, maxAge: event.target.value }))} className={inputClassName} /></label>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <label className="block"><span className="text-xs uppercase tracking-wide text-gray-500">{t("browse.minHeight")}</span><input type="number" min="0" value={draftInputs.minHeight} onChange={(event) => setDraftInputs((current: MarketplaceDraftInputs) => ({ ...current, minHeight: event.target.value }))} className={inputClassName} /></label>
@@ -391,4 +390,4 @@ function FilterSelect({ label, value, options, labels, onChange }: { label: stri
       </select>
     </label>
   );
-});
+}
