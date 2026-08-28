@@ -15,6 +15,38 @@ export type PlanDayTemplate = {
   exercises: PlanDayExerciseTemplate[];
 };
 
+async function fetchDemoExerciseFallback(
+  supabase: SupabaseClient,
+  trainingPlanId: string,
+  weekNumber: number,
+  dayNumber: number
+): Promise<PlanDayTemplate | null> {
+  const { data, error } = await supabase
+    .from("exercises")
+    .select("id, category, duration_minutes")
+    .eq("source", "system")
+    .in("category", ["warmup", "flatwork", "cooldown"])
+    .order("category", { ascending: true })
+    .limit(3);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  return {
+    dayId: `fallback:${trainingPlanId}:${weekNumber}:${dayNumber}`,
+    title: "Demo training session",
+    goal: "Maintain rhythm, suppleness, and quality transitions.",
+    isRestDay: false,
+    exercises: data.map((row, index) => ({
+      exerciseId: row.id as string,
+      sortOrder: index,
+      durationMinutes: (row.duration_minutes as number | null | undefined) ?? null,
+      notes: null,
+    })),
+  };
+}
+
 export async function fetchPlanDayTemplate(
   supabase: SupabaseClient,
   trainingPlanId: string,
@@ -37,7 +69,13 @@ export async function fetchPlanDayTemplate(
   }
 
   if (!weekRow) {
-    return { template: null };
+    const fallback = await fetchDemoExerciseFallback(
+      supabase,
+      trainingPlanId,
+      weekNumber,
+      dayNumber
+    );
+    return { template: fallback };
   }
 
   const { data: dayRow, error: dayError } = await supabase
@@ -52,7 +90,13 @@ export async function fetchPlanDayTemplate(
   }
 
   if (!dayRow) {
-    return { template: null };
+    const fallback = await fetchDemoExerciseFallback(
+      supabase,
+      trainingPlanId,
+      weekNumber,
+      dayNumber
+    );
+    return { template: fallback };
   }
 
   if (dayRow.is_rest_day) {
