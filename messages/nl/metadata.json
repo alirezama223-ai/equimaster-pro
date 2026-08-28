@@ -166,7 +166,7 @@
   },
   "entities": {
     "horse": {
-      "title": "{name} · {discipline} · {level} | {siteName}",
+      "title": "{name} · {discipline} · {level}",
       "description": "{breed} {gender}, {age} jaar, {price}. Aangeboden door {breeder} in {country}. {descriptionSnippet}",
       "keywords": "{name}, {breed}, {discipline}, {gender}, paard te koop, {country}",
       "openGraphTitle": "{name} — {breed} {gender} te koop | {siteName}",

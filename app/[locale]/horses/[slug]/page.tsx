@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const t = await getTranslations("marketplace");
   const tMeta = await getTranslations("metadata");
+  const tCommon = await getTranslations("common");
   const result = await getCachedPublicListingProfileBySlug(slug);
 
   if (!result.profile || result.profile.listing.status !== "active") {
@@ -71,15 +72,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (locale as AppLocale)
     : routing.defaultLocale;
 
-  return buildHorseListingMetadata(result.profile.listing, resolvedLocale, {
+  return buildHorseListingMetadata(result.profile, resolvedLocale, {
     siteName: tMeta("listing.siteName"),
     imageAltTemplate: tMeta("listing.imageAlt"),
     templates: loadEntitySeoTemplates(tMeta, "horse"),
+    priceOnRequestLabel: tCommon("priceOnRequest"),
+    genderLabels: {
+      Mare: t("advancedSearch.mare"),
+      Stallion: t("advancedSearch.stallion"),
+      Gelding: t("advancedSearch.gelding"),
+      unknown: t("horseCard.genderUnknown"),
+    },
   });
 }
 
 export default async function PublicHorseListingPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const t = await getTranslations("marketplace");
   const tCommon = await getTranslations("common");
   const tHorse = await getTranslations("horse");
@@ -135,12 +143,20 @@ export default async function PublicHorseListingPage({ params }: Props) {
       }
     : undefined;
 
+  const resolvedLocale = routing.locales.includes(locale as AppLocale)
+    ? (locale as AppLocale)
+    : routing.defaultLocale;
+
   const structuredData =
     listing.status === "active"
-      ? buildHorseListingStructuredData(listing, {
-          home: tNav("home"),
-          marketplace: t("listingPage.breadcrumbMarketplace"),
-        })
+      ? buildHorseListingStructuredData(
+          profile,
+          {
+            home: tNav("home"),
+            marketplace: t("listingPage.breadcrumbMarketplace"),
+          },
+          resolvedLocale
+        )
       : null;
 
   const breedBrowseHref = `/horses${buildMarketplaceSearchQuery({ breed: horse.breed })}`;

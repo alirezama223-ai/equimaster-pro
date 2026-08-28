@@ -166,7 +166,7 @@
   },
   "entities": {
     "horse": {
-      "title": "{name} · {discipline} · {level} | {siteName}",
+      "title": "{name} · {discipline} · {level}",
       "description": "{breed} {gender}, {age} años, {price}. Publicado por {breeder} en {country}. {descriptionSnippet}",
       "keywords": "{name}, {breed}, {discipline}, {gender}, caballo en venta, {country}",
       "openGraphTitle": "{name} — {breed} {gender} en venta | {siteName}",

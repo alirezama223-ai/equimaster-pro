@@ -175,7 +175,7 @@
   },
   "entities": {
     "horse": {
-      "title": "{name} · {discipline} · {level} | {siteName}",
+      "title": "{name} · {discipline} · {level}",
       "description": "{breed} {gender}, {age} years, {price}. Listed by {breeder} in {country}. {descriptionSnippet}",
       "keywords": "{name}, {breed}, {discipline}, {gender}, horse for sale, {country}",
       "openGraphTitle": "{name} — {breed} {gender} for sale | {siteName}",
