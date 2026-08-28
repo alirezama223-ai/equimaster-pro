@@ -14,7 +14,7 @@ import type { PublicListingProfile } from "@/app/types/marketplace-public";
 
 const PLACEHOLDER_IMAGE = "/emi.jpg";
 const META_DESCRIPTION_MAX = 160;
-const META_DESCRIPTION_WORD_BREAK_FLOOR = 140;
+const META_DESCRIPTION_WORD_BREAK_WINDOW = 20;
 
 const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
   en: "en_US",
@@ -60,12 +60,14 @@ function clampMetaDescription(text: string, maxLength = META_DESCRIPTION_MAX): s
   }
 
   const truncated = normalized.slice(0, maxLength);
+  const wordBreakFloor = Math.max(0, maxLength - META_DESCRIPTION_WORD_BREAK_WINDOW);
   const lastSpace = truncated.lastIndexOf(" ");
-  if (lastSpace >= META_DESCRIPTION_WORD_BREAK_FLOOR) {
-    return truncated.slice(0, lastSpace).replace(/[.,;:]+$/, "").trim();
-  }
+  const wordSafe =
+    lastSpace >= wordBreakFloor
+      ? truncated.slice(0, lastSpace).replace(/[.,;:]+$/, "").trim()
+      : truncated.trim();
 
-  return truncated.trim();
+  return wordSafe.length <= maxLength ? wordSafe : wordSafe.slice(0, maxLength).trim();
 }
 
 function localizedHorseGender(
