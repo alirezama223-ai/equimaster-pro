@@ -8,6 +8,7 @@ import {
 } from "@/app/lib/training/format";
 import type {
   TrainingDashboardErrors,
+  TrainingExerciseExecutionStatus,
   TrainingExerciseItem,
   TrainingHorse,
   TrainingHorseDashboard,
@@ -130,9 +131,7 @@ export async function fetchManageableTrainingHorses(
     if (isUuid(source.pedigree_horse_id)) horseIds.add(source.pedigree_horse_id);
   }
 
-  if (horseIds.size === 0) {
-    return { horses: [] };
-  }
+  if (horseIds.size === 0) return { horses: [] };
 
   const { data: pedigreeRows, error } = await supabase
     .from("pedigree_horses")
@@ -140,9 +139,7 @@ export async function fetchManageableTrainingHorses(
     .in("id", [...horseIds])
     .order("name", { ascending: true });
 
-  if (error) {
-    return { horses: [], error: error.message };
-  }
+  if (error) return { horses: [], error: error.message };
 
   const horses = (pedigreeRows ?? []).map((row) => {
     const discipline = disciplineMap.get(row.id as string) ?? null;
@@ -171,15 +168,8 @@ export async function fetchActiveTrainingPlanForHorse(
   pedigreeHorseId: string
 ): Promise<{ plan: Record<string, unknown> | null; error?: string }> {
   const result = await fetchAssignedActivePlanForHorse(supabase, userId, pedigreeHorseId);
-
-  if (result.error) {
-    return { plan: null, error: result.error };
-  }
-
-  if (!result.plan) {
-    return { plan: null };
-  }
-
+  if (result.error) return { plan: null, error: result.error };
+  if (!result.plan) return { plan: null };
   return {
     plan: {
       id: result.plan.id,
@@ -239,18 +229,14 @@ export async function fetchSessionExerciseLinks(
     .select("exercise_id, sort_order, duration_minutes")
     .eq("training_session_id", sessionId)
     .order("sort_order", { ascending: true });
-
-  if (error) {
-    return { links: [], error: error.message };
-  }
-
-  const links = (data ?? []).map((row) => ({
-    exercise_id: row.exercise_id as string,
-    sort_order: row.sort_order as number,
-    duration_minutes: (row.duration_minutes as number | null | undefined) ?? null,
-  }));
-
-  return { links };
+  if (error) return { links: [], error: error.message };
+  return {
+    links: (data ?? []).map((row) => ({
+      exercise_id: row.exercise_id as string,
+      sort_order: row.sort_order as number,
+      duration_minutes: (row.duration_minutes as number | null | undefined) ?? null,
+    })),
+  };
 }
 
 export async function fetchTrainingSessionById(
@@ -276,18 +262,10 @@ export async function fetchTrainingSessionById(
     .eq("id", sessionId)
     .eq("created_by", userId)
     .maybeSingle();
-
-  if (error) {
-    return { session: null, error: error.message };
-  }
-
-  if (!data) {
-    return { session: null };
-  }
-
+  if (error) return { session: null, error: error.message };
+  if (!data) return { session: null };
   const horse = data.pedigree_horses as { name?: string } | null;
   const sessionDate = String(data.session_date);
-
   return {
     session: {
       id: data.id as string,
@@ -302,29 +280,46 @@ export async function fetchTrainingSessionById(
   };
 }
 
+function normalizeExerciseStatus(value: unknown): TrainingExerciseExecutionStatus {
+  if (value === "in_progress" || value === "completed" || value === "skipped") return value;
+  return "pending";
+}
+
 export async function fetchTodayExercises(
   supabase: SupabaseClient,
   sessionId: string
 ): Promise<{ exercises: TrainingExerciseItem[]; error?: string }> {
-  const { data, error } = await supabase
+  const extended = await supabase
     .from("training_session_exercises")
-    .select("id, sort_order, exercises(name)")
+    .select("id, sort_order, exercises(name), status")
     .eq("training_session_id", sessionId)
     .order("sort_order", { ascending: true });
 
-  if (error) {
-    return { exercises: [], error: error.message };
+  let rows = extended.data as Record<string, unknown>[] | null;
+  let error = extended.error;
+
+  if (error && (error.message.includes("status") || error.message.includes("does not exist"))) {
+    const fallback = await supabase
+      .from("training_session_exercises")
+      .select("id, sort_order, exercises(name)")
+      .eq("training_session_id", sessionId)
+      .order("sort_order", { ascending: true });
+    rows = fallback.data as Record<string, unknown>[] | null;
+    error = fallback.error;
   }
 
-  const exercises = (data ?? []).map((row) => {
-    const exercise = row.exercises as { name?: string } | null;
-    return {
-      id: row.id as string,
-      label: exercise?.name?.trim() || "Untitled exercise",
-    };
-  });
+  if (error) return { exercises: [], error: error.message };
 
-  return { exercises };
+  return {
+    exercises: (rows ?? []).map((row) => {
+      const exercise = row.exercises as { name?: string } | null;
+      return {
+        id: row.id as string,
+        label: exercise?.name?.trim() || "Untitled exercise",
+        status: normalizeExerciseStatus(row.status),
+      };
+    }),
+  };
 }
 
 function buildTodayPlan(
@@ -334,21 +329,9 @@ function buildTodayPlan(
 ): TrainingTodayPlan {
   const planName = String(planRow.name);
   const startDate = planRow.start_date as string | null;
-  const schedule = startDate
-    ? computePlanSchedule(startDate, referenceDate)
-    : { week: "—", day: "—" };
-
-  const goal =
-    todaySessionGoal?.trim() ||
-    (planRow.description as string | null)?.trim() ||
-    "No goal set for today.";
-
-  return {
-    planName,
-    week: schedule.week,
-    day: schedule.day,
-    goal,
-  };
+  const schedule = startDate ? computePlanSchedule(startDate, referenceDate) : { week: "—", day: "—" };
+  const goal = todaySessionGoal?.trim() || (planRow.description as string | null)?.trim() || "No goal set for today.";
+  return { planName, week: schedule.week, day: schedule.day, goal };
 }
 
 export async function fetchTrainingHorseDashboard(
@@ -374,35 +357,19 @@ export async function fetchTrainingHorseDashboard(
 
   const today = toDateOnlyString(new Date());
   const errors: TrainingDashboardErrors = {};
+  const generationResult = await ensureTodayTrainingSession(supabase, userId, pedigreeHorseId, new Date());
+  if (generationResult.error) errors.exercises = generationResult.error;
 
-  const generationResult = await ensureTodayTrainingSession(
-    supabase,
-    userId,
-    pedigreeHorseId,
-    new Date()
-  );
-
-  if (generationResult.error) {
-    errors.exercises = generationResult.error;
-  }
-
-  const [
-    planResult,
-    todaySessionResult,
-    recentResult,
-    summaryResult,
-    activityResult,
-    notesResult,
-    calendarResult,
-  ] = await Promise.all([
-    fetchActiveTrainingPlanForHorse(supabase, userId, pedigreeHorseId),
-    fetchTodaySession(supabase, userId, pedigreeHorseId, today),
-    fetchRecentSessions(supabase, userId, pedigreeHorseId, 3),
-    fetchTrainingSummary(supabase, userId, pedigreeHorseId),
-    fetchTrainingActivity(supabase, userId, pedigreeHorseId),
-    fetchRecentSessionNotes(supabase, userId, pedigreeHorseId),
-    fetchTrainingCalendarMonth(supabase, userId, pedigreeHorseId),
-  ]);
+  const [planResult, todaySessionResult, recentResult, summaryResult, activityResult, notesResult, calendarResult] =
+    await Promise.all([
+      fetchActiveTrainingPlanForHorse(supabase, userId, pedigreeHorseId),
+      fetchTodaySession(supabase, userId, pedigreeHorseId, today),
+      fetchRecentSessions(supabase, userId, pedigreeHorseId, 3),
+      fetchTrainingSummary(supabase, userId, pedigreeHorseId),
+      fetchTrainingActivity(supabase, userId, pedigreeHorseId),
+      fetchRecentSessionNotes(supabase, userId, pedigreeHorseId),
+      fetchTrainingCalendarMonth(supabase, userId, pedigreeHorseId),
+    ]);
 
   if (planResult.error) errors.plan = planResult.error;
   if (todaySessionResult.error) errors.exercises = todaySessionResult.error.message;
@@ -414,7 +381,6 @@ export async function fetchTrainingHorseDashboard(
 
   let todayExercises: TrainingExerciseItem[] = [];
   const todaySessionId = todaySessionResult.data?.id as string | undefined;
-
   if (todaySessionId) {
     const exerciseResult = await fetchTodayExercises(supabase, todaySessionId);
     if (exerciseResult.error) errors.exercises = exerciseResult.error;
@@ -430,7 +396,6 @@ export async function fetchTrainingHorseDashboard(
     : null;
 
   const hasErrors = Object.keys(errors).length > 0;
-
   return {
     dashboard: {
       plan,
