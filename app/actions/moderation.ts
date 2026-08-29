@@ -33,8 +33,8 @@ export async function getPendingEquiMarketListings() {
 export async function moderateEquiMarketListing(
   listingId: string,
   status: ModerationStatus,
-  reason?: string,
-  _formData?: FormData,
+  reason: string,
+  _formData: FormData,
 ) {
   const auth = await requireModerator();
   if (!auth.user) return { ok: false, error: auth.error };
@@ -43,7 +43,7 @@ export async function moderateEquiMarketListing(
   const { error } = await auth.supabase.rpc("moderate_equimarket_listing", {
     p_listing_id: listingId,
     p_to_status: status,
-    p_reason: reason?.trim() || null,
+    p_reason: reason.trim() || null,
   });
 
   if (error) return { ok: false, error: error.message };
