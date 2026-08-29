@@ -9,53 +9,17 @@ export type LiveEvent = {
 const FEI_EVENTS_URL = "https://www.fei.org/events";
 
 const COUNTRY_CODES: Record<string, string> = {
-  GER: "Germany",
-  FRA: "France",
-  BEL: "Belgium",
-  NED: "Netherlands",
-  GBR: "Great Britain",
-  ITA: "Italy",
-  ESP: "Spain",
-  USA: "United States",
-  SUI: "Switzerland",
-  AUT: "Austria",
-  POL: "Poland",
-  SWE: "Sweden",
-  DEN: "Denmark",
-  IRL: "Ireland",
-  POR: "Portugal",
-  CZE: "Czech Republic",
-  NOR: "Norway",
-  FIN: "Finland",
-  AUS: "Australia",
-  NZL: "New Zealand",
-  CAN: "Canada",
-  MEX: "Mexico",
+  GER: "Germany", FRA: "France", BEL: "Belgium", NED: "Netherlands", GBR: "Great Britain", ITA: "Italy", ESP: "Spain", USA: "United States", SUI: "Switzerland", AUT: "Austria", POL: "Poland", SWE: "Sweden", DEN: "Denmark", IRL: "Ireland", POR: "Portugal", CZE: "Czech Republic", NOR: "Norway", FIN: "Finland", AUS: "Australia", NZL: "New Zealand", CAN: "Canada", MEX: "Mexico",
 };
 
-const DISCIPLINES = [
-  "Jumping",
-  "Dressage",
-  "Eventing",
-  "Endurance",
-  "Driving",
-  "Vaulting",
-] as const;
+const DISCIPLINES = ["Jumping", "Dressage", "Eventing", "Endurance", "Driving", "Vaulting"] as const;
 
 function cleanText(value: string) {
-  return value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+  return value.replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
 }
 
 function inferDiscipline(context: string): string | null {
-  return DISCIPLINES.find((discipline) =>
-    new RegExp(`\\b${discipline}\\b`, "i").test(context)
-  ) ?? null;
+  return DISCIPLINES.find((discipline) => new RegExp(`\\b${discipline}\\b`, "i").test(context)) ?? null;
 }
 
 function inferCountry(context: string): string | null {
@@ -66,43 +30,29 @@ function inferCountry(context: string): string | null {
 }
 
 function inferDate(context: string): string | null {
-  const match = context.match(/\b\d{1,2}\s*(?:-|–|—)\s*\d{1,2}(?:\s+[A-Z][a-z]{2,9})?\b/);
-  return match?.[0] ?? null;
+  const match = context.match(/\b\d{1,2}\s*(?:-|–|—)\s*\d{1,2}(?:\s+[A-Z][a-z]{2,9})?(?:\s+\d{4})?(?:\s+\d{1,2}:\d{2})?\b/);
+  if (match) return match[0];
+  const single = context.match(/\b\d{1,2}\s+[A-Z][a-z]{2,9}(?:\s+\d{4})?(?:\s+\d{1,2}:\d{2})?\b/);
+  return single?.[0] ?? null;
 }
 
 export async function fetchLiveFEIEvents(): Promise<LiveEvent[]> {
   try {
-    const response = await fetch(FEI_EVENTS_URL, {
-      headers: { "User-Agent": "Shabdiz/1.0" },
-      next: { revalidate: 900 },
-    });
+    const response = await fetch(FEI_EVENTS_URL, { headers: { "User-Agent": "Shabdiz/1.0" }, next: { revalidate: 900 } });
     if (!response.ok) return [];
-
     const html = await response.text();
     const events: LiveEvent[] = [];
     const seen = new Set<string>();
     const pattern = /<a[^>]+href=["']([^"']*\/events\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
     let match: RegExpExecArray | null;
-
     while ((match = pattern.exec(html)) && events.length < 100) {
       const href = new URL(match[1], FEI_EVENTS_URL).toString();
       const name = cleanText(match[2]);
       if (!name || name.length < 3 || name.length > 180 || seen.has(href)) continue;
-
       const context = cleanText(html.slice(Math.max(0, match.index - 900), match.index + 1200));
-      const location = inferCountry(context);
-      const discipline = inferDiscipline(context);
-
       seen.add(href);
-      events.push({
-        name,
-        href,
-        date: inferDate(context),
-        location,
-        discipline,
-      });
+      events.push({ name, href, date: inferDate(context), location: inferCountry(context), discipline: inferDiscipline(context) });
     }
-
     return events;
   } catch {
     return [];
