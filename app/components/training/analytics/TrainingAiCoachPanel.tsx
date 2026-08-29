@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getTrainingAiCoach } from "@/app/actions/training-ai";
+import { applyTrainingAiNextSessionAction, getTrainingAiCoach } from "@/app/actions/training-ai";
 import type { TrainingAiCoachResult } from "@/app/lib/training/ai-coach";
 
 type Props = { horseId: string; horseName: string };
@@ -9,15 +9,39 @@ type Props = { horseId: string; horseName: string };
 export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
   const [result, setResult] = useState<TrainingAiCoachResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [applying, setApplying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appliedMessage, setAppliedMessage] = useState<string | null>(null);
 
   async function analyze() {
     setLoading(true);
     setError(null);
+    setAppliedMessage(null);
     const response = await getTrainingAiCoach(horseId);
     setResult(response.result);
     setError(response.error ?? null);
     setLoading(false);
+  }
+
+  async function applyNextSession() {
+    if (!result || applying) return;
+
+    setApplying(true);
+    setError(null);
+    setAppliedMessage(null);
+    const response = await applyTrainingAiNextSessionAction(horseId, result.nextSession);
+
+    if (response.error) {
+      setError(response.error);
+    } else if (response.sessionDate) {
+      setAppliedMessage(
+        response.created
+          ? `AI recommendation applied to the next session (${response.sessionDate}).`
+          : `AI recommendation updated the next planned session (${response.sessionDate}).`
+      );
+    }
+
+    setApplying(false);
   }
 
   return (
@@ -33,7 +57,7 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
         <button
           type="button"
           onClick={analyze}
-          disabled={loading}
+          disabled={loading || applying}
           className="shrink-0 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-500 disabled:cursor-wait disabled:opacity-60"
         >
           {loading ? "Analyzing…" : result ? "Analyze again" : "Analyze with AI"}
@@ -43,6 +67,12 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
       {error ? (
         <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
           {error}
+        </div>
+      ) : null}
+
+      {appliedMessage ? (
+        <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-200">
+          {appliedMessage}
         </div>
       ) : null}
 
@@ -59,7 +89,17 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
             </ul>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/10 p-5 lg:col-span-2">
-            <p className="text-sm font-bold text-white">Next session</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-bold text-white">Next session</p>
+              <button
+                type="button"
+                onClick={applyNextSession}
+                disabled={applying}
+                className="rounded-lg border border-blue-400/30 bg-blue-500/10 px-4 py-2 text-xs font-bold text-blue-200 transition hover:bg-blue-500/20 disabled:cursor-wait disabled:opacity-60"
+              >
+                {applying ? "Applying…" : "Apply to next session"}
+              </button>
+            </div>
             <ul className="mt-3 grid gap-2 text-sm text-gray-300 sm:grid-cols-2">
               {result.nextSession.map((item, index) => <li key={`${item}-${index}`}>• {item}</li>)}
             </ul>
