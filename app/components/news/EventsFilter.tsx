@@ -13,6 +13,7 @@ type Event = {
 const DISCIPLINES = ["All", "Jumping", "Dressage", "Eventing", "Endurance", "Driving", "Vaulting"];
 const COUNTRIES = ["All", "Germany", "France", "Belgium", "Netherlands", "Great Britain", "Italy", "Spain", "United States", "Switzerland", "Austria", "Poland", "Sweden", "Denmark"];
 const MONTHS = ["All", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12"];
+const MONTH_NAMES: Record<string, string> = { "08": "aug", "09": "sep", "10": "oct", "11": "nov", "12": "dec" };
 const monthLabel = (value: string) => value === "All" ? "All months" : new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(`${value}-01T00:00:00`));
 
 function ExternalIcon() {
@@ -40,7 +41,8 @@ export default function EventsFilter() {
     const matchesQuery = text.includes(query.trim().toLowerCase());
     const matchesDiscipline = discipline === "All" || event.discipline === discipline;
     const matchesCountry = country === "All" || event.location === country;
-    const matchesMonth = month === "All" || (event.date ?? "").toLowerCase().includes(month.slice(5));
+    const monthName = MONTH_NAMES[month.slice(5)];
+    const matchesMonth = month === "All" || (event.date ?? "").toLowerCase().includes(monthName);
     return matchesQuery && matchesDiscipline && matchesCountry && matchesMonth;
   }), [events, country, discipline, month, query]);
 
