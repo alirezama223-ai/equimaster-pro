@@ -32,7 +32,7 @@
   "savedEvents":"Gespeicherte Events",
   "eventSearchPlaceholder":"Event oder Land suchen…",
   "loadingEvents":"Live-FEI-Events werden geladen…",
-  "matchingEvents":"{count} passende{s, plural, =0 { Events} =1 { Event} other { Events}}",
+  "matchingEvents":"{count} passende Events",
   "officialFeiCalendar":"Offizieller FEI-Kalender",
   "removeFavorite":"Aus gespeicherten Events entfernen",
   "saveFavorite":"Event speichern",
