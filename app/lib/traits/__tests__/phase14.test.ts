@@ -15,7 +15,7 @@ function row(
     trait_key: traitKey,
     score,
     confidence,
-    source_type: "admin_assessed",
+    source_type: "verified_record",
     source_note: null,
     verified: false,
     created_by: null,
@@ -52,7 +52,6 @@ describe("phase 14 evidence-driven breeding goal score", () => {
     expect(result.goalCoveragePercent).toBe(100);
     expect(result.goalMatchScoreAvailable).toBe(true);
     expect(result.goalMatchScore).toBe(75);
-
     expect(result.traitAnalyses.map((item) => item.weightedContribution)).toEqual([240, 240, 120]);
     expect(result.traitAnalyses.map((item) => item.maxContribution)).toEqual([300, 300, 200]);
   });
