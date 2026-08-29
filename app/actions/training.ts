@@ -9,7 +9,7 @@ import {
   saveSessionReflection,
 } from "@/app/lib/training/session-lifecycle";
 import { fetchSessionExercises, updateSessionExercise } from "@/app/lib/training/session-exercises";
-import { fetchManageableTrainingHorses, fetchTrainingHorseDashboard } from "@/app/lib/training/queries";
+import { fetchManageableTrainingHorses, fetchTrainingHorseDashboard, fetchTodaySession } from "@/app/lib/training/queries";
 import { createEmptyTrainingCalendarMonth } from "@/app/lib/training/calendar";
 import { trainingSessionPath } from "@/app/lib/training/routes";
 import { startTrainingSession } from "@/app/lib/training/start-session";
@@ -86,10 +86,6 @@ export async function getTrainingHorses(): Promise<{
   const result = await fetchManageableTrainingHorses(auth.supabase, auth.user.id);
   if (!result.error) return result;
 
-  // Fallback for accounts with legacy/orphaned horse links. The selector must not
-  // fail completely just because an unrelated linked record makes the aggregate
-  // query return a 400. Demo horses are created_by the current demo user, so this
-  // path also keeps the Training dashboard usable while those legacy links are fixed.
   const fallback = await fallbackTrainingHorses(auth.supabase, auth.user.id);
   if (fallback.horses.length > 0) return fallback;
 
@@ -207,6 +203,38 @@ export async function getTrainingSession(sessionId: string): Promise<{
     exercises: exerciseResult.exercises,
     error: exerciseResult.error,
   };
+}
+
+export async function getTrainingTodayExercisesAction(pedigreeHorseId: string): Promise<{
+  exercises: TrainingSessionExercise[];
+  error?: string;
+}> {
+  if (!isUuid(pedigreeHorseId)) {
+    return { exercises: [], error: "Invalid horse selection." };
+  }
+
+  const auth = await requireAuthenticatedUser();
+  if (!auth.user) {
+    return { exercises: [], error: auth.error };
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const sessionResult = await fetchTodaySession(
+    auth.supabase,
+    auth.user.id,
+    pedigreeHorseId,
+    today
+  );
+
+  if (sessionResult.error) {
+    return { exercises: [], error: sessionResult.error.message };
+  }
+
+  if (!sessionResult.data?.id) {
+    return { exercises: [] };
+  }
+
+  return fetchSessionExercises(auth.supabase, sessionResult.data.id as string);
 }
 
 export async function updateSessionExerciseAction(
