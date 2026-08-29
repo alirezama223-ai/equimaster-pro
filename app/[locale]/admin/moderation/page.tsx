@@ -54,7 +54,7 @@ export default async function ModerationPage() {
                 </div>
 
                 <div className="flex w-full shrink-0 flex-col gap-2 lg:w-44">
-                  <form action={moderateEquiMarketListing.bind(null, listing.id, "active")}>
+                  <form action={moderateEquiMarketListing.bind(null, listing.id, "active", "Approved during moderation review.")}>
                     <button className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" type="submit">Approve</button>
                   </form>
                   <form action={moderateEquiMarketListing.bind(null, listing.id, "rejected", "Rejected during moderation review.")}>
