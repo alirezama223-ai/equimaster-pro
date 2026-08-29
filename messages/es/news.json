@@ -49,5 +49,19 @@
   "eventDetailsDescription":"Esta información procede del feed de eventos FEI. Consulta la página oficial para ver el programa completo, el lugar, las inscripciones, los resultados y las novedades del organizador.",
   "saved":"Guardado",
   "saveEvent":"Guardar evento",
-  "openOfficialEvent":"Abrir evento oficial"
+  "openOfficialEvent":"Abrir evento oficial",
+  "remindersEyebrow":"EVENTOS GUARDADOS",
+  "remindersTitle":"Mis recordatorios de eventos",
+  "remindersDescription":"Elige un recordatorio para los eventos guardados. Las preferencias se almacenan en este dispositivo.",
+  "reminderLabel":"Recordatorio",
+  "noReminder":"Sin recordatorio",
+  "oneDayBefore":"1 día antes",
+  "oneHourBefore":"1 hora antes",
+  "addToCalendar":"Añadir al calendario",
+  "calendarTitle":"Exportar al calendario",
+  "calendarDescription":"Guardado desde el calendario de Noticias y Eventos de Shabdiz.",
+  "timedCalendarHint":"Se exportará una entrada de calendario con hora.",
+  "allDayCalendarHint":"No hay una hora de inicio fiable; se exportará como evento de día completo.",
+  "timeReminderUnavailable":"Los recordatorios por hora necesitan una hora de inicio fiable.",
+  "calendarUnavailable":"No se puede crear el archivo de calendario hasta disponer de una fecha fiable del evento."
 }
