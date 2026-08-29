@@ -1,0 +1,23 @@
+{
+  "eyebrow":"NEWS & EVENTS",
+  "title":"News & Events",
+  "description":"Stay connected to the sport horse world with trusted news sources and direct links to major event calendars.",
+  "backHome":"Back to Home",
+  "comingSoonLabel":"COMING SOON",
+  "liveFeedTitle":"Live news feed",
+  "liveFeedDescription":"The first release uses curated, official and established sources. A live feed, filters, favourites and personalised event alerts can be added next.",
+  "newsEyebrow":"NEWS",
+  "newsTitle":"Sport Horse News",
+  "newsDescription":"Quick access to trusted equestrian news and show-jumping coverage.",
+  "eventsEyebrow":"EVENTS",
+  "eventsTitle":"Event Calendars",
+  "eventsDescription":"Jump straight to competition calendars and official event information.",
+  "openSource":"Open source",
+  "eventCalendar":"Official calendar / event site",
+  "verifiedLinksTitle":"Trusted links",
+  "verifiedLinksDescription":"Links are curated toward official federations, organisers and established equestrian media.",
+  "personalizationTitle":"Personalised later",
+  "personalizationDescription":"Future versions can filter events by country, discipline, distance and your favourite horses.",
+  "alertsTitle":"Event alerts",
+  "alertsDescription":"Future alerts can notify you when selected competitions or important equestrian stories are published."
+}
