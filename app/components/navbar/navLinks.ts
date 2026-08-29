@@ -10,6 +10,7 @@ export type NavLinkKey =
   | "breedingLab"
   | "training"
   | "news"
+  | "services"
   | "stallionMatch"
   | "sell"
   | "sellAHorse"
@@ -22,7 +23,6 @@ export type NavLinkItem = {
   accent?: "red" | "blue";
 };
 
-/** Primary routes shown in the desktop inline bar (Sell uses the right-side CTA instead). */
 export const DESKTOP_INLINE_NAV_LINKS: NavLinkItem[] = [
   { href: "/", labelKey: "home" },
   { href: "/marketplace", labelKey: "marketplace" },
@@ -34,10 +34,10 @@ export const DESKTOP_INLINE_NAV_LINKS: NavLinkItem[] = [
   { href: "/breeding-lab", labelKey: "breedingLab" },
   { href: "/training", labelKey: "training" },
   { href: "/news", labelKey: "news", accent: "blue" },
+  { href: "/services", labelKey: "services", accent: "blue" },
   { href: "/breeding-recommendations", labelKey: "stallionMatch" },
 ];
 
-/** Full route list for compact desktop/mobile menu. */
 export const FULL_NAV_LINKS: NavLinkItem[] = [
   { href: "/", labelKey: "home" },
   { href: "/favorites", labelKey: "favorites", accent: "red" },
@@ -45,6 +45,7 @@ export const FULL_NAV_LINKS: NavLinkItem[] = [
   { href: "/marketplace", labelKey: "marketplace" },
   { href: "/horses", labelKey: "browseHorses" },
   { href: "/news", labelKey: "news", accent: "blue" },
+  { href: "/services", labelKey: "services", accent: "blue" },
   { href: "/dashboard/seller", labelKey: "sellerDashboard" },
   { href: "/stallions", labelKey: "stallions" },
   { href: "/breeders", labelKey: "breeders" },
