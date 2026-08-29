@@ -1,27 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EquiMaster Pro
 
-## Getting Started
+EquiMaster Pro is a multilingual sport-horse platform focused on horse discovery, pedigrees, breeding analysis, marketplace listings, and equestrian news and events.
 
-First, install dependencies and run the development server:
+## Highlights
+
+- 🐎 Horse profiles, pedigree data, traits, and breeding workflows
+- 🧬 Breeding-goal analysis and transparent trait scoring
+- 🛒 Marketplace listings with favourites and advanced search
+- 📰 News & Events hub with live FEI event discovery
+- 📅 Saved events, calendar export (`.ics`), and local reminder preferences
+- 🌍 Internationalized UI for English, German, French, Spanish, and Dutch
+- 🔎 SEO metadata and structured Schema.org data
+- 📱 Responsive experience for desktop and mobile
+
+## Tech stack
+
+- Next.js / React / TypeScript
+- Tailwind CSS
+- next-intl for localization
+- Supabase for application data and authentication
+- Vercel for deployment
+- Vitest for automated tests
+
+## Local development
+
+### Requirements
+
+- Node.js 22+
+- npm
+- A configured Supabase project and the required environment variables
+
+### Setup
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validation
 
-## Learn More
+Run the same checks used by CI before opening a pull request:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx tsc --noEmit
+npm run lint --if-present
+npm test
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-## Deploy on Vercel
+```text
+app/
+  [locale]/          Localized application routes
+  actions/           Server actions and data access
+  components/        UI components
+  lib/               Domain logic and utilities
+messages/             Translation dictionaries
+public/               Static assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Production
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The production application is deployed through Vercel. Keep secrets and environment-specific configuration in the deployment environment rather than committing them to the repository.
+
+## Contributing
+
+Keep changes focused, maintain type safety and localization parity, and make sure TypeScript, lint, tests, and production build checks pass before merging.
