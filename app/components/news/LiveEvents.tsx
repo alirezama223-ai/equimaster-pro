@@ -1,5 +1,3 @@
-import { fetch } from "next/dist/compiled/@edge-runtime/primitives/fetch";
-
 export type LiveEvent = {
   name: string;
   href: string;
