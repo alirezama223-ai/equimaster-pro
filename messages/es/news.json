@@ -1,0 +1,23 @@
+{
+  "eyebrow":"NOTICIAS Y EVENTOS",
+  "title":"Noticias y Eventos",
+  "description":"Mantente conectado con el mundo del caballo deportivo mediante fuentes de noticias fiables y enlaces directos a los principales calendarios de eventos.",
+  "backHome":"Volver al inicio",
+  "comingSoonLabel":"PRÓXIMAMENTE",
+  "liveFeedTitle":"Noticias en directo",
+  "liveFeedDescription":"La primera versión utiliza fuentes oficiales y reconocidas seleccionadas. Más adelante podremos añadir un feed en directo, filtros, favoritos y alertas personalizadas.",
+  "newsEyebrow":"NOTICIAS",
+  "newsTitle":"Noticias del caballo deportivo",
+  "newsDescription":"Acceso rápido a noticias ecuestres y de salto de obstáculos de fuentes fiables.",
+  "eventsEyebrow":"EVENTOS",
+  "eventsTitle":"Calendarios de eventos",
+  "eventsDescription":"Accede directamente a calendarios de competición e información oficial de eventos.",
+  "openSource":"Abrir fuente",
+  "eventCalendar":"Calendario oficial / sitio del evento",
+  "verifiedLinksTitle":"Enlaces de confianza",
+  "verifiedLinksDescription":"Los enlaces priorizan federaciones, organizadores y medios ecuestres reconocidos.",
+  "personalizationTitle":"Personalización futura",
+  "personalizationDescription":"Las próximas versiones podrán filtrar eventos por país, disciplina, distancia y caballos favoritos.",
+  "alertsTitle":"Alertas de eventos",
+  "alertsDescription":"Las futuras alertas podrán avisarte sobre competiciones seleccionadas o noticias ecuestres importantes."
+}
