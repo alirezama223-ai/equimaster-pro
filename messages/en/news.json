@@ -49,5 +49,19 @@
   "eventDetailsDescription":"This information comes from the live FEI event feed. Use the official event page for the complete schedule, venue information, entries, results, and organiser updates.",
   "saved":"Saved",
   "saveEvent":"Save event",
-  "openOfficialEvent":"Open official event"
+  "openOfficialEvent":"Open official event",
+  "remindersEyebrow":"SAVED EVENTS",
+  "remindersTitle":"My Event Reminders",
+  "remindersDescription":"Choose a reminder for saved events. Preferences are stored on this device.",
+  "reminderLabel":"Reminder",
+  "noReminder":"No reminder",
+  "oneDayBefore":"1 day before",
+  "oneHourBefore":"1 hour before",
+  "addToCalendar":"Add to Calendar",
+  "calendarTitle":"Calendar export",
+  "calendarDescription":"Saved from the Shabdiz News & Events calendar.",
+  "timedCalendarHint":"A timed calendar entry will be exported.",
+  "allDayCalendarHint":"No reliable start time is available, so this exports as an all-day event.",
+  "timeReminderUnavailable":"Time-specific reminders need a reliable event start time.",
+  "calendarUnavailable":"A calendar file cannot be created until a reliable event date is available."
 }
