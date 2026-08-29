@@ -49,5 +49,19 @@
   "eventDetailsDescription":"Deze informatie komt uit de live FEI-eventfeed. Gebruik de officiële evenementpagina voor het volledige programma, de locatie, inschrijvingen, resultaten en updates van de organisator.",
   "saved":"Opgeslagen",
   "saveEvent":"Evenement opslaan",
-  "openOfficialEvent":"Officieel evenement openen"
+  "openOfficialEvent":"Officieel evenement openen",
+  "remindersEyebrow":"OPGESLAGEN EVENEMENTEN",
+  "remindersTitle":"Mijn evenementherinneringen",
+  "remindersDescription":"Kies een herinnering voor opgeslagen evenementen. Voorkeuren worden op dit apparaat opgeslagen.",
+  "reminderLabel":"Herinnering",
+  "noReminder":"Geen herinnering",
+  "oneDayBefore":"1 dag van tevoren",
+  "oneHourBefore":"1 uur van tevoren",
+  "addToCalendar":"Aan agenda toevoegen",
+  "calendarTitle":"Agenda-export",
+  "calendarDescription":"Opgeslagen vanuit de Shabdiz Nieuws & Evenementen-kalender.",
+  "timedCalendarHint":"Een agenda-item met tijd wordt geëxporteerd.",
+  "allDayCalendarHint":"Er is geen betrouwbare starttijd; het evenement wordt als een hele dag geëxporteerd.",
+  "timeReminderUnavailable":"Herinneringen op tijdstip vereisen een betrouwbare starttijd.",
+  "calendarUnavailable":"Er kan pas een agendabestand worden gemaakt wanneer een betrouwbare evenementdatum beschikbaar is."
 }
