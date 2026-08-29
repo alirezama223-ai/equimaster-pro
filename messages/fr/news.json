@@ -49,5 +49,19 @@
   "eventDetailsDescription":"Ces informations proviennent du flux d’événements FEI. Consultez la page officielle pour le programme complet, le lieu, les engagements, les résultats et les mises à jour de l’organisateur.",
   "saved":"Enregistré",
   "saveEvent":"Enregistrer l’événement",
-  "openOfficialEvent":"Ouvrir l’événement officiel"
+  "openOfficialEvent":"Ouvrir l’événement officiel",
+  "remindersEyebrow":"ÉVÉNEMENTS ENREGISTRÉS",
+  "remindersTitle":"Mes rappels d’événements",
+  "remindersDescription":"Choisissez un rappel pour les événements enregistrés. Les préférences sont conservées sur cet appareil.",
+  "reminderLabel":"Rappel",
+  "noReminder":"Aucun rappel",
+  "oneDayBefore":"1 jour avant",
+  "oneHourBefore":"1 heure avant",
+  "addToCalendar":"Ajouter au calendrier",
+  "calendarTitle":"Export calendrier",
+  "calendarDescription":"Enregistré depuis le calendrier Actualités & Événements Shabdiz.",
+  "timedCalendarHint":"Une entrée de calendrier avec horaire sera exportée.",
+  "allDayCalendarHint":"Aucune heure de début fiable n’est disponible ; l’événement sera exporté sur toute la journée.",
+  "timeReminderUnavailable":"Les rappels horaires nécessitent une heure de début fiable.",
+  "calendarUnavailable":"Un fichier calendrier ne peut être créé tant qu’une date fiable n’est pas disponible."
 }
