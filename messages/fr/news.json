@@ -1,0 +1,23 @@
+{
+  "eyebrow":"ACTUALITÉS & ÉVÉNEMENTS",
+  "title":"Actualités & Événements",
+  "description":"Restez connecté au monde du cheval de sport grâce à des sources d’actualité fiables et à des liens directs vers les principaux calendriers d’événements.",
+  "backHome":"Retour à l’accueil",
+  "comingSoonLabel":"BIENTÔT",
+  "liveFeedTitle":"Flux d’actualités en direct",
+  "liveFeedDescription":"La première version utilise des sources officielles et reconnues sélectionnées. Un flux en direct, des filtres, des favoris et des alertes personnalisées pourront être ajoutés ensuite.",
+  "newsEyebrow":"ACTUALITÉS",
+  "newsTitle":"Actualités du cheval de sport",
+  "newsDescription":"Accès rapide aux actualités équestres et au saut d’obstacles provenant de sources fiables.",
+  "eventsEyebrow":"ÉVÉNEMENTS",
+  "eventsTitle":"Calendriers des événements",
+  "eventsDescription":"Accédez directement aux calendriers de compétitions et aux informations officielles.",
+  "openSource":"Ouvrir la source",
+  "eventCalendar":"Calendrier officiel / site de l’événement",
+  "verifiedLinksTitle":"Liens de confiance",
+  "verifiedLinksDescription":"Les liens privilégient les fédérations, organisateurs et médias équestres reconnus.",
+  "personalizationTitle":"Personnalisation à venir",
+  "personalizationDescription":"Les prochaines versions pourront filtrer les événements par pays, discipline, distance et chevaux favoris.",
+  "alertsTitle":"Alertes événements",
+  "alertsDescription":"Des alertes pourront vous informer des compétitions sélectionnées ou des actualités équestres importantes."
+}
