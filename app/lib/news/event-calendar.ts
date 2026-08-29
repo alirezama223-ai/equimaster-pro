@@ -44,11 +44,7 @@ function nextDay(date: Date) {
   return result;
 }
 
-/**
- * Parses the date formats currently exposed by the FEI feed, including
- * `29 Aug 2026`, `29 Aug`, and ranges such as `29 Aug - 31 Aug 2026`.
- * A time such as `14:30` is treated as a local-time event start.
- */
+/** Parses the date formats currently exposed by the FEI feed. */
 export function parseEventDate(value: string | null, now = new Date()): ParsedEventDate | null {
   if (!value) return null;
   const normalized = value.replace(/–|—/g, "-").replace(/\s+/g, " ").trim();
@@ -65,8 +61,11 @@ export function parseEventDate(value: string | null, now = new Date()): ParsedEv
   const minutes = timeMatch ? Number(timeMatch[2]) : 0;
   if (hours > 23 || minutes > 59) return null;
 
-  const date = new Date(year, month, day, hours, minutes, 0, 0);
-  if (Number.isNaN(date.getTime()) || date.getMonth() !== month || date.getDate() !== day) return null;
+  const date = timeMatch
+    ? new Date(year, month, day, hours, minutes, 0, 0)
+    : new Date(Date.UTC(year, month, day));
+  if (Number.isNaN(date.getTime())) return null;
+  if (timeMatch && (date.getMonth() !== month || date.getDate() !== day)) return null;
   return { date, hasTime: Boolean(timeMatch) };
 }
 
