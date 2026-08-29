@@ -20,16 +20,17 @@ export type TrainingTodayPlan = {
   goal: string;
 };
 
-export type TrainingExerciseItem = {
-  id: string;
-  label: string;
-};
-
 export type TrainingExerciseExecutionStatus =
   | "pending"
   | "in_progress"
   | "completed"
   | "skipped";
+
+export type TrainingExerciseItem = {
+  id: string;
+  label: string;
+  status?: TrainingExerciseExecutionStatus;
+};
 
 export type TrainingSessionExerciseStatus = TrainingExerciseExecutionStatus;
 
