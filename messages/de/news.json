@@ -49,5 +49,19 @@
   "eventDetailsDescription":"Diese Informationen stammen aus dem Live-FEI-Eventfeed. Die offizielle Eventseite enthält den vollständigen Zeitplan, Veranstaltungsort, Starter, Ergebnisse und Updates des Veranstalters.",
   "saved":"Gespeichert",
   "saveEvent":"Event speichern",
-  "openOfficialEvent":"Offizielles Event öffnen"
+  "openOfficialEvent":"Offizielles Event öffnen",
+  "remindersEyebrow":"GESPEICHERTE EVENTS",
+  "remindersTitle":"Meine Event-Erinnerungen",
+  "remindersDescription":"Wählen Sie eine Erinnerung für gespeicherte Events. Die Einstellungen werden auf diesem Gerät gespeichert.",
+  "reminderLabel":"Erinnerung",
+  "noReminder":"Keine Erinnerung",
+  "oneDayBefore":"1 Tag vorher",
+  "oneHourBefore":"1 Stunde vorher",
+  "addToCalendar":"Zum Kalender hinzufügen",
+  "calendarTitle":"Kalender-Export",
+  "calendarDescription":"Aus dem Shabdiz Nachrichten- & Eventkalender gespeichert.",
+  "timedCalendarHint":"Ein Kalendereintrag mit Uhrzeit wird exportiert.",
+  "allDayCalendarHint":"Keine verlässliche Startzeit verfügbar; das Event wird als ganztägig exportiert.",
+  "timeReminderUnavailable":"Zeitbezogene Erinnerungen benötigen eine verlässliche Startzeit.",
+  "calendarUnavailable":"Eine Kalenderdatei kann erst erstellt werden, wenn ein verlässliches Eventdatum verfügbar ist."
 }
