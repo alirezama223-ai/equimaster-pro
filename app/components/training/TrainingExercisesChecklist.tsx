@@ -9,28 +9,16 @@ type Props = {
 };
 
 export default function TrainingExercisesChecklist({ exercises }: Props) {
-  const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set());
+  const [completedIds, setCompletedIds] = useState<Set<string>>(
+    () => new Set(exercises.filter((exercise) => exercise.status === "completed").map((exercise) => exercise.id))
+  );
   const [savingIds, setSavingIds] = useState<Set<string>>(() => new Set());
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function syncSavedStatus() {
-      if (exercises.length === 0) return;
-      // The dashboard currently supplies the stable session-exercise IDs. Load
-      // their persisted status through the session-aware action before rendering
-      // completed state so a refresh does not reset the checklist.
-      const horseId = window.location.pathname === "/training" ? null : null;
-      void horseId;
-      // Initial status is populated by the dashboard/session data in later passes.
-      if (!cancelled) setCompletedIds((current) => new Set(current));
-    }
-
-    void syncSavedStatus();
-    return () => {
-      cancelled = true;
-    };
+    setCompletedIds(
+      new Set(exercises.filter((exercise) => exercise.status === "completed").map((exercise) => exercise.id))
+    );
   }, [exercises]);
 
   function toggleExercise(exerciseId: string) {
