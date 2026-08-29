@@ -11,13 +11,19 @@ type Event = {
 };
 
 const DISCIPLINES = ["All", "Jumping", "Dressage", "Eventing", "Endurance", "Driving", "Vaulting"];
-const COUNTRIES = ["All", "Germany", "France", "Belgium", "Netherlands", "Great Britain", "Italy", "Spain", "United States", "Switzerland", "Austria", "Poland", "Sweden", "Denmark"];
+const COUNTRIES = ["All", "Germany", "France", "Belgium", "Netherlands", "Great Britain", "Italy", "Spain", "United States", "Switzerland", "Austria", "Poland", "Sweden", "Denmark", "Ireland", "Portugal", "Czech Republic", "Norway", "Finland", "Australia", "New Zealand", "Canada", "Mexico"];
 const MONTHS = ["All", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12"];
-const MONTH_NAMES: Record<string, string> = { "08": "aug", "09": "sep", "10": "oct", "11": "nov", "12": "dec" };
+const MONTH_NAMES: Record<string, string> = { "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun", "07": "Jul", "08": "Aug", "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec" };
 const monthLabel = (value: string) => value === "All" ? "All months" : new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date(`${value}-01T00:00:00`));
 
 function ExternalIcon() {
   return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5h5v5M19 5l-8 8"/><path strokeLinecap="round" strokeLinejoin="round" d="M19 14v3a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3"/></svg>;
+}
+
+function matchesMonth(date: string | null, month: string) {
+  if (month === "All" || !date) return true;
+  const monthName = MONTH_NAMES[month.slice(5)];
+  return monthName ? new RegExp(`\\b${monthName}\\b`, "i").test(date) : false;
 }
 
 export default function EventsFilter() {
@@ -41,9 +47,8 @@ export default function EventsFilter() {
     const matchesQuery = text.includes(query.trim().toLowerCase());
     const matchesDiscipline = discipline === "All" || event.discipline === discipline;
     const matchesCountry = country === "All" || event.location === country;
-    const monthName = MONTH_NAMES[month.slice(5)];
-    const matchesMonth = month === "All" || (event.date ?? "").toLowerCase().includes(monthName);
-    return matchesQuery && matchesDiscipline && matchesCountry && matchesMonth;
+    const matchesEventMonth = matchesMonth(event.date, month);
+    return matchesQuery && matchesDiscipline && matchesCountry && matchesEventMonth;
   }), [events, country, discipline, month, query]);
 
   return <section className="mb-8 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/[0.10] to-transparent p-6 sm:p-8">
