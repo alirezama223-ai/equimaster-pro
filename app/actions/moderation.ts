@@ -34,6 +34,7 @@ export async function moderateEquiMarketListing(
   listingId: string,
   status: ModerationStatus,
   reason?: string,
+  _formData?: FormData,
 ) {
   const auth = await requireModerator();
   if (!auth.user) return { ok: false, error: auth.error };
