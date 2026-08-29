@@ -1,9 +1,9 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { fetchLiveNews } from "@/app/lib/news/live-feed";
 
 export default async function LiveNewsFeed() {
   const items = await fetchLiveNews();
-  const t = useTranslations("news");
+  const t = await getTranslations("news");
 
   return (
     <section className="mb-8 rounded-2xl border border-white/10 bg-slate-900/70 p-6 sm:p-8">
