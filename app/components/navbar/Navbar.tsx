@@ -33,13 +33,15 @@ export default function Navbar() {
         <Link href="/" aria-label="SHABDIZ Sport Horses Marketplace" className="inline-flex min-h-11 min-w-0 shrink-0 items-center transition-opacity hover:opacity-90">
           <Image src={BRAND_LOGO_SRC} alt="SHABDIZ Sport Horses Marketplace" width={190} height={73} priority unoptimized className="h-auto w-[170px] object-contain sm:w-[190px] 2xl:w-[200px]" />
         </Link>
-        <nav className="hidden min-w-0 flex-1 items-center justify-center gap-x-3 gap-y-1 2xl:flex 2xl:gap-x-4" aria-label={t("primaryNav")}>
-          {DESKTOP_INLINE_NAV_LINKS.map((link) => <Link key={`${link.href}-${link.labelKey}`} href={link.href} className={`text-sm font-medium text-gray-300 ${navLinkClassName(link)}`}>{t(link.labelKey)}</Link>)}
-          <Link href="#" className="text-sm font-medium text-gray-300 hover:text-white transition">{t("about")}</Link>
+
+        <nav className="hidden min-w-0 flex-1 items-center justify-center gap-x-3 gap-y-1 min-[1800px]:flex min-[1800px]:gap-x-4" aria-label={t("primaryNav")}>
+          {DESKTOP_INLINE_NAV_LINKS.map((link) => <Link key={`${link.href}-${link.labelKey}`} href={link.href} className={`whitespace-nowrap text-sm font-medium text-gray-300 ${navLinkClassName(link)}`}>{t(link.labelKey)}</Link>)}
+          <Link href="#" className="whitespace-nowrap text-sm font-medium text-gray-300 hover:text-white transition">{t("about")}</Link>
         </nav>
+
         <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
           <div className="hidden md:block"><LocaleSwitcher /></div>
-          <div className="2xl:hidden"><NavbarDesktopMenu /></div>
+          <div className="min-[1800px]:hidden"><NavbarDesktopMenu /></div>
           <ProtectedLink href="/sell" aria-label={t("sellAHorse")} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500 sm:h-auto sm:w-auto sm:px-3 sm:py-2.5 lg:px-4 lg:py-2.5 2xl:px-5 2xl:py-3">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 sm:hidden" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M12 5v14M5 12h14" /></svg>
             <span className="hidden sm:inline lg:hidden">{t("sell")}</span><span className="hidden lg:inline">{t("sellAHorse")}</span>
