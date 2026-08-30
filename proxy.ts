@@ -22,9 +22,9 @@ function isStaticAsset(pathname: string) {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // API routes must bypass next-intl routing. The Shabdiz hero video is
-  // served by /api/hero-video and must reach the route handler unchanged.
-  if (pathname === "/api/hero-video" || pathname.startsWith("/api/hero-video/")) {
+  // All API routes must bypass next-intl routing. API endpoints do not use
+  // locale prefixes and must reach their route handlers unchanged.
+  if (pathname === "/api" || pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
