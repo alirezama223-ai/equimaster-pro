@@ -44,6 +44,22 @@ export async function getPendingModerationListings() {
   };
 }
 
+export async function getModerationListingDetails(kind: ModerationKind, listingId: string) {
+  const auth = await requireModerator();
+  if (!auth.user) return { listing: null, error: auth.error };
+  if (!/^[0-9a-f-]{36}$/i.test(listingId)) return { listing: null, error: "Invalid listing." };
+
+  const { data, error } = await auth.supabase.rpc("get_moderation_listing_details", {
+    p_kind: kind,
+    p_listing_id: listingId,
+  });
+
+  if (error) return { listing: null, error: error.message };
+  if (!data || typeof data !== "object") return { listing: null, error: "Listing not found." };
+
+  return { listing: data as Record<string, unknown>, error: null };
+}
+
 export async function moderateListing(
   kind: ModerationKind,
   listingId: string,
