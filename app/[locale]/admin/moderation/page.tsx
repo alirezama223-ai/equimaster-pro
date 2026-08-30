@@ -4,13 +4,18 @@ import { getPendingModerationListings, moderateListing } from "@/app/actions/mod
 
 export const dynamic = "force-dynamic";
 
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
 type Kind = "equimarket" | "horse_sale";
 
 function typeLabel(kind: Kind) {
   return kind === "horse_sale" ? "Horse for Sale" : "Service Listing";
 }
 
-export default async function ModerationPage() {
+export default async function ModerationPage({ params }: Props) {
+  const { locale } = await params;
   const result = await getPendingModerationListings();
   if (result.error === "Authentication required." || result.error === "You are not authorized to moderate listings.") redirect("/");
 
@@ -55,7 +60,7 @@ export default async function ModerationPage() {
 
                 <div className="flex w-full shrink-0 flex-col gap-2 lg:w-44">
                   <Link
-                    href={`/admin/moderation/${listing.kind}/${listing.id}`}
+                    href={`/${locale}/admin/moderation/${listing.kind}/${listing.id}`}
                     className="w-full rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-center text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
                   >
                     Review Details
