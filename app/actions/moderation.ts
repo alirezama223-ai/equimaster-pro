@@ -31,14 +31,14 @@ export async function getPendingEquiMarketListings() {
 }
 
 export async function moderateEquiMarketListing(
-  _formData: FormData,
   listingId: string,
   status: ModerationStatus,
   reason: string,
-) {
+  _formData: FormData,
+): Promise<void> {
   const auth = await requireModerator();
-  if (!auth.user) return { ok: false, error: auth.error };
-  if (!/^[0-9a-f-]{36}$/i.test(listingId)) return { ok: false, error: "Invalid listing." };
+  if (!auth.user) throw new Error(auth.error ?? "Authentication required.");
+  if (!/^[0-9a-f-]{36}$/i.test(listingId)) throw new Error("Invalid listing.");
 
   const { error } = await auth.supabase.rpc("moderate_equimarket_listing", {
     p_listing_id: listingId,
@@ -46,8 +46,7 @@ export async function moderateEquiMarketListing(
     p_reason: reason.trim() || null,
   });
 
-  if (error) return { ok: false, error: error.message };
+  if (error) throw new Error(error.message);
   revalidatePath("/admin/moderation");
   revalidatePath("/services");
-  return { ok: true, error: null };
 }
