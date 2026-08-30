@@ -83,3 +83,25 @@ export async function moderateListing(
   revalidatePath("/services");
   revalidatePath("/marketplace");
 }
+
+export async function triggerListingNotifications(_formData: FormData): Promise<void> {
+  const auth = await requireModerator();
+  if (!auth.user) throw new Error(auth.error ?? "Authentication required.");
+
+  const secret = process.env.CRON_SECRET;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!secret || !siteUrl) throw new Error("Notification worker configuration is incomplete.");
+
+  const response = await fetch(`${siteUrl}/api/cron/listing-notifications`, {
+    method: "GET",
+    headers: { authorization: `Bearer ${secret}` },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(body || `Notification worker returned ${response.status}.`);
+  }
+
+  revalidatePath("/admin/moderation");
+}
