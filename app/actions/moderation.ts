@@ -90,11 +90,12 @@ export async function triggerListingNotifications(_formData: FormData): Promise<
 
   const secret = process.env.CRON_SECRET;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!secret || !siteUrl) throw new Error("Notification worker configuration is incomplete.");
+  if (!siteUrl) throw new Error("Notification worker configuration is incomplete.");
 
+  const headers: HeadersInit = secret ? { authorization: `Bearer ${secret}` } : {};
   const response = await fetch(`${siteUrl}/api/cron/listing-notifications`, {
     method: "GET",
-    headers: { authorization: `Bearer ${secret}` },
+    headers,
     cache: "no-store",
   });
 
