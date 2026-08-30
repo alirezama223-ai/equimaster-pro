@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getPendingModerationListings, moderateListing } from "@/app/actions/moderation";
+import { getPendingModerationListings, moderateListing, triggerListingNotifications } from "@/app/actions/moderation";
 
 export const dynamic = "force-dynamic";
 
@@ -21,13 +21,20 @@ export default async function ModerationPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-emerald-600">EquiMaster Pro</p>
           <h1 className="text-3xl font-bold tracking-tight">Moderation Center</h1>
           <p className="mt-2 text-sm text-gray-600">Review horse sales and service listings before they become public.</p>
         </div>
-        <div className="rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800">{result.listings.length} pending</div>
+        <div className="flex items-center gap-3">
+          <form action={triggerListingNotifications}>
+            <button type="submit" className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100">
+              Send Pending Notifications
+            </button>
+          </form>
+          <div className="rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800">{result.listings.length} pending</div>
+        </div>
       </div>
 
       {result.error && <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{result.error}</div>}
