@@ -37,7 +37,7 @@ function Detail({ label, value }: { label: string; value: unknown }) {
 }
 
 export default async function ModerationListingReviewPage({ params }: Props) {
-  const { kind, id } = await params;
+  const { locale, kind, id } = await params;
   if (!isKind(kind)) notFound();
 
   const result = await getModerationListingDetails(kind, id);
@@ -56,12 +56,13 @@ export default async function ModerationListingReviewPage({ params }: Props) {
   const title = text(listing.title ?? listing.name, "Untitled listing");
   const description = text(listing.description);
   const price = money(listing.price, listing.price_on_request);
+  const moderationPath = `/${locale}/admin/moderation`;
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Link href="/admin/moderation" className="text-sm font-semibold text-blue-600 hover:underline">
+          <Link href={moderationPath} className="text-sm font-semibold text-blue-600 hover:underline">
             ← Back to Moderation Center
           </Link>
           <p className="mt-4 text-sm font-semibold uppercase tracking-wider text-emerald-600">EquiMaster Pro · Review</p>
