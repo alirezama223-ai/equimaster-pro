@@ -11,10 +11,14 @@ function adminClient() {
 }
 
 function assertCron(req: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return;
+  const cronSecret = process.env.CRON_SECRET;
+  const workerToken = process.env.NOTIFICATION_WORKER_TOKEN;
   const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${secret}`) throw new Error("Unauthorized");
+  const internalToken = req.headers.get("x-notification-worker-token");
+
+  if (cronSecret && auth === `Bearer ${cronSecret}`) return;
+  if (workerToken && internalToken === workerToken) return;
+  if (cronSecret || workerToken) throw new Error("Unauthorized");
 }
 
 function eventCopy(event: string, name: string, reason?: string | null) {
