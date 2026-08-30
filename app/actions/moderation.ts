@@ -4,6 +4,22 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/lib/supabase/server";
 
 export type ModerationStatus = "active" | "rejected" | "paused" | "closed";
+export type ModerationKind = "equimarket" | "horse_sale";
+
+type ModerationListing = {
+  id: string;
+  kind: ModerationKind;
+  title: string;
+  description: string;
+  discipline: string | null;
+  level: string | null;
+  country: string | null;
+  city: string | null;
+  price: number | null;
+  pricePeriod: string | null;
+  horseName: string | null;
+  createdAt: string;
+};
 
 async function requireModerator() {
   const supabase = await createClient();
@@ -15,22 +31,66 @@ async function requireModerator() {
   return { supabase, user, error: null };
 }
 
-export async function getPendingEquiMarketListings() {
+export async function getPendingModerationListings() {
   const auth = await requireModerator();
-  if (!auth.user) return { listings: [], error: auth.error };
+  if (!auth.user) return { listings: [] as ModerationListing[], error: auth.error };
 
-  const { data, error } = await auth.supabase
-    .from("equimarket_listings")
-    .select("id, listing_type, title, description, horse_name, discipline, level, country, city, price, price_period, available_from, available_to, min_duration_weeks, competition_allowed, coach_included, status, created_at, user_id")
-    .eq("status", "pending")
-    .order("created_at", { ascending: true })
-    .limit(100);
+  const [equiResult, horseResult] = await Promise.all([
+    auth.supabase
+      .from("equimarket_listings")
+      .select("id, title, description, discipline, level, country, city, price, price_period, horse_name, created_at, listing_type")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true })
+      .limit(100),
+    auth.supabase
+      .from("horse_listings")
+      .select("id, name, description, discipline, level, country, price, created_at")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true })
+      .limit(100),
+  ]);
 
-  if (error) return { listings: [], error: error.message };
-  return { listings: data ?? [], error: null };
+  if (equiResult.error) return { listings: [] as ModerationListing[], error: equiResult.error.message };
+  if (horseResult.error) return { listings: [] as ModerationListing[], error: horseResult.error.message };
+
+  const equi = (equiResult.data ?? []).map((item) => ({
+    id: item.id,
+    kind: "equimarket" as const,
+    title: item.title,
+    description: item.description,
+    discipline: item.discipline,
+    level: item.level,
+    country: item.country,
+    city: item.city,
+    price: item.price,
+    pricePeriod: item.price_period,
+    horseName: item.horse_name,
+    createdAt: item.created_at,
+  }));
+
+  const horses = (horseResult.data ?? []).map((item) => ({
+    id: item.id,
+    kind: "horse_sale" as const,
+    title: item.name,
+    description: item.description,
+    discipline: item.discipline,
+    level: item.level,
+    country: item.country,
+    city: null,
+    price: item.price,
+    pricePeriod: null,
+    horseName: item.name,
+    createdAt: item.created_at,
+  }));
+
+  return {
+    listings: [...equi, ...horses].sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+    error: null,
+  };
 }
 
-export async function moderateEquiMarketListing(
+export async function moderateListing(
+  kind: ModerationKind,
   listingId: string,
   status: ModerationStatus,
   reason: string,
@@ -40,7 +100,8 @@ export async function moderateEquiMarketListing(
   if (!auth.user) throw new Error(auth.error ?? "Authentication required.");
   if (!/^[0-9a-f-]{36}$/i.test(listingId)) throw new Error("Invalid listing.");
 
-  const { error } = await auth.supabase.rpc("moderate_equimarket_listing", {
+  const rpc = kind === "horse_sale" ? "moderate_horse_listing" : "moderate_equimarket_listing";
+  const { error } = await auth.supabase.rpc(rpc, {
     p_listing_id: listingId,
     p_to_status: status,
     p_reason: reason.trim() || null,
@@ -49,4 +110,5 @@ export async function moderateEquiMarketListing(
   if (error) throw new Error(error.message);
   revalidatePath("/admin/moderation");
   revalidatePath("/services");
+  revalidatePath("/marketplace");
 }
