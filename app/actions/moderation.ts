@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { createClient } from "@/app/lib/supabase/server";
 
 export type ModerationStatus = "active" | "rejected" | "paused" | "closed";
@@ -32,74 +31,15 @@ async function requireModerator() {
   return { supabase, user, error: null };
 }
 
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceKey) throw new Error("Supabase server configuration is incomplete");
-  return createSupabaseAdmin(url, serviceKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-}
-
 export async function getPendingModerationListings() {
   const auth = await requireModerator();
   if (!auth.user) return { listings: [] as ModerationListing[], error: auth.error };
 
-  // Authorization is checked above with the user's session. Use the server-only
-  // service client for queue reads so RLS on marketplace tables cannot block the
-  // moderator dashboard. The service key never reaches the browser.
-  const admin = createAdminClient();
-
-  const [equiResult, horseResult] = await Promise.all([
-    admin
-      .from("equimarket_listings")
-      .select("id, title, description, discipline, level, country, city, price, price_period, horse_name, created_at, listing_type")
-      .eq("status", "pending")
-      .order("created_at", { ascending: true })
-      .limit(100),
-    admin
-      .from("horse_listings")
-      .select("id, name, description, discipline, level, country, price, created_at")
-      .eq("status", "pending")
-      .order("created_at", { ascending: true })
-      .limit(100),
-  ]);
-
-  if (equiResult.error) return { listings: [] as ModerationListing[], error: equiResult.error.message };
-  if (horseResult.error) return { listings: [] as ModerationListing[], error: horseResult.error.message };
-
-  const equi = (equiResult.data ?? []).map((item) => ({
-    id: item.id,
-    kind: "equimarket" as const,
-    title: item.title,
-    description: item.description,
-    discipline: item.discipline,
-    level: item.level,
-    country: item.country,
-    city: item.city,
-    price: item.price,
-    pricePeriod: item.price_period,
-    horseName: item.horse_name,
-    createdAt: item.created_at,
-  }));
-
-  const horses = (horseResult.data ?? []).map((item) => ({
-    id: item.id,
-    kind: "horse_sale" as const,
-    title: item.name,
-    description: item.description,
-    discipline: item.discipline,
-    level: item.level,
-    country: item.country,
-    city: null,
-    price: item.price,
-    pricePeriod: null,
-    horseName: item.name,
-    createdAt: item.created_at,
-  }));
+  const { data, error } = await auth.supabase.rpc("get_pending_moderation_listings");
+  if (error) return { listings: [] as ModerationListing[], error: error.message };
 
   return {
-    listings: [...equi, ...horses].sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
+    listings: (Array.isArray(data) ? data : []) as ModerationListing[],
     error: null,
   };
 }
