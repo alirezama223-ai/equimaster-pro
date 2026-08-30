@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getPendingModerationListings, moderateListing } from "@/app/actions/moderation";
 
@@ -53,6 +54,12 @@ export default async function ModerationPage() {
                 </div>
 
                 <div className="flex w-full shrink-0 flex-col gap-2 lg:w-44">
+                  <Link
+                    href={`/admin/moderation/${listing.kind}/${listing.id}`}
+                    className="w-full rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-center text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+                  >
+                    Review Details
+                  </Link>
                   <form action={moderateListing.bind(null, listing.kind, listing.id, "active", "Approved during moderation review.")}>
                     <button className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" type="submit">Approve</button>
                   </form>
