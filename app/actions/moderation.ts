@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { createClient } from "@/app/lib/supabase/server";
 
 export type ModerationStatus = "active" | "rejected" | "paused" | "closed";
@@ -31,18 +32,32 @@ async function requireModerator() {
   return { supabase, user, error: null };
 }
 
+function createAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) throw new Error("Supabase server configuration is incomplete");
+  return createSupabaseAdmin(url, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}
+
 export async function getPendingModerationListings() {
   const auth = await requireModerator();
   if (!auth.user) return { listings: [] as ModerationListing[], error: auth.error };
 
+  // Authorization is checked above with the user's session. Use the server-only
+  // service client for queue reads so RLS on marketplace tables cannot block the
+  // moderator dashboard. The service key never reaches the browser.
+  const admin = createAdminClient();
+
   const [equiResult, horseResult] = await Promise.all([
-    auth.supabase
+    admin
       .from("equimarket_listings")
       .select("id, title, description, discipline, level, country, city, price, price_period, horse_name, created_at, listing_type")
       .eq("status", "pending")
       .order("created_at", { ascending: true })
       .limit(100),
-    auth.supabase
+    admin
       .from("horse_listings")
       .select("id, name, description, discipline, level, country, price, created_at")
       .eq("status", "pending")
