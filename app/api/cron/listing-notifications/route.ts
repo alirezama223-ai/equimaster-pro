@@ -57,7 +57,10 @@ async function sendEmail(to: string, subject: string, body: string) {
       html: `<div style="font-family:Arial,sans-serif;line-height:1.6"><p>${body.replaceAll("\n", "<br/>")}</p><p>EquiMaster Pro</p></div>`,
     }),
   });
-  if (!response.ok) throw new Error(`Email provider returned ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`Email provider returned ${response.status}${detail ? `: ${detail.slice(0, 300)}` : ""}`);
+  }
   return true;
 }
 
@@ -75,8 +78,21 @@ async function sendSms(to: string, body: string) {
     },
     body: params.toString(),
   });
-  if (!response.ok) throw new Error(`SMS provider returned ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`SMS provider returned ${response.status}${detail ? `: ${detail.slice(0, 300)}` : ""}`);
+  }
   return true;
+}
+
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "Unknown notification worker error";
+  }
 }
 
 export async function GET(req: Request) {
@@ -94,13 +110,14 @@ export async function GET(req: Request) {
 
     let processed = 0;
     for (const job of jobs ?? []) {
-      const { data: claimed } = await supabase
+      const { data: claimed, error: claimError } = await supabase
         .from("listing_notification_jobs")
         .update({ status: "processing", attempts: (job.attempts ?? 0) + 1, last_error: null })
         .eq("id", job.id)
         .eq("status", "pending")
         .select("id")
         .maybeSingle();
+      if (claimError) throw claimError;
       if (!claimed) continue;
 
       try {
@@ -109,22 +126,25 @@ export async function GET(req: Request) {
         let phone: string | null = null;
 
         if (job.listing_kind === "horse_sale") {
-          const { data } = await supabase
+          const { data, error: listingError } = await supabase
             .from("horse_listings")
             .select("name, seller_email, seller_phone")
             .eq("id", job.listing_id)
             .maybeSingle();
+          if (listingError) throw listingError;
           name = data?.name || name;
           email = data?.seller_email || null;
           phone = data?.seller_phone || null;
         } else {
-          const { data } = await supabase
+          const { data, error: listingError } = await supabase
             .from("equimarket_listings")
             .select("title")
             .eq("id", job.listing_id)
             .maybeSingle();
+          if (listingError) throw listingError;
           name = data?.title || name;
-          const { data: authUser } = await supabase.auth.admin.getUserById(job.user_id);
+          const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(job.user_id);
+          if (authError) throw authError;
           email = authUser.user?.email ?? null;
           phone = authUser.user?.phone ?? null;
         }
@@ -135,28 +155,32 @@ export async function GET(req: Request) {
         if (phone) delivered = (await sendSms(phone, copy.sms)) || delivered;
 
         const inAppType = job.event_type === "submitted" ? "listing_submitted" : job.event_type === "published" ? "listing_published" : "listing_rejected";
-        await supabase.from("notifications").insert({
+        const { error: notificationError } = await supabase.from("notifications").insert({
           user_id: job.user_id,
           type: inAppType,
           title: copy.title,
           body: copy.body,
           entity_id: job.listing_id,
         });
+        if (notificationError) throw notificationError;
 
         if (!delivered && !email && !phone) throw new Error("No email or phone is available for this listing owner");
         if (!delivered) throw new Error("No notification provider is configured for the available contact channel");
 
-        await supabase.from("listing_notification_jobs").update({ status: "sent", processed_at: new Date().toISOString() }).eq("id", job.id);
+        const { error: sentError } = await supabase.from("listing_notification_jobs").update({ status: "sent", processed_at: new Date().toISOString() }).eq("id", job.id);
+        if (sentError) throw sentError;
         processed += 1;
       } catch (jobError) {
-        const message = jobError instanceof Error ? jobError.message : "Notification delivery failed";
+        const message = errorMessage(jobError);
+        console.error("listing notification job failed", { jobId: job.id, message });
         await supabase.from("listing_notification_jobs").update({ status: "failed", last_error: message }).eq("id", job.id);
       }
     }
 
     return NextResponse.json({ ok: true, processed, queued: jobs?.length ?? 0 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Notification worker failed";
+    const message = errorMessage(error);
+    console.error("listing notification worker failed", { message });
     return NextResponse.json({ ok: false, error: message }, { status: message === "Unauthorized" ? 401 : 500 });
   }
 }
