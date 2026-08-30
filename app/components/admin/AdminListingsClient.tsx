@@ -45,8 +45,24 @@ function statusBadgeClass(status: string): string {
 }
 
 function statusLabel(status: string, translate: (key: string) => string): string {
-  if (status === "paused") return "Paused";
-  return translate(`status.${status}`);
+  switch (status) {
+    case "active":
+      return "Active";
+    case "pending":
+      return "Pending";
+    case "paused":
+      return "Paused";
+    case "rejected":
+      return "Rejected";
+    case "draft":
+      return "Draft";
+    case "sold":
+      return "Sold";
+    case "archived":
+      return "Archived";
+    default:
+      return translate(`status.${status}`);
+  }
 }
 
 export default function AdminListingsClient({
