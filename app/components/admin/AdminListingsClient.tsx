@@ -35,9 +35,18 @@ function statusBadgeClass(status: string): string {
       return "border-blue-500/30 bg-blue-500/15 text-blue-200";
     case "archived":
       return "border-gray-500/30 bg-gray-500/15 text-gray-300";
+    case "paused":
+      return "border-orange-500/30 bg-orange-500/15 text-orange-200";
+    case "rejected":
+      return "border-rose-500/30 bg-rose-500/15 text-rose-200";
     default:
       return "border-white/10 bg-white/5 text-gray-300";
   }
+}
+
+function statusLabel(status: string, translate: (key: string) => string): string {
+  if (status === "paused") return "Paused";
+  return translate(`status.${status}`);
 }
 
 export default function AdminListingsClient({
@@ -189,7 +198,7 @@ export default function AdminListingsClient({
                   <td className="px-4 py-4"><p className="text-white">{listing.sellerName}</p><p className="mt-1 font-mono text-xs text-gray-500">{listing.sellerReference}</p></td>
                   <td className="px-4 py-4">
                     <div className="flex flex-col gap-2">
-                      <span className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${statusBadgeClass(listing.status)}`}>{t(`status.${listing.status as "active" | "draft" | "sold" | "archived"}`)}</span>
+                      <span className={`inline-flex w-fit rounded-full border px-2.5 py-1 text-xs font-semibold ${statusBadgeClass(listing.status)}`}>{statusLabel(listing.status, t)}</span>
                       {listing.featured ? <span className="inline-flex w-fit rounded-full border border-violet-500/30 bg-violet-500/15 px-2.5 py-1 text-xs font-semibold text-violet-200">{t("featuredBadge")}</span> : null}
                       {listing.hidden ? <span className="inline-flex w-fit rounded-full border border-gray-500/30 bg-gray-500/15 px-2.5 py-1 text-xs font-semibold text-gray-300">{t("hiddenBadge")}</span> : null}
                     </div>
