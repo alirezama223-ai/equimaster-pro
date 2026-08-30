@@ -58,7 +58,7 @@ function escapeHtml(value: string) {
 function emailHtml(title: string, body: string) {
   const safeTitle = escapeHtml(title);
   const safeBody = escapeHtml(body).replaceAll("\n", "<br />");
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.equimaster.pro";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.equimaster.pro";
 
   return `<!doctype html>
 <html lang="en">
