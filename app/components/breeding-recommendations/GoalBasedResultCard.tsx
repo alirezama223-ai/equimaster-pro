@@ -28,6 +28,12 @@ export default function GoalBasedResultCard({ result, marePedigreeId }: Props) {
         </div>
       </div>
 
+      <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm leading-6 text-amber-100">
+        <p className="font-bold">Evidence-based breeding analysis</p>
+        <p className="mt-1">{t("disclaimer")}</p>
+        <p className="mt-1">Results are decision support based on available structured data; they are not a guarantee of breeding success, offspring quality, health, performance, market value, or future outcomes.</p>
+      </div>
+
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.goalMatch")}</p><p className="mt-1 text-xl font-bold text-emerald-400">{result.goalMatchScore !== null ? `${result.goalMatchScore}/100` : t("insufficientData")}</p><p className="text-xs text-gray-500">{result.finalMatchBreakdown.goalWeight}% weight</p></div>
         <div className="rounded-2xl border border-white/10 bg-black/10 p-3"><p className="text-xs uppercase tracking-wide text-gray-500">{t("recommendations.pedigreeScoreShort")}</p><p className="mt-1 text-xl font-bold text-blue-300">{result.compatibilityScore !== null ? `${result.compatibilityScore}/100` : t("insufficientData")}</p><p className="text-xs text-gray-500">{result.finalMatchBreakdown.pedigreeWeight}% weight</p></div>
