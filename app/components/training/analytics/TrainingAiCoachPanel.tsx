@@ -64,6 +64,13 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
         </button>
       </div>
 
+      <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm leading-6 text-amber-100">
+        <p className="font-bold">AI-assisted analysis</p>
+        <p className="mt-1">
+          This information is for decision support only. It does not replace veterinary, medical, training, or other professional advice and does not guarantee health, performance, or training outcomes. If health concerns are present, consult a qualified veterinarian.
+        </p>
+      </div>
+
       {error ? (
         <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
           {error}
