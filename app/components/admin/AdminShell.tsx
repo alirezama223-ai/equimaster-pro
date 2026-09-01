@@ -80,7 +80,7 @@ export default function AdminShell({ children }: Props) {
             : "text-gray-300 hover:bg-white/[0.05] hover:text-white"
         }`}
       >
-        {t(`nav.${item.key}`)}
+        {item.key === "services" ? "Services" : t(`nav.${item.key}`)}
       </Link>
     );
   }
