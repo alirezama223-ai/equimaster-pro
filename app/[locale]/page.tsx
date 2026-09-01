@@ -1,13 +1,13 @@
 import { getActiveHorseListings } from "@/app/actions/horse-listings";
-import { getActiveHomepageAdvertisements } from "@/app/actions/advertisements";
 import { getHeroStats } from "@/app/actions/home-stats";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
+import { getHomepageAdvertisements } from "@/app/actions/advertisements";
 import HomeClient from "@/app/components/home/HomeClient";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import dynamicImport from "next/dynamic";
-import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 const PremiumStallions = dynamicImport(
   () => import("@/app/components/stallions/PremiumStallions"),
@@ -55,11 +55,13 @@ export default async function Home() {
     ],
   };
 
-  const [{ data: listingRows }, favoriteListingIds, heroStats, advertisements] = await Promise.all([
+  const [{ data: listingRows }, favoriteListingIds, heroStats, topAds, featuredAds, bottomAds] = await Promise.all([
     getActiveHorseListings(100),
     getUserFavoriteListingIds(),
     getHeroStats(),
-    getActiveHomepageAdvertisements(),
+    getHomepageAdvertisements("homepage_top"),
+    getHomepageAdvertisements("homepage_featured"),
+    getHomepageAdvertisements("homepage_bottom"),
   ]);
   const marketplaceHorses = listingRows.map((row) =>
     listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
@@ -75,8 +77,8 @@ export default async function Home() {
         marketplaceHorses={marketplaceHorses}
         favoriteListingIds={favoriteListingIds}
         heroStats={heroStats}
-        advertisements={advertisements}
         premiumStallions={<PremiumStallions />}
+        homepageAds={{ top: topAds.advertisements, featured: featuredAds.advertisements, bottom: bottomAds.advertisements }}
       />
     </>
   );
