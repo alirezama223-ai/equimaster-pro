@@ -1,4 +1,4 @@
-import AdminAdvertisementsClient from "@/app/components/admin/AdminAdvertisementsClient";
+import AdvertisementManager from "@/app/components/admin/AdvertisementManager";
 import AdminPageHeader from "@/app/components/admin/AdminPageHeader";
 import { getAdminAdvertisements } from "@/app/actions/advertisements";
 
@@ -12,12 +12,12 @@ export default async function AdminAdvertisementsPage() {
       <AdminPageHeader
         eyebrow="Admin"
         title="Homepage Advertisements"
-        description="Create, review, and activate paid campaigns that appear in the premium homepage advertising slot."
+        description="Create, review, and activate paid campaigns for the three homepage advertising placements."
       />
       {error ? (
         <div className="rounded-3xl border border-red-500/30 bg-red-500/10 px-6 py-8 text-red-200">{error}</div>
       ) : (
-        <AdminAdvertisementsClient advertisements={advertisements} />
+        <AdvertisementManager initialAds={advertisements} />
       )}
     </div>
   );
