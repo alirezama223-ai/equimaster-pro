@@ -1,6 +1,7 @@
 import { getActiveHorseListings } from "@/app/actions/horse-listings";
 import { getHeroStats } from "@/app/actions/home-stats";
 import { getUserFavoriteListingIds } from "@/app/actions/favorites";
+import { getHomepageAdvertisements } from "@/app/actions/advertisements";
 import HomeClient from "@/app/components/home/HomeClient";
 import { listingRowToHorse } from "@/app/lib/horse-listings";
 import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
@@ -54,10 +55,13 @@ export default async function Home() {
     ],
   };
 
-  const [{ data: listingRows }, favoriteListingIds, heroStats] = await Promise.all([
+  const [{ data: listingRows }, favoriteListingIds, heroStats, topAds, featuredAds, bottomAds] = await Promise.all([
     getActiveHorseListings(100),
     getUserFavoriteListingIds(),
     getHeroStats(),
+    getHomepageAdvertisements("homepage_top"),
+    getHomepageAdvertisements("homepage_featured"),
+    getHomepageAdvertisements("homepage_bottom"),
   ]);
   const marketplaceHorses = listingRows.map((row) =>
     listingRowToHorse(row, { priceOnRequestLabel: tCommon("priceOnRequest") })
@@ -74,6 +78,7 @@ export default async function Home() {
         favoriteListingIds={favoriteListingIds}
         heroStats={heroStats}
         premiumStallions={<PremiumStallions />}
+        homepageAds={{ top: topAds.advertisements, featured: featuredAds.advertisements, bottom: bottomAds.advertisements }}
       />
     </>
   );
