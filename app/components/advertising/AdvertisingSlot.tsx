@@ -1,72 +1,35 @@
-import Link from "next/link";
 import type { HomepageAdvertisement } from "@/app/actions/advertisements";
 
 type AdvertisingSlotProps = {
   advertisements?: HomepageAdvertisement[];
+  placement?: HomepageAdvertisement["placement"];
   className?: string;
 };
 
-/**
- * Premium homepage advertising inventory.
- * The slot stays stable even when no campaign is active to avoid layout shift.
- */
-export default function AdvertisingSlot({ advertisements = [], className = "" }: AdvertisingSlotProps) {
-  const ad = advertisements[0];
+export default function AdvertisingSlot({ advertisements = [], placement = "homepage_featured", className = "" }: AdvertisingSlotProps) {
+  const ads = advertisements.filter((ad) => ad.placement === placement);
+  if (ads.length === 0) return null;
 
   return (
-    <section
-      aria-label="Advertisement"
-      data-ad-slot="home-premium"
-      className={`mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10 ${className}`}
-    >
-      <div className="flex min-h-[120px] items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025]">
-        {ad ? (
-          ad.target_url ? (
-            <Link
-              href={ad.target_url}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="group flex h-[90px] w-full max-w-[970px] items-center overflow-hidden rounded-2xl px-5 transition hover:bg-white/[0.04]"
-            >
-              <AdvertisementContent ad={ad} />
-            </Link>
-          ) : (
-            <div className="flex h-[90px] w-full max-w-[970px] items-center overflow-hidden rounded-2xl px-5">
-              <AdvertisementContent ad={ad} />
+    <section aria-label="Advertisement" data-ad-slot={placement} className={`mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10 ${className}`}>
+      <div className={`grid gap-4 ${ads.length > 1 ? "md:grid-cols-2" : "grid-cols-1"}`}>
+        {ads.map((ad) => {
+          const content = (
+            <div className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025] shadow-lg transition hover:border-blue-400/40 hover:bg-white/[0.04]">
+              <div className="relative aspect-[970/250] min-h-[120px] w-full overflow-hidden bg-[#111827]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={ad.image_url} alt={ad.title} loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.01]" />
+                <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">Sponsored</span>
+              </div>
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <div className="min-w-0"><p className="truncate text-sm font-semibold text-white">{ad.title}</p><p className="truncate text-xs text-gray-500">{ad.advertiser_name}</p></div>
+                {ad.target_url && <span className="shrink-0 text-xs font-semibold text-blue-400">Learn more →</span>}
+              </div>
             </div>
-          )
-        ) : (
-          <div className="h-[90px] w-full max-w-[970px]" aria-hidden="true" />
-        )}
+          );
+          return ad.target_url ? <a key={ad.id} href={ad.target_url} target="_blank" rel="noreferrer sponsored" aria-label={`${ad.title} — ${ad.advertiser_name}`}>{content}</a> : <div key={ad.id}>{content}</div>;
+        })}
       </div>
     </section>
-  );
-}
-
-function AdvertisementContent({ ad }: { ad: HomepageAdvertisement }) {
-  return (
-    <>
-      {ad.image_url ? (
-        <img
-          src={ad.image_url}
-          alt={ad.alt_text || ad.title}
-          className="h-full w-full object-cover"
-          loading="lazy"
-        />
-      ) : (
-        <div className="flex w-full items-center justify-between gap-5">
-          <div className="min-w-0">
-            <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.3em] text-blue-400">Advertisement</div>
-            <div className="truncate text-lg font-bold text-white sm:text-xl">{ad.title}</div>
-            <div className="truncate text-sm text-gray-400">{ad.advertiser_name}</div>
-          </div>
-          {ad.target_url && (
-            <span className="shrink-0 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white group-hover:bg-blue-500">
-              Learn more
-            </span>
-          )}
-        </div>
-      )}
-    </>
   );
 }
