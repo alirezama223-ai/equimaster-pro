@@ -9,6 +9,7 @@ import HeroSection from "@/app/components/hero/HeroSection";
 import FadeUp from "@/app/components/animations/FadeUp";
 import AdvertisingSlot from "@/app/components/advertising/AdvertisingSlot";
 
+import type { HomepageAdvertisement } from "@/app/actions/advertisements";
 import type { HeroStats } from "@/app/actions/home-stats";
 import { Horse } from "@/app/data/horses";
 import { DEFAULT_SORT, filterAndSortHorses, SortOption } from "@/app/lib/horse-filters";
@@ -23,9 +24,15 @@ const FeaturedHorses = dynamic(() => import("@/app/components/featured/FeaturedH
 
 const HORSES_PER_PAGE = 6;
 
-type Props = { marketplaceHorses: Horse[]; favoriteListingIds?: string[]; heroStats: HeroStats; premiumStallions: React.ReactNode };
+type Props = {
+  marketplaceHorses: Horse[];
+  favoriteListingIds?: string[];
+  heroStats: HeroStats;
+  advertisements?: HomepageAdvertisement[];
+  premiumStallions: React.ReactNode;
+};
 
-export default function HomeClient({ marketplaceHorses, favoriteListingIds = [], heroStats, premiumStallions }: Props) {
+export default function HomeClient({ marketplaceHorses, favoriteListingIds = [], heroStats, advertisements = [], premiumStallions }: Props) {
   const t = useTranslations("home");
   const [search, setSearchState] = useState("");
   const [breed, setBreedState] = useState("All");
@@ -83,7 +90,7 @@ export default function HomeClient({ marketplaceHorses, favoriteListingIds = [],
       <div id="search-results" className="scroll-mt-24">
         <FeaturedHorses horses={displayedHorses} favoriteListingIds={favoriteListingIds} />
       </div>
-      <AdvertisingSlot />
+      <AdvertisingSlot advertisements={advertisements} />
       {totalPages > 1 && (
         <section className="bg-[#08111F] pb-24"><div className="flex flex-wrap justify-center gap-3 px-4">
           <button type="button" disabled={effectivePage === 1} onClick={() => setCurrentPage((p) => p - 1)} className="px-5 py-3 rounded-xl bg-[#111827] text-white disabled:opacity-40">{t("pagination.previous")}</button>
