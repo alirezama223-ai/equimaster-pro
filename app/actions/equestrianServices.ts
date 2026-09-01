@@ -25,12 +25,13 @@ export type EquestrianServiceProvider = {
 };
 
 const providerSelect = "id,user_id,name,category,description,country,city,postal_code,address,latitude,longitude,phone,email,website,languages,disciplines,price_from,verified,status,created_at,updated_at";
+const publicProviderSelect = "id,name,category,description,country,city,postal_code,address,latitude,longitude,phone,email,website,languages,disciplines,price_from,verified";
 
 export async function getEquestrianServiceProviders() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("equestrian_service_providers")
-    .select("id,name,category,description,country,city,postal_code,address,latitude,longitude,phone,email,website,languages,disciplines,price_from,verified")
+    .select(publicProviderSelect)
     .eq("status", "active")
     .order("verified", { ascending: false })
     .order("name", { ascending: true })
@@ -38,6 +39,19 @@ export async function getEquestrianServiceProviders() {
 
   if (error) return { providers: [] as EquestrianServiceProvider[], error: error.message };
   return { providers: (data ?? []) as EquestrianServiceProvider[] };
+}
+
+export async function getEquestrianServiceProvider(id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("equestrian_service_providers")
+    .select(publicProviderSelect)
+    .eq("id", id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) return { provider: null as EquestrianServiceProvider | null, error: error.message };
+  return { provider: (data ?? null) as EquestrianServiceProvider | null, error: null };
 }
 
 function text(formData: FormData, key: string) {
