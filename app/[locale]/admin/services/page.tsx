@@ -17,6 +17,16 @@ const labels: Record<string, string> = {
 export default async function AdminServicesPage() {
   const { providers, error } = await getAdminEquestrianServiceProviders("pending");
 
+  async function approveService(formData: FormData) {
+    "use server";
+    await moderateEquestrianServiceProvider(formData);
+  }
+
+  async function rejectService(formData: FormData) {
+    "use server";
+    await moderateEquestrianServiceProvider(formData);
+  }
+
   return (
     <main className="min-h-screen bg-[#081223] px-4 pb-20 pt-28 text-white sm:px-6">
       <div className="mx-auto max-w-6xl">
@@ -56,12 +66,12 @@ export default async function AdminServicesPage() {
                   </div>
 
                   <div className="flex shrink-0 flex-wrap gap-2 lg:w-52 lg:flex-col">
-                    <form action={moderateEquestrianServiceProvider}>
+                    <form action={approveService}>
                       <input type="hidden" name="id" value={provider.id} />
                       <input type="hidden" name="action" value="approve" />
                       <button className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold">Approve</button>
                     </form>
-                    <form action={moderateEquestrianServiceProvider}>
+                    <form action={rejectService}>
                       <input type="hidden" name="id" value={provider.id} />
                       <input type="hidden" name="action" value="reject" />
                       <button className="w-full rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-200">Reject</button>
