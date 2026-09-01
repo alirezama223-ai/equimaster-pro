@@ -1,5 +1,6 @@
 import Navbar from "@/app/components/navbar/Navbar";
 import EquiMarketServices from "@/app/components/services/EquiMarketServices";
+import LocalServicesFinder from "@/app/components/services/LocalServicesFinder";
 import { getEquiMarketListings } from "@/app/actions/equimarket";
 import { getEquestrianServiceProviders } from "@/app/actions/equestrianServices";
 import { getLocale } from "next-intl/server";
@@ -23,7 +24,10 @@ export default async function ServicesPage() {
   return (
     <>
       <Navbar />
-      <EquiMarketServices locale={locale} rentals={rentals} wanted={wanted} providers={providers} />
+      <main className="min-h-screen bg-[#081223] px-4 pb-24 pt-28 text-white sm:px-6">
+        <LocalServicesFinder locale={locale} providers={providers} />
+        <EquiMarketServices locale={locale} rentals={rentals} wanted={wanted} />
+      </main>
     </>
   );
 }
