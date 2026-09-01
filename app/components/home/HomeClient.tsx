@@ -9,6 +9,7 @@ import HeroSection from "@/app/components/hero/HeroSection";
 import FadeUp from "@/app/components/animations/FadeUp";
 import AdvertisingSlot from "@/app/components/advertising/AdvertisingSlot";
 
+import type { HomepageAdvertisement } from "@/app/actions/advertisements";
 import type { HeroStats } from "@/app/actions/home-stats";
 import { Horse } from "@/app/data/horses";
 import { DEFAULT_SORT, filterAndSortHorses, SortOption } from "@/app/lib/horse-filters";
@@ -18,14 +19,24 @@ const AdvancedSearch = dynamic(() => import("@/app/components/search/AdvancedSea
 });
 
 const FeaturedHorses = dynamic(() => import("@/app/components/featured/FeaturedHorses"), {
-  loading: () => <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6" aria-hidden="true"><div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 3 }, (_, index) => <div key={index} className="h-96 animate-pulse rounded-3xl bg-white/5" />)}</div></div>,
+  loading: () => <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6"><div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 3 }, (_, index) => <div key={index} className="h-96 animate-pulse rounded-3xl bg-white/5" />)}</div></div>,
 });
 
 const HORSES_PER_PAGE = 6;
 
-type Props = { marketplaceHorses: Horse[]; favoriteListingIds?: string[]; heroStats: HeroStats; premiumStallions: React.ReactNode };
+type Props = {
+  marketplaceHorses: Horse[];
+  favoriteListingIds?: string[];
+  heroStats: HeroStats;
+  premiumStallions: React.ReactNode;
+  homepageAds: {
+    top: HomepageAdvertisement[];
+    featured: HomepageAdvertisement[];
+    bottom: HomepageAdvertisement[];
+  };
+};
 
-export default function HomeClient({ marketplaceHorses, favoriteListingIds = [], heroStats, premiumStallions }: Props) {
+export default function HomeClient({ marketplaceHorses, favoriteListingIds = [], heroStats, premiumStallions, homepageAds }: Props) {
   const t = useTranslations("home");
   const [search, setSearchState] = useState("");
   const [breed, setBreedState] = useState("All");
@@ -77,13 +88,14 @@ export default function HomeClient({ marketplaceHorses, favoriteListingIds = [],
     <div className="max-md:min-w-0 max-md:max-w-full max-md:overflow-x-hidden">
       <Navbar />
       <HeroSection stats={heroStats} />
+      <AdvertisingSlot advertisements={homepageAds.top} placement="homepage_top" />
       <FadeUp>
         <AdvancedSearch search={search} setSearch={setSearch} breed={breed} setBreed={setBreed} country={country} setCountry={setCountry} gender={gender} setGender={setGender} discipline={discipline} setDiscipline={setDiscipline} verified={verified} setVerified={setVerified} minPrice={minPrice} setMinPrice={setMinPrice} maxPrice={maxPrice} setMaxPrice={setMaxPrice} minAge={minAge} setMinAge={setMinAge} maxAge={maxAge} setMaxAge={setMaxAge} minHeight={minHeight} setMinHeight={setMinHeight} maxHeight={maxHeight} setMaxHeight={setMaxHeight} sort={sort} setSort={setSort} onSearch={runSearch} onResetFilters={resetFilters} />
       </FadeUp>
       <div id="search-results" className="scroll-mt-24">
         <FeaturedHorses horses={displayedHorses} favoriteListingIds={favoriteListingIds} />
       </div>
-      <AdvertisingSlot />
+      <AdvertisingSlot advertisements={homepageAds.featured} placement="homepage_featured" />
       {totalPages > 1 && (
         <section className="bg-[#08111F] pb-24"><div className="flex flex-wrap justify-center gap-3 px-4">
           <button type="button" disabled={effectivePage === 1} onClick={() => setCurrentPage((p) => p - 1)} className="px-5 py-3 rounded-xl bg-[#111827] text-white disabled:opacity-40">{t("pagination.previous")}</button>
@@ -91,6 +103,7 @@ export default function HomeClient({ marketplaceHorses, favoriteListingIds = [],
           <button type="button" disabled={effectivePage === totalPages} onClick={() => setCurrentPage((p) => p + 1)} className="px-5 py-3 rounded-xl bg-[#111827] text-white disabled:opacity-40">{t("pagination.next")}</button>
         </div></section>
       )}
+      <AdvertisingSlot advertisements={homepageAds.bottom} placement="homepage_bottom" />
       <FadeUp>{premiumStallions}</FadeUp>
     </div>
   );
