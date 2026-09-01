@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/lib/supabase/server";
+import { requireAdmin } from "@/app/lib/admin";
 
 export type EquestrianServiceProvider = {
   id: string;
@@ -22,6 +23,8 @@ export type EquestrianServiceProvider = {
   price_from: number | null;
   verified: boolean;
 };
+
+const providerSelect = "id,user_id,name,category,description,country,city,postal_code,address,latitude,longitude,phone,email,website,languages,disciplines,price_from,verified,status,created_at,updated_at";
 
 export async function getEquestrianServiceProviders() {
   const supabase = await createClient();
@@ -95,5 +98,43 @@ export async function createEquestrianServiceProvider(formData: FormData) {
 
   if (error) return { ok: false, error: "Unable to submit this service right now." };
   revalidatePath("/services");
+  revalidatePath("/admin/services");
+  return { ok: true, error: null };
+}
+
+export async function getAdminEquestrianServiceProviders(status: "pending" | "active" | "rejected" | "all" = "pending") {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase) return { providers: [], error: auth.error ?? "Forbidden" };
+
+  let query = auth.supabase.from("equestrian_service_providers").select(providerSelect).order("created_at", { ascending: false }).limit(200);
+  if (status !== "all") query = query.eq("status", status);
+  const { data, error } = await query;
+  if (error) return { providers: [], error: error.message };
+  return { providers: data ?? [], error: null };
+}
+
+export async function moderateEquestrianServiceProvider(formData: FormData) {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase) return { ok: false, error: auth.error ?? "Forbidden" };
+
+  const id = text(formData, "id");
+  const action = text(formData, "action");
+  if (!id || !["approve", "reject", "pause", "restore", "verify", "unverify"].includes(action)) {
+    return { ok: false, error: "Invalid moderation request." };
+  }
+
+  const patch: Record<string, unknown> = {};
+  if (action === "approve") patch.status = "active";
+  if (action === "reject") patch.status = "rejected";
+  if (action === "pause") patch.status = "paused";
+  if (action === "restore") patch.status = "active";
+  if (action === "verify") patch.verified = true;
+  if (action === "unverify") patch.verified = false;
+
+  const { error } = await auth.supabase.from("equestrian_service_providers").update(patch).eq("id", id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/services");
+  revalidatePath("/admin/services");
   return { ok: true, error: null };
 }
