@@ -7,6 +7,15 @@ import { requireAdmin } from "@/app/lib/admin";
 const placements = ["homepage_top", "homepage_featured", "homepage_bottom"] as const;
 const statuses = ["draft", "pending", "active", "paused", "rejected"] as const;
 
+export type HomepageAdvertisement = {
+  id: string;
+  title: string;
+  advertiser_name: string;
+  image_url: string;
+  target_url: string | null;
+  placement: typeof placements[number];
+};
+
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
@@ -14,6 +23,23 @@ function text(formData: FormData, key: string) {
 function validateUrl(value: string) {
   if (!value) return true;
   try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:"; } catch { return false; }
+}
+
+export async function getHomepageAdvertisements(placement?: typeof placements[number]) {
+  const supabase = await createClient();
+  const now = new Date().toISOString();
+  let query = supabase
+    .from("advertisements")
+    .select("id,title,advertiser_name,image_url,target_url,placement")
+    .eq("status", "active")
+    .or(`start_at.is.null,start_at.lte.${now}`)
+    .or(`end_at.is.null,end_at.gte.${now}`)
+    .order("priority", { ascending: false })
+    .limit(20);
+  if (placement) query = query.eq("placement", placement);
+  const { data, error } = await query;
+  if (error) return { advertisements: [] as HomepageAdvertisement[], error: error.message };
+  return { advertisements: (data ?? []) as HomepageAdvertisement[], error: null };
 }
 
 export async function getAdminAdvertisements() {
