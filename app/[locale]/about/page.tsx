@@ -1,0 +1,60 @@
+import Link from "next/link";
+import Navbar from "@/app/components/navbar/Navbar";
+
+const content = {
+  en: {
+    title: "About Shabdiz",
+    intro: "A modern equestrian ecosystem connecting horses, riders, professionals and services in one trusted place.",
+    missionTitle: "Our mission",
+    mission: "Shabdiz is built to make the equestrian world easier to discover, connect and navigate. We bring horse listings, equestrian services and intelligent tools together so riders and horse owners can make better-informed decisions.",
+    offerTitle: "What you can find on Shabdiz",
+    items: [
+      ["Horse Marketplace", "Discover and compare horses through a dedicated equestrian marketplace."],
+      ["Equestrian Services", "Find riding schools, trainers, farriers, veterinarians and other professionals near you."],
+      ["AI-assisted tools", "Use intelligent analysis to support training, planning and other equestrian decisions."],
+      ["A growing ecosystem", "Connect the people, horses and services that make the equestrian community work."],
+    ],
+    trustTitle: "Built around trust and transparency",
+    trust: "We believe useful equestrian technology should be clear about what is verified, what is user-provided and where intelligent assistance is being used. Shabdiz is designed with that principle at its core.",
+    visionTitle: "Our vision",
+    vision: "To build a trusted international digital home for the equestrian community — bringing discovery, services and intelligent technology together without losing the human side of horses.",
+    explore: "Explore horses",
+    services: "Find services",
+  },
+  de: {
+    title: "Über Shabdiz",
+    intro: "Ein modernes Reitsport-Ökosystem, das Pferde, Reiter, Fachleute und Dienstleistungen an einem vertrauenswürdigen Ort verbindet.",
+    missionTitle: "Unsere Mission",
+    mission: "Shabdiz soll die Welt des Reitsports einfacher auffindbar und vernetzbar machen. Wir verbinden Pferdeangebote, Reitsport-Dienstleistungen und intelligente Werkzeuge, damit Reiter und Pferdebesitzer fundiertere Entscheidungen treffen können.",
+    offerTitle: "Was du auf Shabdiz findest",
+    items: [["Pferdemarktplatz", "Pferde auf einem spezialisierten Reitsport-Marktplatz entdecken und vergleichen."], ["Reitsport-Dienstleistungen", "Reitschulen, Trainer, Hufschmiede, Tierärzte und weitere Fachleute in deiner Nähe finden."], ["KI-gestützte Werkzeuge", "Intelligente Analysen für Training, Planung und weitere Entscheidungen nutzen."], ["Ein wachsendes Ökosystem", "Menschen, Pferde und Dienstleistungen der Reitsportgemeinschaft miteinander verbinden."]],
+    trustTitle: "Vertrauen und Transparenz",
+    trust: "Wir sind überzeugt, dass gute Reitsport-Technologie klar zeigen sollte, was verifiziert ist, was von Nutzern stammt und wo intelligente Unterstützung eingesetzt wird.",
+    visionTitle: "Unsere Vision",
+    vision: "Ein vertrauenswürdiger internationaler digitaler Ort für die Reitsportgemeinschaft, der Entdeckung, Dienstleistungen und intelligente Technologie zusammenbringt.",
+    explore: "Pferde entdecken", services: "Dienstleistungen finden",
+  },
+  fr: {
+    title: "À propos de Shabdiz", intro: "Un écosystème équestre moderne qui réunit chevaux, cavaliers, professionnels et services dans un espace de confiance.", missionTitle: "Notre mission", mission: "Shabdiz rend l'univers équestre plus simple à découvrir et à connecter. Nous réunissons annonces de chevaux, services équestres et outils intelligents pour aider les cavaliers et propriétaires à prendre de meilleures décisions.", offerTitle: "Ce que vous trouverez sur Shabdiz", items: [["Marketplace équestre", "Découvrez et comparez des chevaux sur une marketplace dédiée."], ["Services équestres", "Trouvez centres équestres, entraîneurs, maréchaux-ferrants, vétérinaires et autres professionnels près de chez vous."], ["Outils assistés par l'IA", "Utilisez des analyses intelligentes pour l'entraînement et la planification."], ["Un écosystème en développement", "Connectez les personnes, chevaux et services de la communauté équestre."]], trustTitle: "Confiance et transparence", trust: "Nous pensons qu'une technologie équestre utile doit clairement distinguer les informations vérifiées, celles fournies par les utilisateurs et l'assistance intelligente.", visionTitle: "Notre vision", vision: "Construire un espace numérique international de confiance pour la communauté équestre, réunissant découverte, services et technologie intelligente.", explore: "Découvrir les chevaux", services: "Trouver des services",
+  },
+  es: {
+    title: "Sobre Shabdiz", intro: "Un ecosistema ecuestre moderno que conecta caballos, jinetes, profesionales y servicios en un solo lugar de confianza.", missionTitle: "Nuestra misión", mission: "Shabdiz hace que el mundo ecuestre sea más fácil de descubrir y conectar. Reunimos anuncios de caballos, servicios ecuestres y herramientas inteligentes para ayudar a jinetes y propietarios a tomar mejores decisiones.", offerTitle: "Qué puedes encontrar en Shabdiz", items: [["Marketplace de caballos", "Descubre y compara caballos en un marketplace especializado."], ["Servicios ecuestres", "Encuentra centros de equitación, entrenadores, herradores, veterinarios y otros profesionales cerca de ti."], ["Herramientas con IA", "Utiliza análisis inteligentes para entrenamiento y planificación."], ["Un ecosistema en crecimiento", "Conecta a las personas, caballos y servicios de la comunidad ecuestre."]], trustTitle: "Confianza y transparencia", trust: "Creemos que una tecnología ecuestre útil debe dejar claro qué información está verificada, cuál procede de usuarios y dónde se utiliza asistencia inteligente.", visionTitle: "Nuestra visión", vision: "Crear un espacio digital internacional y de confianza para la comunidad ecuestre, uniendo descubrimiento, servicios y tecnología inteligente.", explore: "Explorar caballos", services: "Encontrar servicios",
+  },
+  nl: {
+    title: "Over Shabdiz", intro: "Een modern paardensportecosysteem dat paarden, ruiters, professionals en diensten samenbrengt op één vertrouwde plek.", missionTitle: "Onze missie", mission: "Shabdiz maakt de paardenwereld eenvoudiger om te ontdekken en met elkaar te verbinden. We brengen paardaanbiedingen, paardensportdiensten en slimme hulpmiddelen samen zodat ruiters en paardeneigenaren betere beslissingen kunnen nemen.", offerTitle: "Wat je op Shabdiz vindt", items: [["Paardenmarktplaats", "Ontdek en vergelijk paarden op een gespecialiseerde marktplaats."], ["Paardensportdiensten", "Vind maneges, trainers, hoefsmeden, dierenartsen en andere professionals bij jou in de buurt."], ["AI-ondersteunde tools", "Gebruik slimme analyses voor training en planning."], ["Een groeiend ecosysteem", "Breng mensen, paarden en diensten binnen de paardensportgemeenschap samen."]], trustTitle: "Vertrouwen en transparantie", trust: "Goede paardensporttechnologie moet duidelijk maken wat geverifieerd is, wat door gebruikers is aangeleverd en waar intelligente ondersteuning wordt gebruikt.", visionTitle: "Onze visie", vision: "Een vertrouwde internationale digitale thuisbasis voor de paardensportgemeenschap bouwen, waarin ontdekking, diensten en slimme technologie samenkomen.", explore: "Paarden ontdekken", services: "Diensten vinden",
+  },
+} as const;
+
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const c = content[locale as keyof typeof content] ?? content.en;
+
+  return <><Navbar /><main className="min-h-screen bg-[#081223] px-4 pb-24 pt-28 text-white sm:px-6"><div className="mx-auto max-w-6xl">
+    <section className="rounded-3xl border border-blue-500/20 bg-[#111827] px-6 py-14 text-center sm:px-12 sm:py-20">
+      <div className="mx-auto max-w-4xl"><span className="text-sm font-bold uppercase tracking-[0.25em] text-blue-400">Shabdiz</span><h1 className="mt-4 text-4xl font-black sm:text-6xl">{c.title}</h1><p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-gray-400 sm:text-xl">{c.intro}</p></div>
+    </section>
+    <section className="mt-8 grid gap-8 lg:grid-cols-2"><article className="rounded-3xl border border-white/10 bg-[#111827] p-7 sm:p-9"><h2 className="text-2xl font-bold">{c.missionTitle}</h2><p className="mt-4 leading-8 text-gray-400">{c.mission}</p></article><article className="rounded-3xl border border-white/10 bg-[#111827] p-7 sm:p-9"><h2 className="text-2xl font-bold">{c.trustTitle}</h2><p className="mt-4 leading-8 text-gray-400">{c.trust}</p></article></section>
+    <section className="mt-8 rounded-3xl border border-white/10 bg-[#111827] p-7 sm:p-9"><h2 className="text-2xl font-bold">{c.offerTitle}</h2><div className="mt-6 grid gap-4 sm:grid-cols-2">{c.items.map(([title, text]) => <div key={title} className="rounded-2xl bg-[#081223] p-5"><h3 className="font-bold">{title}</h3><p className="mt-2 text-sm leading-6 text-gray-400">{text}</p></div>)}</div></section>
+    <section className="mt-8 rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111827] to-[#0b172a] p-7 text-center sm:p-10"><h2 className="text-2xl font-bold">{c.visionTitle}</h2><p className="mx-auto mt-4 max-w-3xl leading-8 text-gray-400">{c.vision}</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Link href={`/${locale}/marketplace`} className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold">{c.explore}</Link><Link href={`/${locale}/services`} className="rounded-xl border border-white/10 px-5 py-3 text-sm font-bold">{c.services}</Link></div></section>
+  </div></main></>;
+}
