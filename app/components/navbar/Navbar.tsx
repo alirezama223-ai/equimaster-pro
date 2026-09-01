@@ -36,7 +36,7 @@ export default function Navbar() {
 
         <nav className="hidden min-w-0 flex-1 items-center justify-center gap-x-3 gap-y-1 min-[1800px]:flex min-[1800px]:gap-x-4" aria-label={t("primaryNav")}>
           {DESKTOP_INLINE_NAV_LINKS.map((link) => <Link key={`${link.href}-${link.labelKey}`} href={link.href} className={`whitespace-nowrap text-sm font-medium text-gray-300 ${navLinkClassName(link)}`}>{t(link.labelKey)}</Link>)}
-          <Link href="#" className="whitespace-nowrap text-sm font-medium text-gray-300 hover:text-white transition">{t("about")}</Link>
+          <Link href="/about" className="whitespace-nowrap text-sm font-medium text-gray-300 hover:text-white transition">{t("about")}</Link>
         </nav>
 
         <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-3">
