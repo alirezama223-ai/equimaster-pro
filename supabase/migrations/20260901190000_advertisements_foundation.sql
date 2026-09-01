@@ -42,4 +42,9 @@ on public.advertisements
 for select to anon, authenticated
 using (status = 'active' and start_at <= now() and end_at > now());
 
--- Administrative writes are performed through protected server-side actions.
+drop policy if exists "Admins can manage advertisements" on public.advertisements;
+create policy "Admins can manage advertisements"
+on public.advertisements
+for all
+using (public.is_admin())
+with check (public.is_admin());
