@@ -16,9 +16,9 @@ export default function AdvertisingSlot({ advertisements = [], placement = "home
         {ads.map((ad) => {
           const content = (
             <div className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025] shadow-lg transition hover:border-blue-400/40 hover:bg-white/[0.04]">
-              <div className="relative aspect-[970/250] min-h-[120px] w-full overflow-hidden bg-[#111827]">
+              <div className="relative aspect-[1600/600] min-h-[120px] w-full overflow-hidden bg-[#111827]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={ad.image_url} alt={ad.title} loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.01]" />
+                <img src={ad.image_url} alt={ad.title} loading="lazy" className="h-full w-full object-contain transition duration-300 group-hover:scale-[1.01]" />
                 <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">Sponsored</span>
               </div>
               <div className="flex items-center justify-between gap-3 px-4 py-3">
