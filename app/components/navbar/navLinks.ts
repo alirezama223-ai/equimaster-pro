@@ -53,7 +53,7 @@ export const FULL_NAV_LINKS: NavLinkItem[] = [
   { href: "/breeding-lab", labelKey: "breedingLab" },
   { href: "/training", labelKey: "training" },
   { href: "/breeding-recommendations", labelKey: "stallionMatch" },
-  { href: "#", labelKey: "about" },
+  { href: "/about", labelKey: "about" },
 ];
 
 export function navLinkClassName(link: NavLinkItem, base = "whitespace-nowrap transition") {
