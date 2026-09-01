@@ -9,7 +9,7 @@ const links = [
   { href: "/admin/stallions", key: "stallions" as const },
   { href: "/admin/pedigree", key: "pedigree" as const },
   { href: "/admin/traits", key: "traits" as const },
-  { href: "/admin/advertisements", key: "advertisements" as const },
+  { href: "/admin/advertisements", label: "Advertisements" as const },
   { href: "/admin/feedback", key: "feedback" as const },
 ];
 
@@ -31,7 +31,7 @@ export default function AdminNav() {
                 : "border border-white/10 text-gray-300 hover:border-blue-500/40 hover:text-white"
             }`}
           >
-            {t(link.key)}
+            {"label" in link ? link.label : t(link.key)}
           </Link>
         );
       })}
