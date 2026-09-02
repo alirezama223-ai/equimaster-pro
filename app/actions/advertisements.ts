@@ -5,7 +5,7 @@ import { createClient } from "@/app/lib/supabase/server";
 import { requireAdmin } from "@/app/lib/admin";
 
 const placements = ["homepage_top", "homepage_featured", "homepage_bottom"] as const;
-const statuses = ["draft", "pending", "active", "paused", "rejected", "expired"] as const;
+const statuses = ["draft", "pending", "active", "paused", "rejected", "expired", "scheduled"] as const;
 
 export type HomepageAdvertisement = {
   id: string;
@@ -75,6 +75,21 @@ export async function getAdminAdvertisements(): Promise<{
     .limit(200);
 
   if (error) return { advertisements: [], error: error.message };
+  return { advertisements: (data ?? []) as AdminAdvertisement[], error: undefined };
+}
+
+export async function getAdminAdvertisementReport() {
+  const auth = await requireAdmin();
+  if (auth.error || !auth.supabase) return { advertisements: [] as AdminAdvertisement[], error: auth.error ?? "Forbidden" };
+
+  const { data, error } = await auth.supabase
+    .from("advertisements")
+    .select("id,title,advertiser_name,placement,start_at,end_at,status,priority,impressions,clicks")
+    .order("clicks", { ascending: false })
+    .order("impressions", { ascending: false })
+    .limit(200);
+
+  if (error) return { advertisements: [] as AdminAdvertisement[], error: error.message };
   return { advertisements: (data ?? []) as AdminAdvertisement[], error: undefined };
 }
 
