@@ -25,7 +25,7 @@ function trackAdvertisement(adId: string, event: "impression" | "click") {
 
 function TrackedAdvertisement({ ad }: { ad: HomepageAdvertisement }) {
   const impressionSent = useRef(false);
-  const cardRef = useRef<HTMLAnchorElement | HTMLDivElement>(null);
+  const cardRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const element = cardRef.current;
@@ -67,12 +67,12 @@ function TrackedAdvertisement({ ad }: { ad: HomepageAdvertisement }) {
   );
 
   if (!ad.target_url) {
-    return <div ref={cardRef}>{content}</div>;
+    return <div ref={(node) => { cardRef.current = node; }}>{content}</div>;
   }
 
   return (
     <a
-      ref={cardRef}
+      ref={(node) => { cardRef.current = node; }}
       href={ad.target_url}
       target="_blank"
       rel="noreferrer sponsored"
