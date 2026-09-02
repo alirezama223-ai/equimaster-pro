@@ -9,10 +9,60 @@ import type { BillingInterval, PlanSlug } from "@/app/types/subscription";
 
 async function getPlanIdBySlug(slug: PlanSlug) {
   const supabase = createServiceClient();
-  const { data, error } = await supabase.from("plans").select("id, slug").eq("slug", slug).maybeSingle();
-  if (error || !data) {
-    throw new Error(`Plan not found for slug: ${slug}`);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const supabaseHost = (() => {
+    try {
+      return new URL(supabaseUrl).host;
+    } catch {
+      return "invalid-url";
+    }
+  })();
+
+  const { data, error } = await supabase
+    .from("plans")
+    .select("id, slug")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error("[stripe-webhook] Supabase plans query failed:", {
+      slug,
+      host: supabaseHost,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    throw new Error(`Supabase plans query failed for slug ${slug}: ${error.message}`);
   }
+
+  if (!data) {
+    const { data: visiblePlans, error: listError } = await supabase
+      .from("plans")
+      .select("id, slug")
+      .order("slug");
+
+    console.error("[stripe-webhook] Plan missing from Supabase:", {
+      requestedSlug: slug,
+      host: supabaseHost,
+      visibleSlugs: visiblePlans?.map((plan) => plan.slug) ?? [],
+      listError: listError
+        ? {
+            code: listError.code,
+            message: listError.message,
+            details: listError.details,
+            hint: listError.hint,
+          }
+        : null,
+    });
+
+    throw new Error(
+      `Plan not found for slug: ${slug} (Supabase host: ${supabaseHost}; visible plans: ${
+        visiblePlans?.map((plan) => plan.slug).join(", ") || "none"
+      })`
+    );
+  }
+
   return String(data.id);
 }
 
