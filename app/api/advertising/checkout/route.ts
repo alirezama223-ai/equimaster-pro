@@ -97,8 +97,8 @@ export async function POST(request: Request) {
           advertisement_id: String(order.advertisement_id),
         },
       },
-      success_url: `${siteUrl}/advertising/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/advertising/checkout/cancelled?order_id=${encodeURIComponent(order.id)}`,
+      success_url: `${siteUrl}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/?payment=cancelled&order_id=${encodeURIComponent(order.id)}`,
     });
 
     const { error: updateError } = await supabase
