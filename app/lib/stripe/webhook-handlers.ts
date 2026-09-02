@@ -209,17 +209,212 @@ async function syncStripeInvoice(invoice: Stripe.Invoice, stripeEventId: string)
   });
 }
 
+async function recordAdvertisementBillingEvent(
+  event: Stripe.Event,
+  orderId: string | null
+): Promise<boolean> {
+  const supabase = createServiceClient();
+  const payload = event.data.object as unknown as Record<string, unknown>;
+
+  const { error } = await supabase
+    .from("advertisement_billing_events")
+    .upsert(
+      {
+        order_id: orderId,
+        event_type: event.type,
+        provider: "stripe",
+        provider_event_id: event.id,
+        payload,
+      },
+      { onConflict: "provider_event_id", ignoreDuplicates: true }
+    );
+
+  if (error) {
+    throw new Error(`Unable to record advertising billing event: ${error.message}`);
+  }
+
+  const { data: existing } = await supabase
+    .from("advertisement_billing_events")
+    .select("processed_at")
+    .eq("provider_event_id", event.id)
+    .maybeSingle();
+
+  return Boolean(existing?.processed_at);
+}
+
+async function markAdvertisementOrderProcessed(orderId: string, eventId: string) {
+  const supabase = createServiceClient();
+  const { error } = await supabase
+    .from("advertisement_billing_events")
+    .update({ processed_at: new Date().toISOString() })
+    .eq("provider_event_id", eventId)
+    .eq("order_id", orderId);
+
+  if (error) {
+    throw new Error(`Unable to mark advertising billing event processed: ${error.message}`);
+  }
+}
+
+async function findAdvertisementOrderId(session: Stripe.Checkout.Session): Promise<string | null> {
+  const metadataOrderId = session.metadata?.billing_order_id;
+  if (metadataOrderId) {
+    return metadataOrderId;
+  }
+
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("advertisement_billing_orders")
+    .select("id")
+    .eq("payment_session_id", session.id)
+    .maybeSingle();
+
+  return data?.id ? String(data.id) : null;
+}
+
+async function syncAdvertisementCheckoutSession(
+  session: Stripe.Checkout.Session,
+  event: Stripe.Event
+) {
+  const orderId = await findAdvertisementOrderId(session);
+  const alreadyProcessed = await recordAdvertisementBillingEvent(event, orderId);
+  if (alreadyProcessed) return;
+
+  if (!orderId) {
+    throw new Error("Advertising billing order not found for Stripe Checkout Session.");
+  }
+
+  const supabase = createServiceClient();
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
+
+  const isPaid = session.payment_status === "paid";
+  const nextStatus = isPaid ? "paid" : "pending_payment";
+
+  const { data: order, error: orderError } = await supabase
+    .from("advertisement_billing_orders")
+    .select("id, advertisement_id, status")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (orderError || !order) {
+    throw new Error(orderError?.message || "Advertising billing order not found.");
+  }
+
+  const { error: updateError } = await supabase
+    .from("advertisement_billing_orders")
+    .update({
+      status: nextStatus,
+      payment_provider: "stripe",
+      payment_session_id: session.id,
+      payment_intent_id: paymentIntentId,
+      payment_reference: paymentIntentId ?? session.id,
+      paid_at: isPaid ? new Date().toISOString() : null,
+    })
+    .eq("id", order.id);
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+
+  await supabase
+    .from("advertisements")
+    .update({ billing_status: isPaid ? "paid" : "pending_payment" })
+    .eq("id", order.advertisement_id);
+
+  if (isPaid) {
+    // Payment never bypasses moderation. An already-approved campaign can remain active;
+    // draft/pending/rejected campaigns keep their current moderation state until approved.
+    const { data: advertisement } = await supabase
+      .from("advertisements")
+      .select("status")
+      .eq("id", order.advertisement_id)
+      .maybeSingle();
+
+    if (advertisement?.status === "active") {
+      await supabase
+        .from("advertisements")
+        .update({ billing_status: "paid", payment_reference: paymentIntentId ?? session.id })
+        .eq("id", order.advertisement_id);
+    }
+  }
+
+  await markAdvertisementOrderProcessed(order.id, event.id);
+}
+
+async function syncAdvertisementCheckoutFailure(
+  session: Stripe.Checkout.Session,
+  event: Stripe.Event,
+  status: "failed" | "cancelled"
+) {
+  const orderId = await findAdvertisementOrderId(session);
+  const alreadyProcessed = await recordAdvertisementBillingEvent(event, orderId);
+  if (alreadyProcessed) return;
+
+  if (!orderId) {
+    throw new Error("Advertising billing order not found for Stripe Checkout Session.");
+  }
+
+  const supabase = createServiceClient();
+  const { data: order, error: orderError } = await supabase
+    .from("advertisement_billing_orders")
+    .select("id, advertisement_id")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  if (orderError || !order) {
+    throw new Error(orderError?.message || "Advertising billing order not found.");
+  }
+
+  await supabase
+    .from("advertisement_billing_orders")
+    .update({ status })
+    .eq("id", order.id);
+
+  await supabase
+    .from("advertisements")
+    .update({ billing_status: status })
+    .eq("id", order.advertisement_id);
+
+  await markAdvertisementOrderProcessed(order.id, event.id);
+}
+
 export async function handleStripeWebhookEvent(event: Stripe.Event) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      if (session.mode !== "subscription" || !session.subscription) {
+      if (session.mode === "subscription" && session.subscription) {
+        const stripe = (await import("@/app/lib/stripe/config")).getStripeClient();
+        const subscription = await stripe.subscriptions.retrieve(String(session.subscription));
+        await syncStripeSubscription(subscription, event.type, event.id);
         return;
       }
 
-      const stripe = (await import("@/app/lib/stripe/config")).getStripeClient();
-      const subscription = await stripe.subscriptions.retrieve(String(session.subscription));
-      await syncStripeSubscription(subscription, event.type, event.id);
+      if (session.mode === "payment" && session.metadata?.billing_order_id) {
+        await syncAdvertisementCheckoutSession(session, event);
+      }
+      return;
+    }
+    case "checkout.session.async_payment_succeeded": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      if (session.mode === "payment" && session.metadata?.billing_order_id) {
+        await syncAdvertisementCheckoutSession(session, event);
+      }
+      return;
+    }
+    case "checkout.session.async_payment_failed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      if (session.mode === "payment" && session.metadata?.billing_order_id) {
+        await syncAdvertisementCheckoutFailure(session, event, "failed");
+      }
+      return;
+    }
+    case "checkout.session.expired": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      if (session.mode === "payment" && session.metadata?.billing_order_id) {
+        await syncAdvertisementCheckoutFailure(session, event, "cancelled");
+      }
       return;
     }
     case "customer.subscription.created":
