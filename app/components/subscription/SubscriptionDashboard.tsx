@@ -215,40 +215,50 @@ export default function SubscriptionDashboard({
 
       {snapshot.canUpgrade ? (
         <section className="grid gap-6 lg:grid-cols-2">
-          {paidPlans.map((plan) => (
-            <article key={plan.id} className="rounded-3xl border border-white/10 bg-[#0f1729] p-6">
-              <h2 className="text-2xl font-black text-white">{plan.name}</h2>
-              <p className="mt-2 text-sm text-gray-400">{t(`plans.${plan.slug}.description`)}</p>
-              <div className="mt-4 space-y-2 text-sm text-gray-300">
-                <p>{formatMoney(plan.monthly_price_cents)} / {t("monthly")}</p>
-                <p>{formatMoney(plan.yearly_price_cents)} / {t("yearly")}</p>
-              </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={
-                    isPending ||
-                    (snapshot.plan.slug === plan.slug && snapshot.subscription.billing_interval === "month")
-                  }
-                  onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "month")}
-                  className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-60"
-                >
-                  {t("monthly")}
-                </button>
-                <button
-                  type="button"
-                  disabled={
-                    isPending ||
-                    (snapshot.plan.slug === plan.slug && snapshot.subscription.billing_interval === "year")
-                  }
-                  onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "year")}
-                  className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-white/20 disabled:opacity-60"
-                >
-                  {t("yearly")}
-                </button>
-              </div>
-            </article>
-          ))}
+          {paidPlans.map((plan) => {
+            const isCurrentPlan = snapshot.plan.slug === plan.slug;
+            const isCurrentMonthly = isCurrentPlan && snapshot.subscription.billing_interval === "month";
+            const isCurrentYearly = isCurrentPlan && snapshot.subscription.billing_interval === "year";
+
+            return (
+              <article key={plan.id} className="rounded-3xl border border-white/10 bg-[#0f1729] p-6">
+                <h2 className="text-2xl font-black text-white">{plan.name}</h2>
+                <p className="mt-2 text-sm text-gray-400">{t(`plans.${plan.slug}.description`)}</p>
+                <div className="mt-4 space-y-2 text-sm text-gray-300">
+                  <p>{formatMoney(plan.monthly_price_cents)} / {t("monthly")}</p>
+                  <p>{formatMoney(plan.yearly_price_cents)} / {t("yearly")}</p>
+                </div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={isPending || isCurrentMonthly}
+                    onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "month")}
+                    className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-100 ${
+                      isCurrentMonthly
+                        ? "border border-blue-500/40 bg-blue-600 text-white shadow-sm"
+                        : "bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-60"
+                    }`}
+                    aria-pressed={isCurrentMonthly}
+                  >
+                    {t("monthly")}{isCurrentMonthly ? " ✓" : ""}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending || isCurrentYearly}
+                    onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "year")}
+                    className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-100 ${
+                      isCurrentYearly
+                        ? "border border-blue-500/40 bg-blue-600 text-white shadow-sm"
+                        : "border border-white/10 text-white hover:border-white/20 disabled:opacity-60"
+                    }`}
+                    aria-pressed={isCurrentYearly}
+                  >
+                    {t("yearly")}{isCurrentYearly ? " ✓" : ""}
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </section>
       ) : null}
 
