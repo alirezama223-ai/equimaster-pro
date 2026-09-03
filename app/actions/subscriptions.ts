@@ -166,7 +166,7 @@ export async function createSubscriptionCheckoutSession(
         return { error: "No subscription item found for the active subscription." };
       }
 
-      await stripe.subscriptions.update(existingSubscriptionId, {
+      const updatedSubscription = await stripe.subscriptions.update(existingSubscriptionId, {
         items: [{ id: item.id, price: priceId, quantity: item.quantity ?? 1 }],
         proration_behavior: "always_invoice",
         payment_behavior: "pending_if_incomplete",
@@ -177,6 +177,27 @@ export async function createSubscriptionCheckoutSession(
           billing_interval: interval,
         },
       });
+
+      const updatedItem = updatedSubscription.items.data[0];
+      const currentPeriodStart = updatedItem?.current_period_start ?? null;
+      const currentPeriodEnd = updatedItem?.current_period_end ?? null;
+
+      await auth.supabase
+        .from("subscriptions")
+        .update({
+          billing_interval: interval,
+          current_period_start: currentPeriodStart
+            ? new Date(currentPeriodStart * 1000).toISOString()
+            : null,
+          current_period_end: currentPeriodEnd
+            ? new Date(currentPeriodEnd * 1000).toISOString()
+            : null,
+          cancel_at_period_end: updatedSubscription.cancel_at_period_end,
+          canceled_at: updatedSubscription.canceled_at
+            ? new Date(updatedSubscription.canceled_at * 1000).toISOString()
+            : null,
+        })
+        .eq("user_id", auth.user.id);
 
       revalidateSubscriptionPaths();
       return { success: true };
@@ -273,13 +294,20 @@ export async function cancelSubscriptionAtPeriodEnd(): Promise<
 
   try {
     const stripe = getStripeClient();
-    await stripe.subscriptions.update(snapshot.subscription.stripe_subscription_id, {
-      cancel_at_period_end: true,
-    });
+    const updatedSubscription = await stripe.subscriptions.update(
+      snapshot.subscription.stripe_subscription_id,
+      { cancel_at_period_end: true }
+    );
 
+    const currentPeriodEnd = updatedSubscription.items.data[0]?.current_period_end ?? null;
     await auth.supabase
       .from("subscriptions")
-      .update({ cancel_at_period_end: true })
+      .update({
+        cancel_at_period_end: true,
+        current_period_end: currentPeriodEnd
+          ? new Date(currentPeriodEnd * 1000).toISOString()
+          : null,
+      })
       .eq("user_id", auth.user.id);
 
     revalidateSubscriptionPaths();
@@ -308,13 +336,21 @@ export async function resumeSubscription(): Promise<{ success: true } | { error:
 
   try {
     const stripe = getStripeClient();
-    await stripe.subscriptions.update(snapshot.subscription.stripe_subscription_id, {
-      cancel_at_period_end: false,
-    });
+    const updatedSubscription = await stripe.subscriptions.update(
+      snapshot.subscription.stripe_subscription_id,
+      { cancel_at_period_end: false }
+    );
 
+    const currentPeriodEnd = updatedSubscription.items.data[0]?.current_period_end ?? null;
     await auth.supabase
       .from("subscriptions")
-      .update({ cancel_at_period_end: false, canceled_at: null })
+      .update({
+        cancel_at_period_end: false,
+        canceled_at: null,
+        current_period_end: currentPeriodEnd
+          ? new Date(currentPeriodEnd * 1000).toISOString()
+          : null,
+      })
       .eq("user_id", auth.user.id);
 
     revalidateSubscriptionPaths();
