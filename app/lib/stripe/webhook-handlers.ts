@@ -156,10 +156,11 @@ async function syncStripeSubscription(
       ? stripeSubscription.customer
       : stripeSubscription.customer.id;
 
-  const period = stripeSubscription as Stripe.Subscription & {
-    current_period_start?: number;
-    current_period_end?: number;
-  };
+  // Stripe API 2025-03-31+ moved current period timestamps from the
+  // top-level Subscription object to Subscription Items.
+  const subscriptionItem = stripeSubscription.items.data[0];
+  const currentPeriodStart = subscriptionItem?.current_period_start ?? null;
+  const currentPeriodEnd = subscriptionItem?.current_period_end ?? null;
 
   const patch = {
     plan_id: planId,
@@ -167,11 +168,11 @@ async function syncStripeSubscription(
     billing_interval: billingInterval,
     stripe_customer_id: customerId,
     stripe_subscription_id: stripeSubscription.id,
-    current_period_start: period.current_period_start
-      ? new Date(period.current_period_start * 1000).toISOString()
+    current_period_start: currentPeriodStart
+      ? new Date(currentPeriodStart * 1000).toISOString()
       : null,
-    current_period_end: period.current_period_end
-      ? new Date(period.current_period_end * 1000).toISOString()
+    current_period_end: currentPeriodEnd
+      ? new Date(currentPeriodEnd * 1000).toISOString()
       : null,
     cancel_at_period_end: stripeSubscription.cancel_at_period_end,
     canceled_at: stripeSubscription.canceled_at
