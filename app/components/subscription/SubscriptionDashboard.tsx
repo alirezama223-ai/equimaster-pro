@@ -60,7 +60,11 @@ export default function SubscriptionDashboard({
         setActionError(result.error);
         return;
       }
-      window.location.href = result.url;
+      if ("url" in result) {
+        window.location.href = result.url;
+        return;
+      }
+      router.refresh();
     });
   }
 
@@ -222,7 +226,10 @@ export default function SubscriptionDashboard({
               <div className="mt-6 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  disabled={isPending || snapshot.plan.slug === plan.slug}
+                  disabled={
+                    isPending ||
+                    (snapshot.plan.slug === plan.slug && snapshot.subscription.billing_interval === "month")
+                  }
                   onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "month")}
                   className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-60"
                 >
@@ -230,7 +237,10 @@ export default function SubscriptionDashboard({
                 </button>
                 <button
                   type="button"
-                  disabled={isPending || snapshot.plan.slug === plan.slug}
+                  disabled={
+                    isPending ||
+                    (snapshot.plan.slug === plan.slug && snapshot.subscription.billing_interval === "year")
+                  }
                   onClick={() => handleCheckout(plan.slug as "pro" | "enterprise", "year")}
                   className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-white/20 disabled:opacity-60"
                 >
