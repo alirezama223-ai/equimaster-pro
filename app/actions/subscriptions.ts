@@ -7,7 +7,6 @@ import {
   getAllPlans,
   getUserSubscriptionSnapshot,
   mapBillingHistoryRow,
-  mapPlanRow,
 } from "@/app/lib/subscriptions/queries";
 import {
   getSiteUrl,
@@ -129,7 +128,7 @@ async function getOrCreateStripeCustomer(
 export async function createSubscriptionCheckoutSession(
   planSlug: PlanSlug,
   interval: BillingInterval
-): Promise<{ url: string } | { error: string }> {
+): Promise<{ url: string } | { success: true } | { error: string }> {
   if (!isStripeConfigured()) {
     return { error: "Stripe billing is not configured yet." };
   }
@@ -149,6 +148,40 @@ export async function createSubscriptionCheckoutSession(
   }
 
   try {
+    const snapshot = await getUserSubscriptionSnapshot(auth.supabase, auth.user.id);
+    const existingSubscriptionId = snapshot?.subscription.stripe_subscription_id;
+    const existingPlan = snapshot?.plan.slug;
+    const existingInterval = snapshot?.subscription.billing_interval;
+
+    if (snapshot?.isPaid && existingSubscriptionId) {
+      if (existingPlan === planSlug && existingInterval === interval) {
+        return { success: true };
+      }
+
+      const stripe = getStripeClient();
+      const subscription = await stripe.subscriptions.retrieve(existingSubscriptionId);
+      const item = subscription.items.data[0];
+
+      if (!item) {
+        return { error: "No subscription item found for the active subscription." };
+      }
+
+      await stripe.subscriptions.update(existingSubscriptionId, {
+        items: [{ id: item.id, price: priceId, quantity: item.quantity ?? 1 }],
+        proration_behavior: "always_invoice",
+        payment_behavior: "pending_if_incomplete",
+        metadata: {
+          ...subscription.metadata,
+          user_id: auth.user.id,
+          plan_slug: planSlug,
+          billing_interval: interval,
+        },
+      });
+
+      revalidateSubscriptionPaths();
+      return { success: true };
+    }
+
     const customerId = await getOrCreateStripeCustomer(
       auth.supabase,
       auth.user.id,
@@ -298,7 +331,10 @@ export async function redirectToCheckout(planSlug: PlanSlug, interval: BillingIn
   if ("error" in result) {
     redirect(`/account/subscription?error=${encodeURIComponent(result.error)}`);
   }
-  redirect(result.url);
+  if ("url" in result) {
+    redirect(result.url);
+  }
+  redirect(`/account/subscription`);
 }
 
 export async function redirectToBillingPortal() {
