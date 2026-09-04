@@ -8,6 +8,7 @@ import { getSiteBaseUrl } from "@/app/lib/seo/site-url";
 /** Public indexable routes (locale-neutral paths). */
 export const STATIC_PUBLIC_PATHS = [
   "/",
+  "/about",
   "/marketplace",
   "/horses",
   "/stallions",
