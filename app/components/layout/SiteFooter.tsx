@@ -21,7 +21,7 @@ export default function SiteFooter({ locale }: Props) {
           <Link href={prefix} className="text-lg font-black tracking-tight text-white">SHABDIZ</Link>
           <p className="mt-1 text-sm">{l.tagline}</p>
         </div>
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3 text-sm md:pr-52">
           <Link href={`${prefix}/about`} className="transition hover:text-white">{l.about}</Link>
           <Link href={`${prefix}/marketplace`} className="transition hover:text-white">{l.marketplace}</Link>
           <Link href={`${prefix}/legal`} className="font-medium text-gray-300 transition hover:text-white">{l.legal}</Link>
