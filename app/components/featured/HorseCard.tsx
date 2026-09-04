@@ -49,7 +49,7 @@ export default function HorseCard({
       <div
         className={`group cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-[#111827] transition-all duration-500 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-900/20 ${homepageMobile ? "max-md:min-w-0 max-md:max-w-full" : ""}`}
       >
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden bg-[#0B1220]">
           <Image
             src={horse.images[0]}
             alt={t("horseCard.imageAlt", { name: horse.name })}
@@ -57,10 +57,10 @@ export default function HorseCard({
             height={420}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 400px"
             loading="lazy"
-            className={`w-full object-cover transition duration-700 group-hover:scale-110 ${homepageMobile ? "h-72 max-md:h-[220px]" : "h-72"}`}
+            className={`w-full object-contain transition duration-700 group-hover:scale-[1.03] ${homepageMobile ? "h-72 max-md:h-[220px]" : "h-72"}`}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
           {horse.verified ? (
             <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-full shadow-lg">
