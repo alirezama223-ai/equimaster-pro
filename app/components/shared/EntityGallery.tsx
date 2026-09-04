@@ -78,14 +78,25 @@ export default function EntityGallery({ images, altPrefix }: Props) {
       >
         <Image
           src={activeImage}
+          alt=""
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover scale-110 blur-2xl opacity-40"
+          aria-hidden="true"
+        />
+
+        <div className="pointer-events-none absolute inset-0 bg-[#111827]/35" />
+
+        <Image
+          src={activeImage}
           alt={t("photoAlt", { prefix: altPrefix, index: activeIndex + 1 })}
           fill
           priority={activeIndex === 0}
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover"
+          className="object-contain object-center drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)]"
         />
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/5" />
 
         {hasMultipleImages ? (
           <>
