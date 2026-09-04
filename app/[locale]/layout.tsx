@@ -5,6 +5,7 @@ import { hasLocale } from "next-intl";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { createSiteMetadata } from "@/app/lib/seo/page-metadata";
 import GlobalFeedbackShell from "@/app/components/feedback/GlobalFeedbackShell";
+import SiteFooter from "@/app/components/layout/SiteFooter";
 
 type Props = { children: React.ReactNode; params: Promise<{ locale: string }> };
 
@@ -27,6 +28,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
+      <SiteFooter locale={locale} />
       <GlobalFeedbackShell />
     </NextIntlClientProvider>
   );
