@@ -261,7 +261,7 @@ export default memo(function HorseGallery({ horse }: Props) {
             priority={activeIndex === 0}
             loading={activeIndex === 0 ? undefined : "lazy"}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 900px"
-            className={`object-cover object-[center_22%] pointer-events-none transition-all duration-300 ease-out [@media(hover:hover)]:group-hover:scale-[1.02] ${
+            className={`object-contain object-center pointer-events-none transition-all duration-300 ease-out [@media(hover:hover)]:group-hover:scale-[1.02] ${
               imageVisible ? "opacity-100 scale-100" : "opacity-0 scale-[1.01]"
             }`}
           />
@@ -360,79 +360,79 @@ export default memo(function HorseGallery({ horse }: Props) {
             className="flex h-full flex-col outline-none"
             tabIndex={-1}
           >
-          <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-            <p className="text-sm font-semibold text-white">
-              {t("gallery.photoCounter", { index: activeIndex + 1, total: totalImages })}
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => adjustZoom(-ZOOM_STEP)}
-                aria-label={t("gallery.zoomOut")}
-                className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                −
-              </button>
-              <span className="min-w-12 text-center text-sm text-gray-300" aria-hidden="true">
-                {Math.round(zoom * 100)}%
-              </span>
-              <button
-                type="button"
-                onClick={() => adjustZoom(ZOOM_STEP)}
-                aria-label={t("gallery.zoomIn")}
-                className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                onClick={closeLightbox}
-                aria-label={t("gallery.closeLightbox")}
-                className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-
-          <div className="relative flex-1 overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-              <div
-                className="relative h-full w-full max-h-full max-w-full transition-transform duration-150 ease-out"
-                style={{ transform: `scale(${zoom})` }}
-              >
-                <Image
-                  src={activeImage}
-                  alt={photoAlt(activeIndex)}
-                  fill
-                  sizes="100vw"
-                  loading="lazy"
-                  className="object-contain"
-                />
+            <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+              <p className="text-sm font-semibold text-white">
+                {t("gallery.photoCounter", { index: activeIndex + 1, total: totalImages })}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => adjustZoom(-ZOOM_STEP)}
+                  aria-label={t("gallery.zoomOut")}
+                  className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  −
+                </button>
+                <span className="min-w-12 text-center text-sm text-gray-300" aria-hidden="true">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  type="button"
+                  onClick={() => adjustZoom(ZOOM_STEP)}
+                  aria-label={t("gallery.zoomIn")}
+                  className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={closeLightbox}
+                  aria-label={t("gallery.closeLightbox")}
+                  className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  ×
+                </button>
               </div>
             </div>
 
-            {hasMultipleImages ? (
-              <>
-                <button
-                  type="button"
-                  onClick={goToPrevious}
-                  aria-label={t("gallery.previousPhoto")}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-blue-600"
+            <div className="relative flex-1 overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div
+                  className="relative h-full w-full max-h-full max-w-full transition-transform duration-150 ease-out"
+                  style={{ transform: `scale(${zoom})` }}
                 >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  onClick={goToNext}
-                  aria-label={t("gallery.nextPhoto")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-blue-600"
-                >
-                  →
-                </button>
-              </>
-            ) : null}
-          </div>
+                  <Image
+                    src={activeImage}
+                    alt={photoAlt(activeIndex)}
+                    fill
+                    sizes="100vw"
+                    loading="lazy"
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+
+              {hasMultipleImages ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={goToPrevious}
+                    aria-label={t("gallery.previousPhoto")}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-blue-600"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNext}
+                    aria-label={t("gallery.nextPhoto")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-blue-600"
+                  >
+                    →
+                  </button>
+                </>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}
