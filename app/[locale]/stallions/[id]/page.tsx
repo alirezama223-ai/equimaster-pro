@@ -120,7 +120,7 @@ export default async function StallionDetailPage({ params }: Props) {
             </Link>
           </div>
 
-          <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10">
+          <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10 bg-[#0f1729]">
             <Image
               src={stallion.coverImageUrl}
               alt={t("detail.coverAlt", {
@@ -128,10 +128,10 @@ export default async function StallionDetailPage({ params }: Props) {
               })}
               fill
               priority
-              className="object-cover"
+              className="object-contain object-center"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#081223] via-black/20 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#081223] via-black/20 to-transparent" />
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16">
