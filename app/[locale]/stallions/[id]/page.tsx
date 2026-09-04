@@ -120,7 +120,18 @@ export default async function StallionDetailPage({ params }: Props) {
             </Link>
           </div>
 
-          <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10 bg-[#0f1729]">
+          <div className="mb-10 relative h-52 sm:h-64 md:h-80 overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_center,_#263653_0%,_#121d31_42%,_#081223_78%)]">
+            <Image
+              src={stallion.coverImageUrl}
+              alt=""
+              fill
+              priority
+              aria-hidden="true"
+              className="object-cover scale-110 blur-2xl opacity-40"
+            />
+
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#081223]/90 via-[#081223]/10 to-white/5" />
+
             <Image
               src={stallion.coverImageUrl}
               alt={t("detail.coverAlt", {
@@ -128,10 +139,10 @@ export default async function StallionDetailPage({ params }: Props) {
               })}
               fill
               priority
-              className="object-contain object-center"
+              className="object-contain object-center drop-shadow-[0_20px_35px_rgba(0,0,0,0.45)]"
             />
 
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#081223] via-black/20 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/5" />
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16">
@@ -377,7 +388,7 @@ function DetailItem({
         {label}
       </p>
 
-           <p className="text-white font-semibold mt-1">{value}</p>
+      <p className="text-white font-semibold mt-1">{value}</p>
     </div>
   );
 }
