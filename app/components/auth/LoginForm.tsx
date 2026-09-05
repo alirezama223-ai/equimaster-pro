@@ -92,7 +92,7 @@ export default function LoginForm() {
 
       const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       const destination =
-        assurance.currentLevel === "aal1" && assurance.nextLevel === "aal2"
+        assurance?.currentLevel === "aal1" && assurance.nextLevel === "aal2"
           ? `/account/mfa?next=${encodeURIComponent(nextPath)}`
           : nextPath;
 
