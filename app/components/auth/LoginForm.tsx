@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -9,6 +9,9 @@ import AuthFormShell, {
   authLabelClassName,
 } from "@/app/components/auth/AuthFormShell";
 import PasswordInput from "@/app/components/auth/PasswordInput";
+import TurnstileWidget, {
+  type TurnstileWidgetHandle,
+} from "@/app/components/auth/TurnstileWidget";
 import {
   getAuthErrorMessage,
   validateLoginForm,
@@ -30,6 +33,8 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<TurnstileWidgetHandle>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     email?: string;
     password?: string;
@@ -57,6 +62,11 @@ export default function LoginForm() {
       return;
     }
 
+    if (!captchaToken) {
+      setFormError(t("login.genericError"));
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -64,6 +74,7 @@ export default function LoginForm() {
       const { error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
+        options: { captchaToken },
       });
 
       if (error) {
@@ -83,6 +94,8 @@ export default function LoginForm() {
     } catch {
       setFormError(t("login.genericError"));
     } finally {
+      captchaRef.current?.reset();
+      setCaptchaToken(null);
       setIsLoading(false);
     }
   }
@@ -143,6 +156,12 @@ export default function LoginForm() {
           </p>
         </div>
 
+        <TurnstileWidget
+          ref={captchaRef}
+          action="login"
+          onToken={setCaptchaToken}
+        />
+
         {resetSuccess ? (
           <div className="rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-200">
             {t("login.passwordResetSuccess")}
@@ -157,7 +176,7 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !captchaToken}
           className="w-full rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-4 text-white font-semibold transition"
         >
           {isLoading ? t("login.submitting") : t("login.submit")}
