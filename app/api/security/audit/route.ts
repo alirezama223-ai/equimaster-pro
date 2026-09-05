@@ -11,6 +11,9 @@ const CLIENT_AUDIT_EVENTS = new Set([
   "auth.login.success",
   "auth.logout",
   "auth.password_change.success",
+  "auth.mfa.enroll.success",
+  "auth.mfa.verify.success",
+  "auth.mfa.unenroll.success",
 ]);
 
 export async function POST(request: Request) {
