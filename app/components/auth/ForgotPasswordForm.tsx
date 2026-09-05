@@ -21,11 +21,13 @@ export default function ForgotPasswordForm() {
   const captchaRef = useRef<TurnstileWidgetHandle>(null);
   const [fieldErrors, setFieldErrors] = useState<{ email?: string }>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSuccessMessage(null);
+    setFormError(null);
 
     const validationErrors = validateForgotPasswordForm(email);
     setFieldErrors(validationErrors);
@@ -40,7 +42,7 @@ export default function ForgotPasswordForm() {
     }
 
     if (!captchaToken) {
-      setSuccessMessage(t("forgotPassword.success"));
+      setFormError(t("login.genericError"));
       return;
     }
 
@@ -96,6 +98,12 @@ export default function ForgotPasswordForm() {
           action="password_reset"
           onToken={setCaptchaToken}
         />
+
+        {formError ? (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {formError}
+          </div>
+        ) : null}
 
         {successMessage ? (
           <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
