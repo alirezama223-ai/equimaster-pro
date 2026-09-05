@@ -7,7 +7,11 @@ import {
 
 export const runtime = "nodejs";
 
-const CLIENT_AUDIT_EVENTS = new Set(["auth.login.success", "auth.logout"]);
+const CLIENT_AUDIT_EVENTS = new Set([
+  "auth.login.success",
+  "auth.logout",
+  "auth.password_change.success",
+]);
 
 export async function POST(request: Request) {
   try {
