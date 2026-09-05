@@ -22,7 +22,8 @@ type NavKey =
   | "pedigree"
   | "traits"
   | "services"
-  | "advertisements";
+  | "advertisements"
+  | "security";
 
 type NavItem = {
   href: string;
@@ -52,6 +53,7 @@ const toolLinks: NavItem[] = [
   { href: "/admin/traits", key: "traits" },
   { href: "/admin/services", key: "services" },
   { href: "/admin/advertisements", key: "advertisements" },
+  { href: "/admin/security", key: "security" },
 ];
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -86,7 +88,9 @@ export default function AdminShell({ children }: Props) {
           ? "Services"
           : item.key === "advertisements"
             ? "Advertisements"
-            : t(`nav.${item.key}`)}
+            : item.key === "security"
+              ? "Security Logs"
+              : t(`nav.${item.key}`)}
       </Link>
     );
   }
