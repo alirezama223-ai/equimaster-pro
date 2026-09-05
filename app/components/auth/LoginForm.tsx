@@ -18,10 +18,10 @@ import {
 } from "@/app/lib/auth-validation";
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
-import { localizePath } from "@/i18n/path";
 import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import type { AppLocale } from "@/i18n/routing";
+import { localizePath } from "@/i18n/path";
 
 export default function LoginForm() {
   const t = useTranslations("auth");
@@ -82,8 +82,7 @@ export default function LoginForm() {
         return;
       }
 
-      // Record the successful login without ever sending credentials or tokens.
-      // Audit failures must never prevent an otherwise successful login.
+      // Record the successful first-factor login without ever sending credentials or tokens.
       await fetch("/api/security/audit", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -91,11 +90,13 @@ export default function LoginForm() {
         keepalive: true,
       }).catch(() => undefined);
 
-      // signInWithPassword has completed successfully, so the browser auth
-      // state is established. Navigate immediately instead of waiting for a
-      // second getSession() round-trip, which could leave the form visible on
-      // slower browsers even though the login itself succeeded.
-      window.location.replace(localizePath(nextPath, locale));
+      const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      const destination =
+        assurance.currentLevel === "aal1" && assurance.nextLevel === "aal2"
+          ? `/account/mfa?next=${encodeURIComponent(nextPath)}`
+          : nextPath;
+
+      window.location.replace(localizePath(destination, locale));
     } catch {
       setFormError(t("login.genericError"));
     } finally {
