@@ -236,7 +236,7 @@ export default function MfaManager() {
           <p className="text-sm text-gray-300">{t("scan")}</p>
           <div className="flex justify-center rounded-2xl bg-white p-5">
             <img
-              src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrCode)}`}
+              src={qrCode.startsWith("data:image/") ? qrCode : `data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrCode)}`}
               alt={t("qrAlt")}
               className="h-56 w-56"
             />
