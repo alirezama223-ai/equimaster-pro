@@ -18,6 +18,19 @@ export default function LogoutButton({ variant = "button" }: Props) {
     setIsLoading(true);
 
     try {
+      // Record the audit event while the authenticated session still exists.
+      // Audit failure must never prevent the user from logging out.
+      try {
+        await fetch("/api/security/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventType: "auth.logout" }),
+          keepalive: true,
+        });
+      } catch (error) {
+        console.warn("[security-audit] Logout audit request failed:", error);
+      }
+
       const supabase = createClient();
       await supabase.auth.signOut();
       router.push("/");
