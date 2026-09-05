@@ -55,7 +55,16 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, Props>(
       onTokenRef.current = onToken;
     }, [onToken]);
 
-    const renderWidget = () => {
+    useImperativeHandle(ref, () => ({
+      reset() {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.reset(widgetIdRef.current);
+        }
+        onTokenRef.current(null);
+      },
+    }));
+
+    useEffect(() => {
       if (!siteKey || !scriptReady || !window.turnstile || !containerRef.current) {
         return;
       }
@@ -72,19 +81,6 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, Props>(
         "expired-callback": () => onTokenRef.current(null),
         "timeout-callback": () => onTokenRef.current(null),
       });
-    };
-
-    useImperativeHandle(ref, () => ({
-      reset() {
-        if (widgetIdRef.current && window.turnstile) {
-          window.turnstile.reset(widgetIdRef.current);
-        }
-        onTokenRef.current(null);
-      },
-    }));
-
-    useEffect(() => {
-      renderWidget();
 
       return () => {
         if (widgetIdRef.current && window.turnstile) {
@@ -92,17 +88,14 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, Props>(
           widgetIdRef.current = null;
         }
       };
-    }, [scriptReady]);
+    }, [action, scriptReady]);
 
     return (
       <>
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => {
-            setScriptReady(true);
-            window.setTimeout(renderWidget, 0);
-          }}
+          onLoad={() => setScriptReady(true)}
         />
         <div
           ref={containerRef}
