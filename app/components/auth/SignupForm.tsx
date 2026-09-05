@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import AuthFormShell, {
@@ -8,6 +8,9 @@ import AuthFormShell, {
   authLabelClassName,
 } from "@/app/components/auth/AuthFormShell";
 import PasswordInput from "@/app/components/auth/PasswordInput";
+import TurnstileWidget, {
+  type TurnstileWidgetHandle,
+} from "@/app/components/auth/TurnstileWidget";
 import {
   getAuthErrorMessage,
   validateSignupForm,
@@ -18,9 +21,7 @@ import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
 import { buildProtectedLoginUrl } from "@/app/lib/auth/navigate-protected";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
-import {
-  buildAuthCallbackUrl,
-} from "@/app/lib/auth/redirect";
+import { buildAuthCallbackUrl } from "@/app/lib/auth/redirect";
 import type { AppLocale } from "@/i18n/routing";
 
 export default function SignupForm() {
@@ -33,6 +34,8 @@ export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<TurnstileWidgetHandle>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     fullName?: string;
     email?: string;
@@ -63,6 +66,11 @@ export default function SignupForm() {
       return;
     }
 
+    if (!captchaToken) {
+      setFormError(t("signup.genericError"));
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -77,6 +85,7 @@ export default function SignupForm() {
             full_name: fullName.trim(),
           },
           emailRedirectTo: redirectTo,
+          captchaToken,
         },
       });
 
@@ -107,6 +116,8 @@ export default function SignupForm() {
     } catch {
       setFormError(t("signup.genericError"));
     } finally {
+      captchaRef.current?.reset();
+      setCaptchaToken(null);
       setIsLoading(false);
     }
   }
@@ -200,6 +211,12 @@ export default function SignupForm() {
           ) : null}
         </div>
 
+        <TurnstileWidget
+          ref={captchaRef}
+          action="signup"
+          onToken={setCaptchaToken}
+        />
+
         {formError ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             {formError}
@@ -214,7 +231,7 @@ export default function SignupForm() {
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !captchaToken}
           className="w-full rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-4 text-white font-semibold transition"
         >
           {isLoading ? t("signup.submitting") : t("signup.submit")}
