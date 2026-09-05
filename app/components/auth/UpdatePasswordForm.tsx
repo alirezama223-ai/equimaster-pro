@@ -107,6 +107,17 @@ export default function UpdatePasswordForm() {
         return;
       }
 
+      try {
+        await fetch("/api/security/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventType: "auth.password_change.success" }),
+          keepalive: true,
+        });
+      } catch (auditError) {
+        console.warn("[security-audit] Password change audit request failed:", auditError);
+      }
+
       await supabase.auth.signOut();
       router.push("/login?reset=success");
     } catch {
