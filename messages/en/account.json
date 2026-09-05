@@ -8,7 +8,8 @@
     "createListing": "Create a Listing",
     "openSellerDashboard": "Open full seller dashboard →",
     "openVerification": "Seller & horse verification →",
-    "openSubscription": "Manage subscription →"
+    "openSubscription": "Manage subscription →",
+    "openSecurity": "Security & two-factor authentication →"
   },
   "sellerListings": {
     "eyebrow": "Seller Dashboard",
