@@ -41,8 +41,10 @@ export default function MfaManager() {
       await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (assuranceError) {
       setError(assuranceError.message);
-    } else {
+    } else if (assurance) {
       setNeedsChallenge(assurance.currentLevel === "aal1" && assurance.nextLevel === "aal2");
+    } else {
+      setNeedsChallenge(false);
     }
 
     setIsLoading(false);
@@ -56,6 +58,32 @@ export default function MfaManager() {
     setError(null);
     setMessage(null);
     setIsSubmitting(true);
+
+    // A previous interrupted enrollment can leave an unverified factor behind.
+    // Remove only the stale factor with our known friendly name so a fresh QR
+    // code can be generated without creating duplicate factors.
+    const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
+    if (factorsError) {
+      setError(factorsError.message);
+      setIsSubmitting(false);
+      return;
+    }
+
+    const staleFactor = factors.totp.find(
+      (factor) =>
+        factor.status === "unverified" && factor.friendly_name === "Shabdiz Authenticator",
+    );
+
+    if (staleFactor) {
+      const { error: cleanupError } = await supabase.auth.mfa.unenroll({
+        factorId: staleFactor.id,
+      });
+      if (cleanupError) {
+        setError(cleanupError.message);
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     const { data, error: enrollError } = await supabase.auth.mfa.enroll({
       factorType: "totp",
@@ -119,7 +147,7 @@ export default function MfaManager() {
       setMessage(t("enabled"));
     } else {
       setNeedsChallenge(false);
-      window.location.replace(nextPath.startsWith("/") ? nextPath : "/account");
+      window.location.replace(nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/account");
       return;
     }
 
