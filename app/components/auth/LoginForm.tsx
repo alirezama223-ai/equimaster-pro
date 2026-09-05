@@ -82,6 +82,15 @@ export default function LoginForm() {
         return;
       }
 
+      // Record the successful login without ever sending credentials or tokens.
+      // Audit failures must never prevent an otherwise successful login.
+      await fetch("/api/security/audit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ eventType: "auth.login.success" }),
+        keepalive: true,
+      }).catch(() => undefined);
+
       // signInWithPassword has completed successfully, so the browser auth
       // state is established. Navigate immediately instead of waiting for a
       // second getSession() round-trip, which could leave the form visible on
