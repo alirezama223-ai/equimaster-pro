@@ -18,7 +18,7 @@ import {
 } from "@/app/lib/auth-validation";
 import { createClient } from "@/app/lib/supabase/client";
 import { getSupabaseEnv } from "@/app/lib/supabase/env";
-import { completePostAuthRedirect } from "@/app/lib/auth/complete-post-auth";
+import { localizePath } from "@/i18n/path";
 import AuthSessionResume from "@/app/components/auth/AuthSessionResume";
 import { getSafeNextPath } from "@/app/lib/auth/paths";
 import type { AppLocale } from "@/i18n/routing";
@@ -82,15 +82,11 @@ export default function LoginForm() {
         return;
       }
 
-      const redirected = await completePostAuthRedirect(
-        supabase,
-        nextPath,
-        locale
-      );
-
-      if (!redirected) {
-        setFormError(t("login.genericError"));
-      }
+      // signInWithPassword has completed successfully, so the browser auth
+      // state is established. Navigate immediately instead of waiting for a
+      // second getSession() round-trip, which could leave the form visible on
+      // slower browsers even though the login itself succeeded.
+      window.location.replace(localizePath(nextPath, locale));
     } catch {
       setFormError(t("login.genericError"));
     } finally {
