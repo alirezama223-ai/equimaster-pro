@@ -60,8 +60,7 @@ export default function MfaManager() {
     setIsSubmitting(true);
 
     // A previous interrupted enrollment can leave an unverified factor behind.
-    // Remove only the stale factor with our known friendly name so a fresh QR
-    // code can be generated without creating duplicate factors.
+    // listFactors().all includes both verified and unverified factors.
     const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
     if (factorsError) {
       setError(factorsError.message);
@@ -69,7 +68,7 @@ export default function MfaManager() {
       return;
     }
 
-    const staleFactor = factors.totp.find(
+    const staleFactor = factors.all.find(
       (factor) =>
         factor.status === "unverified" && factor.friendly_name === "Shabdiz Authenticator",
     );
