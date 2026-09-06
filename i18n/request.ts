@@ -35,6 +35,21 @@ function deepMerge(base: Record<string, unknown>, override: Record<string, unkno
   return result;
 }
 
+function ensureMarketplaceBrowseAliases(messages: Record<string, unknown>) {
+  const browse = messages.browse;
+  if (!browse || typeof browse !== "object" || Array.isArray(browse)) return;
+
+  const browseMessages = browse as Record<string, unknown>;
+
+  if (typeof browseMessages.verifiedHorses !== "string" && typeof browseMessages.verifiedOnly === "string") {
+    browseMessages.verifiedHorses = browseMessages.verifiedOnly;
+  }
+
+  if (typeof browseMessages.verifiedSellers !== "string" && typeof browseMessages.verifiedSellersOnly === "string") {
+    browseMessages.verifiedSellers = browseMessages.verifiedSellersOnly;
+  }
+}
+
 async function loadMessages(locale: string) {
   const entries = await Promise.all(
     namespaces.map(async (namespace) => {
@@ -47,11 +62,15 @@ async function loadMessages(locale: string) {
 
       const messages =
         locale === "en"
-          ? fallbackMessages.default
+          ? (fallbackMessages.default as Record<string, unknown>)
           : deepMerge(
               fallbackMessages.default as Record<string, unknown>,
               localizedMessages?.default as Record<string, unknown>
             );
+
+      if (namespace === "marketplace") {
+        ensureMarketplaceBrowseAliases(messages);
+      }
 
       return [namespace, messages] as const;
     })
