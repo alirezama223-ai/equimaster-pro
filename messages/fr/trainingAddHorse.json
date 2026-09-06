@@ -1,0 +1,34 @@
+{
+  "title": "Ajouter un nouveau cheval",
+  "description": "Créez un profil de cheval pour l'entraînement quotidien. Vous pourrez ajouter d'autres détails plus tard.",
+  "fields": {
+    "name": "Nom du cheval",
+    "namePlaceholder": "ex. Emerald Star Z",
+    "sex": "Sexe",
+    "birthYear": "Année de naissance",
+    "birthYearPlaceholder": "ex. 2018",
+    "breed": "Race",
+    "studbook": "Stud-book",
+    "registrationNumber": "Numéro d'enregistrement",
+    "color": "Robe",
+    "country": "Pays"
+  },
+  "sex": {
+    "unknown": "Non précisé",
+    "mare": "Jument",
+    "stallion": "Étalon",
+    "gelding": "Hongre"
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "save": "Enregistrer le cheval",
+    "saving": "Enregistrement..."
+  },
+  "button": {
+    "addHorse": "Ajouter un cheval",
+    "addFirstHorse": "Ajouter votre premier cheval"
+  },
+  "errors": {
+    "createFailed": "Impossible de créer le cheval pour le moment. Veuillez réessayer."
+  }
+}
