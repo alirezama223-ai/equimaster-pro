@@ -1,0 +1,34 @@
+{
+  "title": "Nieuw paard toevoegen",
+  "description": "Maak een paardenprofiel voor de dagelijkse training. Meer details kun je later toevoegen.",
+  "fields": {
+    "name": "Naam paard",
+    "namePlaceholder": "bijv. Emerald Star Z",
+    "sex": "Geslacht",
+    "birthYear": "Geboortejaar",
+    "birthYearPlaceholder": "bijv. 2018",
+    "breed": "Ras",
+    "studbook": "Stamboek",
+    "registrationNumber": "Registratienummer",
+    "color": "Kleur",
+    "country": "Land"
+  },
+  "sex": {
+    "unknown": "Niet opgegeven",
+    "mare": "Merrie",
+    "stallion": "Hengst",
+    "gelding": "Ruin"
+  },
+  "actions": {
+    "cancel": "Annuleren",
+    "save": "Paard opslaan",
+    "saving": "Opslaan..."
+  },
+  "button": {
+    "addHorse": "Paard toevoegen",
+    "addFirstHorse": "Eerste paard toevoegen"
+  },
+  "errors": {
+    "createFailed": "Het paard kan momenteel niet worden aangemaakt. Probeer het opnieuw."
+  }
+}
