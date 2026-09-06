@@ -1,0 +1,34 @@
+{
+  "title": "Add a new horse",
+  "description": "Create a horse profile for daily training. You can add more details later.",
+  "fields": {
+    "name": "Horse name",
+    "namePlaceholder": "e.g. Emerald Star Z",
+    "sex": "Sex",
+    "birthYear": "Birth year",
+    "birthYearPlaceholder": "e.g. 2018",
+    "breed": "Breed",
+    "studbook": "Studbook",
+    "registrationNumber": "Registration number",
+    "color": "Color",
+    "country": "Country"
+  },
+  "sex": {
+    "unknown": "Not specified",
+    "mare": "Mare",
+    "stallion": "Stallion",
+    "gelding": "Gelding"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "save": "Save Horse",
+    "saving": "Saving..."
+  },
+  "button": {
+    "addHorse": "Add Horse",
+    "addFirstHorse": "Add your first horse"
+  },
+  "errors": {
+    "createFailed": "Unable to create the horse right now. Please try again."
+  }
+}
