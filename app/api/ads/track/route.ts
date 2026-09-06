@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/app/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 
 const events = new Set(["impression", "click"]);
+
+function serviceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase server configuration is incomplete");
+  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+}
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Invalid tracking payload." }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = serviceClient();
     const functionName = event === "click" ? "track_ad_click" : "track_ad_impression";
     const { data, error } = await supabase.rpc(functionName, { p_ad_id: adId });
 
