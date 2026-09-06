@@ -1,0 +1,34 @@
+{
+  "title": "Neues Pferd hinzufügen",
+  "description": "Erstellen Sie ein Pferdeprofil für das tägliche Training. Weitere Details können später ergänzt werden.",
+  "fields": {
+    "name": "Pferdename",
+    "namePlaceholder": "z. B. Emerald Star Z",
+    "sex": "Geschlecht",
+    "birthYear": "Geburtsjahr",
+    "birthYearPlaceholder": "z. B. 2018",
+    "breed": "Rasse",
+    "studbook": "Zuchtbuch",
+    "registrationNumber": "Registrierungsnummer",
+    "color": "Farbe",
+    "country": "Land"
+  },
+  "sex": {
+    "unknown": "Nicht angegeben",
+    "mare": "Stute",
+    "stallion": "Hengst",
+    "gelding": "Wallach"
+  },
+  "actions": {
+    "cancel": "Abbrechen",
+    "save": "Pferd speichern",
+    "saving": "Wird gespeichert..."
+  },
+  "button": {
+    "addHorse": "Pferd hinzufügen",
+    "addFirstHorse": "Erstes Pferd hinzufügen"
+  },
+  "errors": {
+    "createFailed": "Das Pferd konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
+  }
+}
