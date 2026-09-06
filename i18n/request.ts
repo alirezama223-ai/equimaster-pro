@@ -4,7 +4,7 @@ import { routing } from "./routing";
 
 const namespaces = [
   "common", "nav", "auth", "metadata", "home", "marketplace", "dashboard", "sell", "account",
-  "horse", "favorites", "training", "health", "admin", "breeding", "stallions",
+  "horse", "favorites", "training", "trainingAddHorse", "health", "admin", "breeding", "stallions",
   "breeders", "pedigree", "inquiries", "messaging", "notifications", "demo", "bloodlines",
   "events", "traits", "feedback", "verification", "subscription", "savedSearch", "news",
 ] as const;
