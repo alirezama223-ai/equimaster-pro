@@ -10,8 +10,8 @@ import {
   getSellerInquiries,
   getSellerNewInquiryCount,
 } from "@/app/actions/inquiries";
-import { getMyBreederProfile } from "@/app/actions/breeders";
 import { getMyStallions } from "@/app/actions/stallions";
+import { getOptionalMyBreederProfile } from "@/app/lib/breeder-profile";
 import { fetchDemoEnvironmentSnapshot } from "@/app/lib/demo/queries";
 import { createClient } from "@/app/lib/supabase/server";
 
@@ -45,7 +45,7 @@ export default async function AccountPage() {
     getSellerInquiries(),
     getBuyerInquiries(),
     getSellerNewInquiryCount(),
-    getMyBreederProfile(),
+    getOptionalMyBreederProfile(),
     getMyStallions(),
   ]);
 
