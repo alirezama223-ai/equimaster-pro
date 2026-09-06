@@ -1,0 +1,34 @@
+{
+  "title": "Añadir un caballo nuevo",
+  "description": "Crea un perfil del caballo para el entrenamiento diario. Puedes añadir más detalles después.",
+  "fields": {
+    "name": "Nombre del caballo",
+    "namePlaceholder": "p. ej. Emerald Star Z",
+    "sex": "Sexo",
+    "birthYear": "Año de nacimiento",
+    "birthYearPlaceholder": "p. ej. 2018",
+    "breed": "Raza",
+    "studbook": "Libro genealógico",
+    "registrationNumber": "Número de registro",
+    "color": "Capa",
+    "country": "País"
+  },
+  "sex": {
+    "unknown": "No especificado",
+    "mare": "Yegua",
+    "stallion": "Semental",
+    "gelding": "Caballo castrado"
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "save": "Guardar caballo",
+    "saving": "Guardando..."
+  },
+  "button": {
+    "addHorse": "Añadir caballo",
+    "addFirstHorse": "Añadir tu primer caballo"
+  },
+  "errors": {
+    "createFailed": "No se puede crear el caballo ahora. Inténtalo de nuevo."
+  }
+}
