@@ -122,12 +122,6 @@ export default function HeroSection({ stats }: Props) {
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none">
               <div className="absolute inset-0 scale-110 rounded-[35px] bg-[#D4A437]/10 blur-3xl" />
               <div className="relative aspect-video w-full overflow-hidden rounded-[35px] bg-[#081223] shadow-2xl">
-                <img
-                  src="/emi.jpg"
-                  alt={t("hero.imageAlt")}
-                  className="absolute inset-0 h-full w-full rounded-[35px] object-cover"
-                />
-
                 <video
                   ref={videoRef}
                   className="absolute inset-0 z-10 block h-full w-full rounded-[35px] object-cover"
@@ -137,7 +131,6 @@ export default function HeroSection({ stats }: Props) {
                   loop
                   playsInline
                   preload="auto"
-                  poster="/emi.jpg"
                   onLoadedData={startPlayback}
                   onCanPlay={startPlayback}
                   onError={() => {
