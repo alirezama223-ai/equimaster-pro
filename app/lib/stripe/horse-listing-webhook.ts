@@ -3,7 +3,7 @@ import { createServiceClient } from "@/app/lib/supabase/service";
 import {
   HORSE_LISTING_AGB_VERSION,
   HORSE_LISTING_RULES_VERSION,
-} from "@/app/actions/horse-listing-billing";
+} from "@/app/lib/marketplace/horse-listing-billing-constants";
 
 function getOrderId(session: Stripe.Checkout.Session): string | null {
   return session.metadata?.horse_listing_order_id ?? null;
