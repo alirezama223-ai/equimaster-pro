@@ -12,7 +12,7 @@ import {
 import { isListingUuid } from "@/app/lib/horse-listings";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
   searchParams: Promise<{ payment?: string }>;
 };
 
@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ListingPreviewPage({ params, searchParams }: Props) {
   const t = await getTranslations("dashboard");
-  const { id } = await params;
+  const { locale, id } = await params;
   const query = await searchParams;
 
   if (!isListingUuid(id)) {
