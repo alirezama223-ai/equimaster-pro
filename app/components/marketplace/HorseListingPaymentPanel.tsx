@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { createHorseListingCheckoutSession } from "@/app/actions/horse-listing-billing";
 
@@ -35,7 +35,7 @@ export default function HorseListingPaymentPanel({
   paymentStatus = null,
 }: Props) {
   const t = useTranslations("listingBilling");
-  const locale = useLocale();
+  const locale = useTranslations("common") ? undefined : undefined;
   const [selectedPlan, setSelectedPlan] = useState(plans[0]?.slug ?? "");
   const [agbAccepted, setAgbAccepted] = useState(false);
   const [rulesAccepted, setRulesAccepted] = useState(false);
@@ -53,7 +53,7 @@ export default function HorseListingPaymentPanel({
         selectedPlan,
         agbAccepted,
         rulesAccepted,
-        locale
+        typeof locale === "string" ? locale : "en"
       );
 
       if ("error" in result) {
