@@ -54,6 +54,9 @@ export type HorseListingRow = {
   view_count: number;
   public_training_summary: Record<string, unknown> | null;
   public_health_summary: Record<string, unknown> | null;
+  listing_package_slug?: string | null;
+  listing_visibility?: string | null;
+  listing_expires_at?: string | null;
   created_at: string;
   updated_at: string;
 };
