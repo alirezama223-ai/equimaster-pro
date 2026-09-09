@@ -1,0 +1,22 @@
+{
+  "title": "Choisissez votre formule d'annonce",
+  "subtitle": "Votre annonce devient éligible à la publication après paiement et modération.",
+  "visibility": "Visibilité",
+  "duration": "Durée",
+  "price": "Prix",
+  "features": "Comprend",
+  "recommended": "Recommandé",
+  "payNow": "Continuer vers le paiement sécurisé",
+  "processing": "Ouverture du paiement sécurisé...",
+  "acceptAgb": "J'accepte les CGV/conditions générales.",
+  "acceptRules": "J'accepte les règles du Marketplace.",
+  "agb": "Conditions générales",
+  "rules": "Règles du Marketplace",
+  "paymentRequired": "Le paiement est requis avant la publication de l'annonce.",
+  "paymentSuccess": "Paiement reçu. Votre annonce est maintenant en attente de modération.",
+  "paymentCancelled": "Paiement annulé. Votre annonce reste un brouillon.",
+  "alreadyPaid": "Cette annonce a déjà été payée.",
+  "statusPending": "En attente de modération",
+  "statusPaid": "Payé",
+  "days": "jours"
+}
