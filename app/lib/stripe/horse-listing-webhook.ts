@@ -32,13 +32,16 @@ export async function handleHorseListingWebhookEvent(event: Stripe.Event) {
     if (order.status === "refunded") return;
 
     const refundedAt = new Date().toISOString();
-    const { error: updateOrderError } = await supabase
+    const { data: refundedOrder, error: updateOrderError } = await supabase
       .from("horse_listing_orders")
       .update({ status: "refunded", refunded_at: refundedAt })
       .eq("id", order.id)
-      .eq("status", "paid");
+      .eq("status", "paid")
+      .select("id")
+      .maybeSingle();
 
     if (updateOrderError) throw new Error(updateOrderError.message);
+    if (!refundedOrder) return;
 
     // A refunded listing payment must not remain publicly active.
     const { error: listingError } = await supabase
