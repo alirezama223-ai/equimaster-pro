@@ -91,6 +91,7 @@ export async function getHorseListingBillingState(listingId: string): Promise<{
     .eq("listing_id", listingId)
     .eq("buyer_user_id", user.id)
     .eq("status", "paid")
+    .gt("expires_at", new Date().toISOString())
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -115,7 +116,8 @@ export async function createHorseListingCheckoutSession(
   listingId: string,
   planSlug: string,
   agbAccepted: boolean,
-  marketplaceRulesAccepted: boolean
+  marketplaceRulesAccepted: boolean,
+  locale: string
 ): Promise<{ url: string } | { error: string }> {
   if (!isStripeConfigured()) {
     return { error: "Stripe billing is not configured yet." };
@@ -191,6 +193,8 @@ export async function createHorseListingCheckoutSession(
   try {
     const stripe = getStripeClient();
     const siteUrl = getSiteUrl();
+    const normalizedLocale = locale.trim().toLowerCase();
+    const localizedPreviewPath = `/${normalizedLocale}/dashboard/seller/listings/${listingId}/preview`;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: user.email ?? undefined,
@@ -207,8 +211,8 @@ export async function createHorseListingCheckoutSession(
           quantity: 1,
         },
       ],
-      success_url: `${siteUrl}/dashboard/seller/listings/${listingId}/preview?payment=success`,
-      cancel_url: `${siteUrl}/dashboard/seller/listings/${listingId}/preview?payment=cancelled`,
+      success_url: `${siteUrl}${localizedPreviewPath}?payment=success`,
+      cancel_url: `${siteUrl}${localizedPreviewPath}?payment=cancelled`,
       client_reference_id: user.id,
       metadata: {
         horse_listing_order_id: String(order.id),
