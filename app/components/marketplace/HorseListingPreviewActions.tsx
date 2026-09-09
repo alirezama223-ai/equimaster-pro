@@ -31,6 +31,7 @@ type Props = {
     expires_at: string | null;
   } | null;
   paymentStatus: "success" | "cancelled" | null;
+  locale: string;
 };
 
 export default function HorseListingPreviewActions({
@@ -38,6 +39,7 @@ export default function HorseListingPreviewActions({
   plans,
   paidOrder,
   paymentStatus,
+  locale,
 }: Props) {
   const t = useTranslations("dashboard");
   const [isPending, startTransition] = useTransition();
@@ -85,6 +87,7 @@ export default function HorseListingPreviewActions({
           plans={plans}
           paidOrder={paidOrder}
           paymentStatus={paymentStatus}
+          locale={locale}
         />
       ) : null}
 
