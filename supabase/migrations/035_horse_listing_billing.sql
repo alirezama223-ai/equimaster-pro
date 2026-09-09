@@ -95,6 +95,7 @@ alter table public.horse_listing_orders enable row level security;
 
 revoke all on public.horse_listing_pricing_plans from anon, authenticated;
 revoke all on public.horse_listing_orders from anon, authenticated;
+grant select on public.horse_listing_pricing_plans to anon, authenticated;
 
 drop policy if exists "public can read active horse listing pricing plans" on public.horse_listing_pricing_plans;
 create policy "public can read active horse listing pricing plans"
