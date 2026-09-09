@@ -1,0 +1,22 @@
+{
+  "title": "Choose your listing package",
+  "subtitle": "Your horse listing becomes eligible for publication after successful payment and moderation.",
+  "visibility": "Visibility",
+  "duration": "Duration",
+  "price": "Price",
+  "features": "Includes",
+  "recommended": "Recommended",
+  "payNow": "Continue to secure payment",
+  "processing": "Opening secure checkout...",
+  "acceptAgb": "I accept the AGB.",
+  "acceptRules": "I accept the Marketplace Rules.",
+  "agb": "AGB",
+  "rules": "Marketplace Rules",
+  "paymentRequired": "Payment is required before the listing can be published.",
+  "paymentSuccess": "Payment received. Your listing is now waiting for moderation.",
+  "paymentCancelled": "Payment was cancelled. Your listing remains a draft.",
+  "alreadyPaid": "This listing has already been paid for.",
+  "statusPending": "Waiting for moderation",
+  "statusPaid": "Paid",
+  "days": "days"
+}

@@ -5,6 +5,7 @@ import {
   isStripeConfigured,
 } from "@/app/lib/stripe/config";
 import { handleStripeWebhookEvent } from "@/app/lib/stripe/webhook-handlers";
+import { handleHorseListingWebhookEvent } from "@/app/lib/stripe/horse-listing-webhook";
 
 export const runtime = "nodejs";
 
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
     const event = stripe.webhooks.constructEvent(payload, signature, getStripeWebhookSecret());
     console.info("[stripe-webhook] Received event:", event.type, event.id);
     await handleStripeWebhookEvent(event);
+    await handleHorseListingWebhookEvent(event);
     console.info("[stripe-webhook] Processed event successfully:", event.type, event.id);
     return NextResponse.json({ received: true });
   } catch (error) {

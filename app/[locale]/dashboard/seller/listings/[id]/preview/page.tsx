@@ -3,19 +3,25 @@ import { notFound, redirect } from "next/navigation";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import Navbar from "@/app/components/navbar/Navbar";
 import FadeUp from "@/app/components/animations/FadeUp";
-import { ListingPreviewActions } from "@/app/components/marketplace/SellerDashboardClient";
+import HorseListingPreviewActions from "@/app/components/marketplace/HorseListingPreviewActions";
 import { getHorseListingForOwner } from "@/app/actions/horse-listings";
+import {
+  getHorseListingBillingState,
+  getHorseListingPricingPlans,
+} from "@/app/actions/horse-listing-billing";
 import { isListingUuid } from "@/app/lib/horse-listings";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<{ payment?: string }>;
 };
 
 export const dynamic = "force-dynamic";
 
-export default async function ListingPreviewPage({ params }: Props) {
+export default async function ListingPreviewPage({ params, searchParams }: Props) {
   const t = await getTranslations("dashboard");
-  const { id } = await params;
+  const { locale, id } = await params;
+  const query = await searchParams;
 
   if (!isListingUuid(id)) {
     notFound();
@@ -31,6 +37,11 @@ export default async function ListingPreviewPage({ params }: Props) {
     notFound();
   }
 
+  const [plansResult, billingResult] = await Promise.all([
+    getHorseListingPricingPlans(),
+    getHorseListingBillingState(id),
+  ]);
+
   return (
     <>
       <Navbar />
@@ -44,7 +55,16 @@ export default async function ListingPreviewPage({ params }: Props) {
               <h1 className="text-4xl font-black text-white mt-3">{result.data.name}</h1>
               <p className="mt-3 text-gray-400">{t("preview.subtitle")}</p>
             </div>
-            <ListingPreviewActions listing={result.data} />
+            <HorseListingPreviewActions
+              listing={result.data}
+              plans={plansResult.plans}
+              paidOrder={billingResult.paidOrder}
+              paymentStatus={
+                query.payment === "success" || query.payment === "cancelled"
+                  ? query.payment
+                  : null
+              }
+            />
           </FadeUp>
         </div>
       </main>

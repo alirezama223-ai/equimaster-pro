@@ -1,0 +1,22 @@
+{
+  "title": "Kies uw advertentiepakket",
+  "subtitle": "Uw advertentie kan na succesvolle betaling en moderatie worden gepubliceerd.",
+  "visibility": "Zichtbaarheid",
+  "duration": "Duur",
+  "price": "Prijs",
+  "features": "Inbegrepen",
+  "recommended": "Aanbevolen",
+  "payNow": "Doorgaan naar veilige betaling",
+  "processing": "Beveiligde checkout wordt geopend...",
+  "acceptAgb": "Ik accepteer de algemene voorwaarden.",
+  "acceptRules": "Ik accepteer de Marketplace-regels.",
+  "agb": "Algemene voorwaarden",
+  "rules": "Marketplace-regels",
+  "paymentRequired": "Betaling is vereist voordat de advertentie kan worden gepubliceerd.",
+  "paymentSuccess": "Betaling ontvangen. Uw advertentie wacht nu op moderatie.",
+  "paymentCancelled": "Betaling geannuleerd. Uw advertentie blijft een concept.",
+  "alreadyPaid": "Voor deze advertentie is al betaald.",
+  "statusPending": "Wacht op moderatie",
+  "statusPaid": "Betaald",
+  "days": "dagen"
+}
