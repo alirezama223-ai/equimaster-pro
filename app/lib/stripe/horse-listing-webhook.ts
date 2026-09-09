@@ -10,6 +10,47 @@ function getOrderId(session: Stripe.Checkout.Session): string | null {
 }
 
 export async function handleHorseListingWebhookEvent(event: Stripe.Event) {
+  const supabase = createServiceClient();
+
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object as Stripe.Charge;
+    const paymentIntentId =
+      typeof charge.payment_intent === "string"
+        ? charge.payment_intent
+        : charge.payment_intent?.id ?? null;
+
+    if (!paymentIntentId) return;
+
+    const { data: order, error: orderError } = await supabase
+      .from("horse_listing_orders")
+      .select("id, listing_id, status")
+      .eq("stripe_payment_intent_id", paymentIntentId)
+      .maybeSingle();
+
+    if (orderError) throw new Error(orderError.message);
+    if (!order) return;
+    if (order.status === "refunded") return;
+
+    const refundedAt = new Date().toISOString();
+    const { error: updateOrderError } = await supabase
+      .from("horse_listing_orders")
+      .update({ status: "refunded", refunded_at: refundedAt })
+      .eq("id", order.id)
+      .eq("status", "paid");
+
+    if (updateOrderError) throw new Error(updateOrderError.message);
+
+    // A refunded listing payment must not remain publicly active.
+    const { error: listingError } = await supabase
+      .from("horse_listings")
+      .update({ status: "paused", listing_expires_at: null, published_at: null })
+      .eq("id", order.listing_id)
+      .eq("status", "active");
+
+    if (listingError) throw new Error(listingError.message);
+    return;
+  }
+
   if (!event.type.startsWith("checkout.session.")) return;
 
   const session = event.data.object as Stripe.Checkout.Session;
@@ -17,8 +58,6 @@ export async function handleHorseListingWebhookEvent(event: Stripe.Event) {
 
   const orderId = getOrderId(session);
   if (!orderId) return;
-
-  const supabase = createServiceClient();
 
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     if (session.payment_status !== "paid") return;
