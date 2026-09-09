@@ -1,0 +1,22 @@
+{
+  "title": "Anzeigenpaket auswählen",
+  "subtitle": "Nach erfolgreicher Zahlung und Moderation kann Ihr Pferdeangebot veröffentlicht werden.",
+  "visibility": "Sichtbarkeit",
+  "duration": "Laufzeit",
+  "price": "Preis",
+  "features": "Enthalten",
+  "recommended": "Empfohlen",
+  "payNow": "Weiter zur sicheren Zahlung",
+  "processing": "Sicherer Checkout wird geöffnet...",
+  "acceptAgb": "Ich akzeptiere die AGB.",
+  "acceptRules": "Ich akzeptiere die Marketplace-Regeln.",
+  "agb": "AGB",
+  "rules": "Marketplace-Regeln",
+  "paymentRequired": "Vor der Veröffentlichung ist eine Zahlung erforderlich.",
+  "paymentSuccess": "Zahlung erhalten. Ihr Angebot wartet nun auf die Moderation.",
+  "paymentCancelled": "Zahlung abgebrochen. Ihr Angebot bleibt ein Entwurf.",
+  "alreadyPaid": "Für dieses Angebot wurde bereits bezahlt.",
+  "statusPending": "Wartet auf Moderation",
+  "statusPaid": "Bezahlt",
+  "days": "Tage"
+}
