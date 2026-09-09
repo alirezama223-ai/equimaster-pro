@@ -1,0 +1,22 @@
+{
+  "title": "Elige tu paquete de anuncio",
+  "subtitle": "Tu anuncio podrá publicarse después del pago y la moderación.",
+  "visibility": "Visibilidad",
+  "duration": "Duración",
+  "price": "Precio",
+  "features": "Incluye",
+  "recommended": "Recomendado",
+  "payNow": "Continuar al pago seguro",
+  "processing": "Abriendo el pago seguro...",
+  "acceptAgb": "Acepto las condiciones generales.",
+  "acceptRules": "Acepto las reglas del Marketplace.",
+  "agb": "Condiciones generales",
+  "rules": "Reglas del Marketplace",
+  "paymentRequired": "El pago es obligatorio antes de publicar el anuncio.",
+  "paymentSuccess": "Pago recibido. Tu anuncio está ahora pendiente de moderación.",
+  "paymentCancelled": "Pago cancelado. Tu anuncio sigue como borrador.",
+  "alreadyPaid": "Este anuncio ya ha sido pagado.",
+  "statusPending": "Pendiente de moderación",
+  "statusPaid": "Pagado",
+  "days": "días"
+}
