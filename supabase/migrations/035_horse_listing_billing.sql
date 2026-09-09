@@ -103,4 +103,74 @@ create policy "public can read active horse listing pricing plans"
   to anon, authenticated
   using (active = true);
 
+-- An active listing is publicly visible only while its paid package is valid.
+drop policy if exists "Public can read active horse listings" on public.horse_listings;
+create policy "Public can read active horse listings"
+  on public.horse_listings
+  for select
+  to public
+  using (
+    status = 'active'
+    and (listing_expires_at is null or listing_expires_at > now())
+  );
+
+-- Moderation approval is the final publication step, but it cannot activate an unpaid listing.
+create or replace function public.moderate_horse_listing(
+  p_listing_id uuid,
+  p_to_status text,
+  p_reason text default null
+)
+returns public.horse_listings
+language plpgsql
+security definer
+set search_path to 'public'
+as $function$
+declare
+  v_listing public.horse_listings;
+  v_from_status text;
+begin
+  if not public.is_moderator() then
+    raise exception 'not authorized';
+  end if;
+
+  if p_to_status not in ('active','rejected','paused','closed','pending') then
+    raise exception 'invalid moderation status';
+  end if;
+
+  select * into v_listing
+  from public.horse_listings
+  where id = p_listing_id
+  for update;
+
+  if not found then
+    raise exception 'listing not found';
+  end if;
+
+  if p_to_status = 'active' and not exists (
+    select 1
+    from public.horse_listing_orders o
+    where o.listing_id = p_listing_id
+      and o.buyer_user_id = v_listing.user_id
+      and o.status = 'paid'
+      and o.expires_at is not null
+      and o.expires_at > now()
+  ) then
+    raise exception 'listing payment required';
+  end if;
+
+  v_from_status := v_listing.status;
+
+  update public.horse_listings
+  set status = p_to_status,
+      published_at = case when p_to_status = 'active' then coalesce(published_at, now()) else null end
+  where id = p_listing_id
+  returning * into v_listing;
+
+  insert into public.horse_listing_moderation_audit_log(listing_id, actor_user_id, from_status, to_status, reason)
+  values (p_listing_id, auth.uid(), v_from_status, p_to_status, nullif(trim(p_reason), ''));
+
+  return v_listing;
+end;
+$function$;
+
 notify pgrst, 'reload schema';
