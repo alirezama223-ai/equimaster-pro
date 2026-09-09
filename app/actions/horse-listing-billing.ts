@@ -13,8 +13,6 @@ import {
   HORSE_LISTING_RULES_VERSION,
 } from "@/app/lib/marketplace/horse-listing-billing-constants";
 
-export { HORSE_LISTING_AGB_VERSION, HORSE_LISTING_RULES_VERSION } from "@/app/lib/marketplace/horse-listing-billing-constants";
-
 type HorseListingPlan = {
   id: string;
   slug: string;
