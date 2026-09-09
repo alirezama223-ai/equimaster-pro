@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { loginRedirectPath } from "@/app/lib/auth/paths";
 import Navbar from "@/app/components/navbar/Navbar";
 import FadeUp from "@/app/components/animations/FadeUp";
-import { ListingPreviewActions } from "@/app/components/marketplace/SellerDashboardClient";
+import HorseListingPreviewActions from "@/app/components/marketplace/HorseListingPreviewActions";
 import { getHorseListingForOwner } from "@/app/actions/horse-listings";
 import {
   getHorseListingBillingState,
@@ -55,7 +55,7 @@ export default async function ListingPreviewPage({ params, searchParams }: Props
               <h1 className="text-4xl font-black text-white mt-3">{result.data.name}</h1>
               <p className="mt-3 text-gray-400">{t("preview.subtitle")}</p>
             </div>
-            <ListingPreviewActions
+            <HorseListingPreviewActions
               listing={result.data}
               plans={plansResult.plans}
               paidOrder={billingResult.paidOrder}
