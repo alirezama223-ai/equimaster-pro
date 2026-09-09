@@ -8,9 +8,12 @@ import {
   getStripeClient,
   isStripeConfigured,
 } from "@/app/lib/stripe/config";
+import {
+  HORSE_LISTING_AGB_VERSION,
+  HORSE_LISTING_RULES_VERSION,
+} from "@/app/lib/marketplace/horse-listing-billing-constants";
 
-export const HORSE_LISTING_AGB_VERSION = "AGB-RC1-2026-09";
-export const HORSE_LISTING_RULES_VERSION = "MARKETPLACE-RULES-RC1-2026-09";
+export { HORSE_LISTING_AGB_VERSION, HORSE_LISTING_RULES_VERSION } from "@/app/lib/marketplace/horse-listing-billing-constants";
 
 type HorseListingPlan = {
   id: string;
@@ -96,14 +99,18 @@ export async function getHorseListingBillingState(listingId: string): Promise<{
 
   if (error) return { paidOrder: null, error: "Unable to load listing payment status." };
 
-  return { paidOrder: order ? {
-    id: String(order.id),
-    plan_slug: String(order.plan_slug),
-    plan_name: String(order.plan_name),
-    status: String(order.status),
-    expires_at: order.expires_at ? String(order.expires_at) : null,
-    paid_at: order.paid_at ? String(order.paid_at) : null,
-  } : null };
+  return {
+    paidOrder: order
+      ? {
+          id: String(order.id),
+          plan_slug: String(order.plan_slug),
+          plan_name: String(order.plan_name),
+          status: String(order.status),
+          expires_at: order.expires_at ? String(order.expires_at) : null,
+          paid_at: order.paid_at ? String(order.paid_at) : null,
+        }
+      : null,
+  };
 }
 
 export async function createHorseListingCheckoutSession(
@@ -241,7 +248,7 @@ export async function createHorseListingCheckoutSession(
       .eq("id", order.id);
 
     console.error("[horse-listing-billing] Stripe checkout creation failed", error);
-    return { error: error instanceof Error ? error.message : "Unable to start payment." };
+    return { error: "Unable to start payment. Please try again." };
   }
 }
 
