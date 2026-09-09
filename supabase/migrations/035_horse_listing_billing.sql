@@ -104,7 +104,7 @@ create policy "public can read active horse listing pricing plans"
   to anon, authenticated
   using (active = true);
 
--- An active listing is publicly visible only while its paid package is valid.
+-- An active listing is publicly visible only while it has a non-expired paid package.
 drop policy if exists "Public can read active horse listings" on public.horse_listings;
 create policy "Public can read active horse listings"
   on public.horse_listings
@@ -112,7 +112,8 @@ create policy "Public can read active horse listings"
   to public
   using (
     status = 'active'
-    and (listing_expires_at is null or listing_expires_at > now())
+    and listing_expires_at is not null
+    and listing_expires_at > now()
   );
 
 -- Moderation approval is the final publication step, but it cannot activate an unpaid listing.
