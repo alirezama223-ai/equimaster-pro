@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import ListingPreview from "@/app/components/sell/ListingPreview";
 import HorseListingPaymentPanel from "@/app/components/marketplace/HorseListingPaymentPanel";
 import { getListingEditPath, getPublicListingPath } from "@/app/lib/marketplace/paths";
@@ -40,7 +40,6 @@ export default function HorseListingPreviewActions({
   paymentStatus,
 }: Props) {
   const t = useTranslations("dashboard");
-  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const formData = listingRowToFormData(listing);
@@ -62,12 +61,6 @@ export default function HorseListingPreviewActions({
         videoPreviewUrl={null}
         existingVideoUrl={listing.video_url}
       />
-
-      {error ? (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-          {error}
-        </div>
-      ) : null}
 
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Link
