@@ -18,6 +18,15 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "xejckyolhuurzsqnzohq.supabase.co",
+        pathname: "/storage/v1/object/public/horse-images/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {
