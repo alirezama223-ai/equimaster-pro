@@ -18,7 +18,8 @@ function assertCron(req: Request) {
 
   if (cronSecret && auth === `Bearer ${cronSecret}`) return;
   if (workerToken && internalToken === workerToken) return;
-  if (cronSecret || workerToken) throw new Error("Unauthorized");
+  if (!cronSecret && !workerToken) throw new Error("Cron authentication is not configured");
+  throw new Error("Unauthorized");
 }
 
 function eventCopy(event: string, name: string, reason?: string | null) {
