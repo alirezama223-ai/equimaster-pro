@@ -30,7 +30,8 @@ type Props = {
   buyerInquiriesError?: string;
   breederProfile: BreederRow | null;
   myStallions: StallionRow[];
-  demoSnapshot: DemoEnvironmentSnapshot;
+  demoSnapshot: DemoEnvironmentSnapshot | null;
+  isAdmin: boolean;
 };
 
 export default async function AccountDashboard({
@@ -45,6 +46,7 @@ export default async function AccountDashboard({
   breederProfile,
   myStallions,
   demoSnapshot,
+  isAdmin,
 }: Props) {
   const t = await getTranslations("account.dashboard");
   const savedSearchT = await getTranslations("savedSearch");
@@ -90,7 +92,9 @@ export default async function AccountDashboard({
         </div>
       </section>
 
-      <DemoEnvironmentPanel snapshot={demoSnapshot} />
+      {isAdmin && demoSnapshot ? (
+        <DemoEnvironmentPanel snapshot={demoSnapshot} />
+      ) : null}
 
       <SellerListingsDashboard listings={listings} stats={listingStats} />
 
