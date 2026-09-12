@@ -13,6 +13,7 @@ import {
 import { getMyStallions } from "@/app/actions/stallions";
 import { getOptionalMyBreederProfile } from "@/app/lib/breeder-profile";
 import { fetchDemoEnvironmentSnapshot } from "@/app/lib/demo/queries";
+import { isCurrentUserAdmin } from "@/app/lib/admin";
 import { createClient } from "@/app/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function AccountPage() {
     newInquiryCount,
     breederProfileResult,
     myStallionsResult,
+    isAdmin,
   ] = await Promise.all([
     getMyHorseListings(),
     getSellerListingStats(),
@@ -47,9 +49,12 @@ export default async function AccountPage() {
     getSellerNewInquiryCount(),
     getOptionalMyBreederProfile(),
     getMyStallions(),
+    isCurrentUserAdmin(),
   ]);
 
-  const demoSnapshotResult = await fetchDemoEnvironmentSnapshot(supabase, user.id);
+  const demoSnapshotResult = isAdmin
+    ? await fetchDemoEnvironmentSnapshot(supabase, user.id)
+    : null;
 
   return (
     <>
@@ -69,7 +74,8 @@ export default async function AccountPage() {
               buyerInquiriesError={buyerInquiriesResult.error}
               breederProfile={breederProfileResult.breeder ?? null}
               myStallions={myStallionsResult.stallions ?? []}
-              demoSnapshot={demoSnapshotResult.snapshot}
+              demoSnapshot={demoSnapshotResult?.snapshot ?? null}
+              isAdmin={isAdmin}
             />
           </FadeUp>
         </div>
