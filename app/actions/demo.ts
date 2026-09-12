@@ -108,17 +108,21 @@ export async function getDemoEnvironmentSnapshot(): Promise<{ snapshot: DemoEnvi
 }
 
 export async function setDemoMode(enabled: boolean): Promise<{ error?: string }> {
-  const auth = await requireAuthenticatedUser();
-  if (!auth.user) return { error: auth.error };
-  const { sellerName, sellerEmail } = sellerDetails(auth.user);
-  return setDemoModeEnabled(auth.supabase, auth.user.id, enabled, sellerName, sellerEmail);
+  const admin = await requireAdmin();
+  if (admin.error || !admin.supabase || !admin.user) {
+    return { error: admin.error ?? "Admin access required to manage the demo environment." };
+  }
+  const { sellerName, sellerEmail } = sellerDetails(admin.user);
+  return setDemoModeEnabled(admin.supabase, admin.user.id, enabled, sellerName, sellerEmail);
 }
 
 export async function resetDemo(): Promise<{ error?: string }> {
-  const auth = await requireAuthenticatedUser();
-  if (!auth.user) return { error: auth.error };
-  const { sellerName, sellerEmail } = sellerDetails(auth.user);
-  return resetDemoEnvironment(auth.supabase, auth.user.id, sellerName, sellerEmail);
+  const admin = await requireAdmin();
+  if (admin.error || !admin.supabase || !admin.user) {
+    return { error: admin.error ?? "Admin access required to manage the demo environment." };
+  }
+  const { sellerName, sellerEmail } = sellerDetails(admin.user);
+  return resetDemoEnvironment(admin.supabase, admin.user.id, sellerName, sellerEmail);
 }
 
 /** Enables the demo environment, seeds five isolated SHABDIZ demo stallions, and repairs any older shallow demo records. */
