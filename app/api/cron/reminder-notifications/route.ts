@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// Production reminder runner: queue due reminders, then dispatch browser push jobs.
 function assertCron(req: Request) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization");
