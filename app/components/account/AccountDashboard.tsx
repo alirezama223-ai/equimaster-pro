@@ -9,6 +9,7 @@ import InquiriesSection from "@/app/components/account/InquiriesSection";
 import BuyerInquiriesSection from "@/app/components/account/BuyerInquiriesSection";
 import DemoEnvironmentPanel from "@/app/components/account/DemoEnvironmentPanel";
 import SavedSearchAlerts from "@/app/components/account/SavedSearchAlerts";
+import NotificationSettings from "@/app/components/account/NotificationSettings";
 import { getUserSavedSearches } from "@/app/actions/saved-searches";
 import { getSavedSearchAlerts } from "@/app/actions/saved-search-alerts";
 import { buildMarketplaceSearchQuery } from "@/app/lib/marketplace/search";
@@ -92,6 +93,8 @@ export default async function AccountDashboard({
         </div>
       </section>
 
+      <NotificationSettings userId={user.id} />
+
       {isAdmin && demoSnapshot ? (
         <DemoEnvironmentPanel snapshot={demoSnapshot} />
       ) : null}
@@ -119,37 +122,25 @@ export default async function AccountDashboard({
       ) : null}
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <Link
-          href="/account/mfa"
-          className="text-blue-300 hover:text-blue-200 font-semibold"
-        >
+        <Link href="/account/mfa" className="text-blue-300 hover:text-blue-200 font-semibold">
           {t("openSecurity")}
         </Link>
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <Link
-          href="/account/subscription"
-          className="text-blue-300 hover:text-blue-200 font-semibold"
-        >
+        <Link href="/account/subscription" className="text-blue-300 hover:text-blue-200 font-semibold">
           {t("openSubscription")}
         </Link>
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <Link
-          href="/account/verification"
-          className="text-blue-300 hover:text-blue-200 font-semibold"
-        >
+        <Link href="/account/verification" className="text-blue-300 hover:text-blue-200 font-semibold">
           {t("openVerification")}
         </Link>
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-[#111827] p-6">
-        <Link
-          href="/dashboard/seller"
-          className="text-blue-300 hover:text-blue-200 font-semibold"
-        >
+        <Link href="/dashboard/seller" className="text-blue-300 hover:text-blue-200 font-semibold">
           {t("openSellerDashboard")}
         </Link>
       </div>
