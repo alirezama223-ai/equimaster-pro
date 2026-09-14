@@ -23,6 +23,9 @@ export async function enablePushNotifications(): Promise<PushPermissionResult> {
   if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
     return { supported: false, enabled: false, reason: "Push notifications are not supported by this browser." };
   }
+
+  // Prefer the Vercel public environment variable; the fallback keeps the
+  // production deployment functional if that variable was omitted at build time.
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || PRODUCTION_VAPID_PUBLIC_KEY;
 
   const permission = await Notification.requestPermission();
