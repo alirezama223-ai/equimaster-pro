@@ -12,6 +12,7 @@ EquiMaster Pro is a multilingual sport-horse platform focused on horse discovery
 - 🌍 Internationalized UI for English, German, French, Spanish, and Dutch
 - 🔎 SEO metadata and structured Schema.org data
 - 📱 Responsive experience for desktop and mobile
+- 🔔 Browser push reminders for important horse-care and training events
 
 ## Tech stack
 
