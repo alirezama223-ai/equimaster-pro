@@ -6,6 +6,12 @@ export type PushPermissionResult = {
   reason?: string;
 };
 
+// The VAPID public key is safe to expose to the browser. Keep the environment
+// variable as the preferred override, but use the production key as a fallback
+// so push setup cannot silently break when a frontend deployment is missing it.
+const PRODUCTION_VAPID_PUBLIC_KEY =
+  "BH-Un_d-Dr6yZkPKsrswrQIWGzjWLsNHFEPkfpZxjSU0U23odRyJZJ7BWsxGlhqfsj97oVIlM0ICH1yA4ZixALs";
+
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -17,8 +23,7 @@ export async function enablePushNotifications(): Promise<PushPermissionResult> {
   if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
     return { supported: false, enabled: false, reason: "Push notifications are not supported by this browser." };
   }
-  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  if (!publicKey) return { supported: true, enabled: false, reason: "Push notifications are not configured." };
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || PRODUCTION_VAPID_PUBLIC_KEY;
 
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return { supported: true, enabled: false, reason: "Notification permission was not granted." };
