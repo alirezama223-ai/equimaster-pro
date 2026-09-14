@@ -28,6 +28,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Service worker must be served directly from the site root. Sending it
+  // through next-intl/auth routing can turn /sw.js into a redirect or HTML,
+  // which makes browser ServiceWorker registration fail during installation.
+  if (pathname === "/sw.js") {
+    return NextResponse.next();
+  }
+
   // Never send static assets through next-intl or auth routing.
   // This is especially important for video files such as shabdiz-hero.mp4.
   if (isStaticAsset(pathname)) {
@@ -49,6 +56,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm|mov|avif|woff|woff2|ttf|otf)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp4|webm|mov|avif|woff|woff2|ttf|otf)$).*)",
   ],
 };
