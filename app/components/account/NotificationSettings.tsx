@@ -68,6 +68,22 @@ const copy = {
 type Locale = keyof typeof copy;
 type Props = { userId: string };
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === "string" && error) return error;
+  if (error && typeof error === "object") {
+    const candidate = error as { message?: unknown; name?: unknown; code?: unknown };
+    if (typeof candidate.message === "string" && candidate.message) {
+      return candidate.name && candidate.name !== "Error"
+        ? `${String(candidate.name)}: ${candidate.message}`
+        : candidate.message;
+    }
+    if (typeof candidate.name === "string" && candidate.name) return candidate.name;
+    if (typeof candidate.code === "string" && candidate.code) return candidate.code;
+  }
+  return fallback;
+}
+
 export default function NotificationSettings({ userId }: Props) {
   const locale = useLocale() as Locale;
   const t = copy[locale] ?? copy.en;
@@ -114,7 +130,7 @@ export default function NotificationSettings({ userId }: Props) {
         setEnabled(true);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.error);
+      setError(getErrorMessage(err, t.error));
     } finally {
       setBusy(false);
     }
@@ -130,7 +146,7 @@ export default function NotificationSettings({ userId }: Props) {
           <p className="mt-3 text-sm text-gray-300">
             {supported ? (enabled ? t.enabled : t.disabled) : t.unsupported}
           </p>
-          {error ? <p className="mt-2 text-sm text-red-300">{error}</p> : null}
+          {error ? <p className="mt-2 break-words text-sm text-red-300">{error}</p> : null}
         </div>
         <button
           type="button"
