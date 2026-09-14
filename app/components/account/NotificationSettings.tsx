@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
-import { createClient } from "@/app/lib/supabase/client";
 import {
   disablePushNotifications,
   enablePushNotifications,
@@ -67,7 +66,6 @@ const copy = {
 } as const;
 
 type Locale = keyof typeof copy;
-
 type Props = { userId: string };
 
 export default function NotificationSettings({ userId }: Props) {
