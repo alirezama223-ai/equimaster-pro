@@ -55,6 +55,16 @@ export async function getMyReminders(): Promise<{
 
 const TYPES = new Set(["training", "vaccination", "dental", "farrier", "medication", "vet", "custom"]);
 const ALLOWED_MINUTES = new Set([0, 5, 10, 30, 60, 1440, 2880]);
+const RECURRENCE_RULES = new Set([
+  "FREQ=DAILY",
+  "FREQ=WEEKLY",
+  "FREQ=WEEKLY;INTERVAL=2",
+  "FREQ=WEEKLY;INTERVAL=4",
+  "FREQ=WEEKLY;INTERVAL=6",
+  "FREQ=MONTHLY",
+  "FREQ=MONTHLY;INTERVAL=6",
+  "FREQ=YEARLY",
+]);
 
 export async function createReminder(input: {
   title: string;
@@ -63,6 +73,7 @@ export async function createReminder(input: {
   dueAt: string;
   horseId?: string;
   remindBeforeMinutes: number;
+  recurrenceRule?: string;
 }): Promise<{ ok?: true; error?: string }> {
   const { supabase, user } = await getUser();
   if (!user) return { error: "You must be signed in." };
@@ -72,6 +83,9 @@ export async function createReminder(input: {
   if (!TYPES.has(input.reminderType)) return { error: "Invalid reminder type." };
   if (!Number.isFinite(Date.parse(input.dueAt))) return { error: "Please choose a valid date and time." };
   if (!ALLOWED_MINUTES.has(input.remindBeforeMinutes)) return { error: "Invalid reminder lead time." };
+
+  const recurrenceRule = input.recurrenceRule?.trim() || null;
+  if (recurrenceRule && !RECURRENCE_RULES.has(recurrenceRule)) return { error: "Invalid recurrence rule." };
 
   const horseId = input.horseId?.trim() || null;
   if (horseId) {
@@ -91,7 +105,7 @@ export async function createReminder(input: {
     description: input.description?.trim() || null,
     reminder_type: input.reminderType,
     due_at: new Date(input.dueAt).toISOString(),
-    recurrence_rule: null,
+    recurrence_rule: recurrenceRule,
     remind_before_minutes: input.remindBeforeMinutes,
     status: "pending",
     enabled: true,
