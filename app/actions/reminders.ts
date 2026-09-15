@@ -77,6 +77,12 @@ async function validateHorse(supabase: Awaited<ReturnType<typeof createClient>>,
   return !error && !!data;
 }
 
+function formatDatabaseError(error: { code?: string; message?: string; details?: string | null; hint?: string | null }) {
+  const code = error.code ? ` [${error.code}]` : "";
+  const message = error.message?.trim() || "Unknown database error.";
+  return `Unable to create this reminder right now.${code} ${message}`;
+}
+
 export async function createReminder(input: {
   title: string; description?: string; reminderType: string; dueAt: string; horseId?: string;
   remindBeforeMinutes: number; recurrenceRule?: string;
@@ -96,15 +102,10 @@ export async function createReminder(input: {
   const { error } = await supabase.from("reminders").insert(payload);
   if (error) {
     console.error("[EquiMaster reminders] createReminder insert failed", {
-      code: error.code,
-      message: error.message,
-      details: error.details,
-      hint: error.hint,
-      reminderType: payload.reminder_type,
-      hasHorse: Boolean(payload.horse_id),
-      recurrenceRule: payload.recurrence_rule,
+      code: error.code, message: error.message, details: error.details, hint: error.hint,
+      reminderType: payload.reminder_type, hasHorse: Boolean(payload.horse_id), recurrenceRule: payload.recurrence_rule,
     });
-    return { error: "Unable to create this reminder right now." };
+    return { error: formatDatabaseError(error) };
   }
   return { ok: true };
 }
@@ -121,14 +122,11 @@ export async function updateReminder(id: string, input: {
   if (!(await validateHorse(supabase, user.id, checked.horseId))) return { error: "The selected horse could not be found." };
 
   const now = new Date().toISOString();
-  const { error } = await supabase
-    .from("reminders")
-    .update({
-      horse_id: checked.horseId, title: checked.title, description: input.description?.trim() || null,
+  const { error } = await supabase.from("reminders")
+    .update({ horse_id: checked.horseId, title: checked.title, description: input.description?.trim() || null,
       reminder_type: input.reminderType, due_at: new Date(input.dueAt).toISOString(),
       recurrence_rule: checked.recurrenceRule, remind_before_minutes: input.remindBeforeMinutes,
-      status: "pending", enabled: true, completed_at: null, dismissed_at: null, updated_at: now,
-    })
+      status: "pending", enabled: true, completed_at: null, dismissed_at: null, updated_at: now })
     .eq("id", id).eq("user_id", user.id);
 
   if (error) return { error: "Unable to update this reminder right now." };
@@ -138,9 +136,7 @@ export async function updateReminder(id: string, input: {
 export async function cancelReminder(id: string): Promise<{ ok?: true; error?: string }> {
   const { supabase, user } = await getUser();
   if (!user) return { error: "You must be signed in." };
-  const { error } = await supabase.from("reminders")
-    .update({ status: "cancelled", enabled: false, updated_at: new Date().toISOString() })
-    .eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase.from("reminders").update({ status: "cancelled", enabled: false, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", user.id);
   if (error) return { error: "Unable to cancel this reminder." };
   return { ok: true };
 }
@@ -149,9 +145,7 @@ export async function completeReminder(id: string): Promise<{ ok?: true; error?:
   const { supabase, user } = await getUser();
   if (!user) return { error: "You must be signed in." };
   const now = new Date().toISOString();
-  const { error } = await supabase.from("reminders")
-    .update({ status: "completed", enabled: false, completed_at: now, updated_at: now })
-    .eq("id", id).eq("user_id", user.id).eq("status", "pending");
+  const { error } = await supabase.from("reminders").update({ status: "completed", enabled: false, completed_at: now, updated_at: now }).eq("id", id).eq("user_id", user.id).eq("status", "pending");
   if (error) return { error: "Unable to complete this reminder." };
   return { ok: true };
 }
