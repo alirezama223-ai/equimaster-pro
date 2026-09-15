@@ -87,13 +87,25 @@ export async function createReminder(input: {
   if ("error" in checked) return checked;
   if (!(await validateHorse(supabase, user.id, checked.horseId))) return { error: "The selected horse could not be found." };
 
-  const { error } = await supabase.from("reminders").insert({
+  const payload = {
     user_id: user.id, horse_id: checked.horseId, title: checked.title,
     description: input.description?.trim() || null, reminder_type: input.reminderType,
     due_at: new Date(input.dueAt).toISOString(), recurrence_rule: checked.recurrenceRule,
     remind_before_minutes: input.remindBeforeMinutes, status: "pending", enabled: true,
-  });
-  if (error) return { error: "Unable to create this reminder right now." };
+  };
+  const { error } = await supabase.from("reminders").insert(payload);
+  if (error) {
+    console.error("[EquiMaster reminders] createReminder insert failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      reminderType: payload.reminder_type,
+      hasHorse: Boolean(payload.horse_id),
+      recurrenceRule: payload.recurrence_rule,
+    });
+    return { error: "Unable to create this reminder right now." };
+  }
   return { ok: true };
 }
 
