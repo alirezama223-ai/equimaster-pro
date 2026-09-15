@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "EquiMaster Pro",
+    "slug": "equimaster-pro",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "equimaster",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router", "expo-secure-store"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "pro.equimaster.app"
+    },
+    "android": {
+      "package": "pro.equimaster.app"
+    }
+  }
+}
