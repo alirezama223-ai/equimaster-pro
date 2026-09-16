@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
+import { syncReminderNotifications } from '../../lib/notifications';
 
 type Reminder = {
   id: string;
@@ -19,6 +20,7 @@ export default function RemindersTab() {
   const [items, setItems] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async (pull = false) => {
@@ -31,8 +33,21 @@ export default function RemindersTab() {
       .eq('enabled', true)
       .order('due_at', { ascending: true });
 
-    if (queryError) setError(queryError.message);
-    else setItems((data ?? []) as Reminder[]);
+    if (queryError) {
+      setError(queryError.message);
+      setItems([]);
+    } else {
+      const reminders = (data ?? []) as Reminder[];
+      setItems(reminders);
+      setSyncing(true);
+      try {
+        await syncReminderNotifications(reminders);
+      } catch (notificationError) {
+        setError(notificationError instanceof Error ? notificationError.message : 'Could not schedule notifications.');
+      } finally {
+        setSyncing(false);
+      }
+    }
     setLoading(false);
     setRefreshing(false);
   }, []);
@@ -47,10 +62,11 @@ export default function RemindersTab() {
         contentContainerStyle={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void load(true)} />}
       >
-        <Text style={styles.eyebrow}>EQUIMASTER PRO</Text>
+        <Text style={styles.eyebrow}>SHABDIZ</Text>
         <Text style={styles.title}>Reminders</Text>
-        <Text style={styles.subtitle}>Your next stable tasks, ready to act on.</Text>
+        <Text style={styles.subtitle}>Your stable tasks — with native notifications.</Text>
 
+        {syncing ? <View style={styles.sync}><Text style={styles.syncText}>🔔 Syncing notifications…</Text></View> : null}
         {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text></View> : null}
 
         {items.length === 0 ? (
@@ -97,6 +113,8 @@ const styles = StyleSheet.create({
   eyebrow: { fontSize: 11, fontWeight: '800', letterSpacing: 2, opacity: 0.55 },
   title: { marginTop: 10, fontSize: 32, fontWeight: '800' },
   subtitle: { marginTop: 8, fontSize: 15, lineHeight: 21, opacity: 0.6 },
+  sync: { marginTop: 16, padding: 11, borderRadius: 12, backgroundColor: '#E9F3EE' },
+  syncText: { fontSize: 13, fontWeight: '700' },
   list: { marginTop: 22, gap: 12 },
   card: { padding: 17, borderRadius: 19, backgroundColor: '#FFFFFF' },
   pressed: { opacity: 0.8, transform: [{ scale: 0.99 }] },
