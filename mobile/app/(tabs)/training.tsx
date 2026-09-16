@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
 
 type Session = { id: string; horse_id: string; training_date: string; discipline: string; duration_minutes: number | null; rating: number | null; notes: string | null };
-
 type Horse = { id: string; name: string };
 
 export default function TrainingScreen() {
+  const params = useLocalSearchParams<{ horseId?: string | string[] }>();
+  const requestedHorseId = Array.isArray(params.horseId) ? params.horseId[0] : params.horseId;
   const [sessions, setSessions] = useState<Session[]>([]);
   const [horses, setHorses] = useState<Horse[]>([]);
-  const [horseId, setHorseId] = useState('');
+  const [horseId, setHorseId] = useState(requestedHorseId ?? '');
   const [discipline, setDiscipline] = useState('Show Jumping');
   const [duration, setDuration] = useState('45');
   const [rating, setRating] = useState('');
@@ -34,11 +35,12 @@ export default function TrainingScreen() {
     else setHorses((horseRows ?? []) as Horse[]);
     if (sessionError) setError(sessionError.message);
     else setSessions((sessionRows ?? []) as Session[]);
-    if (!horseId && horseRows?.[0]?.id) setHorseId(horseRows[0].id);
+    if (requestedHorseId && horseRows?.some((horse) => horse.id === requestedHorseId)) setHorseId(requestedHorseId);
+    else if (!horseId && horseRows?.[0]?.id) setHorseId(horseRows[0].id);
     setLoading(false);
   }
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { void load(); }, [requestedHorseId]);
 
   async function addSession() {
     setError(null);
@@ -46,13 +48,13 @@ export default function TrainingScreen() {
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError('Please sign in first.'); setSaving(false); return; }
+    const parsedDuration = duration.trim() ? Number(duration) : null;
+    const parsedRating = rating.trim() ? Number(rating) : null;
+    if (parsedDuration !== null && (!Number.isFinite(parsedDuration) || parsedDuration <= 0)) { setError('Minutes must be a positive number.'); setSaving(false); return; }
+    if (parsedRating !== null && (!Number.isInteger(parsedRating) || parsedRating < 1 || parsedRating > 10)) { setError('Rating must be an integer from 1 to 10.'); setSaving(false); return; }
     const { error: insertError } = await supabase.from('training_sessions').insert({
-      user_id: user.id,
-      horse_id: horseId,
-      training_date: new Date().toISOString(),
-      discipline: discipline.trim() || 'General Training',
-      duration_minutes: Number(duration) || null,
-      rating: rating ? Number(rating) : null,
+      user_id: user.id, horse_id: horseId, training_date: new Date().toISOString(),
+      discipline: discipline.trim() || 'General Training', duration_minutes: parsedDuration, rating: parsedRating,
       notes: notes.trim() || null,
     });
     if (insertError) setError(insertError.message);
