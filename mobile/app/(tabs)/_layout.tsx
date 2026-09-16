@@ -5,17 +5,24 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#1F2933',
+        tabBarActiveTintColor: '#0E5A45',
         tabBarInactiveTintColor: '#8B918E',
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '700' },
-        tabBarStyle: { height: 72, paddingTop: 8, paddingBottom: 10, backgroundColor: '#FFFFFF', borderTopWidth: 0 },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '800' },
+        tabBarStyle: {
+          height: 78,
+          paddingTop: 8,
+          paddingBottom: 10,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 0,
+        },
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: () => null }} />
-      <Tabs.Screen name="horses" options={{ title: 'My Horses', tabBarIcon: () => null }} />
-      <Tabs.Screen name="calendar" options={{ title: 'Calendar', tabBarIcon: () => null }} />
-      <Tabs.Screen name="reminders" options={{ title: 'Reminders', tabBarIcon: () => null }} />
-      <Tabs.Screen name="account" options={{ title: 'Account', tabBarIcon: () => null }} />
+      <Tabs.Screen name="explore" options={{ title: 'Explore', tabBarIcon: () => null }} />
+      <Tabs.Screen name="horses" options={{ href: null }} />
+      <Tabs.Screen name="calendar" options={{ href: null }} />
+      <Tabs.Screen name="reminders" options={{ href: null }} />
+      <Tabs.Screen name="account" options={{ href: null }} />
     </Tabs>
   );
 }
