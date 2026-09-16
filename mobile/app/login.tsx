@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 
@@ -16,7 +17,11 @@ export default function LoginScreen() {
     const value = email.trim().toLowerCase();
     if (!value) return;
     setBusy(true); setMessage('');
-    const { error } = await supabase.auth.signInWithOtp({ email: value, options: { shouldCreateUser: true, emailRedirectTo: 'equimaster://auth/callback' } });
+    const redirectTo = Linking.createURL('auth/callback');
+    const { error } = await supabase.auth.signInWithOtp({
+      email: value,
+      options: { shouldCreateUser: true, emailRedirectTo: redirectTo },
+    });
     if (error) { setMessage(error.message); setSent(false); } else { setSent(true); setMessage('Secure sign-in link sent. Check your email and tap the link to continue.'); }
     setBusy(false);
   }
