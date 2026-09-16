@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "EquiMaster Pro",
-    "slug": "equimaster-pro",
+    "name": "SHABDIZ",
+    "slug": "shabdiz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "equimaster",
+    "scheme": "shabdiz",
     "userInterfaceStyle": "automatic",
     "plugins": [
       "expo-router",
