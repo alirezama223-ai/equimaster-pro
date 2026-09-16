@@ -4,35 +4,97 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 
+const C = { green: '#174D3F', greenDark: '#103D32', gold: '#D9A93A', cream: '#F7F5F0', white: '#FFFFFF', muted: '#7B817D', soft: '#EAF2EE' };
+
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [sent, setSent] = useState(false);
 
   async function sendLink() {
-    setBusy(true); setMessage('');
+    const value = email.trim().toLowerCase();
+    if (!value) return;
+    setBusy(true);
+    setMessage('');
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { shouldCreateUser: true, emailRedirectTo: 'equimaster://login' },
+      email: value,
+      options: { shouldCreateUser: true, emailRedirectTo: 'equimaster://auth/callback' },
     });
-    if (error) setMessage(error.message);
-    else setMessage('Check your email for the secure sign-in link.');
+    if (error) {
+      setMessage(error.message);
+      setSent(false);
+    } else {
+      setSent(true);
+      setMessage('Secure sign-in link sent. Check your email and tap the link to continue.');
+    }
     setBusy(false);
   }
 
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Pressable onPress={() => router.back()}><Text style={styles.close}>‹ Close</Text></Pressable>
-        <Text style={styles.logo}>EQUIMASTER PRO</Text>
+        <Pressable onPress={() => router.back()} style={styles.closeButton}><Text style={styles.close}>‹</Text><Text style={styles.closeText}>Back</Text></Pressable>
+
+        <View style={styles.brandMark}><Text style={styles.brandS}>S</Text></View>
+        <Text style={styles.brand}>SHABDIZ</Text>
+        <Text style={styles.eyebrow}>EQUESTRIAN PLATFORM</Text>
+
         <Text style={styles.title}>Welcome back.</Text>
-        <Text style={styles.subtitle}>Enter your email and we will send you a secure sign-in link.</Text>
-        <TextInput autoCapitalize="none" keyboardType="email-address" placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} />
-        {message ? <Text style={styles.message}>{message}</Text> : null}
-        <Pressable disabled={busy || !email.trim()} onPress={sendLink} style={({ pressed }) => [styles.button, pressed && styles.pressed, (busy || !email.trim()) && styles.disabled]}>{busy ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>Send secure link</Text>}</Pressable>
-        <View style={styles.note}><Text style={styles.noteIcon}>🔐</Text><Text style={styles.noteText}>No local credentials are stored by the app. Your session is kept securely on the device.</Text></View>
+        <Text style={styles.subtitle}>Sign in to access your horses, training, health, competitions and stable tools.</Text>
+
+        <Text style={styles.label}>EMAIL ADDRESS</Text>
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
+          placeholder="you@example.com"
+          placeholderTextColor="#A5AAA6"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+
+        {message ? <View style={[styles.messageBox, sent ? styles.successBox : styles.errorBox]}><Text style={[styles.message, sent ? styles.success : styles.error]}>{message}</Text></View> : null}
+
+        <Pressable disabled={busy || !email.trim()} onPress={sendLink} style={({ pressed }) => [styles.button, pressed && styles.pressed, (busy || !email.trim()) && styles.disabled]}>
+          {busy ? <ActivityIndicator color={C.greenDark} /> : <Text style={styles.buttonText}>Send secure link</Text>}
+        </Pressable>
+
+        <View style={styles.note}>
+          <Text style={styles.noteIcon}>🔐</Text>
+          <Text style={styles.noteText}>Your session is stored securely on this device. No password is required.</Text>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: '#F7F5F0' }, container: { flex: 1, padding: 20 }, close: { fontSize: 16, fontWeight: '700', opacity: 0.6 }, logo: { marginTop: 55, fontSize: 11, fontWeight: '800', letterSpacing: 2, opacity: 0.5 }, title: { marginTop: 10, fontSize: 34, lineHeight: 40, fontWeight: '800' }, subtitle: { marginTop: 10, fontSize: 16, lineHeight: 23, opacity: 0.58 }, input: { marginTop: 18, minHeight: 54, paddingHorizontal: 16, borderRadius: 14, backgroundColor: '#FFFFFF', fontSize: 16 }, message: { marginTop: 12, lineHeight: 20, fontSize: 14, opacity: 0.72 }, button: { marginTop: 18, minHeight: 54, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1F2933' }, pressed: { opacity: 0.82 }, disabled: { opacity: 0.4 }, buttonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' }, note: { marginTop: 24, padding: 16, borderRadius: 16, backgroundColor: '#FFFFFF', flexDirection: 'row' }, noteIcon: { fontSize: 22, marginRight: 10 }, noteText: { flex: 1, fontSize: 13, lineHeight: 19, opacity: 0.58 } });
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: C.cream },
+  container: { flex: 1, paddingHorizontal: 24, paddingTop: 10 },
+  closeButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 8 },
+  close: { color: C.green, fontSize: 32, lineHeight: 30, fontWeight: '500' },
+  closeText: { marginLeft: 5, color: C.green, fontSize: 15, fontWeight: '800' },
+  brandMark: { marginTop: 34, width: 48, height: 48, borderRadius: 24, borderWidth: 1.5, borderColor: C.gold, alignItems: 'center', justifyContent: 'center' },
+  brandS: { color: C.gold, fontSize: 26, fontWeight: '900' },
+  brand: { marginTop: 12, color: C.green, fontSize: 28, letterSpacing: 3, fontWeight: '900' },
+  eyebrow: { marginTop: 3, color: C.gold, fontSize: 9, letterSpacing: 2.4, fontWeight: '900' },
+  title: { marginTop: 42, color: C.green, fontSize: 38, lineHeight: 44, fontWeight: '900' },
+  subtitle: { marginTop: 10, color: C.muted, fontSize: 16, lineHeight: 24, fontWeight: '500' },
+  label: { marginTop: 26, marginBottom: 8, color: C.green, fontSize: 11, letterSpacing: 1.5, fontWeight: '900' },
+  input: { minHeight: 58, paddingHorizontal: 17, borderRadius: 16, backgroundColor: C.white, borderWidth: 1, borderColor: '#E4E0D7', color: C.green, fontSize: 16 },
+  messageBox: { marginTop: 12, padding: 14, borderRadius: 14 },
+  successBox: { backgroundColor: C.soft },
+  errorBox: { backgroundColor: '#F6E9E6' },
+  message: { fontSize: 14, lineHeight: 20, fontWeight: '600' },
+  success: { color: C.green },
+  error: { color: '#A33A2B' },
+  button: { marginTop: 16, minHeight: 58, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: C.gold },
+  pressed: { opacity: 0.82 },
+  disabled: { opacity: 0.42 },
+  buttonText: { color: C.greenDark, fontSize: 17, fontWeight: '900' },
+  note: { marginTop: 18, padding: 15, borderRadius: 16, backgroundColor: C.white, flexDirection: 'row', borderWidth: 1, borderColor: '#E8E4DB' },
+  noteIcon: { fontSize: 20, marginRight: 10 },
+  noteText: { flex: 1, color: C.muted, fontSize: 12, lineHeight: 18, fontWeight: '600' },
+});
