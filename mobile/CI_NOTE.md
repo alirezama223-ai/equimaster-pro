@@ -1,1 +1,0 @@
-Mobile CI is configured in .github/workflows/mobile-ci.yml.
