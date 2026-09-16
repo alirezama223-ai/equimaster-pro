@@ -11,7 +11,7 @@ export default function ExploreTab() {
         <Text style={styles.subtitle}>Discover everything in your equestrian world.</Text>
 
         <ExploreCard icon="🐴" title="My Horses" body="Manage profiles, details and your stable." onPress={() => router.push('/(tabs)/horses')} />
-        <ExploreCard icon="🏇" title="Training" body="Build training routines and track progress." />
+        <ExploreCard icon="🏇" title="Training" body="Build training routines and track progress." onPress={() => router.push('/(tabs)/training')} />
         <ExploreCard icon="🛒" title="Marketplace" body="Discover horses and equestrian listings." />
         <ExploreCard icon="🧬" title="Breeding Lab" body="Explore pedigrees, traits and breeding goals." />
         <ExploreCard icon="📅" title="Events & Calendar" body="Keep competitions, appointments and reminders together." onPress={() => router.push('/(tabs)/calendar')} />
