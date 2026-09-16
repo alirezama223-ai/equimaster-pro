@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { supabase } from '../../lib/supabase';
+
+const C = { green: '#174D3F', greenDark: '#103D32', gold: '#D9A93A', cream: '#F7F5F0', white: '#FFFFFF', muted: '#7B817D', line: '#E7E3DA', soft: '#EAF2EE', text: '#17382F' };
 
 export default function HomeTab() {
   const [email, setEmail] = useState<string | null>(null);
@@ -11,37 +13,123 @@ export default function HomeTab() {
   useEffect(() => {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setEmail(data.session?.user.email ?? null);
-      setLoading(false);
+      if (mounted) { setEmail(data.session?.user.email ?? null); setLoading(false); }
     });
     return () => { mounted = false; };
   }, []);
 
-  if (loading) return <View style={styles.center}><ActivityIndicator size="large" /></View>;
+  const firstName = useMemo(() => {
+    if (!email) return 'Rider';
+    const value = email.split('@')[0].replace(/[._-]+/g, ' ');
+    return value.split(' ').filter(Boolean).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ') || 'Rider';
+  }, [email]);
+
+  if (loading) return <View style={styles.center}><ActivityIndicator size="large" color={C.gold} /></View>;
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.eyebrow}>EQUIMASTER PRO</Text>
-        <View style={styles.row}><View><Text style={styles.greeting}>{email ? 'Welcome back' : 'Welcome'}</Text><Text style={styles.name}>{email ? email.split('@')[0] : 'Horse manager'}</Text></View><Text style={styles.avatar}>🐴</Text></View>
-        <View style={styles.hero}><Text style={styles.heroKicker}>TODAY</Text><Text style={styles.heroTitle}>Your stable at a glance.</Text><Text style={styles.heroBody}>Tasks, horses, training and appointments in one place.</Text></View>
-        <Text style={styles.section}>Quick actions</Text>
-        <View style={styles.grid}>
-          <Action icon="🐴" title="My Horses" onPress={() => router.push('/(tabs)/horses')} />
-          <Action icon="🔔" title="Reminders" onPress={() => router.push('/(tabs)/calendar')} />
-          <Action icon="🏇" title="Training" onPress={() => {}} />
-          <Action icon="🌾" title="Feeding" onPress={() => {}} />
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Image source={require('../../assets/shabdiz-logo-gold-transparent.png')} style={styles.logo} resizeMode="contain" />
+          <Pressable onPress={() => router.push('/(tabs)/account')} style={({ pressed }) => [styles.settings, pressed && styles.pressed]} accessibilityLabel="Settings">
+            <Text style={styles.settingsText}>⚙</Text>
+          </Pressable>
         </View>
-        <Text style={styles.section}>Coming next</Text>
-        <View style={styles.card}><Text style={styles.cardTitle}>Smart horse management</Text><Text style={styles.cardBody}>Breeding recommendations, training plans and stable management will become native mobile features — not web pages.</Text></View>
+
+        <View style={styles.welcome}>
+          <Text style={styles.welcomeKicker}>WELCOME BACK</Text>
+          <Text style={styles.greeting}>Good afternoon</Text>
+          <Text style={styles.name}>{firstName}</Text>
+        </View>
+
+        <View style={styles.hero}>
+          <View style={styles.heroTop}><Text style={styles.heroKicker}>YOUR STABLE</Text><View style={styles.badge}><Text style={styles.badgeText}>S</Text></View></View>
+          <Text style={styles.heroTitle}>At a glance.</Text>
+          <Text style={styles.heroBody}>Horses, training, health and competitions — all in one place.</Text>
+          <Pressable onPress={() => router.push('/(tabs)/horses')} style={({ pressed }) => [styles.heroButton, pressed && styles.pressed]}>
+            <Text style={styles.heroButtonText}>View My Horses</Text><Text style={styles.heroArrow}>→</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Quick access</Text><Text style={styles.sectionEyebrow}>YOUR WORLD</Text></View>
+        <View style={styles.grid}>
+          <Action icon="🐎" title="My Horses" subtitle="Manage horses" onPress={() => router.push('/(tabs)/horses')} />
+          <Action icon="🏇" title="Training" subtitle="Track sessions" onPress={() => router.push('/(tabs)/training')} />
+          <Action icon="🏆" title="Competitions" subtitle="Prepare & compete" onPress={() => router.push('/(tabs)/competitions')} />
+          <Action icon="◷" title="Calendar" subtitle="Your schedule" onPress={() => router.push('/(tabs)/calendar')} />
+        </View>
+
+        <View style={styles.todayHeader}><Text style={styles.todayTitle}>Today</Text><Text style={styles.todayDate}>{new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'long' }).format(new Date()).toUpperCase()}</Text></View>
+        <View style={styles.todayCard}>
+          <TodayRow icon="🏇" title="Training" body="No training scheduled" onPress={() => router.push('/(tabs)/training')} />
+          <TodayRow icon="🔔" title="Reminders" body="Check your upcoming reminders" onPress={() => router.push('/(tabs)/reminders')} />
+          <TodayRow icon="🏆" title="Competitions" body="No competition today" onPress={() => router.push('/(tabs)/competitions')} last />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function Action({ icon, title, onPress }: { icon: string; title: string; onPress: () => void }) {
-  return <Pressable onPress={onPress} style={({ pressed }) => [styles.action, pressed && styles.pressed]}><Text style={styles.actionIcon}>{icon}</Text><Text style={styles.actionTitle}>{title}</Text></Pressable>;
+function Action({ icon, title, subtitle, onPress }: { icon: string; title: string; subtitle: string; onPress: () => void }) {
+  return <Pressable onPress={onPress} style={({ pressed }) => [styles.action, pressed && styles.pressed]}>
+    <View style={styles.actionIconWrap}><Text style={styles.actionIcon}>{icon}</Text></View>
+    <View><Text numberOfLines={1} style={styles.actionTitle}>{title}</Text><Text numberOfLines={1} style={styles.actionSubtitle}>{subtitle}</Text></View>
+    <Text style={styles.cardArrow}>›</Text>
+  </Pressable>;
 }
 
-const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: '#F7F5F0' }, center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0' }, container: { padding: 20, paddingBottom: 36 }, eyebrow: { fontSize: 11, fontWeight: '800', letterSpacing: 2, opacity: 0.55, marginBottom: 14 }, row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, greeting: { fontSize: 16, opacity: 0.55 }, name: { marginTop: 2, fontSize: 28, fontWeight: '800', textTransform: 'capitalize' }, avatar: { fontSize: 36 }, hero: { marginTop: 24, padding: 22, borderRadius: 24, backgroundColor: '#1F2933' }, heroKicker: { color: '#FFFFFF', fontSize: 10, fontWeight: '800', letterSpacing: 1.5, opacity: 0.65 }, heroTitle: { marginTop: 8, color: '#FFFFFF', fontSize: 27, lineHeight: 33, fontWeight: '800' }, heroBody: { marginTop: 9, color: '#FFFFFF', fontSize: 15, lineHeight: 22, opacity: 0.72 }, section: { marginTop: 26, marginBottom: 12, fontSize: 18, fontWeight: '800' }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, action: { width: '48%', minHeight: 118, padding: 16, borderRadius: 20, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }, pressed: { transform: [{ scale: 0.98 }], opacity: 0.8 }, actionIcon: { fontSize: 30 }, actionTitle: { fontSize: 16, fontWeight: '800' }, card: { padding: 18, borderRadius: 18, backgroundColor: '#FFFFFF' }, cardTitle: { fontSize: 16, fontWeight: '800' }, cardBody: { marginTop: 8, fontSize: 14, lineHeight: 21, opacity: 0.62 } });
+function TodayRow({ icon, title, body, onPress, last = false }: { icon: string; title: string; body: string; onPress: () => void; last?: boolean }) {
+  return <Pressable onPress={onPress} style={({ pressed }) => [styles.todayRow, !last && styles.todayRowBorder, pressed && styles.rowPressed]}>
+    <View style={styles.todayIconWrap}><Text style={styles.todayIcon}>{icon}</Text></View>
+    <View style={styles.todayCopy}><Text style={styles.todayRowTitle}>{title}</Text><Text style={styles.todayRowBody}>{body}</Text></View>
+    <Text style={styles.chevron}>›</Text>
+  </Pressable>;
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: C.cream },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: C.cream },
+  container: { paddingBottom: 42 },
+  header: { height: 118, paddingHorizontal: 24, backgroundColor: C.green, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  logo: { width: 285, height: 100 },
+  settings: { width: 52, height: 52, borderRadius: 26, borderWidth: 1.5, borderColor: C.gold, alignItems: 'center', justifyContent: 'center' },
+  settingsText: { color: C.gold, fontSize: 28, fontWeight: '800' },
+  welcome: { paddingHorizontal: 24, paddingTop: 28, paddingBottom: 20 },
+  welcomeKicker: { color: '#B8892F', fontSize: 15, fontWeight: '900', letterSpacing: 3 },
+  greeting: { marginTop: 15, color: C.muted, fontSize: 27, fontWeight: '500' },
+  name: { color: C.green, fontSize: 52, lineHeight: 58, fontWeight: '900', letterSpacing: -1.5 },
+  hero: { marginHorizontal: 20, padding: 26, borderRadius: 28, backgroundColor: C.green },
+  heroTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  heroKicker: { color: C.gold, fontSize: 15, fontWeight: '900', letterSpacing: 3 },
+  badge: { width: 58, height: 58, borderRadius: 29, borderWidth: 2, borderColor: C.gold, alignItems: 'center', justifyContent: 'center' },
+  badgeText: { color: C.gold, fontSize: 31, fontWeight: '900' },
+  heroTitle: { marginTop: 13, color: C.white, fontSize: 46, lineHeight: 51, fontWeight: '900', letterSpacing: -1.5 },
+  heroBody: { marginTop: 15, color: '#E8F0EC', fontSize: 18, lineHeight: 28, fontWeight: '500' },
+  heroButton: { marginTop: 23, minHeight: 64, paddingHorizontal: 20, borderRadius: 18, backgroundColor: C.gold, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  heroButtonText: { color: C.greenDark, fontSize: 19, fontWeight: '900' },
+  heroArrow: { color: C.greenDark, fontSize: 38, lineHeight: 40, fontWeight: '800' },
+  sectionHeader: { marginHorizontal: 24, marginTop: 28, marginBottom: 14, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  sectionTitle: { color: C.green, fontSize: 30, fontWeight: '900' },
+  sectionEyebrow: { color: '#999D99', fontSize: 12, fontWeight: '900', letterSpacing: 2 },
+  grid: { marginHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
+  action: { width: '48.5%', height: 142, padding: 15, borderRadius: 22, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, justifyContent: 'space-between' },
+  actionIconWrap: { width: 58, height: 58, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: C.soft },
+  actionIcon: { fontSize: 29 },
+  actionTitle: { color: C.text, fontSize: 18, lineHeight: 22, fontWeight: '900', maxWidth: '86%' },
+  actionSubtitle: { marginTop: 2, color: C.muted, fontSize: 13, lineHeight: 18, fontWeight: '600' },
+  cardArrow: { position: 'absolute', right: 13, bottom: 18, color: '#8D918E', fontSize: 30 },
+  todayHeader: { marginHorizontal: 24, marginTop: 28, marginBottom: 13, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  todayTitle: { color: C.green, fontSize: 38, fontWeight: '900' },
+  todayDate: { color: '#999D99', fontSize: 11, fontWeight: '900', letterSpacing: 1.2 },
+  todayCard: { marginHorizontal: 20, paddingHorizontal: 16, borderRadius: 23, backgroundColor: C.white, borderWidth: 1, borderColor: C.line },
+  todayRow: { minHeight: 88, flexDirection: 'row', alignItems: 'center' },
+  todayRowBorder: { borderBottomWidth: 1, borderBottomColor: C.line },
+  todayIconWrap: { width: 52, height: 52, borderRadius: 17, alignItems: 'center', justifyContent: 'center', backgroundColor: C.soft },
+  todayIcon: { fontSize: 26 },
+  todayCopy: { flex: 1, paddingHorizontal: 14 },
+  todayRowTitle: { color: C.text, fontSize: 18, fontWeight: '900' },
+  todayRowBody: { marginTop: 3, color: C.muted, fontSize: 14, lineHeight: 19, fontWeight: '600' },
+  chevron: { color: '#9B9E9B', fontSize: 37 },
+  pressed: { opacity: 0.82, transform: [{ scale: 0.985 }] },
+  rowPressed: { opacity: 0.72 },
+});
