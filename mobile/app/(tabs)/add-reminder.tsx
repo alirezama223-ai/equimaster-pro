@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { supabase } from '../../../lib/supabase';
-import { scheduleReminderNotification } from '../../../lib/notifications';
+import { supabase } from '../../lib/supabase';
+import { scheduleReminderNotification } from '../../lib/notifications';
 
 const TYPES = ['Vaccination', 'Farrier', 'Veterinary', 'Training', 'Competition', 'Other'];
 const LEADS = [0, 60, 1440, 2880, 10080];

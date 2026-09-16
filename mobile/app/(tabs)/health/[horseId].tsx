@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { supabase } from '../../../../lib/supabase';
+import { supabase } from '../../../lib/supabase';
 
 type RecordItem={id:string;record_type:string;record_date:string;title:string;provider:string|null;notes:string|null};
 type Horse={id:string;name:string};

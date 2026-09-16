@@ -81,4 +81,200 @@ export default function StableTodayScreen() {
 }
 function Stat({ value, label }: { value: string; label: string }) { return <View><Text style={styles.statValue}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>; }
 function Quick({ title, onPress }: { title: string; onPress: () => void }) { return <Pressable onPress={onPress} style={styles.quickButton}><Text style={styles.quickText}>{title}</Text></Pressable>; }
-const styles = StyleSheet.create({ safe:{flex:1,backgroundColor:'#F7F5F0'},content:{padding:20,paddingBottom:50},center:{flex:1,alignItems:'center',justifyContent:'center',backgroundColor:'#F7F5F0'},back:{color:'#0E5A45',fontWeight:'800',marginBottom:14},brand:{fontSize:30,fontWeight:'900',letterSpacing:2.5,color:'#0E5A45'},title:{marginTop:14,fontSize:30,fontWeight:'900'},date:{marginTop:5,fontSize:15,fontWeight:'800',color:'#0E5A45'},subtitle:{marginTop:6,fontSize:13,lineHeight:20,opacity:.58},summary:{marginTop:18,padding:17,borderRadius:20,backgroundColor:'#0E5A45',flexDirection:'row',justifyContent:'space-between'},statValue:{fontSize:21,fontWeight:'900',color:'#FFF'},statLabel:{marginTop:3,fontSize:9,fontWeight:'800',color:'#DCEBE5'},quick:{marginTop:12,flexDirection:'row',gap:8},quickButton:{flex:1,minHeight:44,borderRadius:13,backgroundColor:'#FFF',alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:'#E1DFD9'},quickText:{fontSize:10,fontWeight:'900',color:'#0E5A45'},section:{marginTop:24,marginBottom:10,fontSize:21,fontWeight:'900'},item:{flexDirection:'row',alignItems:'center',padding:15,borderRadius:17,backgroundColor:'#FFF',marginBottom:9},dot:{width:10,height:10,borderRadius:5,marginRight:12},compDot:{backgroundColor:'#0E5A45'},trainDot:{backgroundColor:'#55748B'},remDot:{backgroundColor:'#B9853A'},itemBody:{flex:1},itemTitle:{fontSize:14,fontWeight:'900'},itemMeta:{marginTop:4,fontSize:11,opacity:.6},horse:{marginTop:4,fontSize:11,fontWeight:'800',color:'#0E5A45'},arrow:{fontSize:25,color:'#0E5A45',marginLeft:8},empty:{padding:28,borderRadius:20,backgroundColor:'#FFF',alignItems:'center'},emptyIcon:{fontSize:40},emptyTitle:{marginTop:9,fontSize:18,fontWeight:'900'},emptyText:{marginTop:6,textAlign:'center,lineHeight:20,opacity:.58},primary:{marginTop:16,paddingHorizontal:18,paddingVertical:12,borderRadius:14,backgroundColor:'#0E5A45'},primaryText:{color:'#FFF',fontWeight:'900'},footer:{marginTop:18,padding:17,borderRadius:19,backgroundColor:'#E9F3EE'},footerTitle:{fontSize:15,fontWeight:'900',color:'#0E5A45'},footerText:{marginTop:6,fontSize:12,lineHeight:19,opacity:.62},link:{marginTop:10,color:'#0E5A45',fontWeight:'900'},muted:{marginTop:6,opacity:.55},error:{marginTop:12,color:'#A33A2B',fontWeight:'700'}});
+const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: '#F7F5F0',
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 50,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F7F5F0',
+  },
+  back: {
+    color: '#0E5A45',
+    fontWeight: '800',
+    marginBottom: 14,
+  },
+  brand: {
+    fontSize: 30,
+    fontWeight: '900',
+    letterSpacing: 2.5,
+    color: '#0E5A45',
+  },
+  title: {
+    marginTop: 14,
+    fontSize: 30,
+    fontWeight: '900',
+  },
+  date: {
+    marginTop: 5,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0E5A45',
+  },
+  subtitle: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 20,
+    opacity: 0.58,
+  },
+  summary: {
+    marginTop: 18,
+    padding: 17,
+    borderRadius: 20,
+    backgroundColor: '#0E5A45',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  statValue: {
+    fontSize: 21,
+    fontWeight: '900',
+    color: '#FFF',
+  },
+  statLabel: {
+    marginTop: 3,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#DCEBE5',
+  },
+  quick: {
+    marginTop: 12,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  quickButton: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: 13,
+    backgroundColor: '#FFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E1DFD9',
+  },
+  quickText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#0E5A45',
+  },
+  section: {
+    marginTop: 24,
+    marginBottom: 10,
+    fontSize: 21,
+    fontWeight: '900',
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 17,
+    backgroundColor: '#FFF',
+    marginBottom: 9,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 12,
+  },
+  compDot: {
+    backgroundColor: '#0E5A45',
+  },
+  trainDot: {
+    backgroundColor: '#55748B',
+  },
+  remDot: {
+    backgroundColor: '#B9853A',
+  },
+  itemBody: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  itemMeta: {
+    marginTop: 4,
+    fontSize: 11,
+    opacity: 0.6,
+  },
+  horse: {
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0E5A45',
+  },
+  arrow: {
+    fontSize: 25,
+    color: '#0E5A45',
+    marginLeft: 8,
+  },
+  empty: {
+    padding: 28,
+    borderRadius: 20,
+    backgroundColor: '#FFF',
+    alignItems: 'center',
+  },
+  emptyIcon: {
+    fontSize: 40,
+  },
+  emptyTitle: {
+    marginTop: 9,
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  emptyText: {
+    marginTop: 6,
+    textAlign: 'center',
+    lineHeight: 20,
+    opacity: 0.58,
+  },
+  primary: {
+    marginTop: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: '#0E5A45',
+  },
+  primaryText: {
+    color: '#FFF',
+    fontWeight: '900',
+  },
+  footer: {
+    marginTop: 18,
+    padding: 17,
+    borderRadius: 19,
+    backgroundColor: '#E9F3EE',
+  },
+  footerTitle: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#0E5A45',
+  },
+  footerText: {
+    marginTop: 6,
+    fontSize: 12,
+    lineHeight: 19,
+    opacity: 0.62,
+  },
+  link: {
+    marginTop: 10,
+    color: '#0E5A45',
+    fontWeight: '900',
+  },
+  muted: {
+    marginTop: 6,
+    opacity: 0.55,
+  },
+  error: {
+    marginTop: 12,
+    color: '#A33A2B',
+    fontWeight: '700',
+  },
+});

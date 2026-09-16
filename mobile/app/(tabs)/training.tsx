@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 type Session = { id: string; horse_id: string; training_date: string; discipline: string; duration_minutes: number | null; rating: number | null; notes: string | null };
 type Horse = { id: string; name: string };

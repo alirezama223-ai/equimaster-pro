@@ -1,2 +1,124 @@
 import { Tabs } from 'expo-router';
-export default function TabsLayout(){return <Tabs screenOptions={{headerShown:false,tabBarActiveTintColor:'#0E5A45',tabBarInactiveTintColor:'#8B918E',tabBarLabelStyle:{fontSize:11,fontWeight:'800'},tabBarStyle:{height:78,paddingTop:8,paddingBottom:10,backgroundColor:'#FFFFFF',borderTopWidth:0}}}><Tabs.Screen name="index" options={{title:'Home',tabBarIcon:()=>null}}/><Tabs.Screen name="explore" options={{title:'Explore',tabBarIcon:()=>null}}/><Tabs.Screen name="horses" options={{href:null}}/><Tabs.Screen name="calendar" options={{href:null}}/><Tabs.Screen name="reminders" options={{href:null}}/><Tabs.Screen name="account" options={{href:null}}/><Tabs.Screen name="health/[horseId]" options={{href:null}}/><Tabs.Screen name="reminder/[id]" options={{href:null}}/><Tabs.Screen name="competitions" options={{href:null}}/><Tabs.Screen name="competition/[id]" options={{href:null}}/><Tabs.Screen name="competition/readiness/[id]" options={{href:null}}/><Tabs.Screen name="competition/checklist/[id]" options={{href:null}}/><Tabs.Screen name="competition/day/[id]" options={{href:null}}/><Tabs.Screen name="competition-stats" options={{href:null}}/><Tabs.Screen name="stable-dashboard" options={{href:null}}/><Tabs.Screen name="stable-today" options={{href:null}}/><Tabs.Screen name="stable-performance" options={{href:null}}/><Tabs.Screen name="horse/performance/[horseId]" options={{href:null}}/><Tabs.Screen name="horse/360/[horseId]" options={{href:null}}/><Tabs.Screen name="training-insights" options={{href:null}}/></Tabs>)}
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#0E5A45',
+        tabBarInactiveTintColor: '#8B918E',
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '800',
+        },
+        tabBarStyle: {
+          height: 78,
+          paddingTop: 8,
+          paddingBottom: 10,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 0,
+        },
+      }}
+    >
+      {/* VISIBLE TABS */}
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: () => null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: () => null,
+        }}
+      />
+
+      {/* HIDDEN ROUTES */}
+      <Tabs.Screen name="horses" options={{ href: null }} />
+      <Tabs.Screen name="calendar" options={{ href: null }} />
+      <Tabs.Screen name="reminders" options={{ href: null }} />
+      <Tabs.Screen name="account" options={{ href: null }} />
+      <Tabs.Screen name="training" options={{ href: null }} />
+      <Tabs.Screen name="add-reminder" options={{ href: null }} />
+
+      <Tabs.Screen
+        name="health/[horseId]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="reminder/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="horse/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competitions"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competition/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competition/readiness/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competition/checklist/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competition/day/[id]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="competition-stats"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="stable-dashboard"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="stable-today"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="stable-performance"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="horse/performance/[horseId]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="horse/360/[horseId]"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="training-insights"
+        options={{ href: null }}
+      />
+    </Tabs>
+  );
+}

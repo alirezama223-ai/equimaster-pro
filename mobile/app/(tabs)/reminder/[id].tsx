@@ -2,9 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { supabase } from '../../../../lib/supabase';
-import { replaceReminderNotification, cancelReminderNotification } from '../../../../lib/notifications';
-
+import { replaceReminderNotification, cancelReminderNotification } from '../../../lib/notifications';
 type Reminder={id:string;title:string;description:string|null;reminder_type:string;due_at:string;remind_before_minutes:number;status:string;enabled:boolean;horse_id:string|null};type Horse={id:string;name:string};
 const TYPES=['Vaccination','Farrier','Veterinary','Training','Competition','Other'];const LEADS=[0,60,1440,2880,10080];
 export default function ReminderDetailScreen(){
