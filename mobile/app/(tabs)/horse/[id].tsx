@@ -1,124 +1,22 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
 
 type Horse = Record<string, unknown>;
-
-function value(row: Horse, ...keys: string[]) {
-  for (const key of keys) {
-    const item = row[key];
-    if (item !== null && item !== undefined && String(item).trim()) return String(item);
-  }
-  return '';
-}
+function value(row: Horse, ...keys: string[]) { for (const key of keys) { const v = row[key]; if (typeof v === 'string' && v.trim()) return v.trim(); if (typeof v === 'number') return String(v); } return ''; }
+function imageUrl(row: Horse) { const cover = value(row, 'cover_image_url'); if (cover) return cover; const urls = row.image_urls; if (Array.isArray(urls) && typeof urls[0] === 'string') return urls[0]; return ''; }
 
 export default function HorseProfileScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
-  const [horse, setHorse] = useState<Horse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      if (!id) {
-        setError('Horse profile not found.');
-        setLoading(false);
-        return;
-      }
-      const { data, error: queryError } = await supabase
-        .from('horse_listings')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
-      if (!active) return;
-      if (queryError) setError(queryError.message);
-      else if (!data) setError('Horse profile not found or access is restricted.');
-      else setHorse(data as Horse);
-      setLoading(false);
-    })();
-    return () => { active = false; };
-  }, [id]);
-
+  const { id } = useLocalSearchParams<{ id: string }>(); const router = useRouter();
+  const [horse, setHorse] = useState<Horse | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState<string | null>(null);
+  const load = useCallback(async () => { setError(null); const horseId = Array.isArray(id) ? id[0] : id; if (!horseId) { setError('Horse not found.'); setLoading(false); return; } const { data: { user } } = await supabase.auth.getUser(); if (!user) { setError('Please sign in to view this horse.'); setLoading(false); return; } const { data, error: queryError } = await supabase.from('horse_listings').select('*').eq('id', horseId).eq('user_id', user.id).maybeSingle(); if (queryError) setError(queryError.message); else if (!data) setError('Horse not found.'); else setHorse(data as Horse); setLoading(false); }, [id]);
+  useEffect(() => { void load(); }, [load]);
   if (loading) return <View style={styles.center}><ActivityIndicator size="large" /><Text style={styles.muted}>Loading horse profile…</Text></View>;
-
-  if (error || !horse) {
-    return <SafeAreaView style={styles.safe}><View style={styles.center}><Text style={styles.icon}>🐴</Text><Text style={styles.errorTitle}>Profile unavailable</Text><Text style={styles.errorBody}>{error ?? 'Horse profile not found.'}</Text><Pressable style={styles.backButton} onPress={() => router.back()}><Text style={styles.backText}>Go back</Text></Pressable></View></SafeAreaView>;
-  }
-
-  const name = value(horse, 'name', 'horse_name', 'title') || 'Unnamed horse';
-  const details = [value(horse, 'breed', 'breed_name'), value(horse, 'gender', 'sex'), value(horse, 'age', 'years') ? `${value(horse, 'age', 'years')} yrs` : ''].filter(Boolean).join(' • ');
-  const image = value(horse, 'cover_image_url');
-
-  return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={() => router.back()} style={styles.back}><Text style={styles.backLabel}>‹ Back</Text></Pressable>
-        <View style={styles.hero}>
-          <View style={styles.avatar}><Text style={styles.emoji}>🐴</Text></View>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.details}>{details || 'Horse profile'}</Text>
-          {image ? <Text style={styles.imageNote}>Photo available in EquiMaster Pro</Text> : null}
-        </View>
-
-        <Section title="Horse details">
-          <Row label="Breed" value={value(horse, 'breed', 'breed_name')} />
-          <Row label="Gender" value={value(horse, 'gender', 'sex')} />
-          <Row label="Age" value={value(horse, 'age', 'years') ? `${value(horse, 'age', 'years')} years` : ''} />
-          <Row label="Height" value={value(horse, 'height') ? `${value(horse, 'height')} cm` : ''} />
-          <Row label="Color" value={value(horse, 'color')} />
-          <Row label="Country" value={value(horse, 'country')} />
-          <Row label="Discipline" value={value(horse, 'discipline')} />
-          <Row label="Level" value={value(horse, 'level')} />
-        </Section>
-
-        <Section title="Pedigree">
-          <Row label="Sire" value={value(horse, 'sire')} />
-          <Row label="Dam" value={value(horse, 'dam')} />
-          <Row label="Dam's sire" value={value(horse, 'dam_sire')} />
-        </Section>
-
-        {value(horse, 'description') ? <Section title="Description"><Text style={styles.description}>{value(horse, 'description')}</Text></Section> : null}
-      </ScrollView>
-    </SafeAreaView>
-  );
+  if (!horse) return <SafeAreaView style={styles.safe}><View style={styles.errorPage}><Text style={styles.errorTitle}>Unable to open profile</Text><Text style={styles.errorText}>{error ?? 'Horse not found.'}</Text><Pressable style={styles.button} onPress={() => router.back()}><Text style={styles.buttonText}>Go back</Text></Pressable></View></SafeAreaView>;
+  const name = value(horse, 'name', 'horse_name', 'title') || 'Unnamed horse'; const photo = imageUrl(horse);
+  const facts = [['Breed', value(horse, 'breed', 'breed_name')], ['Gender', value(horse, 'gender', 'sex')], ['Age', value(horse, 'age', 'years')], ['Height', value(horse, 'height')], ['Color', value(horse, 'color')], ['Discipline', value(horse, 'discipline')], ['Level', value(horse, 'level')], ['Country', value(horse, 'country')]].filter(([, v]) => v);
+  return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.content}><Pressable onPress={() => router.back()}><Text style={styles.back}>‹ My Horses</Text></Pressable>{photo ? <Image source={{ uri: photo }} style={styles.hero} resizeMode="cover" /> : <View style={styles.heroPlaceholder}><Text style={styles.horseEmoji}>🐴</Text></View>}<Text style={styles.name}>{name}</Text><Text style={styles.sub}>{[value(horse, 'breed', 'breed_name'), value(horse, 'gender', 'sex')].filter(Boolean).join(' • ') || 'Horse profile'}</Text><View style={styles.card}><Text style={styles.sectionTitle}>Horse details</Text>{facts.map(([label, fact]) => <View key={label} style={styles.row}><Text style={styles.label}>{label}</Text><Text style={styles.fact}>{fact}</Text></View>)}</View>{value(horse, 'sire', 'dam', 'dam_sire') ? <View style={styles.card}><Text style={styles.sectionTitle}>Pedigree</Text>{([['Sire', value(horse, 'sire')], ['Dam', value(horse, 'dam')], ['Dam sire', value(horse, 'dam_sire')]] as const).filter(([, v]) => v).map(([label, fact]) => <View key={label} style={styles.row}><Text style={styles.label}>{label}</Text><Text style={styles.fact}>{fact}</Text></View>)}</View> : null}{value(horse, 'description') ? <View style={styles.card}><Text style={styles.sectionTitle}>About</Text><Text style={styles.description}>{value(horse, 'description')}</Text></View> : null}</ScrollView></SafeAreaView>;
 }
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return <View style={styles.section}><Text style={styles.sectionTitle}>{title}</Text><View style={styles.card}>{children}</View></View>;
-}
-
-function Row({ label, value: item }: { label: string; value: string }) {
-  if (!item) return null;
-  return <View style={styles.row}><Text style={styles.label}>{label}</Text><Text style={styles.value}>{item}</Text></View>;
-}
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F7F5F0' },
-  content: { padding: 20, paddingBottom: 50 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0', padding: 30 },
-  muted: { marginTop: 10, opacity: 0.55 },
-  icon: { fontSize: 52 },
-  errorTitle: { marginTop: 12, fontSize: 22, fontWeight: '800' },
-  errorBody: { marginTop: 8, textAlign: 'center', lineHeight: 21, opacity: 0.6 },
-  backButton: { marginTop: 20, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, backgroundColor: '#0E5A45' },
-  backText: { color: '#FFFFFF', fontWeight: '800' },
-  back: { marginBottom: 14 },
-  backLabel: { fontSize: 16, fontWeight: '800', color: '#0E5A45' },
-  hero: { alignItems: 'center', paddingVertical: 16 },
-  avatar: { width: 104, height: 104, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E9E6DD' },
-  emoji: { fontSize: 54 },
-  name: { marginTop: 16, fontSize: 30, fontWeight: '900', textAlign: 'center' },
-  details: { marginTop: 6, fontSize: 15, opacity: 0.58, textAlign: 'center' },
-  imageNote: { marginTop: 8, fontSize: 12, opacity: 0.45 },
-  section: { marginTop: 22 },
-  sectionTitle: { marginBottom: 9, fontSize: 18, fontWeight: '850' },
-  card: { backgroundColor: '#FFFFFF', borderRadius: 18, paddingHorizontal: 16 },
-  row: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0EEE8' },
-  label: { fontSize: 14, opacity: 0.55 },
-  value: { maxWidth: '62%', fontSize: 15, fontWeight: '700', textAlign: 'right' },
-  description: { paddingVertical: 16, fontSize: 15, lineHeight: 23, opacity: 0.75 },
-});
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: '#F7F5F0' }, center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0' }, muted: { marginTop: 10, opacity: 0.55 }, content: { padding: 20, paddingBottom: 50 }, back: { fontSize: 15, fontWeight: '800', color: '#0E5A45', marginBottom: 16 }, hero: { width: '100%', height: 240, borderRadius: 24, backgroundColor: '#EAE7DF' }, heroPlaceholder: { width: '100%', height: 240, borderRadius: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAE7DF' }, horseEmoji: { fontSize: 72 }, name: { marginTop: 18, fontSize: 30, fontWeight: '900' }, sub: { marginTop: 5, fontSize: 15, opacity: 0.58 }, card: { marginTop: 18, padding: 18, borderRadius: 20, backgroundColor: '#FFFFFF' }, sectionTitle: { fontSize: 18, fontWeight: '900', marginBottom: 8 }, row: { flexDirection: 'row', justifyContent: 'space-between', gap: 18, paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: '#F0EEE8' }, label: { fontSize: 14, opacity: 0.55 }, fact: { flex: 1, textAlign: 'right', fontSize: 14, fontWeight: '700' }, description: { fontSize: 15, lineHeight: 23, opacity: 0.72 }, errorPage: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 30 }, errorTitle: { fontSize: 22, fontWeight: '900' }, errorText: { marginTop: 8, textAlign: 'center', lineHeight: 21, opacity: 0.6 }, button: { marginTop: 20, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 14, backgroundColor: '#0E5A45' }, buttonText: { color: '#FFFFFF', fontWeight: '800' } });
