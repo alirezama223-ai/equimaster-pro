@@ -5,6 +5,20 @@ import { getNativePushToken } from '../lib/notifications';
 import { saveMobileDevice } from '../lib/mobileDevice';
 import { supabase } from '../lib/supabase';
 
+function openNotification(response: Notifications.NotificationResponse | null) {
+  if (!response) return;
+  const data = response.notification.request.content.data as { route?: string; reminderId?: string } | undefined;
+  if (data?.reminderId) {
+    router.push(`/(tabs)/reminder/${data.reminderId}`);
+    return;
+  }
+  if (data?.route) {
+    router.push(data.route as never);
+    return;
+  }
+  router.push('/(tabs)/calendar');
+}
+
 export default function RootLayout() {
   useEffect(() => {
     let mounted = true;
@@ -22,8 +36,9 @@ export default function RootLayout() {
       if (event === 'SIGNED_IN') void register();
     });
 
-    const notificationListener = Notifications.addNotificationResponseReceivedListener(() => {
-      router.push('/(tabs)/calendar');
+    const notificationListener = Notifications.addNotificationResponseReceivedListener(openNotification);
+    void Notifications.getLastNotificationResponseAsync().then(response => {
+      if (mounted) openNotification(response);
     });
 
     return () => {
