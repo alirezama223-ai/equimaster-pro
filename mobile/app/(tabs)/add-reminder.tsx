@@ -1,22 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
 import { scheduleReminderNotification } from '../../../lib/notifications';
 
 const TYPES = ['Vaccination', 'Farrier', 'Veterinary', 'Training', 'Competition', 'Other'];
 const LEADS = [0, 60, 1440, 2880, 10080];
+type Horse = { id: string; name: string };
 
 export default function AddReminderScreen() {
+  const params = useLocalSearchParams<{ horseId?: string }>();
+  const [horses, setHorses] = useState<Horse[]>([]);
+  const [horseId, setHorseId] = useState('');
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Veterinary');
-  const [date, setDate] = useState('2026-09-25');
+  const [date, setDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); });
   const [time, setTime] = useState('10:00');
   const [lead, setLead] = useState(1440);
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadHorses() {
+      const { data } = await supabase.from('horse_listings').select('id,name').order('name');
+      const rows = (data ?? []) as Horse[];
+      setHorses(rows);
+      if (params.horseId && rows.some((horse) => horse.id === params.horseId)) setHorseId(params.horseId);
+    }
+    void loadHorses();
+  }, [params.horseId]);
 
   async function save() {
     setError(null);
@@ -28,25 +42,26 @@ export default function AddReminderScreen() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError('Please sign in first.'); setSaving(false); return; }
     const { data, error: insertError } = await supabase.from('reminders').insert({
-      user_id: user.id,
-      title: title.trim(),
-      description: description.trim() || null,
-      reminder_type: type.toLowerCase().replaceAll(' ', '_'),
-      due_at: due.toISOString(),
-      remind_before_minutes: lead,
-      status: 'pending',
-      enabled: true,
+      user_id: user.id, horse_id: horseId || null, title: title.trim(), description: description.trim() || null,
+      reminder_type: type.toLowerCase().replaceAll(' ', '_'), due_at: due.toISOString(), remind_before_minutes: lead, status: 'pending', enabled: true,
     }).select('id,title,description,reminder_type,due_at,remind_before_minutes').single();
     if (insertError) { setError(insertError.message); setSaving(false); return; }
-    try { await scheduleReminderNotification(data); } catch (notificationError) { setError(notificationError instanceof Error ? notificationError.message : 'Saved, but notification could not be scheduled.'); }
+    let notificationError: string | null = null;
+    try { await scheduleReminderNotification(data); } catch (e) { notificationError = e instanceof Error ? e.message : 'Saved, but notification could not be scheduled.'; }
     setSaving(false);
-    if (!error) router.replace('/(tabs)/reminders');
+    if (notificationError) setError(notificationError);
+    router.replace('/(tabs)/reminders');
   }
 
   return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.content}>
     <Pressable onPress={() => router.back()}><Text style={styles.back}>‹ Reminders</Text></Pressable>
     <Text style={styles.brand}>SHABDIZ</Text><Text style={styles.title}>Add Reminder</Text><Text style={styles.subtitle}>Never miss an important stable task.</Text>
     <View style={styles.card}>
+      <Text style={styles.label}>Horse</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+        <Pressable onPress={() => setHorseId('')} style={[styles.chip, !horseId && styles.active]}><Text style={[styles.chipText, !horseId && styles.activeText]}>General</Text></Pressable>
+        {horses.map((horse) => <Pressable key={horse.id} onPress={() => setHorseId(horse.id)} style={[styles.chip, horse.id === horseId && styles.active]}><Text style={[styles.chipText, horse.id === horseId && styles.activeText]}>{horse.name}</Text></Pressable>)}
+      </ScrollView>
       <Text style={styles.label}>Title</Text><TextInput value={title} onChangeText={setTitle} style={styles.input} placeholder="e.g. Annual vaccination" />
       <Text style={styles.label}>Type</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>{TYPES.map((item) => <Pressable key={item} onPress={() => setType(item)} style={[styles.chip, item === type && styles.active]}><Text style={[styles.chipText, item === type && styles.activeText]}>{item}</Text></Pressable>)}</ScrollView>
       <View style={styles.row}><View style={styles.half}><Text style={styles.label}>Date</Text><TextInput value={date} onChangeText={setDate} style={styles.input} placeholder="YYYY-MM-DD" /></View><View style={styles.half}><Text style={styles.label}>Time</Text><TextInput value={time} onChangeText={setTime} style={styles.input} placeholder="HH:MM" /></View></View>
