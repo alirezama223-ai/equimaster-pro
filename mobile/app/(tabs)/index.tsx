@@ -23,25 +23,56 @@ export default function HomeTab() {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.eyebrow}>EQUIMASTER PRO</Text>
-        <View style={styles.row}><View><Text style={styles.greeting}>{email ? 'Welcome back' : 'Welcome'}</Text><Text style={styles.name}>{email ? email.split('@')[0] : 'Horse manager'}</Text></View><Text style={styles.avatar}>🐴</Text></View>
-        <View style={styles.hero}><Text style={styles.heroKicker}>TODAY</Text><Text style={styles.heroTitle}>Your stable at a glance.</Text><Text style={styles.heroBody}>Tasks, horses, training and appointments in one place.</Text></View>
-        <Text style={styles.section}>Quick actions</Text>
-        <View style={styles.grid}>
-          <Action icon="🐴" title="My Horses" onPress={() => router.push('/(tabs)/horses')} />
-          <Action icon="🔔" title="Reminders" onPress={() => router.push('/(tabs)/calendar')} />
-          <Action icon="🏇" title="Training" onPress={() => {}} />
-          <Action icon="🌾" title="Feeding" onPress={() => {}} />
+        <View style={styles.header}>
+          <View><Text style={styles.brand}>SHABDIZ</Text><Text style={styles.platform}>Equestrian Platform</Text></View>
+          <Pressable onPress={() => router.push('/(tabs)/account')} style={styles.profile}><Text style={styles.profileIcon}>●</Text></Pressable>
         </View>
-        <Text style={styles.section}>Coming next</Text>
-        <View style={styles.card}><Text style={styles.cardTitle}>Smart horse management</Text><Text style={styles.cardBody}>Breeding recommendations, training plans and stable management will become native mobile features — not web pages.</Text></View>
+        <View style={styles.hero}>
+          <Text style={styles.heroKicker}>WELCOME TO</Text>
+          <Text style={styles.heroTitle}>SHABDIZ</Text>
+          <Text style={styles.heroBody}>Your complete equestrian world — horses, training, marketplace and intelligent tools.</Text>
+          <Pressable onPress={() => router.push('/(tabs)/explore')} style={({ pressed }) => [styles.heroButton, pressed && styles.pressed]}><Text style={styles.heroButtonText}>Explore SHABDIZ</Text></Pressable>
+        </View>
+        <Text style={styles.section}>Your Equestrian World</Text>
+        <View style={styles.grid}>
+          <Action icon="🐴" title="My Horses" subtitle="Manage your horses" onPress={() => router.push('/(tabs)/horses')} />
+          <Action icon="🏇" title="Training" subtitle="Training & progress" onPress={() => router.push('/(tabs)/explore')} />
+          <Action icon="🛒" title="Marketplace" subtitle="Find your next horse" onPress={() => router.push('/(tabs)/explore')} />
+          <Action icon="🧬" title="Breeding" subtitle="Smart breeding tools" onPress={() => router.push('/(tabs)/explore')} />
+        </View>
+        <View style={styles.accountHint}><Text style={styles.accountHintTitle}>{email ? 'Your account is connected' : 'Connect your account'}</Text><Text style={styles.accountHintBody}>{email ? email : 'Sign in to sync horses, training and reminders.'}</Text></View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function Action({ icon, title, onPress }: { icon: string; title: string; onPress: () => void }) {
-  return <Pressable onPress={onPress} style={({ pressed }) => [styles.action, pressed && styles.pressed]}><Text style={styles.actionIcon}>{icon}</Text><Text style={styles.actionTitle}>{title}</Text></Pressable>;
+function Action({ icon, title, subtitle, onPress }: { icon: string; title: string; subtitle: string; onPress: () => void }) {
+  return <Pressable onPress={onPress} style={({ pressed }) => [styles.action, pressed && styles.pressed]}><Text style={styles.actionIcon}>{icon}</Text><Text style={styles.actionTitle}>{title}</Text><Text style={styles.actionSubtitle}>{subtitle}</Text></Pressable>;
 }
 
-const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: '#F7F5F0' }, center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0' }, container: { padding: 20, paddingBottom: 36 }, eyebrow: { fontSize: 11, fontWeight: '800', letterSpacing: 2, opacity: 0.55, marginBottom: 14 }, row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, greeting: { fontSize: 16, opacity: 0.55 }, name: { marginTop: 2, fontSize: 28, fontWeight: '800', textTransform: 'capitalize' }, avatar: { fontSize: 36 }, hero: { marginTop: 24, padding: 22, borderRadius: 24, backgroundColor: '#1F2933' }, heroKicker: { color: '#FFFFFF', fontSize: 10, fontWeight: '800', letterSpacing: 1.5, opacity: 0.65 }, heroTitle: { marginTop: 8, color: '#FFFFFF', fontSize: 27, lineHeight: 33, fontWeight: '800' }, heroBody: { marginTop: 9, color: '#FFFFFF', fontSize: 15, lineHeight: 22, opacity: 0.72 }, section: { marginTop: 26, marginBottom: 12, fontSize: 18, fontWeight: '800' }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, action: { width: '48%', minHeight: 118, padding: 16, borderRadius: 20, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }, pressed: { transform: [{ scale: 0.98 }], opacity: 0.8 }, actionIcon: { fontSize: 30 }, actionTitle: { fontSize: 16, fontWeight: '800' }, card: { padding: 18, borderRadius: 18, backgroundColor: '#FFFFFF' }, cardTitle: { fontSize: 16, fontWeight: '800' }, cardBody: { marginTop: 8, fontSize: 14, lineHeight: 21, opacity: 0.62 } });
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#F7F5F0' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0' },
+  container: { padding: 22, paddingBottom: 40 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  brand: { fontSize: 37, fontWeight: '900', letterSpacing: 2.5, color: '#0E5A45' },
+  platform: { marginTop: 1, fontSize: 16, fontWeight: '600', color: '#777D79' },
+  profile: { width: 58, height: 58, borderRadius: 29, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#DDDCD7', alignItems: 'center', justifyContent: 'center' },
+  profileIcon: { fontSize: 31, color: '#55748B' },
+  hero: { marginTop: 30, padding: 30, borderRadius: 30, backgroundColor: '#123F31' },
+  heroKicker: { color: '#F7F5F0', fontSize: 14, fontWeight: '900', letterSpacing: 2.5, opacity: 0.85 },
+  heroTitle: { marginTop: 12, color: '#FFFFFF', fontSize: 53, lineHeight: 57, fontWeight: '900', letterSpacing: 1 },
+  heroBody: { marginTop: 18, color: '#F7F5F0', fontSize: 19, lineHeight: 29, fontWeight: '600', opacity: 0.92 },
+  heroButton: { marginTop: 25, alignSelf: 'flex-start', paddingVertical: 16, paddingHorizontal: 25, borderRadius: 16, backgroundColor: '#FFFFFF' },
+  heroButtonText: { color: '#123F31', fontSize: 17, fontWeight: '900' },
+  section: { marginTop: 34, marginBottom: 16, fontSize: 31, fontWeight: '900', color: '#151817' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
+  action: { width: '47.5%', minHeight: 145, padding: 18, borderRadius: 22, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E1DFD9', justifyContent: 'space-between' },
+  actionIcon: { fontSize: 31 },
+  actionTitle: { marginTop: 8, fontSize: 19, fontWeight: '900', color: '#151817' },
+  actionSubtitle: { marginTop: 4, fontSize: 14, lineHeight: 19, fontWeight: '600', color: '#777D79' },
+  accountHint: { marginTop: 18, padding: 18, borderRadius: 20, backgroundColor: '#E9EEE9' },
+  accountHintTitle: { fontSize: 15, fontWeight: '900', color: '#123F31' },
+  accountHintBody: { marginTop: 5, fontSize: 13, color: '#5F6B65' },
+  pressed: { opacity: 0.8, transform: [{ scale: 0.985 }] },
+});
