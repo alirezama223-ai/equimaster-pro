@@ -6,6 +6,7 @@ import { getCountrySelectOptions } from "@/app/lib/constants/countries";
 import { ListingFormData, HorseGender } from "@/app/types/listing";
 import { ListingFormErrors } from "@/app/lib/listing-validation";
 import FormSection from "@/app/components/sell/FormSection";
+import HorsePassportScanner from "@/app/components/sell/HorsePassportScanner";
 
 const countryOptions = getCountrySelectOptions();
 const breedOptions = getBreedSelectOptions();
@@ -24,6 +25,16 @@ export default function BasicInfoSection({ data, errors, onChange }: Props) {
 
   return (
     <FormSection title={t("basicInfo.title")} subtitle={t("basicInfo.subtitle")}>
+      <HorsePassportScanner
+        onExtracted={(extracted) => {
+          for (const [field, value] of Object.entries(extracted)) {
+            if (value !== undefined && value !== null && value !== "") {
+              onChange(field as keyof ListingFormData, value as never);
+            }
+          }
+        }}
+      />
+
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <FormField label={t("basicInfo.horseName")} htmlFor="name" error={errors.name} required>
           <input
