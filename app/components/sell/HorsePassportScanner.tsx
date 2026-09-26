@@ -53,15 +53,17 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<HorsePassportExtraction | null>(null);
+  const [imageCount, setImageCount] = useState(0);
 
-  async function scan(file: File) {
+  async function scan(files: File[]) {
     setError(null);
     setResult(null);
+    setImageCount(files.length);
     setIsScanning(true);
 
     try {
       const body = new FormData();
-      body.append("file", file);
+      for (const file of files) body.append("file", file);
 
       const response = await fetch("/api/horse-pass/extract", {
         method: "POST",
@@ -76,17 +78,18 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
       const data = payload.data as HorsePassportExtraction;
       setResult(data);
 
+      const normalizedGender = normalizeGender(data.sex);
       const extracted: Partial<ListingFormData> = {
         ...(data.name ? { name: data.name } : {}),
         ...(data.breed ? { breed: data.breed } : {}),
         ...(data.color ? { color: data.color } : {}),
-        ...(data.height_cm ? { height: String(Math.round(data.height_cm)) } : {}),
+        ...(data.height_cm != null ? { height: String(Math.round(data.height_cm)) } : {}),
         ...(data.country ? { country: data.country } : {}),
         ...(data.sire ? { sire: data.sire } : {}),
         ...(data.dam ? { dam: data.dam } : {}),
         ...(data.dam_sire ? { damSire: data.dam_sire } : {}),
         ...(data.birth_date ? { age: calculateAge(data.birth_date) } : {}),
-        ...(normalizeGender(data.sex) ? { gender: normalizeGender(data.sex) } : {}),
+        ...(normalizedGender ? { gender: normalizedGender } : {}),
       };
 
       onExtracted(extracted);
@@ -103,7 +106,7 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
         <div>
           <p className="text-sm font-bold text-white">📷 Daten automatisch erfassen</p>
           <p className="mt-1 text-sm text-gray-400">
-            Pferdepass fotografieren oder hochladen – SHABDIZ übernimmt die erkannten Daten.
+            Eine oder mehrere Pferdepass-Seiten fotografieren oder hochladen – SHABDIZ übernimmt die erkannten Daten.
           </p>
         </div>
         <button
@@ -121,10 +124,11 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
         type="file"
         accept="image/jpeg,image/png,image/webp"
         capture="environment"
+        multiple
         className="hidden"
         onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) void scan(file);
+          const files = Array.from(event.target.files ?? []);
+          if (files.length > 0) void scan(files);
           event.currentTarget.value = "";
         }}
       />
@@ -140,6 +144,9 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
           <p className="text-sm font-semibold text-emerald-300">
             ✓ Daten erkannt – bitte vor dem Speichern prüfen.
             {result.confidence != null ? ` (${Math.round(result.confidence * 100)}% Konfidenz)` : ""}
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            {imageCount} {imageCount === 1 ? "Seite" : "Seiten"} analysiert
           </p>
           <div className="mt-3 grid gap-2 text-xs text-gray-400 sm:grid-cols-2">
             {result.ueln ? <div>UELN: <span className="text-gray-200">{result.ueln}</span></div> : null}
