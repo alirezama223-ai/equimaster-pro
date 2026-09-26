@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/app/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -60,6 +61,18 @@ function safeJsonParse(value: string) {
 }
 
 export async function POST(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Please sign in before scanning a horse passport." },
+      { status: 401 }
+    );
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
@@ -83,7 +96,10 @@ export async function POST(request: Request) {
   }
 
   if (file.size > MAX_FILE_BYTES) {
-    return NextResponse.json({ error: "The image is too large. Maximum size is 10 MB." }, { status: 413 });
+    return NextResponse.json(
+      { error: "The image is too large. Maximum size is 10 MB." },
+      { status: 413 }
+    );
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
@@ -129,7 +145,10 @@ export async function POST(request: Request) {
   const data = typeof content === "string" ? safeJsonParse(content) : null;
 
   if (!data || typeof data !== "object") {
-    return NextResponse.json({ error: "The AI returned an invalid extraction result." }, { status: 502 });
+    return NextResponse.json(
+      { error: "The AI returned an invalid extraction result." },
+      { status: 502 }
+    );
   }
 
   return NextResponse.json({ data });
