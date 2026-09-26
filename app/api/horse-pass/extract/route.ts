@@ -5,6 +5,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
+const MAX_FILES = 5;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 const extractionSchema = {
@@ -82,31 +84,59 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
-  const file = formData.get("file");
+  const files = formData
+    .getAll("file")
+    .filter((value): value is File => value instanceof File);
 
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "Please upload a passport image." }, { status: 400 });
+  if (files.length === 0) {
+    return NextResponse.json({ error: "Please upload at least one passport image." }, { status: 400 });
   }
 
-  if (!ALLOWED_TYPES.has(file.type)) {
+  if (files.length > MAX_FILES) {
     return NextResponse.json(
-      { error: "Unsupported image type. Use JPG, PNG or WEBP." },
+      { error: `Please upload no more than ${MAX_FILES} passport images at once.` },
       { status: 400 }
     );
   }
 
-  if (file.size > MAX_FILE_BYTES) {
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+  if (totalBytes > MAX_TOTAL_BYTES) {
     return NextResponse.json(
-      { error: "The image is too large. Maximum size is 10 MB." },
+      { error: "The combined image size is too large. Maximum is 20 MB." },
       { status: 413 }
     );
   }
 
-  const bytes = Buffer.from(await file.arrayBuffer());
-  const image = `data:${file.type};base64,${bytes.toString("base64")}`;
+  for (const file of files) {
+    if (!ALLOWED_TYPES.has(file.type)) {
+      return NextResponse.json(
+        { error: "Unsupported image type. Use JPG, PNG or WEBP." },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > MAX_FILE_BYTES) {
+      return NextResponse.json(
+        { error: "One of the images is too large. Maximum size per image is 10 MB." },
+        { status: 413 }
+      );
+    }
+  }
+
+  const images = await Promise.all(
+    files.map(async (file) => {
+      const bytes = Buffer.from(await file.arrayBuffer());
+      return `data:${file.type};base64,${bytes.toString("base64")}`;
+    })
+  );
+
   const model = process.env.HORSE_PASS_AI_MODEL || "gpt-4.1-mini";
 
-  const prompt = `You extract structured data from European horse passports. Read only what is visibly present in the uploaded image. Do not guess or invent missing values. Preserve names, registration numbers, UELN and microchip identifiers exactly as printed where possible. Normalize birth_date to YYYY-MM-DD only when the full date is visible. For sex, return one of Mare, Stallion, Gelding when the passport clearly supports it; otherwise null. Return country as the English country name when it is clearly identifiable. height_cm should only be returned when an explicit height in centimeters is visible. confidence is an overall 0-1 estimate of extraction quality, not a claim that the document is authentic. The result will be shown to a human for verification before saving.`;
+  const prompt = `You extract structured data from one or more photos of a European horse passport. Read only what is visibly present across all uploaded images. Combine the pages when they belong to the same passport. Do not guess, invent, or copy placeholder values from the website. If a field is not visible on any uploaded page, return null.
+
+Pay special attention to the horse's name: it may be printed or handwritten in the field labeled Name/Name/Nom. If a clearly readable name is visible there on any page, return it exactly as written (for example, a handwritten "Daisy" must be returned as Daisy). Do not confuse the breeder, owner, or sire/dam names with the horse name.
+
+Preserve names, registration numbers, UELN and microchip identifiers exactly as printed where possible. Normalize birth_date to YYYY-MM-DD only when the full date is visible. For sex, return one of Mare, Stallion, Gelding when the passport clearly supports it; otherwise null. Return country as the English country name when it is clearly identifiable. height_cm should only be returned when an explicit height in centimeters is visible; never infer it from breed, age, or a website placeholder. city and postal code are intentionally not part of this extraction and must never be invented. confidence is an overall 0-1 estimate of extraction quality, not a claim that the document is authentic. The result will be shown to a human for verification before saving.`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -123,8 +153,14 @@ export async function POST(request: Request) {
         {
           role: "user",
           content: [
-            { type: "text", text: "Extract the horse passport fields from this image." },
-            { type: "image_url", image_url: { url: image, detail: "high" } },
+            {
+              type: "text",
+              text: "Extract the horse passport fields from all of these images. They may be different pages of the same passport.",
+            },
+            ...images.map((url) => ({
+              type: "image_url" as const,
+              image_url: { url, detail: "high" as const },
+            })),
           ],
         },
       ],
