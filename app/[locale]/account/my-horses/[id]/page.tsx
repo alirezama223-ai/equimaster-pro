@@ -1,4 +1,5 @@
 import { redirect, notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/app/lib/supabase/server";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import MyHorseProfile from "@/app/components/account/MyHorseProfile";
@@ -18,7 +19,7 @@ const sireLine = [
   { name: "Tangra S van het Darohof", breed: "Belgisches Warmblut (BWP)", registration_number: "BEL 002W00158416", sex: "mare", sire: "Lys de Darmen", dam: "Gesina van het Darohof" },
 ];
 
-const vaccinations = [
+const passportVaccinations = [
   { date: "2023-12-28", product: "Equilis Te", disease: "Tetanus", batch: "A0U4P0U", note: "Passport entry · VHO · Germany" },
   { date: "2024-01-24", product: "Equilis Te", disease: "Tetanus", batch: "A0U4P0U", note: "Passport entry · VHO · Germany" },
   { date: "2025-01-22", product: "Equilis Te", disease: "Tetanus", batch: "A048A03", note: "Passport entry · VHO · Germany" },
@@ -32,6 +33,82 @@ async function getOrCreate(supabase: any, userId: string, data: (typeof sireLine
   if (existing) return existing;
   const { data: created } = await supabase.from("pedigree_horses").insert({ name: data.name, normalized_name: normalized, breed: data.breed, registration_number: data.registration_number, sex: data.sex, created_by: userId }).select("id,name,breed,registration_number,sex,sire_id,dam_id").single();
   return created;
+}
+
+async function getOwnedHorse(supabase: any, userId: string, horseId: string) {
+  const { data } = await supabase.from("personal_horses").select("id,pedigree_horse_id,name").eq("id", horseId).eq("owner_id", userId).maybeSingle();
+  return data;
+}
+
+export async function addHorseVaccination(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/account");
+  const horse = await getOwnedHorse(supabase, user.id, String(formData.get("horse_id") || ""));
+  if (!horse?.pedigree_horse_id) return;
+  await supabase.from("horse_vaccinations").insert({
+    created_by: user.id,
+    pedigree_horse_id: horse.pedigree_horse_id,
+    vaccine_name: String(formData.get("vaccine_name") || "").trim(),
+    administered_date: String(formData.get("administered_date") || ""),
+    next_due_date: String(formData.get("next_due_date") || "") || null,
+    batch_number: String(formData.get("batch_number") || "").trim() || null,
+    notes: String(formData.get("notes") || "").trim() || null,
+  });
+  revalidatePath("/", "layout");
+}
+
+export async function addHorseVetVisit(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/account");
+  const horse = await getOwnedHorse(supabase, user.id, String(formData.get("horse_id") || ""));
+  if (!horse?.pedigree_horse_id) return;
+  await supabase.from("horse_vet_visits").insert({
+    created_by: user.id,
+    pedigree_horse_id: horse.pedigree_horse_id,
+    visit_date: String(formData.get("visit_date") || ""),
+    reason: String(formData.get("reason") || "").trim() || null,
+    diagnosis: String(formData.get("diagnosis") || "").trim() || null,
+    treatment: String(formData.get("treatment") || "").trim() || null,
+    follow_up_date: String(formData.get("follow_up_date") || "") || null,
+    notes: String(formData.get("notes") || "").trim() || null,
+  });
+  revalidatePath("/", "layout");
+}
+
+export async function addHorseBreedingEvent(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/account");
+  const horse = await getOwnedHorse(supabase, user.id, String(formData.get("horse_id") || ""));
+  if (!horse?.pedigree_horse_id) return;
+  await supabase.from("horse_breeding_events").insert({
+    created_by: user.id,
+    pedigree_horse_id: horse.pedigree_horse_id,
+    event_date: String(formData.get("event_date") || ""),
+    event_type: String(formData.get("event_type") || "insemination"),
+    stallion_name: String(formData.get("stallion_name") || "").trim() || null,
+    method: String(formData.get("method") || "").trim() || null,
+    pregnancy_status: String(formData.get("pregnancy_status") || "").trim() || null,
+    ultrasound_date: String(formData.get("ultrasound_date") || "") || null,
+    expected_foaling_date: String(formData.get("expected_foaling_date") || "") || null,
+    foaling_date: String(formData.get("foaling_date") || "") || null,
+    notes: String(formData.get("notes") || "").trim() || null,
+  });
+  revalidatePath("/", "layout");
+}
+
+export async function updateHorseNotes(formData: FormData) {
+  "use server";
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/account");
+  await supabase.from("personal_horses").update({ notes: String(formData.get("notes") || "") }).eq("id", String(formData.get("horse_id") || "")).eq("owner_id", user.id);
+  revalidatePath("/", "layout");
 }
 
 export default async function MyHorsePage({ params }: Props) {
@@ -66,6 +143,17 @@ export default async function MyHorsePage({ params }: Props) {
     personalHorse.pedigree_horse_id = myPedigree.id;
   }
 
-  if (!personalHorse) notFound();
-  return <MyHorseProfile horse={personalHorse} sireLine={sireLine} vaccinations={vaccinations} />;
+  if (!personalHorse || !myPedigree) notFound();
+
+  const { data: existingVaccinations } = await supabase.from("horse_vaccinations").select("id,administered_date,vaccine_name,batch_number,notes,next_due_date").eq("created_by", user.id).eq("pedigree_horse_id", myPedigree.id).order("administered_date", { ascending: false });
+  const existingKeys = new Set((existingVaccinations ?? []).map((item: any) => `${item.administered_date}|${item.vaccine_name}`));
+  const missing = passportVaccinations.filter((item) => !existingKeys.has(`${item.date}|${item.product}`));
+  if (missing.length) {
+    await supabase.from("horse_vaccinations").insert(missing.map((item) => ({ created_by: user.id, pedigree_horse_id: myPedigree!.id, vaccine_name: item.product, administered_date: item.date, batch_number: item.batch ?? null, notes: `${item.disease} · ${item.note}` })));
+  }
+  const { data: vaccinations } = await supabase.from("horse_vaccinations").select("id,administered_date,vaccine_name,batch_number,notes,next_due_date").eq("created_by", user.id).eq("pedigree_horse_id", myPedigree.id).order("administered_date", { ascending: false });
+  const { data: vetVisits } = await supabase.from("horse_vet_visits").select("id,visit_date,reason,diagnosis,treatment,follow_up_date,notes").eq("created_by", user.id).eq("pedigree_horse_id", myPedigree.id).order("visit_date", { ascending: false });
+  const { data: breedingEvents } = await supabase.from("horse_breeding_events").select("id,event_date,event_type,stallion_name,method,pregnancy_status,ultrasound_date,expected_foaling_date,foaling_date,notes").eq("created_by", user.id).eq("pedigree_horse_id", myPedigree.id).order("event_date", { ascending: false });
+
+  return <MyHorseProfile horse={personalHorse} sireLine={sireLine} vaccinations={(vaccinations ?? []).map((item: any) => ({ date: item.administered_date, product: item.vaccine_name, disease: item.notes?.split(" · ")[0] ?? "", batch: item.batch_number ?? undefined, note: item.notes?.split(" · ").slice(1).join(" · ") || undefined, nextDue: item.next_due_date ?? undefined }))} vetVisits={vetVisits ?? []} breedingEvents={breedingEvents ?? []} addVaccination={addHorseVaccination} addVetVisit={addHorseVetVisit} addBreedingEvent={addHorseBreedingEvent} updateNotes={updateHorseNotes} />;
 }
