@@ -1,10 +1,8 @@
 "use client";
 
-type Horse = {
-  name: string; birth_date: string | null; breed: string | null; gender: string | null; color: string | null;
-  height_cm: number | null; ueln: string | null; microchip: string | null; country_of_birth: string | null;
-  studbook: string | null; passport_number: string | null;
-};
+import { uploadPersonalHorseDocument } from "@/app/actions/personal-horse-documents";
+
+type Horse = { id: string; name: string; birth_date: string | null; breed: string | null; gender: string | null; color: string | null; height_cm: number | null; ueln: string | null; microchip: string | null; country_of_birth: string | null; studbook: string | null; passport_number: string | null };
 type PedigreeEntry = { name: string; breed: string; registration_number: string; sex: string; sire?: string; dam?: string };
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -22,17 +20,29 @@ export default function MyHorseProfile({ horse, sireLine }: { horse: Horse; sire
         <nav className="mb-6 flex gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-[#0B1422] p-2">{["Overview","Pedigree","Vaccinations","Medical","Breeding","Documents","Training","Notes"].map((item)=><a key={item} href={`#${item.toLowerCase()}`} className="whitespace-nowrap rounded-xl px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white">{item}</a>)}</nav>
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <Section id="overview" title="Overview"><div className="grid gap-3 sm:grid-cols-2">{[
-            ["Date of birth", horse.birth_date ? new Date(`${horse.birth_date}T00:00:00`).toLocaleDateString("de-DE") : "—"],
-            ["Breed", horse.breed ?? "—"],["Gender", horse.gender ?? "—"],["Colour", horse.color ?? "—"],["Height", horse.height_cm ? `${horse.height_cm} cm` : "—"],
-            ["UELN / Life number", horse.ueln ?? "—"],["Transponder", horse.microchip ?? "—"],["Studbook", horse.studbook ?? "—"],["Country of birth", horse.country_of_birth ?? "—"],["Passport", horse.passport_number ?? "Not entered yet"]
+            ["Date of birth", horse.birth_date ? new Date(`${horse.birth_date}T00:00:00`).toLocaleDateString("de-DE") : "—"], ["Breed", horse.breed ?? "—"],["Gender", horse.gender ?? "—"],["Colour", horse.color ?? "—"],["Height", horse.height_cm ? `${horse.height_cm} cm` : "—"],["UELN / Life number", horse.ueln ?? "—"],["Transponder", horse.microchip ?? "—"],["Studbook", horse.studbook ?? "—"],["Country of birth", horse.country_of_birth ?? "—"],["Passport", horse.passport_number ?? "Not entered yet"]
           ].map(([label,value])=><div key={label} className="rounded-2xl border border-white/10 bg-[#0B1422] p-4"><p className="text-xs text-gray-500">{label}</p><p className="mt-1 break-words font-semibold text-white">{value}</p></div>)}</div></Section>
 
           <Section id="pedigree" title="Pedigree"><div className="space-y-3">{sireLine.map((item)=><div key={item.name} className="rounded-2xl border border-white/10 bg-[#0B1422] p-4"><p className="text-[11px] uppercase tracking-wider text-blue-400">{item.name === "Emerald van het Ruytershof" ? "Sire" : "Sire-line ancestor"}</p><p className="mt-1 font-semibold text-white">{item.name}</p><p className="mt-1 text-sm text-gray-400">{item.breed}</p><p className="mt-1 text-xs text-gray-500">{item.registration_number}</p></div>)}</div><p className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">The dam side is intentionally not guessed. Add the mother's passport page and we can connect the maternal line accurately.</p></Section>
 
-          <Section id="vaccinations" title="Vaccinations"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">No vaccination entries have been saved yet. The next step is to scan the vaccination pages and save each date, product, batch and next-due date into the horse record.</div></Section>
+          <Section id="vaccinations" title="Vaccinations"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">Vaccination records are ready for passport extraction. Each entry will store date, vaccine, batch and next-due date.</div></Section>
           <Section id="medical" title="Medical"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">Medical examinations, treatments, injuries, medication and X-rays will be linked to this horse's private record.</div></Section>
           <Section id="breeding" title="Breeding"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">Breeding events, insemination, stallion, ultrasound checks, pregnancy status and foaling dates will be stored here.</div></Section>
-          <Section id="documents" title="Documents"><div className="grid gap-3 sm:grid-cols-2">{["Equidenpass","Zuchtbescheinigung","Vaccination pages","Pedigree pages"].map(doc=><div key={doc} className="rounded-2xl border border-white/10 bg-[#0B1422] p-4"><p className="font-semibold">{doc}</p><p className="mt-1 text-xs text-gray-500">Ready for private document upload</p></div>)}</div></Section>
+
+          <Section id="documents" title="Documents">
+            <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
+              <p className="font-semibold text-white">📸 Scan / upload Pferdepass</p>
+              <p className="mt-1 text-sm text-gray-400">Upload a passport page now. The file stays private to your horse record and is prepared for the OCR extraction step.</p>
+              <form action={uploadPersonalHorseDocument} className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+                <input type="hidden" name="horse_id" value={horse.id} />
+                <label className="text-sm text-gray-300">Document<input name="file" type="file" accept="image/*,.pdf" required className="mt-2 block w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-3 file:py-2 file:text-white" /></label>
+                <label className="text-sm text-gray-300">Type<select name="document_type" defaultValue="passport" className="mt-2 block rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2 text-sm text-white"><option value="passport">Pferdepass</option><option value="vaccination">Vaccination page</option><option value="pedigree">Pedigree</option><option value="medical">Medical</option><option value="other">Other</option></select></label>
+                <button type="submit" className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500">Upload</button>
+              </form>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">{["Equidenpass","Zuchtbescheinigung","Vaccination pages","Pedigree pages"].map(doc=><div key={doc} className="rounded-2xl border border-white/10 bg-[#0B1422] p-4"><p className="font-semibold">{doc}</p><p className="mt-1 text-xs text-gray-500">Private document category</p></div>)}</div>
+          </Section>
+
           <Section id="training" title="Training"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">Training sessions, competitions, results and milestones will be linked to this horse.</div></Section>
           <Section id="notes" title="Notes"><div className="rounded-2xl border border-dashed border-white/10 bg-[#0B1422] p-5 text-sm text-gray-400">Private notes about the horse, routines, equipment and care.</div></Section>
         </div>
