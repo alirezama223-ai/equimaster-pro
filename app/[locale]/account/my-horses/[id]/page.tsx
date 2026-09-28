@@ -18,6 +18,14 @@ const sireLine = [
   { name: "Tangra S van het Darohof", breed: "Belgisches Warmblut (BWP)", registration_number: "BEL 002W00158416", sex: "mare", sire: "Lys de Darmen", dam: "Gesina van het Darohof" },
 ];
 
+const vaccinations = [
+  { date: "2023-12-28", product: "Equilis Te", disease: "Tetanus", batch: "A0U4P0U", note: "Passport entry · VHO · Germany" },
+  { date: "2024-01-24", product: "Equilis Te", disease: "Tetanus", batch: "A0U4P0U", note: "Passport entry · VHO · Germany" },
+  { date: "2025-01-22", product: "Equilis Te", disease: "Tetanus", batch: "A048A03", note: "Passport entry · VHO · Germany" },
+  { date: "2026-05-02", product: "ProteqFlu", disease: "Equine influenza", note: "Passport entry · VHB · Germany" },
+  { date: "2026-06-10", product: "Equilis Prequenza", disease: "Equine influenza", note: "Passport entry · VHB · Germany" },
+];
+
 async function getOrCreate(supabase: any, userId: string, data: (typeof sireLine)[number]) {
   const normalized = data.name.trim().toLowerCase();
   const { data: existing } = await supabase.from("pedigree_horses").select("id,name,breed,registration_number,sex,sire_id,dam_id").eq("normalized_name", normalized).maybeSingle();
@@ -51,7 +59,7 @@ export default async function MyHorsePage({ params }: Props) {
 
   let { data: personalHorse } = await supabase.from("personal_horses").select("*").eq("owner_id", user.id).eq("name", "My Horse").maybeSingle();
   if (!personalHorse) {
-    const { data: created } = await supabase.from("personal_horses").insert({ owner_id: user.id, pedigree_horse_id: myPedigree?.id ?? null, name: "My Horse", birth_date: "2023-03-27", breed: "Deutsches Sportpferd", gender: "Mare", color: "Fuchs", ueln: "276481810084923", microchip: "276020000825800", country_of_birth: "Deutschland", studbook: "Deutsches Sportpferd" }).select("*").single();
+    const { data: created } = await supabase.from("personal_horses").insert({ owner_id: user.id, pedigree_horse_id: myPedigree?.id ?? null, name: "My Horse", birth_date: "2023-03-27", breed: "Deutsches Sportpferd", gender: "Mare", color: "Fuchs", country_of_birth: "Deutschland", studbook: "Deutsches Sportpferd", ueln: "276481810084923", microchip: "276020000825800" }).select("*").single();
     personalHorse = created;
   } else if (myPedigree && personalHorse.pedigree_horse_id !== myPedigree.id) {
     await supabase.from("personal_horses").update({ pedigree_horse_id: myPedigree.id }).eq("id", personalHorse.id);
@@ -59,5 +67,5 @@ export default async function MyHorsePage({ params }: Props) {
   }
 
   if (!personalHorse) notFound();
-  return <MyHorseProfile horse={personalHorse} sireLine={sireLine} />;
+  return <MyHorseProfile horse={personalHorse} sireLine={sireLine} vaccinations={vaccinations} />;
 }
