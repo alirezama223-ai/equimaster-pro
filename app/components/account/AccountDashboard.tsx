@@ -95,6 +95,17 @@ export default async function AccountDashboard({
 
       <NotificationSettings userId={user.id} />
 
+      <section className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111C2E] to-[#0B1422] p-6 sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[4px] text-blue-400">My Horses</p>
+            <h2 className="mt-2 text-2xl font-bold text-white">Personal horse records</h2>
+            <p className="mt-2 max-w-2xl text-sm text-gray-400">Keep each horse's identity, pedigree, vaccinations, medical history, breeding records and documents in one private profile.</p>
+          </div>
+          <Link href="/account/my-horses/emerald-van-het-ruytershof" className="shrink-0 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500">Open Emerald's profile</Link>
+        </div>
+      </section>
+
       <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
