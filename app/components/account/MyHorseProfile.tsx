@@ -28,7 +28,7 @@ export default function MyHorseProfile({ horse, sireLine, vaccinations }: { hors
   const horseSire = byName.get("Emerald van het Ruytershof");
   const generations = [
     { label: "Sire", items: horseSire ? [horseSire] : [] },
-    { label: "Grandparents", items: [horseSire?.sire, horseSire?.dam].filter(Boolean) as PedigreeEntry[] },
+    { label: "Grandparents", items: [byName.get(horseSire?.sire ?? ""), byName.get(horseSire?.dam ?? "")].filter(Boolean) as PedigreeEntry[] },
     { label: "Great-grandparents", items: [
       byName.get("Le Tot de Semilly"), byName.get("Venise des Cresles"), byName.get("Carthago Z"), byName.get("Tangra S van het Darohof")
     ].filter(Boolean) as PedigreeEntry[] },
