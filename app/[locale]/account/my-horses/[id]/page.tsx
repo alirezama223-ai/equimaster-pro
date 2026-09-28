@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/server";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import MyHorseProfile from "@/app/components/account/MyHorseProfile";
+import HorsePassportOCR from "@/app/components/account/HorsePassportOCR";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
@@ -59,5 +60,12 @@ export default async function MyHorsePage({ params }: Props) {
   }
 
   if (!personalHorse) notFound();
-  return <MyHorseProfile horse={personalHorse} sireLine={sireLine} />;
+  return (
+    <>
+      <MyHorseProfile horse={personalHorse} sireLine={sireLine} />
+      <div className="mx-auto max-w-6xl px-4 pb-24">
+        <HorsePassportOCR horseId={personalHorse.id} />
+      </div>
+    </>
+  );
 }
