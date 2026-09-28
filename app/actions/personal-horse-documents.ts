@@ -11,8 +11,7 @@ function asText(value: unknown): string | null {
 function asDate(value: unknown): string | null {
   const text = asText(value);
   if (!text) return null;
-  const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (iso) return text;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
   const de = text.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
   return de ? `${de[3]}-${de[2]}-${de[1]}` : null;
 }
@@ -47,7 +46,7 @@ export async function uploadPersonalHorseDocument(formData: FormData) {
   const { error: uploadError } = await supabase.storage.from("personal-horse-documents").upload(path, file, { contentType: file.type || "application/octet-stream", upsert: false });
   if (uploadError) return { ok: false, error: uploadError.message };
 
-  const { error: insertError } = await supabase.from("personal_horse_documents").insert({
+  const { data: document, error: insertError } = await supabase.from("personal_horse_documents").insert({
     personal_horse_id: horseId,
     owner_id: user.id,
     document_type: documentType,
@@ -55,13 +54,13 @@ export async function uploadPersonalHorseDocument(formData: FormData) {
     original_filename: file.name,
     extraction_status: extractedData ? "review" : "pending",
     extracted_data: extractedData,
-  });
+  }).select("id").single();
   if (insertError) {
     await supabase.storage.from("personal-horse-documents").remove([path]);
     return { ok: false, error: insertError.message };
   }
 
-  return { ok: true };
+  return { ok: true, documentId: document.id };
 }
 
 export async function confirmPersonalHorseExtraction(formData: FormData) {
@@ -83,17 +82,8 @@ export async function confirmPersonalHorseExtraction(formData: FormData) {
   const extracted = (document.extracted_data ?? {}) as Record<string, unknown>;
   const horsePatch: Record<string, unknown> = {};
   const mapping: Record<string, string> = {
-    name: "name",
-    ueln: "ueln",
-    microchip: "microchip",
-    birth_date: "birth_date",
-    breed: "breed",
-    gender: "gender",
-    color: "color",
-    height_cm: "height_cm",
-    country_of_birth: "country_of_birth",
-    studbook: "studbook",
-    passport_number: "passport_number",
+    name: "name", ueln: "ueln", microchip: "microchip", birth_date: "birth_date", breed: "breed",
+    gender: "gender", color: "color", country_of_birth: "country_of_birth", studbook: "studbook", passport_number: "passport_number",
   };
   for (const [source, target] of Object.entries(mapping)) {
     const value = source === "birth_date" ? asDate(extracted[source]) : asText(extracted[source]);
@@ -106,22 +96,25 @@ export async function confirmPersonalHorseExtraction(formData: FormData) {
     if (error) return { ok: false, error: error.message };
   }
 
-  const vaccinations = Array.isArray(extracted.vaccinations) ? extracted.vaccinations : [];
-  for (const item of vaccinations) {
-    if (!item || typeof item !== "object") continue;
-    const row = item as Record<string, unknown>;
-    const vaccineName = asText(row.vaccine_name ?? row.vaccine ?? row.product);
-    const administeredDate = asDate(row.administered_date ?? row.date);
-    if (!vaccineName || !administeredDate) continue;
-    await supabase.from("horse_vaccinations").insert({
-      created_by: user.id,
-      pedigree_horse_id: (await supabase.from("personal_horses").select("pedigree_horse_id").eq("id", document.personal_horse_id).single()).data?.pedigree_horse_id,
-      vaccine_name: vaccineName,
-      administered_date: administeredDate,
-      next_due_date: asDate(row.next_due_date),
-      batch_number: asText(row.batch_number ?? row.batch),
-      notes: asText(row.notes),
-    });
+  const { data: personalHorse } = await supabase.from("personal_horses").select("pedigree_horse_id").eq("id", document.personal_horse_id).eq("owner_id", user.id).single();
+  const pedigreeHorseId = personalHorse?.pedigree_horse_id;
+  if (pedigreeHorseId && Array.isArray(extracted.vaccinations)) {
+    for (const item of extracted.vaccinations) {
+      if (!item || typeof item !== "object") continue;
+      const row = item as Record<string, unknown>;
+      const vaccineName = asText(row.vaccine_name ?? row.vaccine ?? row.product);
+      const administeredDate = asDate(row.administered_date ?? row.date);
+      if (!vaccineName || !administeredDate) continue;
+      await supabase.from("horse_vaccinations").insert({
+        created_by: user.id,
+        pedigree_horse_id: pedigreeHorseId,
+        vaccine_name: vaccineName,
+        administered_date: administeredDate,
+        next_due_date: asDate(row.next_due_date),
+        batch_number: asText(row.batch_number ?? row.batch),
+        notes: asText(row.notes),
+      });
+    }
   }
 
   const { error: statusError } = await supabase.from("personal_horse_documents").update({ extraction_status: "confirmed" }).eq("id", documentId).eq("owner_id", user.id);
