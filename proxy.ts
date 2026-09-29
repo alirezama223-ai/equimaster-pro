@@ -45,6 +45,16 @@ export async function proxy(request: NextRequest) {
     return updateSession(request);
   }
 
+  // Legacy private horse profile URL: keep the public URL unprefixed, but
+  // internally resolve it to the default English locale route. This avoids
+  // both the next-intl 404 and the redirect loop caused by treating the
+  // unprefixed legacy route as a standalone page.
+  if (pathname === "/account/my-horses/my-horse") {
+    const rewrittenUrl = request.nextUrl.clone();
+    rewrittenUrl.pathname = `/en${pathname}`;
+    return updateSession(request, NextResponse.rewrite(rewrittenUrl));
+  }
+
   const intlResponse = handleI18nRouting(request);
 
   if (intlResponse.headers.get("location")) {
