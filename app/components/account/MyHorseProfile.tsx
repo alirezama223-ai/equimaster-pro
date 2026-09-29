@@ -100,20 +100,30 @@ export default function MyHorseProfile({
   return (
     <main className="min-h-screen bg-[#08111F] px-4 pb-24 pt-28 text-white">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-[#14233A] to-[#0B1422] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.22)] sm:p-7">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[4px] text-blue-400">My Horses · Personal Record</p>
-              <h1 className="mt-2 break-words text-3xl font-black sm:text-4xl">{horse.name}</h1>
-              <p className="mt-2 text-sm text-gray-400">Private horse profile · not a sale listing</p>
+        <div className="mb-6 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#14233A] via-[#102039] to-[#0B1422] shadow-[0_18px_60px_rgba(0,0,0,0.22)]">
+          <div className="p-5 sm:p-7">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[4px] text-blue-400">Horse Identity · Personal Record</p>
+                <h1 className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{horse.name || "Unnamed horse"}</h1>
+                <p className="mt-2 text-sm text-gray-400">Private horse profile · not a sale listing</p>
+              </div>
+              <Link href="/account" className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-gray-200 hover:bg-white/10">← Account</Link>
             </div>
-            <Link href="/account" className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-gray-200 hover:bg-white/10">← Account</Link>
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <InfoCard label="Date of birth" value={horse.birth_date ? new Date(`${horse.birth_date}T00:00:00`).toLocaleDateString("de-DE") : "—"} />
-            <InfoCard label="Breed" value={horse.breed ?? "—"} />
-            <InfoCard label="Gender" value={horse.gender ?? "—"} />
-            <InfoCard label="Colour" value={horse.color ?? "—"} accent />
+
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <InfoCard label="Date of birth" value={horse.birth_date ? new Date(`${horse.birth_date}T00:00:00`).toLocaleDateString("de-DE") : "—"} />
+              <InfoCard label="Sex / Gender" value={horse.gender ?? "—"} />
+              <InfoCard label="Sire / Father" value={sire?.name ?? "Not recorded yet"} accent />
+              <InfoCard label="Dam / Mother" value="Not recorded yet" />
+            </div>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <InfoCard label="Breed" value={horse.breed ?? "—"} />
+              <InfoCard label="Colour" value={horse.color ?? "—"} />
+              <InfoCard label="UELN / Life number" value={horse.ueln ?? "—"} />
+              <InfoCard label="Passport" value={horse.passport_number ?? "Not entered yet"} accent />
+            </div>
           </div>
         </div>
 
