@@ -45,14 +45,6 @@ export async function proxy(request: NextRequest) {
     return updateSession(request);
   }
 
-  // The default-locale legacy My Horse URL has its own app route that
-  // redirects to the canonical /en route. Let Next.js resolve that route
-  // directly instead of allowing next-intl to turn the unprefixed request
-  // into a middleware 404 before the app route can run.
-  if (pathname === "/account/my-horses/my-horse") {
-    return updateSession(request);
-  }
-
   const intlResponse = handleI18nRouting(request);
 
   if (intlResponse.headers.get("location")) {
