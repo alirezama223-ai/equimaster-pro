@@ -102,10 +102,18 @@ export async function updateSession(
           request.cookies.set(name, value);
         });
 
-        supabaseResponse = NextResponse.next({
-          request,
-          headers: response.headers,
-        });
+        const rewriteTarget = response.headers.get("x-middleware-rewrite");
+        if (rewriteTarget) {
+          supabaseResponse = NextResponse.rewrite(
+            new URL(rewriteTarget, request.url),
+            { request, headers: response.headers }
+          );
+        } else {
+          supabaseResponse = NextResponse.next({
+            request,
+            headers: response.headers,
+          });
+        }
 
         cookiesToSet.forEach(({ name, value, options }) => {
           supabaseResponse.cookies.set(name, value, options);
