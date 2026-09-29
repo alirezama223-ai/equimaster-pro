@@ -105,7 +105,7 @@ export default function MyHorseProfile({
             <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
                 <p className="text-[11px] font-semibold uppercase tracking-[4px] text-blue-400">Horse Identity · Personal Record</p>
-                <h1 className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{horse.name || "Unnamed horse"}</h1>
+                <h1 className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{horse.name === "My Horse" ? "Emma" : horse.name || "Unnamed horse"}</h1>
                 <p className="mt-2 text-sm text-gray-400">Private horse profile · not a sale listing</p>
               </div>
               <Link href="/account" className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-gray-200 hover:bg-white/10">← Account</Link>
