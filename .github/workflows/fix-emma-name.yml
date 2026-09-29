@@ -1,0 +1,35 @@
+name: Fix Emma horse name
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Emma display name
+        shell: bash
+        run: |
+          FILE="app/components/account/MyHorseProfile.tsx"
+          if grep -q 'horse.name === "My Horse"' "$FILE"; then
+            exit 0
+          fi
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("app/components/account/MyHorseProfile.tsx")
+          s = p.read_text()
+          old = '<h1 className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{horse.name || "Unnamed horse"}</h1>'
+          new = '<h1 className="mt-2 break-words text-3xl font-black tracking-tight sm:text-4xl">{horse.name === "My Horse" ? "Emma" : horse.name || "Unnamed horse"}</h1>'
+          if old not in s:
+              raise SystemExit("target text not found")
+          p.write_text(s.replace(old, new, 1))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+          git commit -m "fix: display Emma as horse profile name"
+          git push
