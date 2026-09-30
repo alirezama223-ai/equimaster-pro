@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { createClient } from "@/app/lib/supabase/server";
 import { createPageMetadata } from "@/app/lib/seo/page-metadata";
 import { createPersonalHorse } from "@/app/actions/personal-horses";
+import PassportOcr from "@/app/components/passport-ocr";
 
 export const dynamic = "force-dynamic";
 
@@ -46,9 +47,12 @@ export default async function MyHorsesPage() {
           <section className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-[#111C2E] to-[#0B1422] p-5 sm:p-7">
             <div className="mb-5">
               <p className="text-xs font-semibold uppercase tracking-[3px] text-blue-300">＋ New horse</p>
-              <h2 className="mt-2 text-2xl font-bold">Add a horse manually</h2>
-              <p className="mt-2 text-sm text-gray-500">You can enter only the information you know now and complete it later.</p>
+              <h2 className="mt-2 text-2xl font-bold">Add a horse</h2>
+              <p className="mt-2 text-sm text-gray-500">Upload the passport first or enter the information manually. You can always correct and complete it later.</p>
             </div>
+
+            <PassportOcr />
+
             <form action={createPersonalHorse} className="space-y-4">
               <Input name="name" label="Horse name" required />
               <div className="grid gap-4 sm:grid-cols-2">
