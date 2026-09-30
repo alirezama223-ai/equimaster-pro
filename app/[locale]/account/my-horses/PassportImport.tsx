@@ -42,6 +42,17 @@ function Input({ name, label, type = "text", value, onChange }: { name: keyof Ho
   );
 }
 
+function mergeFields(current: HorseDraft, incoming: Partial<HorseDraft>): HorseDraft {
+  const merged = { ...current };
+  (Object.keys(current) as (keyof HorseDraft)[]).forEach((key) => {
+    const value = incoming[key];
+    // Never let an empty result from one passport page erase useful data
+    // already extracted from another page.
+    if (typeof value === "string" && value.trim()) merged[key] = value;
+  });
+  return merged;
+}
+
 export default function PassportImport() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<HorseDraft>(emptyDraft);
@@ -58,7 +69,7 @@ export default function PassportImport() {
     const response = await fetch("/api/horse-passport/extract", { method: "POST", body: formData });
     const result = await response.json();
     if (!response.ok) throw new Error(result?.error || "Could not read the passport.");
-    setDraft((current) => ({ ...current, ...result.fields }));
+    setDraft((current) => mergeFields(current, result.fields ?? {}));
   }
 
   async function handleFiles(files: File[]) {
@@ -90,9 +101,9 @@ export default function PassportImport() {
     const failed: string[] = [];
 
     try {
-      // Process one photo at a time so several passport pages can be uploaded
-      // without exceeding the server request-size limit. Later pages can fill
-      // fields that were not visible in earlier pages.
+      // Process each page separately to stay below request-size limits.
+      // Results are merged field-by-field so a blank value from one page
+      // can never overwrite information extracted from another page.
       for (const file of files) {
         try {
           await extractPassport(file);
@@ -106,7 +117,7 @@ export default function PassportImport() {
       if (failed.length) {
         setError(`Could not read: ${failed.join(", ")}. The other photos were processed.`);
       }
-      setMessage(failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos. Please check the fields.` : `All ${files.length} passport photos were read. Please check the fields before saving.`);
+      setMessage(failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos. Please check the fields.` : `All ${files.length} passport photos were read and combined. Please check the fields before saving.`);
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -123,7 +134,7 @@ export default function PassportImport() {
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-[3px] text-blue-300">＋ New horse</p>
         <h2 className="mt-2 text-2xl font-bold">Add a horse</h2>
-        <p className="mt-2 text-sm text-gray-500">Upload one or several clear photos of the horse passport. EquiMaster will read the pages and combine the information for you. You can correct anything before saving.</p>
+        <p className="mt-2 text-sm text-gray-500">Upload one or several clear photos of the horse passport. EquiMaster reads each page and combines all clearly visible information. You can correct anything before saving.</p>
       </div>
 
       <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleFile} className="hidden" />
