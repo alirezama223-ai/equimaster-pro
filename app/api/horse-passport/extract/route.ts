@@ -37,7 +37,31 @@ export async function POST(request: Request) {
   const bytes = Buffer.from(await file.arrayBuffer());
   const imageData = `data:${file.type};base64,${bytes.toString("base64")}`;
 
-  const prompt = `You extract structured information from a European horse passport photo. Return ONLY valid JSON with these keys: name, birth_date, gender, breed, color, height_cm, country_of_birth, studbook, passport_number, ueln, microchip, notes. Do not guess. If a value is not clearly visible, use an empty string. birth_date must be copied exactly if visible (for example 27.03.2023). height_cm should be digits only. gender must be one of Mare, Stallion, Gelding, or empty. Distinguish the horse's UELN/life number from the document/certificate number whenever possible. Keep notes short and only include clearly relevant identification details. The user will review everything before saving.`;
+  const prompt = `Read this horse passport page carefully and extract EVERY clearly visible horse identification/detail that belongs in the requested fields. Do not focus only on the passport/document number.
+
+This can be any page of a European horse passport, including German-language pages. The photo may show only some of the fields. Read headings and values in German, English, Dutch, French or other European languages and map them to the closest requested field.
+
+Return ONLY valid JSON with exactly these keys: name, birth_date, gender, breed, color, height_cm, country_of_birth, studbook, passport_number, ueln, microchip, notes.
+
+Important rules:
+- Extract all visible fields from THIS image, not just one number.
+- Do not guess or invent anything.
+- If a requested field is not visible or cannot be read reliably on this page, return an empty string for that field.
+- A blank result means "not found on this page"; it must not be treated as evidence that another page has no value.
+- name: horse's registered/name field.
+- birth_date: horse's date of birth; copy it if visible.
+- gender: use only Mare, Stallion, Gelding, or empty. German terms include Stute, Hengst and Wallach.
+- breed: breed/type/studbook breed if clearly shown.
+- color: horse colour, including German terms such as Fuchs, Braun, Rappe, Schimmel, etc.
+- height_cm: only the horse's height in centimetres; digits only. Do not use a page number or other measurement.
+- country_of_birth: country/place of birth if clearly shown.
+- studbook: studbook/registry/association if shown.
+- passport_number: the document/passport/certificate number, not the UELN unless they are explicitly the same.
+- ueln: the horse's UELN/life number/transponder life number when clearly labelled.
+- microchip: the transponder/microchip number when clearly labelled.
+- notes: include other clearly relevant horse-identification information visible on this page that does not fit the fields above. If this is a vaccination or medical page, summarize the clearly readable vaccination/medical entries here rather than ignoring them.
+
+Pay particular attention to printed tables, labels and values. The user will review all extracted information before saving.`;
 
   const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -46,11 +70,11 @@ export async function POST(request: Request) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: process.env.HORSE_PASS_AI_MODEL || "gpt-4.1-mini",
+      model: process.env.HORSE_PASS_AI_MODEL || "gpt-4.1",
       temperature: 0,
       response_format: { type: "json_object" },
       messages: [
-        { role: "system", content: "You are a careful horse-passport data extraction assistant." },
+        { role: "system", content: "You are a meticulous European horse-passport document extraction assistant. Extract all visible information rather than selecting only the easiest number." },
         {
           role: "user",
           content: [
