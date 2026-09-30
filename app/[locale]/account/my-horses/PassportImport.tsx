@@ -45,7 +45,7 @@ function Input({ name, label, type = "text", value, onChange }: { name: keyof Ho
 export default function PassportImport() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<HorseDraft>(emptyDraft);
-  const [fileName, setFileName] = useState("");
+  const [fileNames, setFileNames] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -53,38 +53,69 @@ export default function PassportImport() {
   const set = (key: keyof HorseDraft) => (value: string) => setDraft((current) => ({ ...current, [key]: value }));
 
   async function extractPassport(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch("/api/horse-passport/extract", { method: "POST", body: formData });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result?.error || "Could not read the passport.");
+    setDraft((current) => ({ ...current, ...result.fields }));
+  }
+
+  async function handleFiles(files: File[]) {
+    if (!files.length) return;
+
+    const invalid = files.find((file) => !file.type.startsWith("image/"));
+    if (invalid) {
+      setError(`"${invalid.name}" is not an image. Please choose JPG, PNG or WEBP files.`);
+      return;
+    }
+
+    const tooLarge = files.find((file) => file.size > 10 * 1024 * 1024);
+    if (tooLarge) {
+      setError(`"${tooLarge.name}" is larger than 10 MB.`);
+      return;
+    }
+
+    if (files.length > 10) {
+      setError("You can upload up to 10 passport photos at once.");
+      return;
+    }
+
     setBusy(true);
     setError("");
-    setMessage("Reading the passport…");
-    setFileName(file.name);
+    setMessage(`Reading 0 of ${files.length} passport photos…`);
+    setFileNames(files.map((file) => file.name));
+
+    let completed = 0;
+    const failed: string[] = [];
+
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch("/api/horse-passport/extract", { method: "POST", body: formData });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || "Could not read the passport.");
-      setDraft((current) => ({ ...current, ...result.fields }));
-      setMessage("Passport read. Please check the fields before saving.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not read the passport.");
-      setMessage("");
+      // Process one photo at a time so several passport pages can be uploaded
+      // without exceeding the server request-size limit. Later pages can fill
+      // fields that were not visible in earlier pages.
+      for (const file of files) {
+        try {
+          await extractPassport(file);
+        } catch {
+          failed.push(file.name);
+        }
+        completed += 1;
+        setMessage(`Reading ${completed} of ${files.length} passport photos…`);
+      }
+
+      if (failed.length) {
+        setError(`Could not read: ${failed.join(", ")}. The other photos were processed.`);
+      }
+      setMessage(failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos. Please check the fields.` : `All ${files.length} passport photos were read. Please check the fields before saving.`);
     } finally {
       setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
     }
   }
 
   function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose a passport photo (JPG, PNG or WEBP).");
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      setError("The image must be smaller than 10 MB.");
-      return;
-    }
-    void extractPassport(file);
+    const files = Array.from(event.target.files ?? []);
+    void handleFiles(files);
   }
 
   return (
@@ -92,14 +123,19 @@ export default function PassportImport() {
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-[3px] text-blue-300">＋ New horse</p>
         <h2 className="mt-2 text-2xl font-bold">Add a horse</h2>
-        <p className="mt-2 text-sm text-gray-500">Upload a clear photo of the horse passport and EquiMaster will read the information for you. You can correct anything before saving.</p>
+        <p className="mt-2 text-sm text-gray-500">Upload one or several clear photos of the horse passport. EquiMaster will read the pages and combine the information for you. You can correct anything before saving.</p>
       </div>
 
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile} className="hidden" />
+      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleFile} className="hidden" />
       <button type="button" onClick={() => fileRef.current?.click()} disabled={busy} className="w-full rounded-2xl border border-blue-400/30 bg-blue-500/10 px-4 py-4 text-left transition hover:bg-blue-500/15 disabled:opacity-60">
-        <span className="block text-sm font-bold text-blue-200">{busy ? "Reading passport…" : "📷 Upload passport photo"}</span>
-        <span className="mt-1 block text-xs text-gray-400">JPG, PNG or WEBP · maximum 10 MB</span>
-        {fileName ? <span className="mt-2 block text-xs text-gray-300">Selected: {fileName}</span> : null}
+        <span className="block text-sm font-bold text-blue-200">{busy ? "Reading passport photos…" : "📷 Upload passport photos"}</span>
+        <span className="mt-1 block text-xs text-gray-400">Select several JPG, PNG or WEBP photos · up to 10 photos · maximum 10 MB each</span>
+        {fileNames.length ? (
+          <span className="mt-2 block text-xs text-gray-300">
+            Selected: {fileNames.length} photo{fileNames.length === 1 ? "" : "s"}
+            <span className="mt-1 block text-gray-500">{fileNames.join(" · ")}</span>
+          </span>
+        ) : null}
       </button>
       {message ? <p className="mt-3 rounded-xl bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">{message}</p> : null}
       {error ? <p className="mt-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p> : null}
