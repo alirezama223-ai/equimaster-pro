@@ -110,8 +110,6 @@ export async function createPersonalHorse(formData: FormData) {
     return;
   }
 
-  // Save the pedigree extracted from genealogy pages. We create every clearly
-  // identified ancestor first, then connect sire/dam relationships by name.
   const pedigreeRows = extractedPedigree
     .map((item) => ({
       name: String(item?.name || "").trim(),
@@ -171,8 +169,8 @@ export async function createPersonalHorse(formData: FormData) {
     }
   }
 
-  // Save vaccination rows extracted from vaccination pages. Blank rows are
-  // ignored, while dates/names/batch numbers are kept exactly as readable.
+  // Keep every readable vaccination row. A passport may show only a date,
+  // batch number, stamp or partial vaccine name; that is still useful record data.
   const vaccinationRows = extractedVaccinations
     .map((item) => ({
       vaccine_name: String(item?.vaccine_name || "").trim(),
@@ -181,14 +179,15 @@ export async function createPersonalHorse(formData: FormData) {
       batch_number: String(item?.batch_number || "").trim() || null,
       notes: String(item?.notes || "").trim() || null,
     }))
-    .filter((item) => item.vaccine_name && item.administered_date);
+    .filter((item) => item.vaccine_name || item.administered_date || item.next_due_date || item.batch_number || item.notes);
 
   if (vaccinationRows.length) {
-    await supabase.from("horse_vaccinations").insert(vaccinationRows.map((row) => ({
+    const { error: vaccinationError } = await supabase.from("horse_vaccinations").insert(vaccinationRows.map((row) => ({
       created_by: user.id,
       pedigree_horse_id: pedigreeHorse.id,
       ...row,
     })));
+    if (vaccinationError) console.error("Could not save extracted vaccinations", vaccinationError);
   }
 
   revalidatePath("/account");
