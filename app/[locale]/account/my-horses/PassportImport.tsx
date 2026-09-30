@@ -18,6 +18,24 @@ type HorseDraft = {
   notes: string;
 };
 
+type PedigreeDraft = {
+  name: string;
+  sex: string;
+  breed: string;
+  registration_number: string;
+  relation: string;
+  sire_name: string;
+  dam_name: string;
+};
+
+type VaccinationDraft = {
+  vaccine_name: string;
+  administered_date: string;
+  next_due_date: string;
+  batch_number: string;
+  notes: string;
+};
+
 const emptyDraft: HorseDraft = {
   name: "",
   birth_date: "",
@@ -46,16 +64,40 @@ function mergeFields(current: HorseDraft, incoming: Partial<HorseDraft>): HorseD
   const merged = { ...current };
   (Object.keys(current) as (keyof HorseDraft)[]).forEach((key) => {
     const value = incoming[key];
-    // Never let an empty result from one passport page erase useful data
-    // already extracted from another page.
     if (typeof value === "string" && value.trim()) merged[key] = value;
   });
   return merged;
 }
 
+function mergePedigree(current: PedigreeDraft[], incoming: PedigreeDraft[]) {
+  const map = new Map<string, PedigreeDraft>();
+  [...current, ...incoming].forEach((item) => {
+    if (!item.name.trim()) return;
+    const key = item.name.trim().toLowerCase();
+    const previous = map.get(key);
+    map.set(key, previous ? {
+      ...previous,
+      ...Object.fromEntries(Object.entries(item).map(([field, value]) => [field, value || previous[field as keyof PedigreeDraft]])),
+    } as PedigreeDraft : item);
+  });
+  return [...map.values()];
+}
+
+function mergeVaccinations(current: VaccinationDraft[], incoming: VaccinationDraft[]) {
+  const map = new Map<string, VaccinationDraft>();
+  [...current, ...incoming].forEach((item) => {
+    if (!item.vaccine_name && !item.administered_date && !item.batch_number && !item.notes) return;
+    const key = [item.vaccine_name, item.administered_date, item.batch_number].join("|").toLowerCase();
+    if (!map.has(key)) map.set(key, item);
+  });
+  return [...map.values()];
+}
+
 export default function PassportImport() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<HorseDraft>(emptyDraft);
+  const [pedigree, setPedigree] = useState<PedigreeDraft[]>([]);
+  const [vaccinations, setVaccinations] = useState<VaccinationDraft[]>([]);
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -70,6 +112,8 @@ export default function PassportImport() {
     const result = await response.json();
     if (!response.ok) throw new Error(result?.error || "Could not read the passport.");
     setDraft((current) => mergeFields(current, result.fields ?? {}));
+    setPedigree((current) => mergePedigree(current, Array.isArray(result.pedigree) ? result.pedigree : []));
+    setVaccinations((current) => mergeVaccinations(current, Array.isArray(result.vaccinations) ? result.vaccinations : []));
   }
 
   async function handleFiles(files: File[]) {
@@ -101,9 +145,6 @@ export default function PassportImport() {
     const failed: string[] = [];
 
     try {
-      // Process each page separately to stay below request-size limits.
-      // Results are merged field-by-field so a blank value from one page
-      // can never overwrite information extracted from another page.
       for (const file of files) {
         try {
           await extractPassport(file);
@@ -114,10 +155,13 @@ export default function PassportImport() {
         setMessage(`Reading ${completed} of ${files.length} passport photos…`);
       }
 
-      if (failed.length) {
-        setError(`Could not read: ${failed.join(", ")}. The other photos were processed.`);
-      }
-      setMessage(failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos. Please check the fields.` : `All ${files.length} passport photos were read and combined. Please check the fields before saving.`);
+      if (failed.length) setError(`Could not read: ${failed.join(", ")}. The other photos were processed.`);
+      const summary = [
+        failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos.` : `All ${files.length} passport photos were read and combined.`,
+        pedigree.length ? `${pedigree.length} pedigree entries found.` : "No pedigree entries found in the uploaded pages.",
+        vaccinations.length ? `${vaccinations.length} vaccination entries found.` : "No vaccination entries found in the uploaded pages.",
+      ].join(" ");
+      setMessage(`${summary} Please check the fields before saving.`);
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -134,7 +178,7 @@ export default function PassportImport() {
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-[3px] text-blue-300">＋ New horse</p>
         <h2 className="mt-2 text-2xl font-bold">Add a horse</h2>
-        <p className="mt-2 text-sm text-gray-500">Upload one or several clear photos of the horse passport. EquiMaster reads each page and combines all clearly visible information. You can correct anything before saving.</p>
+        <p className="mt-2 text-sm text-gray-500">Upload one or several clear photos of the horse passport. EquiMaster reads identity, pedigree and vaccination pages and combines all clearly visible information. You can correct anything before saving.</p>
       </div>
 
       <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleFile} className="hidden" />
@@ -151,9 +195,26 @@ export default function PassportImport() {
       {message ? <p className="mt-3 rounded-xl bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">{message}</p> : null}
       {error ? <p className="mt-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p> : null}
 
+      {pedigree.length || vaccinations.length ? (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[2px] text-blue-300">Pedigree detected</p>
+            <p className="mt-2 text-2xl font-black text-white">{pedigree.length}</p>
+            <p className="text-xs text-gray-500">ancestor records will be saved</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[2px] text-emerald-300">Vaccinations detected</p>
+            <p className="mt-2 text-2xl font-black text-white">{vaccinations.length}</p>
+            <p className="text-xs text-gray-500">vaccination records will be saved</p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-[2px] text-gray-600"><span className="h-px flex-1 bg-white/10" />Or enter manually<span className="h-px flex-1 bg-white/10" /></div>
 
       <form action={createPersonalHorse} className="space-y-4">
+        <input type="hidden" name="pedigree_json" value={JSON.stringify(pedigree)} />
+        <input type="hidden" name="vaccinations_json" value={JSON.stringify(vaccinations)} />
         <Input name="name" label="Horse name" value={draft.name} onChange={set("name")} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input name="birth_date" label="Date of birth" type="date" value={draft.birth_date} onChange={set("birth_date")} />
