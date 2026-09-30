@@ -16,6 +16,11 @@ function normalizeDate(value: string) {
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
+function normalizeAnyDate(value: unknown) {
+  const raw = clean(value);
+  return normalizeDate(raw) || (raw.match(/^\d{4}-\d{2}-\d{2}$/) ? raw : "");
+}
+
 function normalizeGender(value: string) {
   const v = value.toLowerCase();
   if (v.includes("mare") || v.includes("stute") || v.includes("weib")) return "Mare";
@@ -45,7 +50,11 @@ Then perform a field-by-field checklist for EVERY requested field before produci
 
 This can be any page of a European horse passport, including German-language pages. Read headings and values in German, English, Dutch, French or other European languages and map them to the closest requested field.
 
-Return ONLY valid JSON with exactly these keys: name, birth_date, gender, breed, color, height_cm, country_of_birth, studbook, passport_number, ueln, microchip, notes.
+Return ONLY valid JSON with exactly these top-level keys: fields, pedigree, vaccinations.
+
+fields must contain exactly: name, birth_date, gender, breed, color, height_cm, country_of_birth, studbook, passport_number, ueln, microchip, notes.
+pedigree must be an array of zero or more objects. Each object must contain exactly: name, sex, breed, registration_number, relation, sire_name, dam_name. relation must be one of: self, sire, dam, paternal_grandsire, paternal_granddam, maternal_grandsire, maternal_granddam, other. Include every clearly readable ancestor on pedigree/genealogy pages. Use the horse's registered name, not a shortened nickname.
+vaccinations must be an array of zero or more objects. Each object must contain exactly: vaccine_name, administered_date, next_due_date, batch_number, notes. Include every clearly readable vaccination/medical prophylaxis entry on vaccination pages. Do not invent missing dates or vaccine names.
 
 Important rules:
 - Extract all clearly visible information from THIS image, not only the easiest number.
@@ -63,9 +72,11 @@ Important rules:
 - passport_number: the document/passport/certificate number, not the UELN unless they are explicitly the same.
 - ueln: the horse's UELN/life number when clearly labelled. Keep the full number and remove spaces only.
 - microchip: the transponder/microchip number when clearly labelled. Do not copy the UELN into this field unless the document explicitly labels the same number as the microchip/transponder.
-- notes: include other clearly relevant horse-identification information visible on this page that does not fit the fields above. If this is a pedigree, vaccination or medical page, summarize clearly readable entries here rather than ignoring them.
+- notes: include other clearly relevant horse-identification information visible on this page that does not fit the fields above.
+- For pedigree pages, capture ancestors and their sire/dam relationships whenever the page makes them clear. Preserve spelling exactly as printed.
+- For vaccination pages, capture every visible row/entry separately. German labels may include Impfungen, Impfung, Impfdatum, nächste Impfung, Chargennummer, Tierarzt and Impfstoff.
 
-Before returning JSON, internally verify each of the 11 fields against the image one more time. In particular, actively check whether name, gender and height are present in small text or a table even if other fields were easier to read.`;
+Before returning JSON, internally verify the fields, pedigree array and vaccinations array against the image one more time. In particular, actively check small tables and handwritten/printed entries.`;
 
   const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -107,22 +118,51 @@ Before returning JSON, internally verify each of the 11 fields against the image
     return NextResponse.json({ error: "The passport reader returned invalid data. Please try again." }, { status: 502 });
   }
 
-  const rawDate = clean(parsed.birth_date);
-  const rawHeight = clean(parsed.height_cm).replace(/[^0-9]/g, "");
+  const rawFields = (parsed.fields && typeof parsed.fields === "object" ? parsed.fields : parsed) as Record<string, unknown>;
+  const rawDate = clean(rawFields.birth_date);
+  const rawHeight = clean(rawFields.height_cm).replace(/[^0-9]/g, "");
   const fields = {
-    name: clean(parsed.name),
+    name: clean(rawFields.name),
     birth_date: normalizeDate(rawDate) || (rawDate.match(/^\d{4}-\d{2}-\d{2}$/) ? rawDate : ""),
-    gender: normalizeGender(clean(parsed.gender)),
-    breed: clean(parsed.breed),
-    color: clean(parsed.color),
+    gender: normalizeGender(clean(rawFields.gender)),
+    breed: clean(rawFields.breed),
+    color: clean(rawFields.color),
     height_cm: rawHeight,
-    country_of_birth: clean(parsed.country_of_birth),
-    studbook: clean(parsed.studbook),
-    passport_number: clean(parsed.passport_number),
-    ueln: clean(parsed.ueln).replace(/\s+/g, ""),
-    microchip: clean(parsed.microchip).replace(/\s+/g, ""),
-    notes: clean(parsed.notes),
+    country_of_birth: clean(rawFields.country_of_birth),
+    studbook: clean(rawFields.studbook),
+    passport_number: clean(rawFields.passport_number),
+    ueln: clean(rawFields.ueln).replace(/\s+/g, ""),
+    microchip: clean(rawFields.microchip).replace(/\s+/g, ""),
+    notes: clean(rawFields.notes),
   };
 
-  return NextResponse.json({ fields });
+  const pedigree = Array.isArray(parsed.pedigree)
+    ? parsed.pedigree.map((item) => {
+        const row = (item && typeof item === "object" ? item : {}) as Record<string, unknown>;
+        return {
+          name: clean(row.name),
+          sex: normalizeGender(clean(row.sex)) || clean(row.sex),
+          breed: clean(row.breed),
+          registration_number: clean(row.registration_number),
+          relation: clean(row.relation),
+          sire_name: clean(row.sire_name),
+          dam_name: clean(row.dam_name),
+        };
+      }).filter((item) => item.name)
+    : [];
+
+  const vaccinations = Array.isArray(parsed.vaccinations)
+    ? parsed.vaccinations.map((item) => {
+        const row = (item && typeof item === "object" ? item : {}) as Record<string, unknown>;
+        return {
+          vaccine_name: clean(row.vaccine_name),
+          administered_date: normalizeAnyDate(row.administered_date),
+          next_due_date: normalizeAnyDate(row.next_due_date),
+          batch_number: clean(row.batch_number),
+          notes: clean(row.notes),
+        };
+      }).filter((item) => item.vaccine_name || item.administered_date || item.batch_number || item.notes)
+    : [];
+
+  return NextResponse.json({ fields, pedigree, vaccinations });
 }
