@@ -5,6 +5,8 @@ export const maxDuration = 90;
 
 const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+type Focus = "pedigree" | "vaccination" | undefined;
+
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -42,11 +44,11 @@ function emptyResult() {
   };
 }
 
-async function callVision(apiKey: string, imageData: string, focus?: "pedigree" | "vaccination") {
+async function callVision(apiKey: string, imageData: string, focus?: Focus) {
   const focusInstruction = focus === "pedigree"
-    ? `This is a SECOND, focused pass. Concentrate almost exclusively on genealogy/pedigree information. Read every visible ancestor name and relationship. If the page gives only the horse's sire and dam, still create a self record containing sire_name and dam_name, plus separate sire and dam records when their names are visible. Never put pedigree data only in notes.`
+    ? `This is a dedicated PEDIGREE pass. Ignore unrelated passport content. Concentrate almost exclusively on genealogy/pedigree information. Read every visible ancestor name and relationship. If the page gives only the horse's sire and dam, still create a self record containing sire_name and dam_name, plus separate sire and dam records when their names are visible. Never put pedigree data only in notes.`
     : focus === "vaccination"
-      ? `This is a SECOND, focused pass. Concentrate almost exclusively on the vaccination table. Read every visible row, including stamped or handwritten entries. Capture the date even when the vaccine/product name is unclear, and put any readable veterinarian, stamp, batch or remark in notes. Never put vaccination data only in notes.`
+      ? `This is a dedicated VACCINATION pass. Ignore unrelated passport content. Concentrate almost exclusively on the vaccination/immunisation table, stamps and handwritten entries. First locate any section headed Impfungen, Impfung, Vaccinations, Vaccination, Impfdatum, vaccination history, or similar. Read EVERY visible row separately. A row must be returned even if only a date, stamp, veterinarian name, batch number, or partial vaccine name is readable. Never put vaccination data only in notes. If the vaccine name is unreadable, keep vaccine_name empty and preserve the date/other evidence in the structured row.`
       : `First classify the page. If it is a pedigree/genealogy page, spend most of the effort extracting the complete family tree. If it is a vaccination page, spend most of the effort extracting every vaccination row. If it is an identity page, extract the horse identity fields. Do not let an easy passport number prevent extraction of the other structured data.`;
 
   const prompt = `You are a meticulous European horse-passport document extraction assistant. Inspect the WHOLE photographed page at high detail, including small tables, stamps and handwritten/printed entries.
@@ -66,7 +68,7 @@ Rules:
 - For identity pages, extract the registered horse name, date of birth, sex, breed/type, colour, height, country of birth, studbook, passport number, UELN/life number and microchip/transponder when labelled.
 - German labels may include Name, Name des Pferdes, Stute, Hengst, Wallach, Stockmaß, Zuchtverband, Lebensnummer, UELN, Transponder, Passnummer.
 - For pedigree pages, preserve names exactly as printed and capture every clearly readable ancestor. Use a self record when the page identifies the main horse and its sire/dam. If a sire or dam's parents are visible, capture those relationships too.
-- For vaccination pages, capture EVERY visible row separately. German labels may include Impfungen, Impfung, Impfdatum, nächste Impfung, Chargennummer, Impfstoff, Tierarzt. Do not discard a row just because one cell is hard to read. If a row has a date but no readable vaccine name, return vaccine_name as an empty string and put the other readable information in notes.
+- For vaccination pages, capture EVERY visible row separately. German labels may include Impfungen, Impfung, Impfdatum, nächste Impfung, Chargennummer, Impfstoff, Tierarzt. Do not discard a row just because one cell is hard to read. If a row has a date but no readable vaccine name, return vaccine_name as an empty string and put the other readable information in notes. Stamps and handwritten entries count as vaccination records when they are visibly part of the vaccination table/history.
 - dates may be written as DD.MM.YYYY, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YY or ISO. Return dates as YYYY-MM-DD when the day, month and year are clear.
 - Do not confuse page numbers, passport numbers, UELN, microchip numbers or dates with vaccination data.
 - Do not summarize pedigree or vaccination rows into fields.notes when they can be represented in the structured arrays.
@@ -167,6 +169,9 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const file = formData.get("file");
+  const focusValue = clean(formData.get("focus")).toLowerCase();
+  const focus: Focus = focusValue === "pedigree" || focusValue === "vaccination" ? focusValue : undefined;
+
   if (!(file instanceof File)) return NextResponse.json({ error: "No passport image was uploaded." }, { status: 400 });
   if (!allowedTypes.has(file.type)) return NextResponse.json({ error: "Please upload a JPG, PNG or WEBP image." }, { status: 400 });
   if (file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "The passport image must be smaller than 10 MB." }, { status: 400 });
@@ -175,15 +180,14 @@ export async function POST(request: Request) {
   const imageData = `data:${file.type};base64,${bytes.toString("base64")}`;
 
   try {
-    let normalized = normalizeParsed(await callVision(apiKey, imageData));
+    let normalized = normalizeParsed(await callVision(apiKey, imageData, focus));
 
-    // Dense passport pages can cause the general extraction pass to miss a structured
-    // table. If the model classifies the page as pedigree or vaccination but returns
-    // no structured rows, run one focused second pass for that table only.
-    if (normalized.page_type === "pedigree" && normalized.pedigree.length === 0) {
+    // A dedicated fallback is useful for dense passport pages where the general pass
+    // sees the page but misses a small structured table.
+    if (!focus && normalized.page_type === "pedigree" && normalized.pedigree.length === 0) {
       normalized = { ...normalized, ...normalizeParsed(await callVision(apiKey, imageData, "pedigree")), page_type: "pedigree" };
     }
-    if (normalized.page_type === "vaccination" && normalized.vaccinations.length === 0) {
+    if (!focus && normalized.page_type === "vaccination" && normalized.vaccinations.length === 0) {
       normalized = { ...normalized, ...normalizeParsed(await callVision(apiKey, imageData, "vaccination")), page_type: "vaccination" };
     }
 
