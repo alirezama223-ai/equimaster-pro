@@ -36,6 +36,12 @@ type VaccinationDraft = {
   notes: string;
 };
 
+type ExtractionResult = {
+  fields?: Partial<HorseDraft>;
+  pedigree?: PedigreeDraft[];
+  vaccinations?: VaccinationDraft[];
+};
+
 const emptyDraft: HorseDraft = {
   name: "",
   birth_date: "",
@@ -86,8 +92,8 @@ function mergePedigree(current: PedigreeDraft[], incoming: PedigreeDraft[]) {
 function mergeVaccinations(current: VaccinationDraft[], incoming: VaccinationDraft[]) {
   const map = new Map<string, VaccinationDraft>();
   [...current, ...incoming].forEach((item) => {
-    if (!item.vaccine_name && !item.administered_date && !item.batch_number && !item.notes) return;
-    const key = [item.vaccine_name, item.administered_date, item.batch_number].join("|").toLowerCase();
+    if (!item.vaccine_name && !item.administered_date && !item.batch_number && !item.notes && !item.next_due_date) return;
+    const key = [item.vaccine_name, item.administered_date, item.next_due_date, item.batch_number, item.notes].join("|").toLowerCase();
     if (!map.has(key)) map.set(key, item);
   });
   return [...map.values()];
@@ -105,15 +111,17 @@ export default function PassportImport() {
 
   const set = (key: keyof HorseDraft) => (value: string) => setDraft((current) => ({ ...current, [key]: value }));
 
-  async function extractPassport(file: File) {
+  async function extractPassport(file: File, focus?: "pedigree" | "vaccination"): Promise<ExtractionResult> {
     const formData = new FormData();
     formData.append("file", file);
+    if (focus) formData.append("focus", focus);
     const response = await fetch("/api/horse-passport/extract", { method: "POST", body: formData });
     const result = await response.json();
     if (!response.ok) throw new Error(result?.error || "Could not read the passport.");
     setDraft((current) => mergeFields(current, result.fields ?? {}));
     setPedigree((current) => mergePedigree(current, Array.isArray(result.pedigree) ? result.pedigree : []));
     setVaccinations((current) => mergeVaccinations(current, Array.isArray(result.vaccinations) ? result.vaccinations : []));
+    return result as ExtractionResult;
   }
 
   async function handleFiles(files: File[]) {
@@ -143,11 +151,15 @@ export default function PassportImport() {
 
     let completed = 0;
     const failed: string[] = [];
+    let combinedPedigree: PedigreeDraft[] = [];
+    let combinedVaccinations: VaccinationDraft[] = [];
 
     try {
       for (const file of files) {
         try {
-          await extractPassport(file);
+          const result = await extractPassport(file);
+          combinedPedigree = mergePedigree(combinedPedigree, Array.isArray(result.pedigree) ? result.pedigree : []);
+          combinedVaccinations = mergeVaccinations(combinedVaccinations, Array.isArray(result.vaccinations) ? result.vaccinations : []);
         } catch {
           failed.push(file.name);
         }
@@ -155,11 +167,29 @@ export default function PassportImport() {
         setMessage(`Reading ${completed} of ${files.length} passport photos…`);
       }
 
-      if (failed.length) setError(`Could not read: ${failed.join(", ")}. The other photos were processed.`);
+      // Some horse passports have a very small vaccination table that the general
+      // document pass can overlook or classify as "other". If the first pass found
+      // no vaccination rows at all, deliberately scan every uploaded page again with
+      // a vaccination-only prompt. This is the important fallback for real passports.
+      if (combinedVaccinations.length === 0) {
+        setMessage("The general scan found no vaccination rows. Checking all uploaded pages specifically for vaccinations…");
+        for (const file of files) {
+          try {
+            const result = await extractPassport(file, "vaccination");
+            combinedVaccinations = mergeVaccinations(combinedVaccinations, Array.isArray(result.vaccinations) ? result.vaccinations : []);
+          } catch {
+            // Keep the successful results from the other pages.
+          }
+        }
+      }
+
+      setPedigree((current) => mergePedigree(current, combinedPedigree));
+      setVaccinations((current) => mergeVaccinations(current, combinedVaccinations));
+
       const summary = [
         failed.length ? `Finished reading ${files.length - failed.length} of ${files.length} photos.` : `All ${files.length} passport photos were read and combined.`,
-        pedigree.length ? `${pedigree.length} pedigree entries found.` : "No pedigree entries found in the uploaded pages.",
-        vaccinations.length ? `${vaccinations.length} vaccination entries found.` : "No vaccination entries found in the uploaded pages.",
+        combinedPedigree.length ? `${combinedPedigree.length} pedigree entries found.` : "No pedigree entries found in the uploaded pages.",
+        combinedVaccinations.length ? `${combinedVaccinations.length} vaccination entries found.` : "No vaccination entries were readable in the uploaded pages.",
       ].join(" ");
       setMessage(`${summary} Please check the fields before saving.`);
     } finally {
