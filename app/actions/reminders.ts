@@ -35,11 +35,15 @@ export async function getMyReminders(): Promise<{
   const { supabase, user } = await getUser();
   if (!user) return { reminders: [], horses: [], error: "You must be signed in." };
 
+  const now = new Date().toISOString();
   const [{ data: reminders, error: reminderError }, { data: personalHorses, error: personalHorseError }, { data: listingHorses, error: listingHorseError }] = await Promise.all([
     supabase
       .from("reminders")
       .select("id, horse_id, title, description, reminder_type, due_at, recurrence_rule, remind_before_minutes, status, enabled, auto_generated, source_type, source_id, rule_key")
       .eq("user_id", user.id)
+      .eq("status", "pending")
+      .eq("enabled", true)
+      .gte("due_at", now)
       .order("due_at", { ascending: true }),
     supabase
       .from("personal_horses")
