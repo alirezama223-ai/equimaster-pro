@@ -13,6 +13,10 @@ export type ReminderRow = {
   remind_before_minutes: number;
   status: string;
   enabled: boolean;
+  auto_generated?: boolean;
+  source_type?: string | null;
+  source_id?: string | null;
+  rule_key?: string | null;
 };
 
 export type ReminderHorseOption = { id: string; name: string };
@@ -31,12 +35,17 @@ export async function getMyReminders(): Promise<{
   const { supabase, user } = await getUser();
   if (!user) return { reminders: [], horses: [], error: "You must be signed in." };
 
-  const [{ data: reminders, error: reminderError }, { data: horses, error: horseError }] = await Promise.all([
+  const [{ data: reminders, error: reminderError }, { data: personalHorses, error: personalHorseError }, { data: listingHorses, error: listingHorseError }] = await Promise.all([
     supabase
       .from("reminders")
-      .select("id, horse_id, title, description, reminder_type, due_at, recurrence_rule, remind_before_minutes, status, enabled")
+      .select("id, horse_id, title, description, reminder_type, due_at, recurrence_rule, remind_before_minutes, status, enabled, auto_generated, source_type, source_id, rule_key")
       .eq("user_id", user.id)
       .order("due_at", { ascending: true }),
+    supabase
+      .from("personal_horses")
+      .select("id, name")
+      .eq("owner_id", user.id)
+      .order("name", { ascending: true }),
     supabase
       .from("horse_listings")
       .select("id, name")
@@ -44,14 +53,21 @@ export async function getMyReminders(): Promise<{
       .order("name", { ascending: true }),
   ]);
 
-  if (reminderError) return { reminders: [], horses: (horses ?? []) as ReminderHorseOption[], error: "Unable to load reminders." };
-  if (horseError) return { reminders: (reminders ?? []) as ReminderRow[], horses: [], error: "Unable to load your horses." };
+  if (reminderError) return { reminders: [], horses: [], error: "Unable to load reminders." };
+  if (personalHorseError && listingHorseError) return { reminders: (reminders ?? []) as ReminderRow[], horses: [], error: "Unable to load your horses." };
 
-  return { reminders: (reminders ?? []) as ReminderRow[], horses: (horses ?? []) as ReminderHorseOption[] };
+  const horses = new Map<string, ReminderHorseOption>();
+  for (const horse of personalHorses ?? []) horses.set(horse.id, horse as ReminderHorseOption);
+  for (const horse of listingHorses ?? []) if (!horses.has(horse.id)) horses.set(horse.id, horse as ReminderHorseOption);
+
+  return {
+    reminders: (reminders ?? []) as ReminderRow[],
+    horses: Array.from(horses.values()).sort((a, b) => a.name.localeCompare(b.name)),
+  };
 }
 
 const TYPES = new Set(["training", "vaccination", "dental", "farrier", "medication", "vet", "custom"]);
-const ALLOWED_MINUTES = new Set([0, 5, 10, 30, 60, 1440, 2880]);
+const ALLOWED_MINUTES = new Set([0, 5, 10, 30, 60, 1440, 2880, 10080, 43200]);
 const RECURRENCE_RULES = new Set([
   "FREQ=DAILY", "FREQ=WEEKLY", "FREQ=WEEKLY;INTERVAL=2", "FREQ=WEEKLY;INTERVAL=4",
   "FREQ=WEEKLY;INTERVAL=6", "FREQ=MONTHLY", "FREQ=MONTHLY;INTERVAL=6", "FREQ=YEARLY",
@@ -73,8 +89,11 @@ function validateInput(input: {
 
 async function validateHorse(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, horseId: string | null) {
   if (!horseId) return true;
-  const { data, error } = await supabase.from("horse_listings").select("id").eq("id", horseId).eq("user_id", userId).maybeSingle();
-  return !error && !!data;
+  const [{ data: personalHorse, error: personalError }, { data: listingHorse, error: listingError }] = await Promise.all([
+    supabase.from("personal_horses").select("id").eq("id", horseId).eq("owner_id", userId).maybeSingle(),
+    supabase.from("horse_listings").select("id").eq("id", horseId).eq("user_id", userId).maybeSingle(),
+  ]);
+  return (!personalError && !!personalHorse) || (!listingError && !!listingHorse);
 }
 
 function formatDatabaseError(error: { code?: string; message?: string; details?: string | null; hint?: string | null }) {
@@ -137,7 +156,7 @@ export async function cancelReminder(id: string): Promise<{ ok?: true; error?: s
   const { supabase, user } = await getUser();
   if (!user) return { error: "You must be signed in." };
   const { error } = await supabase.from("reminders").update({ status: "cancelled", enabled: false, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", user.id);
-  if (error) return { error: "Unable to cancel this reminder." };
+  if (error) return { error: "Unable to cancel this reminder right now." };
   return { ok: true };
 }
 
