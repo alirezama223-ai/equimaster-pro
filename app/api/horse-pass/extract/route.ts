@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
+import { analyzeVaccinationSchedule } from "@/app/lib/vaccination-rules";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -78,6 +79,40 @@ function safeJsonParse(value: string) {
   }
 }
 
+function applyVaccinationSchedules(data: any) {
+  if (!Array.isArray(data?.vaccinations)) return data;
+
+  const history = data.vaccinations.map((row: any) => ({
+    vaccine_name: row?.vaccine_name ?? null,
+    administered_date: row?.administered_date ?? null,
+    next_due_date: row?.next_due_date ?? null,
+  }));
+
+  return {
+    ...data,
+    vaccinations: data.vaccinations.map((row: any) => {
+      if (!row?.administered_date || row?.next_due_date || !row?.vaccine_name) return row;
+
+      const schedule = analyzeVaccinationSchedule({
+        vaccineName: String(row.vaccine_name),
+        notes: row.notes ?? null,
+        administeredDate: String(row.administered_date),
+        history,
+      });
+
+      if (!schedule) return row;
+
+      return {
+        ...row,
+        next_due_date: schedule.nextDueDate,
+        notes: row.notes
+          ? `${row.notes} · ${schedule.label}`
+          : schedule.label,
+      };
+    }),
+  };
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -120,6 +155,8 @@ Preserve names, registration numbers, UELN and microchip identifiers exactly as 
 
 MOST IMPORTANT: inspect every uploaded page for the vaccination/immunisation history. German labels can include Impfungen, Impfung, Impfstoff, Impfdatum, nächste Impfung, Chargennummer, Krankheit(en), Tierarzt, and English labels can include Vaccination, Vaccine, Date, Batch number, Disease. Read EVERY visible vaccination row separately, including handwritten rows, stickers, stamps and rows where only a date or batch number is readable. Do not skip a row because one field is unclear. For each row return vaccine_name, administered_date, next_due_date, batch_number and notes. Put the disease name in notes when it is visible. If the vaccine name is not readable, return null for vaccine_name but preserve the date/batch/veterinarian information in the row. Dates should be YYYY-MM-DD only when the full date is clear. Never confuse passport page numbers, birth dates, UELN or microchip numbers with vaccination dates.
 
+If a next-due date is visibly written in the passport, preserve it exactly. If it is not visibly written, leave next_due_date null; EquiMaster will calculate a reminder from the vaccination history after extraction.
+
 The vaccination table is often on a separate page from the identity and pedigree pages. A page may contain several vaccination rows, so inspect the whole image rather than stopping after the first match. The result will be shown to a human for verification before saving.`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -150,8 +187,9 @@ The vaccination table is often on a separate page from the identity and pedigree
 
   const payload = await response.json();
   const content = payload?.choices?.[0]?.message?.content;
-  const data = typeof content === "string" ? safeJsonParse(content) : null;
-  if (!data || typeof data !== "object") return NextResponse.json({ error: "The AI returned an invalid extraction result." }, { status: 502 });
+  const parsed = typeof content === "string" ? safeJsonParse(content) : null;
+  if (!parsed || typeof parsed !== "object") return NextResponse.json({ error: "The AI returned an invalid extraction result." }, { status: 502 });
 
+  const data = applyVaccinationSchedules(parsed);
   return NextResponse.json({ data });
 }
