@@ -41,6 +41,22 @@ function normalizeSex(value: string) {
   return "unknown";
 }
 
+function normalizePassportDate(value: string) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return raw;
+  const eu = raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+  if (!eu) return null;
+  const [, day, month, year] = eu;
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+function reminderDueAt(date: string) {
+  // Store the event at noon UTC; the reminder engine subtracts the configured lead time.
+  return new Date(`${date}T12:00:00.000Z`).toISOString();
+}
+
 export async function createPersonalHorse(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -174,24 +190,64 @@ export async function createPersonalHorse(formData: FormData) {
   const vaccinationRows = extractedVaccinations
     .map((item) => ({
       vaccine_name: String(item?.vaccine_name || "").trim(),
-      administered_date: String(item?.administered_date || "").trim(),
-      next_due_date: String(item?.next_due_date || "").trim() || null,
+      administered_date: normalizePassportDate(String(item?.administered_date || "")),
+      next_due_date: normalizePassportDate(String(item?.next_due_date || "")),
       batch_number: String(item?.batch_number || "").trim() || null,
       notes: String(item?.notes || "").trim() || null,
     }))
     .filter((item) => item.vaccine_name || item.administered_date || item.next_due_date || item.batch_number || item.notes);
 
   if (vaccinationRows.length) {
-    const { error: vaccinationError } = await supabase.from("horse_vaccinations").insert(vaccinationRows.map((row) => ({
-      created_by: user.id,
-      pedigree_horse_id: pedigreeHorse.id,
-      ...row,
-    })));
-    if (vaccinationError) console.error("Could not save extracted vaccinations", vaccinationError);
+    const { data: savedVaccinations, error: vaccinationError } = await supabase
+      .from("horse_vaccinations")
+      .insert(vaccinationRows.map((row) => ({
+        created_by: user.id,
+        pedigree_horse_id: pedigreeHorse.id,
+        ...row,
+      })))
+      .select("id,vaccine_name,next_due_date");
+
+    if (vaccinationError) {
+      console.error("Could not save extracted vaccinations", vaccinationError);
+    } else if (savedVaccinations?.length) {
+      // One vaccination can generate three independent alerts:
+      // 30 days before, 7 days before, and on the due date.
+      const automaticReminders = savedVaccinations.flatMap((vaccination) => {
+        if (!vaccination.next_due_date) return [];
+        const dueDate = String(vaccination.next_due_date);
+        const vaccineName = String(vaccination.vaccine_name || "Vaccination").trim();
+        const base = {
+          user_id: user.id,
+          horse_id: horse.id,
+          reminder_type: "vaccination",
+          due_at: reminderDueAt(dueDate),
+          recurrence_rule: null,
+          status: "pending",
+          enabled: true,
+          auto_generated: true,
+          source_type: "horse_vaccination",
+          source_id: vaccination.id,
+        };
+        return [
+          { ...base, title: `${vaccineName} due in 30 days`, description: `${name}: ${vaccineName} is due on ${dueDate}.`, remind_before_minutes: 43200, rule_key: "30d" },
+          { ...base, title: `${vaccineName} due in 7 days`, description: `${name}: ${vaccineName} is due on ${dueDate}.`, remind_before_minutes: 10080, rule_key: "7d" },
+          { ...base, title: `${vaccineName} due today`, description: `${name}: ${vaccineName} is due today (${dueDate}).`, remind_before_minutes: 0, rule_key: "0d" },
+        ];
+      });
+
+      if (automaticReminders.length) {
+        const { error: reminderError } = await supabase.from("reminders").upsert(automaticReminders, {
+          onConflict: "user_id,source_type,source_id,rule_key",
+          ignoreDuplicates: true,
+        });
+        if (reminderError) console.error("Could not create automatic vaccination reminders", reminderError);
+      }
+    }
   }
 
   revalidatePath("/account");
   revalidatePath("/account/my-horses");
+  revalidatePath("/account/reminders");
   redirect(`/account/my-horses/${horse.id}`);
 }
 
