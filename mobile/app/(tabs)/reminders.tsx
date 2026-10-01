@@ -10,7 +10,8 @@ type Reminder = { id:string; title:string; description:string|null; reminder_typ
 export default function RemindersTab(){
  const[items,setItems]=useState<Reminder[]>([]);const[loading,setLoading]=useState(true);const[refreshing,setRefreshing]=useState(false);const[error,setError]=useState<string|null>(null);
  const load=useCallback(async(pull=false)=>{if(pull)setRefreshing(true);else setLoading(true);setError(null);
-  const{data,error:queryError}=await supabase.from('reminders').select('id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled,horse_id').eq('status','pending').eq('enabled',true).order('due_at',{ascending:true});
+  const now=new Date().toISOString();
+  const{data,error:queryError}=await supabase.from('reminders').select('id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled,horse_id').eq('status','pending').eq('enabled',true).gte('due_at',now).order('due_at',{ascending:true});
   if(queryError){setError(queryError.message);setLoading(false);setRefreshing(false);return;}
   const reminders=(data??[]) as Reminder[];
   const ids=[...new Set(reminders.map(r=>r.horse_id).filter(Boolean))] as string[];
