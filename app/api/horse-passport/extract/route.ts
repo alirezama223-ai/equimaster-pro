@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { analyzeVaccinationSchedule } from "@/app/lib/vaccination-rules";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
@@ -72,6 +73,7 @@ Rules:
 - dates may be written as DD.MM.YYYY, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YY or ISO. Return dates as YYYY-MM-DD when the day, month and year are clear.
 - Do not confuse page numbers, passport numbers, UELN, microchip numbers or dates with vaccination data.
 - Do not summarize pedigree or vaccination rows into fields.notes when they can be represented in the structured arrays.
+- If a next-due date is visibly written in the passport, preserve it. If it is not visibly written, leave next_due_date empty; EquiMaster calculates a schedule after extraction using the visible vaccination history.
 
 Before returning JSON, inspect the page one more time specifically for small genealogy tables and vaccination rows.`;
 
@@ -163,6 +165,38 @@ function normalizeParsed(parsed: Record<string, unknown>) {
   };
 }
 
+function applyVaccinationSchedules(data: ReturnType<typeof normalizeParsed>) {
+  if (!Array.isArray(data.vaccinations) || data.vaccinations.length === 0) return data;
+
+  const history = data.vaccinations.map((row) => ({
+    vaccine_name: row.vaccine_name || null,
+    administered_date: row.administered_date || null,
+    next_due_date: row.next_due_date || null,
+  }));
+
+  return {
+    ...data,
+    vaccinations: data.vaccinations.map((row) => {
+      if (!row.administered_date || row.next_due_date || !row.vaccine_name) return row;
+
+      const schedule = analyzeVaccinationSchedule({
+        vaccineName: row.vaccine_name,
+        notes: row.notes || null,
+        administeredDate: row.administered_date,
+        history,
+      });
+
+      if (!schedule) return row;
+
+      return {
+        ...row,
+        next_due_date: schedule.nextDueDate,
+        notes: row.notes ? `${row.notes} · ${schedule.label}` : schedule.label,
+      };
+    }),
+  };
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "Passport AI is not configured on the server yet." }, { status: 503 });
@@ -191,6 +225,7 @@ export async function POST(request: Request) {
       normalized = { ...normalized, ...normalizeParsed(await callVision(apiKey, imageData, "vaccination")), page_type: "vaccination" };
     }
 
+    normalized = applyVaccinationSchedules(normalized);
     return NextResponse.json(normalized);
   } catch (error) {
     console.error("Horse passport extraction failed", error);
