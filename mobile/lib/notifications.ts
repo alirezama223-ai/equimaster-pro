@@ -13,14 +13,9 @@ Notifications.setNotificationHandler({
 
 export async function getNativePushToken() {
   if (Platform.OS === 'web') return null;
-
   const permissions = await Notifications.getPermissionsAsync();
-  const status = permissions.status === 'granted'
-    ? permissions.status
-    : (await Notifications.requestPermissionsAsync()).status;
-
+  const status = permissions.status === 'granted' ? permissions.status : (await Notifications.requestPermissionsAsync()).status;
   if (status !== 'granted') return null;
-
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('reminders', {
       name: 'Reminders',
@@ -28,12 +23,8 @@ export async function getNativePushToken() {
       sound: 'default',
     });
   }
-
   const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
-  const result = projectId
-    ? await Notifications.getExpoPushTokenAsync({ projectId })
-    : await Notifications.getExpoPushTokenAsync();
-
+  const result = projectId ? await Notifications.getExpoPushTokenAsync({ projectId }) : await Notifications.getExpoPushTokenAsync();
   return result.data;
 }
 
@@ -41,6 +32,7 @@ export type ReminderNotificationInput = {
   id: string;
   title: string;
   description?: string | null;
+  horse_name?: string | null;
   due_at: string;
   remind_before_minutes: number;
   recurrence_rule?: string | null;
@@ -72,32 +64,27 @@ function nextOccurrence(date: Date, rule: string | null | undefined) {
 export async function cancelReminderNotifications(reminderId: string) {
   if (Platform.OS === 'web') return;
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-  await Promise.all(
-    scheduled
-      .filter((item) => item.content.data?.reminderId === reminderId)
-      .map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier)),
-  );
+  await Promise.all(scheduled.filter((item) => item.content.data?.reminderId === reminderId).map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier)));
 }
 
 export async function scheduleReminderNotifications(reminder: ReminderNotificationInput) {
   if (Platform.OS === 'web' || reminder.enabled === false || reminder.status === 'completed') return;
   if (!(await ensureNotificationPermission())) return;
-
   await cancelReminderNotifications(reminder.id);
-
   const due = new Date(reminder.due_at);
   if (Number.isNaN(due.getTime())) return;
 
   let occurrence: Date | null = due;
   let scheduledCount = 0;
-  // Keep a rolling local queue. It is refreshed whenever the Reminders screen opens.
   while (occurrence && scheduledCount < 30) {
     const fireAt = new Date(occurrence.getTime() - reminder.remind_before_minutes * 60_000);
     if (fireAt.getTime() > Date.now()) {
+      const horsePart = reminder.horse_name ? ` — ${reminder.horse_name}` : '';
+      const descriptionPart = reminder.description ? ` — ${reminder.description}` : '';
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: 'EquiMaster Pro Reminder',
-          body: reminder.title + (reminder.description ? ` — ${reminder.description}` : ''),
+          title: `🔔 ${reminder.title}${horsePart}`,
+          body: `Due ${occurrence.toLocaleDateString()} at ${occurrence.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${descriptionPart}`,
           sound: 'default',
           data: { reminderId: reminder.id },
         },
@@ -112,8 +99,5 @@ export async function scheduleReminderNotifications(reminder: ReminderNotificati
 export async function syncReminderNotifications(reminders: ReminderNotificationInput[]) {
   if (Platform.OS === 'web') return;
   if (!(await ensureNotificationPermission())) return;
-
-  for (const reminder of reminders) {
-    await scheduleReminderNotifications(reminder);
-  }
+  for (const reminder of reminders) await scheduleReminderNotifications(reminder);
 }
