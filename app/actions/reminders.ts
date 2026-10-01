@@ -51,9 +51,55 @@ function advanceRecurringDate(value: string, rule: string, now: Date): string | 
   return date > now ? date.toISOString() : null;
 }
 
+async function syncVaccinationReminders(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
+  const { data: horses } = await supabase.from("personal_horses").select("id,pedigree_horse_id,name").eq("owner_id", userId).not("pedigree_horse_id", "is", null);
+  const horseByPedigree = new Map<string, { id: string; name: string }>();
+  for (const horse of horses ?? []) if (horse.pedigree_horse_id) horseByPedigree.set(horse.pedigree_horse_id, { id: horse.id, name: horse.name });
+  if (!horseByPedigree.size) return;
+
+  const pedigreeIds = [...horseByPedigree.keys()];
+  const { data: vaccinations } = await supabase
+    .from("horse_vaccinations")
+    .select("id,pedigree_horse_id,vaccine_name,next_due_date,notes")
+    .eq("created_by", userId)
+    .in("pedigree_horse_id", pedigreeIds)
+    .not("next_due_date", "is", null);
+  if (!vaccinations?.length) return;
+
+  const vaccinationIds = vaccinations.map((item: any) => item.id);
+  const { data: existing } = await supabase.from("reminders").select("source_id").eq("user_id", userId).eq("source_type", "vaccination").in("source_id", vaccinationIds);
+  const existingIds = new Set((existing ?? []).map((item: any) => item.source_id));
+
+  for (const vaccination of vaccinations as any[]) {
+    if (existingIds.has(vaccination.id)) continue;
+    const horse = horseByPedigree.get(vaccination.pedigree_horse_id);
+    if (!horse || !vaccination.next_due_date) continue;
+    const vaccineName = vaccination.vaccine_name?.trim() || "Vaccination";
+    const due = new Date(`${vaccination.next_due_date}T09:00:00`);
+    if (!Number.isFinite(due.getTime())) continue;
+    await supabase.from("reminders").insert({
+      user_id: userId,
+      horse_id: horse.id,
+      title: `Vaccination due · ${horse.name}`,
+      description: vaccination.notes || vaccineName,
+      reminder_type: "vaccination",
+      due_at: due.toISOString(),
+      recurrence_rule: null,
+      remind_before_minutes: 43200,
+      status: "pending",
+      enabled: true,
+      auto_generated: true,
+      source_type: "vaccination",
+      source_id: vaccination.id,
+      rule_key: vaccineName,
+    });
+  }
+}
+
 export async function getMyReminders(): Promise<{ reminders: ReminderRow[]; horses: ReminderHorseOption[]; error?: string }> {
   const { supabase, user } = await getUser();
   if (!user) return { reminders: [], horses: [], error: "You must be signed in." };
+  await syncVaccinationReminders(supabase, user.id);
   const now = new Date();
   const [{ data: reminders, error: reminderError }, { data: personalHorses, error: personalHorseError }, { data: listingHorses, error: listingHorseError }] = await Promise.all([
     supabase.from("reminders").select("id, horse_id, title, description, reminder_type, due_at, recurrence_rule, remind_before_minutes, status, enabled, auto_generated, source_type, source_id, rule_key").eq("user_id", user.id).eq("status", "pending").eq("enabled", true).order("due_at", { ascending: true }),
@@ -142,7 +188,7 @@ export async function completeReminder(id: string): Promise<{ ok?: true; error?:
   const { supabase, user } = await getUser();
   if (!user) return { error: "You must be signed in." };
   if (!id?.trim()) return { error: "Invalid reminder." };
-  const { data: current, error: loadError } = await supabase.from("reminders").select("id,user_id,horse_id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled").eq("id", id).eq("user_id", user.id).eq("status", "pending").eq("enabled", true).maybeSingle();
+  const { data: current, error: loadError } = await supabase.from("reminders").select("id,user_id,horse_id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled,source_type,source_id,rule_key").eq("id", id).eq("user_id", user.id).eq("status", "pending").eq("enabled", true).maybeSingle();
   if (loadError) return { error: "Unable to load this reminder." };
   if (!current) return { error: "This reminder is no longer active." };
 
@@ -152,12 +198,7 @@ export async function completeReminder(id: string): Promise<{ ok?: true; error?:
     const { data: existingNext, error: existingError } = await supabase.from("reminders").select("id").eq("user_id", user.id).eq("source_id", id).eq("status", "pending").eq("enabled", true).maybeSingle();
     if (existingError) return { error: "Unable to prepare the next reminder." };
     if (!existingNext) {
-      const { error: insertError } = await supabase.from("reminders").insert({
-        user_id: user.id, horse_id: current.horse_id, title: current.title, description: current.description,
-        reminder_type: current.reminder_type, due_at: nextDue, recurrence_rule: current.recurrence_rule,
-        remind_before_minutes: current.remind_before_minutes, status: "pending", enabled: true,
-        auto_generated: true, source_type: "recurring_reminder", source_id: id, rule_key: current.recurrence_rule,
-      });
+      const { error: insertError } = await supabase.from("reminders").insert({ user_id: user.id, horse_id: current.horse_id, title: current.title, description: current.description, reminder_type: current.reminder_type, due_at: nextDue, recurrence_rule: current.recurrence_rule, remind_before_minutes: current.remind_before_minutes, status: "pending", enabled: true, auto_generated: true, source_type: "recurring_reminder", source_id: id, rule_key: current.recurrence_rule });
       if (insertError) return { error: "Unable to create the next occurrence." };
     }
   }
