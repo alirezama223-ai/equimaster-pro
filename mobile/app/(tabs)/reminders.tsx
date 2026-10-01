@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 
 type Reminder = {
@@ -47,17 +48,33 @@ export default function RemindersTab() {
         contentContainerStyle={styles.container}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void load(true)} />}
       >
-        <Text style={styles.eyebrow}>EQUIMASTER PRO</Text>
-        <Text style={styles.title}>Reminders</Text>
-        <Text style={styles.subtitle}>Your next stable tasks, ready to act on.</Text>
+        <View style={styles.headerRow}>
+          <View style={styles.headerCopy}>
+            <Text style={styles.eyebrow}>EQUIMASTER PRO</Text>
+            <Text style={styles.title}>Reminders</Text>
+            <Text style={styles.subtitle}>Your next stable tasks, ready to act on.</Text>
+          </View>
+          <Pressable
+            style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
+            onPress={() => router.push('/add-reminder')}
+          >
+            <Text style={styles.addButtonText}>+ Add</Text>
+          </Pressable>
+        </View>
 
         {error ? <View style={styles.error}><Text style={styles.errorText}>{error}</Text></View> : null}
 
         {items.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>✅</Text>
-            <Text style={styles.emptyTitle}>Nothing due</Text>
-            <Text style={styles.muted}>Your active reminders will appear here.</Text>
+            <Text style={styles.emptyIcon}>🔔</Text>
+            <Text style={styles.emptyTitle}>No active reminders</Text>
+            <Text style={styles.muted}>Add a vaccination, farrier visit, veterinary check, training session or competition reminder.</Text>
+            <Pressable
+              style={({ pressed }) => [styles.emptyButton, pressed && styles.pressed]}
+              onPress={() => router.push('/add-reminder')}
+            >
+              <Text style={styles.emptyButtonText}>Create first reminder</Text>
+            </Pressable>
           </View>
         ) : (
           <View style={styles.list}>
@@ -75,7 +92,10 @@ function ReminderCard({ reminder }: { reminder: Reminder }) {
   const time = due.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      onPress={() => router.push({ pathname: '/reminder/[id]', params: { id: reminder.id } })}
+    >
       <View style={styles.cardTop}>
         <Text style={styles.type}>{reminder.reminder_type.replaceAll('_', ' ')}</Text>
         <Text style={styles.when}>{date} · {time}</Text>
@@ -94,9 +114,13 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#F7F5F0' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F5F0' },
   container: { padding: 20, paddingBottom: 40 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 14 },
+  headerCopy: { flex: 1 },
   eyebrow: { fontSize: 11, fontWeight: '800', letterSpacing: 2, opacity: 0.55 },
   title: { marginTop: 10, fontSize: 32, fontWeight: '800' },
   subtitle: { marginTop: 8, fontSize: 15, lineHeight: 21, opacity: 0.6 },
+  addButton: { marginTop: 4, paddingHorizontal: 16, paddingVertical: 11, borderRadius: 14, backgroundColor: '#1F2933' },
+  addButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   list: { marginTop: 22, gap: 12 },
   card: { padding: 17, borderRadius: 19, backgroundColor: '#FFFFFF' },
   pressed: { opacity: 0.8, transform: [{ scale: 0.99 }] },
@@ -111,7 +135,9 @@ const styles = StyleSheet.create({
   empty: { marginTop: 28, padding: 30, borderRadius: 22, backgroundColor: '#FFFFFF', alignItems: 'center' },
   emptyIcon: { fontSize: 34 },
   emptyTitle: { marginTop: 12, fontSize: 20, fontWeight: '800' },
-  muted: { marginTop: 7, fontSize: 14, opacity: 0.6 },
+  muted: { marginTop: 7, fontSize: 14, lineHeight: 20, textAlign: 'center', opacity: 0.6 },
+  emptyButton: { marginTop: 18, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 14, backgroundColor: '#1F2933' },
+  emptyButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   error: { marginTop: 18, padding: 14, borderRadius: 14, backgroundColor: '#FCECEC' },
   errorText: { fontSize: 13, lineHeight: 18 },
 });
