@@ -6,8 +6,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
-const MAX_FILES = 5;
+const MAX_TOTAL_BYTES = 40 * 1024 * 1024;
+const MAX_FILES = 10;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function cleanString(value: unknown) {
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
   if (files.length > MAX_FILES) return NextResponse.json({ error: `Please upload no more than ${MAX_FILES} passport pages.` }, { status: 400 });
 
   const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
-  if (totalBytes > MAX_TOTAL_BYTES) return NextResponse.json({ error: "The combined image size is too large. Maximum is 20 MB." }, { status: 413 });
+  if (totalBytes > MAX_TOTAL_BYTES) return NextResponse.json({ error: "The combined image size is too large. Maximum is 40 MB." }, { status: 413 });
   for (const file of files) {
     if (!ALLOWED_TYPES.has(file.type) || file.size > MAX_FILE_BYTES) return NextResponse.json({ error: "Use JPG, PNG or WebP images up to 10 MB each." }, { status: 400 });
   }
