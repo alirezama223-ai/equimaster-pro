@@ -67,16 +67,40 @@ async function syncVaccinationReminders(supabase: Awaited<ReturnType<typeof crea
   if (!vaccinations?.length) return;
 
   const vaccinationIds = vaccinations.map((item: any) => item.id);
-  const { data: existing } = await supabase.from("reminders").select("source_id").eq("user_id", userId).eq("source_type", "vaccination").in("source_id", vaccinationIds);
-  const existingIds = new Set((existing ?? []).map((item: any) => item.source_id));
+  const { data: existing } = await supabase
+    .from("reminders")
+    .select("id,source_id,due_at")
+    .eq("user_id", userId)
+    .eq("source_type", "vaccination")
+    .in("source_id", vaccinationIds)
+    .eq("status", "pending")
+    .eq("enabled", true);
+  const existingBySource = new Map((existing ?? []).map((item: any) => [item.source_id, item]));
 
   for (const vaccination of vaccinations as any[]) {
-    if (existingIds.has(vaccination.id)) continue;
     const horse = horseByPedigree.get(vaccination.pedigree_horse_id);
     if (!horse || !vaccination.next_due_date) continue;
     const vaccineName = vaccination.vaccine_name?.trim() || "Vaccination";
     const due = new Date(`${vaccination.next_due_date}T09:00:00`);
     if (!Number.isFinite(due.getTime())) continue;
+
+    const current = existingBySource.get(vaccination.id);
+    if (current) {
+      if (current.due_at !== due.toISOString()) {
+        await supabase.from("reminders").update({
+          horse_id: horse.id,
+          title: `Vaccination due · ${horse.name}`,
+          description: vaccination.notes || vaccineName,
+          reminder_type: "vaccination",
+          due_at: due.toISOString(),
+          remind_before_minutes: 43200,
+          updated_at: new Date().toISOString(),
+        }).eq("id", current.id).eq("user_id", userId).eq("status", "pending").eq("enabled", true);
+      }
+      continue;
+    }
+
+    // A completed/cancelled/old reminder must not block the next vaccination due date.
     await supabase.from("reminders").insert({
       user_id: userId,
       horse_id: horse.id,
