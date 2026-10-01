@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, T
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { supabase } from '../../lib/supabase';
+import { syncReminderNotifications } from '../../lib/notifications';
 
 type Reminder = {
   id: string;
@@ -32,8 +33,17 @@ export default function RemindersTab() {
       .eq('enabled', true)
       .order('due_at', { ascending: true });
 
-    if (queryError) setError(queryError.message);
-    else setItems((data ?? []) as Reminder[]);
+    if (queryError) {
+      setError(queryError.message);
+    } else {
+      const reminders = (data ?? []) as Reminder[];
+      setItems(reminders);
+      try {
+        await syncReminderNotifications(reminders);
+      } catch (notificationError) {
+        console.warn('Reminder notification sync failed', notificationError);
+      }
+    }
     setLoading(false);
     setRefreshing(false);
   }, []);
@@ -54,10 +64,7 @@ export default function RemindersTab() {
             <Text style={styles.title}>Reminders</Text>
             <Text style={styles.subtitle}>Your next stable tasks, ready to act on.</Text>
           </View>
-          <Pressable
-            style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
-            onPress={() => router.push('/add-reminder')}
-          >
+          <Pressable style={({ pressed }) => [styles.addButton, pressed && styles.pressed]} onPress={() => router.push('/add-reminder')}>
             <Text style={styles.addButtonText}>+ Add</Text>
           </Pressable>
         </View>
@@ -69,17 +76,12 @@ export default function RemindersTab() {
             <Text style={styles.emptyIcon}>🔔</Text>
             <Text style={styles.emptyTitle}>No active reminders</Text>
             <Text style={styles.muted}>Add a vaccination, farrier visit, veterinary check, training session or competition reminder.</Text>
-            <Pressable
-              style={({ pressed }) => [styles.emptyButton, pressed && styles.pressed]}
-              onPress={() => router.push('/add-reminder')}
-            >
+            <Pressable style={({ pressed }) => [styles.emptyButton, pressed && styles.pressed]} onPress={() => router.push('/add-reminder')}>
               <Text style={styles.emptyButtonText}>Create first reminder</Text>
             </Pressable>
           </View>
         ) : (
-          <View style={styles.list}>
-            {items.map((item) => <ReminderCard key={item.id} reminder={item} />)}
-          </View>
+          <View style={styles.list}>{items.map((item) => <ReminderCard key={item.id} reminder={item} />)}</View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -92,10 +94,7 @@ function ReminderCard({ reminder }: { reminder: Reminder }) {
   const time = due.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-      onPress={() => router.push({ pathname: '/reminder/[id]', params: { id: reminder.id } })}
-    >
+    <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={() => router.push({ pathname: '/reminder/[id]', params: { id: reminder.id } })}>
       <View style={styles.cardTop}>
         <Text style={styles.type}>{reminder.reminder_type.replaceAll('_', ' ')}</Text>
         <Text style={styles.when}>{date} · {time}</Text>
