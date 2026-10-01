@@ -2,13 +2,37 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type ExtractedData = Record<string, string | number | null>;
-
-type Props = {
-  horseId: string;
+type Vaccination = {
+  vaccine_name: string | null;
+  administered_date: string | null;
+  next_due_date: string | null;
+  batch_number: string | null;
+  notes: string | null;
 };
 
-const FIELDS: Array<[string, string]> = [
+type ExtractedData = {
+  name: string | null;
+  birth_date: string | null;
+  sex: string | null;
+  breed: string | null;
+  color: string | null;
+  country: string | null;
+  height_cm: number | null;
+  sire: string | null;
+  dam: string | null;
+  dam_sire: string | null;
+  registration_number: string | null;
+  ueln: string | null;
+  microchip: string | null;
+  breeder: string | null;
+  issuing_organization: string | null;
+  vaccinations: Vaccination[];
+  confidence: number | null;
+};
+
+type Props = { horseId: string };
+
+const FIELDS: Array<[keyof ExtractedData, string]> = [
   ["name", "Horse name"],
   ["birth_date", "Date of birth"],
   ["sex", "Sex"],
@@ -26,10 +50,10 @@ const FIELDS: Array<[string, string]> = [
   ["issuing_organization", "Issuing organization"],
 ];
 
-const IDENTITY_FIELDS = new Set(["name", "birth_date", "sex", "breed", "color", "country", "height_cm"]);
-const PARENTAGE_FIELDS = new Set(["sire", "dam", "dam_sire"]);
-const IDENTIFIER_FIELDS = new Set(["registration_number", "ueln", "microchip"]);
-const RECORD_FIELDS = new Set(["breeder", "issuing_organization"]);
+const IDENTITY_FIELDS = new Set<keyof ExtractedData>(["name", "birth_date", "sex", "breed", "color", "country", "height_cm"]);
+const PARENTAGE_FIELDS = new Set<keyof ExtractedData>(["sire", "dam", "dam_sire"]);
+const IDENTIFIER_FIELDS = new Set<keyof ExtractedData>(["registration_number", "ueln", "microchip"]);
+const RECORD_FIELDS = new Set<keyof ExtractedData>(["breeder", "issuing_organization"]);
 
 export default function HorsePassportScanner({ horseId }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,9 +75,9 @@ export default function HorsePassportScanner({ horseId }: Props) {
     setSaved(false);
     setData(null);
     const selected = Array.from(event.target.files ?? []);
-    if (selected.length > 5) {
-      setError("Please select no more than 5 passport pages.");
-      setFiles(selected.slice(0, 5));
+    if (selected.length > 10) {
+      setError("Please select no more than 10 passport pages.");
+      setFiles(selected.slice(0, 10));
       return;
     }
     setFiles(selected);
@@ -72,13 +96,29 @@ export default function HorsePassportScanner({ horseId }: Props) {
     try {
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
-      const response = await fetch("/api/horse-pass/extract", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch("/api/horse-pass/extract", { method: "POST", body: formData });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Passport scan failed.");
-      setData(payload.data as ExtractedData);
+      const extracted = payload.data as Partial<ExtractedData>;
+      setData({
+        name: extracted.name ?? null,
+        birth_date: extracted.birth_date ?? null,
+        sex: extracted.sex ?? null,
+        breed: extracted.breed ?? null,
+        color: extracted.color ?? null,
+        country: extracted.country ?? null,
+        height_cm: extracted.height_cm ?? null,
+        sire: extracted.sire ?? null,
+        dam: extracted.dam ?? null,
+        dam_sire: extracted.dam_sire ?? null,
+        registration_number: extracted.registration_number ?? null,
+        ueln: extracted.ueln ?? null,
+        microchip: extracted.microchip ?? null,
+        breeder: extracted.breeder ?? null,
+        issuing_organization: extracted.issuing_organization ?? null,
+        vaccinations: Array.isArray(extracted.vaccinations) ? extracted.vaccinations : [],
+        confidence: typeof extracted.confidence === "number" ? extracted.confidence : null,
+      });
     } catch (scanError) {
       setError(scanError instanceof Error ? scanError.message : "Passport scan failed.");
     } finally {
@@ -86,8 +126,27 @@ export default function HorsePassportScanner({ horseId }: Props) {
     }
   }
 
-  function updateField(key: string, value: string) {
-    setData((current) => (current ? { ...current, [key]: value || null } : current));
+  function updateField(key: keyof ExtractedData, value: string) {
+    setData((current) => current ? { ...current, [key]: value || null } : current);
+  }
+
+  function updateVaccination(index: number, key: keyof Vaccination, value: string) {
+    setData((current) => {
+      if (!current) return current;
+      const vaccinations = current.vaccinations.map((row, rowIndex) => rowIndex === index ? { ...row, [key]: value || null } : row);
+      return { ...current, vaccinations };
+    });
+  }
+
+  function addVaccinationRow() {
+    setData((current) => current ? {
+      ...current,
+      vaccinations: [...current.vaccinations, { vaccine_name: null, administered_date: null, next_due_date: null, batch_number: null, notes: null }],
+    } : current);
+  }
+
+  function removeVaccinationRow(index: number) {
+    setData((current) => current ? { ...current, vaccinations: current.vaccinations.filter((_, rowIndex) => rowIndex !== index) } : current);
   }
 
   async function confirm() {
@@ -101,10 +160,7 @@ export default function HorsePassportScanner({ horseId }: Props) {
       formData.append("extracted_data", JSON.stringify(data));
       files.forEach((file) => formData.append("file", file));
 
-      const response = await fetch("/api/horse-pass/confirm", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch("/api/horse-pass/confirm", { method: "POST", body: formData });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Could not save the passport data.");
 
@@ -119,21 +175,14 @@ export default function HorsePassportScanner({ horseId }: Props) {
     }
   }
 
-  const renderFieldGroup = (title: string, keys: Set<string>) => (
+  const renderFieldGroup = (title: string, keys: Set<keyof ExtractedData>) => (
     <div className="rounded-2xl border border-white/10 bg-[#08111F] p-4 sm:p-5">
-      <div className="mb-4">
-        <p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-400">{title}</p>
-        <p className="mt-1 text-xs text-gray-500">Editable before saving</p>
-      </div>
+      <div className="mb-4"><p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-400">{title}</p><p className="mt-1 text-xs text-gray-500">Editable before saving</p></div>
       <div className="grid gap-3 sm:grid-cols-2">
         {FIELDS.filter(([key]) => keys.has(key)).map(([key, label]) => (
           <label key={key} className="block">
             <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-gray-500">{label}</span>
-            <input
-              value={data?.[key] == null ? "" : String(data[key])}
-              onChange={(event) => updateField(key, event.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20"
-            />
+            <input value={data?.[key] == null ? "" : String(data[key])} onChange={(event) => updateField(key, event.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20" />
           </label>
         ))}
       </div>
@@ -143,116 +192,38 @@ export default function HorsePassportScanner({ horseId }: Props) {
   return (
     <div className="mt-5 rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-500/5 via-[#0B1422] to-[#08111F] p-4 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-semibold text-blue-200">AI passport scanner</p>
-            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-300">Human verification required</span>
-          </div>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-blue-100/70">
-            Upload the passport pages together. The AI combines the visible information and gives you one clean record to review before anything is saved.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-3 lg:min-w-[190px]">
-          <p className="text-[10px] font-semibold uppercase tracking-[2px] text-gray-500">Current horse</p>
-          <p className="mt-1 text-lg font-black text-white">Emma</p>
-          <p className="text-xs text-gray-500">Personal horse record</p>
-        </div>
+        <div><div className="flex flex-wrap items-center gap-2"><p className="font-semibold text-blue-200">AI passport scanner</p><span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-300">Human verification required</span></div><p className="mt-2 max-w-2xl text-sm leading-6 text-blue-100/70">Upload the passport pages together. EquiMaster reads identity, pedigree and vaccination pages, including the vaccination table, and gives you one clean record to review before anything is saved.</p></div>
+        <div className="rounded-2xl border border-white/10 bg-[#0B1422] px-4 py-3 lg:min-w-[190px]"><p className="text-[10px] font-semibold uppercase tracking-[2px] text-gray-500">Current horse</p><p className="mt-1 text-lg font-black text-white">Emma</p><p className="text-xs text-gray-500">Personal horse record</p></div>
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept="image/jpeg,image/png,image/webp"
-          onChange={chooseFiles}
-          className="w-full rounded-xl border border-white/10 bg-[#08111F] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
-        />
-        <button
-          type="button"
-          onClick={scan}
-          disabled={busy || !files.length}
-          className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {busy ? "Scanning…" : "Scan passport"}
-        </button>
-      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]"><input ref={inputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={chooseFiles} className="w-full rounded-xl border border-white/10 bg-[#08111F] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white" /><button type="button" onClick={scan} disabled={busy || !files.length} className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Scanning…" : "Scan passport"}</button></div>
+      <p className="mt-2 text-xs text-gray-500">Up to 10 JPG, PNG or WebP pages · 40 MB total.</p>
 
-      <p className="mt-2 text-xs text-gray-500">Up to 5 JPG, PNG or WebP pages · 20 MB total.</p>
-
-      {files.length > 0 ? (
-        <div className="mt-5">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-gray-200">Passport pages</p>
-              <p className="mt-1 text-xs text-gray-500">Pages are kept in upload order so you can verify page 1 and page 2 visually.</p>
-            </div>
-            <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-gray-400">{files.length} / 5</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {files.map((file, index) => (
-              <div key={`${file.name}-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-[#0B1422]">
-                <div className="aspect-[3/4] bg-black/20">
-                  {previewUrls[index] ? <img src={previewUrls[index]} alt={`Passport page ${index + 1}`} className="h-full w-full object-cover" /> : null}
-                </div>
-                <div className="border-t border-white/10 px-3 py-2.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-blue-400">Page {index + 1}</p>
-                  <p className="mt-1 truncate text-[11px] text-gray-500">{file.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      {files.length > 0 ? <div className="mt-5"><div className="mb-3 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-gray-200">Passport pages</p><p className="mt-1 text-xs text-gray-500">Pages are kept in upload order so you can verify them visually.</p></div><span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-gray-400">{files.length} / 10</span></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{files.map((file, index) => <div key={`${file.name}-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-[#0B1422]"><div className="aspect-[3/4] bg-black/20">{previewUrls[index] ? <img src={previewUrls[index]} alt={`Passport page ${index + 1}`} className="h-full w-full object-cover" /> : null}</div><div className="border-t border-white/10 px-3 py-2.5"><p className="text-[10px] font-bold uppercase tracking-[1.5px] text-blue-400">Page {index + 1}</p><p className="mt-1 truncate text-[11px] text-gray-500">{file.name}</p></div></div>)}</div></div> : null}
 
       {error ? <p className="mt-4 rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-300">{error}</p> : null}
-      {saved ? <p className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-300">Passport data saved to this horse profile.</p> : null}
+      {saved ? <p className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-300">Passport data and detected vaccinations were saved to this horse profile.</p> : null}
 
-      {data ? (
-        <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-[#0B1422]">
-          <div className="border-b border-white/10 bg-gradient-to-r from-[#14233A] to-[#0B1422] p-5 sm:p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[3px] text-blue-400">Passport review</p>
-                <h3 className="mt-2 text-2xl font-black text-white">{data.name ? String(data.name) : "Emma"}</h3>
-                <p className="mt-1 text-sm text-gray-400">Combined information from the uploaded passport pages</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {typeof data.confidence === "number" ? (
-                  <span className="rounded-full bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300">Confidence {Math.round(data.confidence * 100)}%</span>
-                ) : null}
-                <span className="rounded-full bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-300">Review before save</span>
-              </div>
+      {data ? <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-[#0B1422]">
+        <div className="border-b border-white/10 bg-gradient-to-r from-[#14233A] to-[#0B1422] p-5 sm:p-6"><div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[3px] text-blue-400">Passport review</p><h3 className="mt-2 text-2xl font-black text-white">{data.name ? String(data.name) : "Emma"}</h3><p className="mt-1 text-sm text-gray-400">Combined information from the uploaded passport pages</p></div><div className="flex flex-wrap gap-2">{typeof data.confidence === "number" ? <span className="rounded-full bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300">Confidence {Math.round(data.confidence * 100)}%</span> : null}<span className="rounded-full bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-300">Review before save</span></div></div></div>
+        <div className="space-y-4 p-4 sm:p-6">
+          {renderFieldGroup("1 · Identity", IDENTITY_FIELDS)}
+          {renderFieldGroup("2 · Parentage", PARENTAGE_FIELDS)}
+          {renderFieldGroup("3 · Identification numbers", IDENTIFIER_FIELDS)}
+          {renderFieldGroup("4 · Breeder & document", RECORD_FIELDS)}
+
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 sm:p-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[2px] text-emerald-300">5 · Vaccinations detected</p><p className="mt-1 text-xs text-gray-500">These rows will be added to the Vaccinations section after you confirm.</p></div><span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-300">{data.vaccinations.length} record{data.vaccinations.length === 1 ? "" : "s"}</span></div>
+            {data.vaccinations.length === 0 ? <p className="mt-4 rounded-xl border border-dashed border-white/10 bg-[#08111F] p-4 text-sm text-amber-200/80">No vaccination row was detected. If you uploaded the vaccination page, you can add the row manually below.</p> : null}
+            <div className="mt-4 space-y-3">
+              {data.vaccinations.map((row, index) => <div key={index} className="rounded-xl border border-white/10 bg-[#08111F] p-4"><div className="mb-3 flex items-center justify-between"><p className="text-xs font-bold text-gray-300">Vaccination {index + 1}</p><button type="button" onClick={() => removeVaccinationRow(index)} className="text-xs font-semibold text-red-300 hover:text-red-200">Remove</button></div><div className="grid gap-3 sm:grid-cols-2"><label><span className="mb-1 block text-[11px] text-gray-500">Vaccine name</span><input value={row.vaccine_name ?? ""} onChange={(e) => updateVaccination(index, "vaccine_name", e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white" /></label><label><span className="mb-1 block text-[11px] text-gray-500">Date</span><input type="date" value={row.administered_date ?? ""} onChange={(e) => updateVaccination(index, "administered_date", e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white" /></label><label><span className="mb-1 block text-[11px] text-gray-500">Next due date</span><input type="date" value={row.next_due_date ?? ""} onChange={(e) => updateVaccination(index, "next_due_date", e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white" /></label><label><span className="mb-1 block text-[11px] text-gray-500">Batch number</span><input value={row.batch_number ?? ""} onChange={(e) => updateVaccination(index, "batch_number", e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white" /></label><label className="sm:col-span-2"><span className="mb-1 block text-[11px] text-gray-500">Disease / notes / veterinarian</span><input value={row.notes ?? ""} onChange={(e) => updateVaccination(index, "notes", e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#0B1422] px-3 py-2.5 text-sm text-white" /></label></div></div>)}
             </div>
+            <button type="button" onClick={addVaccinationRow} className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/15">＋ Add vaccination row manually</button>
           </div>
 
-          <div className="space-y-4 p-4 sm:p-6">
-            {renderFieldGroup("1 · Identity", IDENTITY_FIELDS)}
-            {renderFieldGroup("2 · Parentage", PARENTAGE_FIELDS)}
-            {renderFieldGroup("3 · Identification numbers", IDENTIFIER_FIELDS)}
-            {renderFieldGroup("4 · Breeder & document", RECORD_FIELDS)}
-
-            <div className="flex flex-col gap-2 border-t border-white/10 pt-5 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={() => setData(null)}
-                disabled={busy}
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={confirm}
-                disabled={busy}
-                className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {busy ? "Saving…" : "Confirm & save"}
-              </button>
-            </div>
-          </div>
+          <div className="flex flex-col gap-2 border-t border-white/10 pt-5 sm:flex-row sm:justify-end"><button type="button" onClick={() => setData(null)} disabled={busy} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 disabled:opacity-50">Cancel</button><button type="button" onClick={confirm} disabled={busy} className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50">{busy ? "Saving…" : "Confirm & save"}</button></div>
         </div>
-      ) : null}
+      </div> : null}
     </div>
   );
 }
