@@ -7,25 +7,26 @@ import { syncReminderNotifications } from '../../lib/notifications';
 
 type Reminder = { id:string; title:string; description:string|null; reminder_type:string; due_at:string; recurrence_rule:string|null; remind_before_minutes:number; status:string; enabled:boolean; horse_id:string|null; horse_name?:string|null };
 
+function advanceRecurringDate(value:string,rule:string,now:Date){
+ const date=new Date(value);if(!Number.isFinite(date.getTime()))return null;
+ const match=rule.match(/^FREQ=(DAILY|WEEKLY|MONTHLY|YEARLY)(?:;INTERVAL=(\d+))?$/);if(!match)return null;
+ const frequency=match[1],interval=Math.max(1,Number(match[2]??'1'));
+ const addOne=()=>{if(frequency==='DAILY')date.setDate(date.getDate()+interval);else if(frequency==='WEEKLY')date.setDate(date.getDate()+7*interval);else if(frequency==='MONTHLY'){const day=date.getDate();date.setDate(1);date.setMonth(date.getMonth()+interval);const last=new Date(date.getFullYear(),date.getMonth()+1,0).getDate();date.setDate(Math.min(day,last));}else{const month=date.getMonth(),day=date.getDate();date.setDate(1);date.setFullYear(date.getFullYear()+interval);date.setMonth(month);const last=new Date(date.getFullYear(),month+1,0).getDate();date.setDate(Math.min(day,last));}};
+ let guard=0;while(date<=now&&guard<1000){addOne();guard++;}return date>now?date.toISOString():null;
+}
+
 export default function RemindersTab(){
  const[items,setItems]=useState<Reminder[]>([]);const[loading,setLoading]=useState(true);const[refreshing,setRefreshing]=useState(false);const[error,setError]=useState<string|null>(null);
  const load=useCallback(async(pull=false)=>{if(pull)setRefreshing(true);else setLoading(true);setError(null);
-  const now=new Date().toISOString();
-  const{data,error:queryError}=await supabase.from('reminders').select('id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled,horse_id').eq('status','pending').eq('enabled',true).gte('due_at',now).order('due_at',{ascending:true});
+  const now=new Date();
+  const{data,error:queryError}=await supabase.from('reminders').select('id,title,description,reminder_type,due_at,recurrence_rule,remind_before_minutes,status,enabled,horse_id').eq('status','pending').eq('enabled',true).order('due_at',{ascending:true});
   if(queryError){setError(queryError.message);setLoading(false);setRefreshing(false);return;}
-  const reminders=(data??[]) as Reminder[];
+  const reminders:Reminder[]=[];
+  for(const raw of (data??[]) as Reminder[]){const due=new Date(raw.due_at);if(due>now){reminders.push(raw);continue;}if(raw.recurrence_rule){const nextDue=advanceRecurringDate(raw.due_at,raw.recurrence_rule,now);if(nextDue){const{error}=await supabase.from('reminders').update({due_at:nextDue,updated_at:new Date().toISOString()}).eq('id',raw.id).eq('status','pending').eq('enabled',true);if(!error)reminders.push({...raw,due_at:nextDue});}}}
+  reminders.sort((a,b)=>new Date(a.due_at).getTime()-new Date(b.due_at).getTime());
   const ids=[...new Set(reminders.map(r=>r.horse_id).filter(Boolean))] as string[];
-  if(ids.length){
-   const[{data:personal},{data:listings}]=await Promise.all([
-    supabase.from('personal_horses').select('id,name').in('id',ids),
-    supabase.from('horse_listings').select('id,name').in('id',ids),
-   ]);
-   const names=new Map<string,string>();for(const h of personal??[])names.set(h.id,h.name);for(const h of listings??[])names.set(h.id,h.name);
-   for(const r of reminders)r.horse_name=r.horse_id?names.get(r.horse_id)??null:null;
-  }
-  setItems(reminders);
-  try{await syncReminderNotifications(reminders);}catch(notificationError){console.warn('Reminder notification sync failed',notificationError);}
-  setLoading(false);setRefreshing(false);
+  if(ids.length){const[{data:personal},{data:listings}]=await Promise.all([supabase.from('personal_horses').select('id,name').in('id',ids),supabase.from('horse_listings').select('id,name').in('id',ids)]);const names=new Map<string,string>();for(const h of personal??[])names.set(h.id,h.name);for(const h of listings??[])names.set(h.id,h.name);for(const r of reminders)r.horse_name=r.horse_id?names.get(r.horse_id)??null:null;}
+  setItems(reminders);try{await syncReminderNotifications(reminders);}catch(notificationError){console.warn('Reminder notification sync failed',notificationError);}setLoading(false);setRefreshing(false);
  },[]);
  useEffect(()=>{void load();},[load]);
  if(loading)return <View style={styles.center}><ActivityIndicator size="large"/><Text style={styles.muted}>Loading reminders…</Text></View>;
