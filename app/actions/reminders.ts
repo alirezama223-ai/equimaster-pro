@@ -27,6 +27,43 @@ async function getUser() {
   return { supabase, user };
 }
 
+function advanceRecurringDate(value: string, rule: string, now: Date): string | null {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return null;
+
+  const match = rule.match(/^FREQ=(DAILY|WEEKLY|MONTHLY|YEARLY)(?:;INTERVAL=(\d+))?$/);
+  if (!match) return null;
+  const frequency = match[1];
+  const interval = Math.max(1, Number(match[2] ?? "1"));
+
+  const addOne = (d: Date) => {
+    if (frequency === "DAILY") d.setDate(d.getDate() + interval);
+    else if (frequency === "WEEKLY") d.setDate(d.getDate() + (7 * interval));
+    else if (frequency === "MONTHLY") {
+      const originalDay = d.getDate();
+      d.setDate(1);
+      d.setMonth(d.getMonth() + interval);
+      const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      d.setDate(Math.min(originalDay, lastDay));
+    } else {
+      const originalMonth = d.getMonth();
+      const originalDay = d.getDate();
+      d.setDate(1);
+      d.setFullYear(d.getFullYear() + interval);
+      d.setMonth(originalMonth);
+      const lastDay = new Date(d.getFullYear(), originalMonth + 1, 0).getDate();
+      d.setDate(Math.min(originalDay, lastDay));
+    }
+  };
+
+  let guard = 0;
+  while (date <= now && guard < 1000) {
+    addOne(date);
+    guard += 1;
+  }
+  return date > now ? date.toISOString() : null;
+}
+
 export async function getMyReminders(): Promise<{
   reminders: ReminderRow[];
   horses: ReminderHorseOption[];
@@ -35,7 +72,7 @@ export async function getMyReminders(): Promise<{
   const { supabase, user } = await getUser();
   if (!user) return { reminders: [], horses: [], error: "You must be signed in." };
 
-  const now = new Date().toISOString();
+  const now = new Date();
   const [{ data: reminders, error: reminderError }, { data: personalHorses, error: personalHorseError }, { data: listingHorses, error: listingHorseError }] = await Promise.all([
     supabase
       .from("reminders")
@@ -43,7 +80,6 @@ export async function getMyReminders(): Promise<{
       .eq("user_id", user.id)
       .eq("status", "pending")
       .eq("enabled", true)
-      .gte("due_at", now)
       .order("due_at", { ascending: true }),
     supabase
       .from("personal_horses")
@@ -60,12 +96,38 @@ export async function getMyReminders(): Promise<{
   if (reminderError) return { reminders: [], horses: [], error: "Unable to load reminders." };
   if (personalHorseError && listingHorseError) return { reminders: (reminders ?? []) as ReminderRow[], horses: [], error: "Unable to load your horses." };
 
+  const activeReminders: ReminderRow[] = [];
+  for (const row of (reminders ?? []) as ReminderRow[]) {
+    const due = new Date(row.due_at);
+    if (due > now) {
+      activeReminders.push(row);
+      continue;
+    }
+
+    if (row.recurrence_rule) {
+      const nextDue = advanceRecurringDate(row.due_at, row.recurrence_rule, now);
+      if (nextDue) {
+        const { error } = await supabase
+          .from("reminders")
+          .update({ due_at: nextDue, updated_at: new Date().toISOString() })
+          .eq("id", row.id)
+          .eq("user_id", user.id)
+          .eq("status", "pending")
+          .eq("enabled", true);
+
+        if (!error) activeReminders.push({ ...row, due_at: nextDue });
+      }
+    }
+  }
+
+  activeReminders.sort((a, b) => new Date(a.due_at).getTime() - new Date(b.due_at).getTime());
+
   const horses = new Map<string, ReminderHorseOption>();
   for (const horse of personalHorses ?? []) horses.set(horse.id, horse as ReminderHorseOption);
   for (const horse of listingHorses ?? []) if (!horses.has(horse.id)) horses.set(horse.id, horse as ReminderHorseOption);
 
   return {
-    reminders: (reminders ?? []) as ReminderRow[],
+    reminders: activeReminders,
     horses: Array.from(horses.values()).sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
