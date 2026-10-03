@@ -16,7 +16,10 @@ export default async function RemindersPage() {
   const result = await getMyReminders();
   const horseNames = new Map(result.horses.map((horse) => [horse.id, horse.name]));
   const reminders = result.reminders.map((reminder) => {
-    if (reminder.source_type !== "vaccination") return reminder;
+    // Vaccination reminders can come from either the newer source metadata
+    // or older rows that only carry the reminder type.
+    const isVaccination = reminder.source_type === "vaccination" || reminder.reminder_type === "vaccination";
+    if (!isVaccination) return reminder;
 
     const horseName = reminder.horse_id ? horseNames.get(reminder.horse_id) : undefined;
     const vaccineName = reminder.rule_key?.trim() || "Vaccination";
