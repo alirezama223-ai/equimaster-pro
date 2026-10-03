@@ -17,12 +17,13 @@ export default async function RemindersPage() {
   const horseNames = new Map(result.horses.map((horse) => [horse.id, horse.name]));
   const reminders = result.reminders.map((reminder) => {
     // Vaccination reminders can come from either the newer source metadata
-    // or older rows that only carry the reminder type.
+    // or older rows that only carry the reminder type. Legacy rows may have
+    // the vaccine name in description rather than rule_key.
     const isVaccination = reminder.source_type === "vaccination" || reminder.reminder_type === "vaccination";
     if (!isVaccination) return reminder;
 
     const horseName = reminder.horse_id ? horseNames.get(reminder.horse_id) : undefined;
-    const vaccineName = reminder.rule_key?.trim() || "Vaccination";
+    const vaccineName = reminder.rule_key?.trim() || reminder.description?.trim() || "Vaccination";
 
     return {
       ...reminder,
