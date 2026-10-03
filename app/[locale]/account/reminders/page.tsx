@@ -14,6 +14,18 @@ export default async function RemindersPage() {
   if (!user) redirect(loginRedirectPath("/account/reminders"));
 
   const result = await getMyReminders();
+  const horseNames = new Map(result.horses.map((horse) => [horse.id, horse.name]));
+  const reminders = result.reminders.map((reminder) => {
+    if (reminder.source_type !== "vaccination") return reminder;
+
+    const horseName = reminder.horse_id ? horseNames.get(reminder.horse_id) : undefined;
+    const vaccineName = reminder.rule_key?.trim() || "Vaccination";
+
+    return {
+      ...reminder,
+      title: horseName ? `${vaccineName} vaccination · ${horseName}` : `${vaccineName} vaccination`,
+    };
+  });
 
   return (
     <>
@@ -21,7 +33,7 @@ export default async function RemindersPage() {
       <main className="min-h-screen bg-[#08111F] pt-28 pb-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <FadeUp immediate>
-            <RemindersManager reminders={result.reminders} horses={result.horses} />
+            <RemindersManager reminders={reminders} horses={result.horses} />
           </FadeUp>
         </div>
       </main>
