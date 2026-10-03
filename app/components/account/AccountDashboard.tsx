@@ -28,7 +28,20 @@ export default async function AccountDashboard({ user, listings, listingStats, i
   const fullName = (user.user_metadata?.full_name as string | undefined) || t("defaultName");
   const [savedSearchResult, savedSearchAlertsResult, remindersResult] = await Promise.all([getUserSavedSearches(), getSavedSearchAlerts(), getMyReminders()]);
   const savedSearches = savedSearchResult.searches; const alertById = new Map(savedSearchAlertsResult.alerts.map((alert) => [alert.id, alert.count]));
-  const upcomingReminders = remindersResult.reminders.filter((reminder) => reminder.status === "pending" && reminder.enabled).slice(0, 3);
+  const horseNames = new Map(remindersResult.horses.map((horse) => [horse.id, horse.name]));
+  const upcomingReminders = remindersResult.reminders
+    .filter((reminder) => reminder.status === "pending" && reminder.enabled)
+    .slice(0, 3)
+    .map((reminder) => {
+      const isVaccination = reminder.source_type === "vaccination" || reminder.reminder_type === "vaccination";
+      if (!isVaccination) return reminder;
+      const horseName = reminder.horse_id ? horseNames.get(reminder.horse_id) : undefined;
+      const vaccineName = reminder.rule_key?.trim() || reminder.description?.trim() || "Vaccination";
+      return {
+        ...reminder,
+        title: horseName ? `${vaccineName} vaccination · ${horseName}` : `${vaccineName} vaccination`,
+      };
+    });
   return <div className="space-y-8">
     <section className="rounded-3xl bg-[#111C2E] border border-gray-800 p-6 sm:p-8"><p className="uppercase tracking-[6px] text-blue-500 text-xs font-semibold">{t("eyebrow")}</p><h1 className="text-3xl sm:text-4xl font-black text-white mt-4">{t("welcome", { name: fullName })}</h1><p className="mt-3 text-gray-400">{user.email}</p>{newInquiryCount > 0 ? <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600/20 border border-blue-500/30 px-4 py-2 text-sm text-blue-200">{newInquiryCount === 1 ? t("newInquiry", { count: newInquiryCount }) : t("newInquiries", { count: newInquiryCount })}</div> : null}<div className="mt-8 flex flex-col sm:flex-row gap-4"><Link href="/sell" className="inline-flex justify-center rounded-xl bg-blue-600 hover:bg-blue-500 px-6 py-4 text-white font-semibold transition">{t("createListing")}</Link><LogoutButton /></div></section>
     <NotificationSettings userId={user.id} />
