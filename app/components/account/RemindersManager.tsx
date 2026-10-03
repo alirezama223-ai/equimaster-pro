@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { cancelReminder, completeReminder, createReminder, updateReminder } from "@/app/actions/reminders";
 import type { ReminderHorseOption, ReminderRow } from "@/app/actions/reminders";
 
@@ -85,15 +85,28 @@ export default function RemindersManager({reminders,horses}:Props){
 
     <div className="mt-6 space-y-3">
       {active.length===0&&!showForm&&<div className="rounded-2xl border border-dashed border-white/10 px-5 py-10 text-center text-sm text-gray-500">{t.empty}</div>}
-      {active.map(r=><article key={r.id} className="rounded-2xl border border-white/10 bg-[#0B1422] p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="truncate text-base font-semibold text-white">{r.title}</h3><span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-300">{t.types[r.reminder_type]??r.reminder_type}</span>{r.recurrence_rule&&<span className="rounded-full bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-300">{t.repeats}: {t.repeatsMap[r.recurrence_rule]??r.recurrence_rule}</span>}</div>
-            <p className="mt-2 text-sm text-gray-300">{formatDate(r.due_at)}</p>{r.description&&<p className="mt-1 text-sm text-gray-500">{r.description}</p>}
-            {r.recurrence_rule&&<p className="mt-2 text-xs font-medium text-gray-400">{t.next}: {formatDate(r.due_at)}</p>}
+      {active.map(r=>{
+        const isVaccination=r.reminder_type==="vaccination" || r.source_type==="vaccination";
+        const reminderContent=(<>
+          <h3 className="truncate text-base font-semibold text-white">{r.title}</h3>
+          <p className="mt-2 text-sm text-gray-300">{formatDate(r.due_at)}</p>
+          {r.description&&<p className="mt-1 text-sm text-gray-500">{r.description}</p>}
+          {r.recurrence_rule&&<p className="mt-2 text-xs font-medium text-gray-400">{t.next}: {formatDate(r.due_at)}</p>}
+        </>);
+        return <article key={r.id} className="rounded-2xl border border-white/10 bg-[#0B1422] p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                {isVaccination && r.horse_id ? <Link href={`/account/my-horses/${r.horse_id}`} className="block min-w-0 rounded-lg outline-none transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-blue-500" title="Open vaccination history">{reminderContent}</Link> : reminderContent}
+                <span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-300">{t.types[r.reminder_type]??r.reminder_type}</span>
+                {r.recurrence_rule&&<span className="rounded-full bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-300">{t.repeats}: {t.repeatsMap[r.recurrence_rule]??r.recurrence_rule}</span>}
+              </div>
+              {isVaccination && r.horse_id && <Link href={`/account/my-horses/${r.horse_id}`} className="mt-2 inline-block text-xs font-semibold text-blue-300 hover:text-blue-200">View vaccination history →</Link>}
+            </div>
+            <div className="flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={()=>openEdit(r)} className="rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-gray-200 hover:bg-white/5 disabled:opacity-50">{t.edit}</button><button type="button" disabled={busy} onClick={()=>action(r.id,"complete")} className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50">{t.complete}</button><button type="button" disabled={busy} onClick={()=>action(r.id,"cancel")} className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-300 hover:bg-red-500/20 disabled:opacity-50">{t.cancel}</button></div>
           </div>
-          <div className="flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={()=>openEdit(r)} className="rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-gray-200 hover:bg-white/5 disabled:opacity-50">{t.edit}</button><button type="button" disabled={busy} onClick={()=>action(r.id,"complete")} className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50">{t.complete}</button><button type="button" disabled={busy} onClick={()=>action(r.id,"cancel")} className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-300 hover:bg-red-500/20 disabled:opacity-50">{t.cancel}</button></div>
-        </div>
-      </article>)}
+        </article>;
+      })}
     </div>
   </section>;
 }
