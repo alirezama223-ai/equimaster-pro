@@ -236,8 +236,29 @@ export async function moderateAdminListingAdvanced(
   }
 
   if (action === "delete") {
-    const { error } = await auth.supabase.from("horse_listings").delete().eq("id", listingId);
-    if (error) return { error: error.message };
+    // Preserve order and payment history: listings with orders are archived and hidden
+    // instead of being physically deleted. Listings without orders can be deleted.
+    const { count: orderCount, error: orderCountError } = await auth.supabase
+      .from("horse_listing_orders")
+      .select("id", { count: "exact", head: true })
+      .eq("listing_id", listingId);
+
+    if (orderCountError) {
+      return { error: "Unable to verify listing order history. Please try again." };
+    }
+
+    if ((orderCount ?? 0) > 0) {
+      const { error } = await auth.supabase
+        .from("horse_listings")
+        .update({ status: "archived", hidden: true, featured: false })
+        .eq("id", listingId);
+
+      if (error) return { error: error.message };
+    } else {
+      const { error } = await auth.supabase.from("horse_listings").delete().eq("id", listingId);
+      if (error) return { error: error.message };
+    }
+
     revalidateEnterprisePaths();
     revalidatePath("/marketplace");
     revalidatePath("/horses");
