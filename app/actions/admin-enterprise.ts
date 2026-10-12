@@ -7,6 +7,7 @@ import type { HorseListingRow } from "@/app/types/horse-listing";
 import type { AccountStatus, AdminAnalyticsDetail, AdminChartPoint, AdminConversationListItem, AdminDashboardCharts, AdminEnterpriseStats, AdminExtendedFeedbackReport, AdminMessageListItem, AdminSellerListItem, BroadcastTarget, SellerVerificationStatus } from "@/app/types/admin-panel";
 import { getAdminDashboardStats } from "@/app/actions/admin";
 import { mapListingRow } from "@/app/lib/admin-listing-mapper";
+import { createServiceClient } from "@/app/lib/supabase/service";
 
 function monthKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
@@ -238,10 +239,21 @@ export async function moderateAdminListingAdvanced(
   if (action === "delete") {
     // Preserve order and payment history: listings with orders are archived and hidden
     // instead of being physically deleted. Listings without orders can be deleted.
-    const { count: orderCount, error: orderCountError } = await auth.supabase
-      .from("horse_listing_orders")
-      .select("id", { count: "exact", head: true })
-      .eq("listing_id", listingId);
+    // Order records are intentionally not readable through the regular admin session.
+    // Check them server-side with the service client only after requireAdmin() succeeded.
+    let orderCount: number | null = null;
+    let orderCountError: { message: string } | null = null;
+    try {
+      const serviceSupabase = createServiceClient();
+      const result = await serviceSupabase
+        .from("horse_listing_orders")
+        .select("id", { count: "exact", head: true })
+        .eq("listing_id", listingId);
+      orderCount = result.count;
+      orderCountError = result.error;
+    } catch {
+      orderCountError = { message: "Unable to initialize secure order-history lookup." };
+    }
 
     if (orderCountError) {
       return { error: "Unable to verify listing order history. Please try again." };
