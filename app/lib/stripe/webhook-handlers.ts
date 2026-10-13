@@ -94,24 +94,36 @@ async function recordSubscriptionEvent(input: {
 async function resolveUserIdFromStripeSubscription(
   subscription: Stripe.Subscription
 ): Promise<string | null> {
-  const metadataUserId = subscription.metadata?.user_id;
-  if (metadataUserId) {
-    return metadataUserId;
-  }
-
   const supabase = createServiceClient();
   const customerId =
     typeof subscription.customer === "string"
       ? subscription.customer
       : subscription.customer.id;
 
-  const { data } = await supabase
+  // The Stripe customer-to-user mapping is the source of truth. Metadata is
+  // checked against it, never used on its own to select a database user.
+  const { data, error } = await supabase
     .from("subscriptions")
     .select("user_id")
     .eq("stripe_customer_id", customerId)
     .maybeSingle();
 
-  return data?.user_id ? String(data.user_id) : null;
+  if (error) {
+    throw new Error(`Unable to resolve Stripe customer ownership: ${error.message}`);
+  }
+
+  if (!data?.user_id) {
+    return null;
+  }
+
+  const mappedUserId = String(data.user_id);
+  const metadataUserId = subscription.metadata?.user_id;
+
+  if (metadataUserId && metadataUserId !== mappedUserId) {
+    throw new Error("Stripe subscription metadata does not match its customer owner.");
+  }
+
+  return mappedUserId;
 }
 
 async function syncStripeSubscription(
@@ -129,10 +141,27 @@ async function syncStripeSubscription(
   await supabase.rpc("ensure_user_subscription", { p_user_id: userId });
 
   const priceId = stripeSubscription.items.data[0]?.price?.id ?? null;
-  const planSlug =
-    (stripeSubscription.metadata?.plan_slug as PlanSlug | undefined) ||
-    planSlugFromStripePriceId(priceId) ||
-    "free";
+  const mappedPlanSlug = planSlugFromStripePriceId(priceId);
+  const metadataPlanSlug = stripeSubscription.metadata?.plan_slug as PlanSlug | undefined;
+
+  // A subscription's actual Stripe Price determines its plan. Metadata is
+  // useful for diagnostics, but must not override the configured Price mapping.
+  if (stripeSubscription.status !== "canceled" && !mappedPlanSlug) {
+    throw new Error("Unable to map Stripe subscription Price ID to a configured plan.");
+  }
+
+  if (
+    stripeSubscription.status !== "canceled" &&
+    metadataPlanSlug &&
+    mappedPlanSlug &&
+    metadataPlanSlug !== mappedPlanSlug
+  ) {
+    throw new Error("Stripe subscription plan metadata does not match its Price ID.");
+  }
+
+  const planSlug: PlanSlug = stripeSubscription.status === "canceled"
+    ? "free"
+    : mappedPlanSlug!;
   const billingInterval =
     stripeSubscription.items.data[0]?.price?.recurring?.interval === "year"
       ? ("year" as BillingInterval)
