@@ -121,6 +121,27 @@ begin
    where id = v_period_id
    for update;
 
+  -- Recover reservations left behind by crashed/timed-out server requests.
+  update public.ai_usage_requests
+     set status = 'released', finalized_at = now()
+   where period_id = v_period_id
+     and status = 'reserved'
+     and created_at < now() - interval '10 minutes';
+
+  update public.ai_usage_periods
+     set reserved_count = (
+       select count(*)::integer
+         from public.ai_usage_requests
+        where period_id = v_period_id and status = 'reserved'
+     ),
+     updated_at = now()
+   where id = v_period_id;
+
+  select used_count, reserved_count
+    into v_used, v_reserved
+    from public.ai_usage_periods
+   where id = v_period_id;
+
   select *
     into v_existing
     from public.ai_usage_requests
