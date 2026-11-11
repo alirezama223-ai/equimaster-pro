@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
 import { analyzeVaccinationSchedule } from "@/app/lib/vaccination-rules";
+import { consumeAiBurstLimit, finalizePaidAiUsage, getPaidAiAccess, reservePaidAiUsage } from "@/app/lib/ai/entitlements";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -81,6 +82,29 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Please sign in before scanning a horse passport." }, { status: 401 });
 
+  const entitlement = await getPaidAiAccess(supabase, user.id);
+  if (entitlement.status === "unavailable") {
+    return NextResponse.json(
+      { error: "We could not verify your subscription. Please try again." },
+      { status: 503 }
+    );
+  }
+  if (entitlement.status === "denied") {
+    return NextResponse.json(
+      { error: "Horse Passport AI requires an active Pro or Enterprise subscription." },
+      { status: 403 }
+    );
+  }
+
+  const rateLimit = consumeAiBurstLimit(user.id, "horse-passport");
+  if (!rateLimit.allowed) {
+    const retryAfterSeconds = Math.max(1, Math.ceil(rateLimit.retryAfterMs / 1000));
+    return NextResponse.json(
+      { error: "Too many passport scans. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(retryAfterSeconds) } }
+    );
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "Horse passport AI scanning is not configured on this deployment." }, { status: 503 });
 
@@ -100,6 +124,20 @@ export async function POST(request: Request) {
     const bytes = Buffer.from(await file.arrayBuffer());
     return `data:${file.type};base64,${bytes.toString("base64")}`;
   }));
+
+  const reservation = await reservePaidAiUsage(supabase, "horse-passport");
+  if (reservation.status === "unavailable") {
+    return NextResponse.json({ error: "AI usage could not be verified. Please try again." }, { status: 503 });
+  }
+  if (reservation.status === "subscription_required") {
+    return NextResponse.json({ error: "Horse Passport AI requires an active Pro or Enterprise subscription." }, { status: 403 });
+  }
+  if (reservation.status === "quota_exceeded") {
+    return NextResponse.json({
+      error: `Your monthly AI allowance is used up (${reservation.used}/${reservation.quota}). It resets with your subscription period.`,
+      usage: { used: reservation.used, quota: reservation.quota, remaining: 0, periodEnd: reservation.periodEnd },
+    }, { status: 429 });
+  }
 
   const model = process.env.HORSE_PASS_AI_MODEL || "gpt-4.1-mini";
   const prompt = `You extract structured data from photos of a European horse passport. Read only what is visibly present across all uploaded images. Combine the pages when they belong to the same passport. Do not guess, invent, or copy placeholder values from the website. If a field is not visible on any uploaded page, return null.
@@ -130,6 +168,7 @@ The vaccination table is often on a separate page from the identity and pedigree
 
   if (!response.ok) {
     const details = await response.text();
+    await finalizePaidAiUsage(supabase, reservation.requestId, false);
     console.error("Horse passport AI request failed", response.status, details.slice(0, 1000));
     return NextResponse.json({ error: "The passport could not be analyzed right now. Please try again." }, { status: 502 });
   }
@@ -137,8 +176,15 @@ The vaccination table is often on a separate page from the identity and pedigree
   const payload = await response.json();
   const content = payload?.choices?.[0]?.message?.content;
   const parsed = typeof content === "string" ? safeJsonParse(content) : null;
-  if (!parsed || typeof parsed !== "object") return NextResponse.json({ error: "The AI returned an invalid extraction result." }, { status: 502 });
+  if (!parsed || typeof parsed !== "object") {
+    await finalizePaidAiUsage(supabase, reservation.requestId, false);
+    return NextResponse.json({ error: "The AI returned an invalid extraction result." }, { status: 502 });
+  }
 
+  await finalizePaidAiUsage(supabase, reservation.requestId, true);
   const data = applyVaccinationSchedules(parsed);
-  return NextResponse.json({ data });
+  return NextResponse.json({
+    data,
+    usage: { used: reservation.used + 1, quota: reservation.quota, remaining: reservation.remaining },
+  });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Link } from "@/i18n/navigation";
 import type { ListingFormData } from "@/app/types/listing";
 
 export type HorsePassportExtraction = {
@@ -54,9 +55,11 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<HorsePassportExtraction | null>(null);
   const [imageCount, setImageCount] = useState(0);
+  const [upgradeRequired, setUpgradeRequired] = useState(false);
 
   async function scan(files: File[]) {
     setError(null);
+    setUpgradeRequired(false);
     setResult(null);
     setImageCount(files.length);
     setIsScanning(true);
@@ -94,7 +97,9 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
 
       onExtracted(extracted);
     } catch (scanError) {
-      setError(scanError instanceof Error ? scanError.message : "The passport could not be analyzed.");
+      const message = scanError instanceof Error ? scanError.message : "The passport could not be analyzed.";
+      setError(message);
+      setUpgradeRequired(message.includes("active Pro or Enterprise subscription"));
     } finally {
       setIsScanning(false);
     }
@@ -134,9 +139,16 @@ export default function HorsePassportScanner({ onExtracted }: Props) {
       />
 
       {error ? (
-        <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
           {error}
-        </p>
+          {upgradeRequired ? (
+            <p className="mt-2">
+              <Link href="/account/subscription" className="font-bold text-blue-300 underline underline-offset-4 hover:text-blue-200">
+                Pro- und Enterprise-Tarife ansehen
+              </Link>
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {result ? (
