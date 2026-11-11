@@ -6,7 +6,7 @@ import { fetchHorseTrainingAnalytics } from "@/app/lib/training/horse-analytics"
 import { applyTrainingAiToNextSession } from "@/app/lib/training/ai-next-session";
 import { generateTrainingAiCoach, type TrainingAiCoachResult } from "@/app/lib/training/ai-coach";
 import { createClient } from "@/app/lib/supabase/server";
-import { consumeAiBurstLimit, getPaidAiAccess } from "@/app/lib/ai/entitlements";
+import { consumeAiBurstLimit, finalizePaidAiUsage, getPaidAiAccess, reservePaidAiUsage } from "@/app/lib/ai/entitlements";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -52,9 +52,26 @@ export async function getTrainingAiCoach(pedigreeHorseId: string): Promise<{
     return { result: null, error: "Training analytics are not available for this horse yet." };
   }
 
+  const reservation = await reservePaidAiUsage(auth.supabase, "training-coach");
+  if (reservation.status === "unavailable") {
+    return { result: null, error: "AI usage could not be verified. Please try again." };
+  }
+  if (reservation.status === "subscription_required") {
+    return { result: null, error: "Training AI requires an active Pro or Enterprise subscription." };
+  }
+  if (reservation.status === "quota_exceeded") {
+    return {
+      result: null,
+      error: `Your monthly AI allowance is used up (${reservation.used}/${reservation.quota}). It resets with your subscription period.`,
+    };
+  }
+
   try {
-    return { result: await generateTrainingAiCoach(analytics.analytics) };
+    const result = await generateTrainingAiCoach(analytics.analytics);
+    await finalizePaidAiUsage(auth.supabase, reservation.requestId, true);
+    return { result };
   } catch (error) {
+    await finalizePaidAiUsage(auth.supabase, reservation.requestId, false);
     return {
       result: null,
       error: error instanceof Error ? error.message : "Training AI could not generate an assessment.",
