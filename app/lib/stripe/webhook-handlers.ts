@@ -138,7 +138,12 @@ async function syncStripeSubscription(
     throw new Error("Unable to resolve user for Stripe subscription.");
   }
 
-  await supabase.rpc("ensure_user_subscription", { p_user_id: userId });
+  const { error: ensureError } = await supabase.rpc("ensure_user_subscription", {
+    p_user_id: userId,
+  });
+  if (ensureError) {
+    throw new Error(`Unable to initialize subscription for Stripe customer: ${ensureError.message}`);
+  }
 
   const priceId = stripeSubscription.items.data[0]?.price?.id ?? null;
   const mappedPlanSlug = planSlugFromStripePriceId(priceId);
