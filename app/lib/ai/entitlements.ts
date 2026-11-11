@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { checkRateLimit } from "@/app/lib/security/rate-limit";
 
 export type AiFeature = "horse-passport" | "training-coach";
 
@@ -102,4 +103,12 @@ export async function finalizePaidAiUsage(
   if (error || data !== true) {
     console.error("[ai-usage] Unable to finalize AI usage reservation:", error?.message ?? "Reservation not finalized");
   }
+}
+
+/** Best-effort burst protection in addition to the persistent monthly quota. */
+export function consumeAiBurstLimit(
+  userId: string,
+  feature: AiFeature
+): { allowed: true } | { allowed: false; retryAfterMs: number } {
+  return checkRateLimit(`ai:${feature}:${userId}`, 5, 60_000);
 }
