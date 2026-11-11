@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
 import { analyzeVaccinationSchedule } from "@/app/lib/vaccination-rules";
+import { consumeAiBurstLimit, getPaidAiAccess } from "@/app/lib/ai/entitlements";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -80,6 +81,29 @@ export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Please sign in before scanning a horse passport." }, { status: 401 });
+
+  const entitlement = await getPaidAiAccess(supabase, user.id);
+  if (entitlement.status === "unavailable") {
+    return NextResponse.json(
+      { error: "We could not verify your subscription. Please try again." },
+      { status: 503 }
+    );
+  }
+  if (entitlement.status === "denied") {
+    return NextResponse.json(
+      { error: "Horse Passport AI requires an active Pro or Enterprise subscription." },
+      { status: 403 }
+    );
+  }
+
+  const rateLimit = consumeAiBurstLimit(user.id, "horse-passport");
+  if (!rateLimit.allowed) {
+    const retryAfterSeconds = Math.max(1, Math.ceil(rateLimit.retryAfterMs / 1000));
+    return NextResponse.json(
+      { error: "Too many passport scans. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(retryAfterSeconds) } }
+    );
+  }
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "Horse passport AI scanning is not configured on this deployment." }, { status: 503 });
