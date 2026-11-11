@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link } from "@/i18n/navigation";
 import { applyTrainingAiNextSessionAction, getTrainingAiCoach } from "@/app/actions/training-ai";
 import type { TrainingAiCoachResult } from "@/app/lib/training/ai-coach";
 
@@ -12,14 +13,17 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedMessage, setAppliedMessage] = useState<string | null>(null);
+  const [upgradeRequired, setUpgradeRequired] = useState(false);
 
   async function analyze() {
     setLoading(true);
     setError(null);
     setAppliedMessage(null);
+    setUpgradeRequired(false);
     const response = await getTrainingAiCoach(horseId);
     setResult(response.result);
     setError(response.error ?? null);
+    setUpgradeRequired(Boolean(response.error?.includes("active Pro or Enterprise subscription")));
     setLoading(false);
   }
 
@@ -29,10 +33,12 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
     setApplying(true);
     setError(null);
     setAppliedMessage(null);
+    setUpgradeRequired(false);
     const response = await applyTrainingAiNextSessionAction(horseId, result.nextSession);
 
     if (response.error) {
       setError(response.error);
+      setUpgradeRequired(response.error.includes("active Pro or Enterprise subscription"));
     } else if (response.sessionDate) {
       setAppliedMessage(
         response.created
@@ -74,6 +80,13 @@ export default function TrainingAiCoachPanel({ horseId, horseName }: Props) {
       {error ? (
         <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
           {error}
+          {upgradeRequired ? (
+            <p className="mt-3">
+              <Link href="/account/subscription" className="font-bold text-blue-300 underline underline-offset-4 hover:text-blue-200">
+                View Pro and Enterprise plans
+              </Link>
+            </p>
+          ) : null}
         </div>
       ) : null}
 
