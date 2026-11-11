@@ -234,3 +234,59 @@ comment on table public.ai_usage_periods is
   'Server-managed monthly AI quota counters, scoped to a paid subscription billing period.';
 comment on table public.ai_usage_requests is
   'Server-managed AI usage reservations; failed AI calls release their reservation.';
+
+
+create or replace function public.get_ai_usage_summary()
+returns table (
+  used integer,
+  quota integer,
+  remaining integer,
+  period_end timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_subscription record;
+  v_period_start timestamptz;
+  v_period_end timestamptz;
+  v_quota integer;
+begin
+  if v_user_id is null then
+    return;
+  end if;
+
+  select s.id, s.status, s.current_period_start, s.current_period_end, p.slug, p.active
+    into v_subscription
+    from public.subscriptions s
+    join public.plans p on p.id = s.plan_id
+   where s.user_id = v_user_id
+   limit 1;
+
+  if not found or v_subscription.status <> 'active' or v_subscription.active is distinct from true
+     or v_subscription.slug not in ('pro', 'enterprise') then
+    return query select 0, 0, 0, null::timestamptz;
+    return;
+  end if;
+
+  v_quota := case v_subscription.slug when 'pro' then 15 when 'enterprise' then 50 else 0 end;
+  v_period_start := coalesce(v_subscription.current_period_start, date_trunc('month', now()));
+  v_period_end := coalesce(v_subscription.current_period_end, v_period_start + interval '1 month');
+
+  return query
+    select coalesce(u.used_count, 0),
+           v_quota,
+           greatest(v_quota - coalesce(u.used_count, 0) - coalesce(u.reserved_count, 0), 0),
+           v_period_end
+      from (select 1) seed
+      left join public.ai_usage_periods u
+        on u.user_id = v_user_id
+       and u.subscription_id = v_subscription.id
+       and u.period_start = v_period_start;
+end;
+$$;
+
+revoke all on function public.get_ai_usage_summary() from public, anon;
+grant execute on function public.get_ai_usage_summary() to authenticated;
