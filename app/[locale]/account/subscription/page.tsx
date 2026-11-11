@@ -29,10 +29,18 @@ export default async function AccountSubscriptionPage({ searchParams }: Props) {
   }
 
   const params = await searchParams;
-  const [{ snapshot, plans, error }, invoicesResult] = await Promise.all([
+  const [{ snapshot, plans, error }, invoicesResult, aiUsageResult] = await Promise.all([
     getSubscriptionSnapshot(),
     getBillingHistory(),
+    supabase.rpc("get_ai_usage_summary"),
   ]);
+  const aiUsageRow = Array.isArray(aiUsageResult.data) ? aiUsageResult.data[0] : null;
+  const aiUsage = aiUsageRow && !aiUsageResult.error ? {
+    used: Number(aiUsageRow.used ?? 0),
+    quota: Number(aiUsageRow.quota ?? 0),
+    remaining: Number(aiUsageRow.remaining ?? 0),
+    periodEnd: aiUsageRow.period_end ? String(aiUsageRow.period_end) : null,
+  } : null;
   const t = await getTranslations("subscription");
 
   return (
@@ -54,6 +62,7 @@ export default async function AccountSubscriptionPage({ searchParams }: Props) {
                 snapshot={snapshot}
                 plans={plans}
                 invoices={invoicesResult.invoices}
+                aiUsage={aiUsage}
                 checkoutStatus={params.checkout ?? null}
                 errorMessage={params.error ?? error ?? invoicesResult.error ?? null}
               />
