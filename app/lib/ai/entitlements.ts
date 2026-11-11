@@ -1,5 +1,5 @@
+import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { checkRateLimit } from "@/app/lib/security/rate-limit";
 
 export type AiFeature = "horse-passport" | "training-coach";
 
@@ -8,28 +8,20 @@ export type PaidAiAccess =
   | { status: "denied" }
   | { status: "unavailable" };
 
-/**
- * AI access is limited to active Pro and Enterprise subscriptions.
- * Trialing, past_due, canceled, incomplete, paused, and Free subscriptions
- * do not receive paid AI access.
- */
+export type AiUsageReservation =
+  | { status: "reserved"; requestId: string; used: number; quota: number; remaining: number; periodEnd: string | null }
+  | { status: "quota_exceeded"; used: number; quota: number; remaining: number; periodEnd: string | null }
+  | { status: "subscription_required" }
+  | { status: "unavailable" };
+
 export function isActivePaidAiSubscription(status: unknown, planValue: unknown): boolean {
   const plan = Array.isArray(planValue) ? planValue[0] : planValue;
   if (!plan || typeof plan !== "object") return false;
-
   const record = plan as { slug?: unknown; active?: unknown };
-  return (
-    status === "active" &&
-    record.active === true &&
-    (record.slug === "pro" || record.slug === "enterprise")
-  );
+  return status === "active" && record.active === true &&
+    (record.slug === "pro" || record.slug === "enterprise");
 }
 
-/**
- * Resolve access from the authenticated user's own subscription row.
- * The subscription bootstrap and lookup fail closed: no AI request is sent
- * when the database cannot confirm the user's entitlement.
- */
 export async function getPaidAiAccess(
   supabase: SupabaseClient,
   userId: string
@@ -37,7 +29,6 @@ export async function getPaidAiAccess(
   const { error: bootstrapError } = await supabase.rpc("ensure_user_subscription", {
     p_user_id: userId,
   });
-
   if (bootstrapError) {
     console.error("[ai-access] Unable to initialize subscription:", bootstrapError.message);
     return { status: "unavailable" };
@@ -53,22 +44,62 @@ export async function getPaidAiAccess(
     console.error("[ai-access] Unable to verify subscription:", error.message);
     return { status: "unavailable" };
   }
-
-  if (!data || !isActivePaidAiSubscription(data.status, data.plans)) {
-    return { status: "denied" };
-  }
-
-  return { status: "allowed" };
+  return data && isActivePaidAiSubscription(data.status, data.plans)
+    ? { status: "allowed" }
+    : { status: "denied" };
 }
 
-/**
- * Best-effort burst protection for a single warm server process.
- * This is not a distributed or monthly quota; use a shared persistent limiter
- * before advertising a guaranteed usage allowance.
- */
-export function consumeAiBurstLimit(
-  userId: string,
+/** Reserve quota atomically before calling a paid AI provider. */
+export async function reservePaidAiUsage(
+  supabase: SupabaseClient,
   feature: AiFeature
-): { allowed: true } | { allowed: false; retryAfterMs: number } {
-  return checkRateLimit(`ai:${feature}:${userId}`, 5, 60_000);
+): Promise<AiUsageReservation> {
+  const requestId = randomUUID();
+  const { data, error } = await supabase.rpc("reserve_ai_usage", {
+    p_request_id: requestId,
+    p_feature: feature,
+  });
+
+  if (error || !Array.isArray(data) || !data[0]) {
+    console.error("[ai-usage] Unable to reserve AI usage:", error?.message ?? "Empty RPC result");
+    return { status: "unavailable" };
+  }
+
+  const row = data[0] as {
+    allowed: boolean; reason: string; used: number; quota: number;
+    remaining: number; period_end: string | null;
+  };
+
+  if (row.allowed) {
+    return {
+      status: "reserved", requestId, used: Number(row.used),
+      quota: Number(row.quota), remaining: Number(row.remaining),
+      periodEnd: row.period_end ?? null,
+    };
+  }
+  if (row.reason === "quota_exceeded") {
+    return {
+      status: "quota_exceeded", used: Number(row.used), quota: Number(row.quota),
+      remaining: Number(row.remaining), periodEnd: row.period_end ?? null,
+    };
+  }
+  if (row.reason === "subscription_required" || row.reason === "subscription_period_expired") {
+    return { status: "subscription_required" };
+  }
+  return { status: "unavailable" };
+}
+
+/** Commit successful calls to usage; release reservations after failed calls. */
+export async function finalizePaidAiUsage(
+  supabase: SupabaseClient,
+  requestId: string,
+  success: boolean
+): Promise<void> {
+  const { data, error } = await supabase.rpc("finalize_ai_usage", {
+    p_request_id: requestId,
+    p_success: success,
+  });
+  if (error || data !== true) {
+    console.error("[ai-usage] Unable to finalize AI usage reservation:", error?.message ?? "Reservation not finalized");
+  }
 }
