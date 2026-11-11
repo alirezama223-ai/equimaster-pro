@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@/i18n/navigation";
 
 type Vaccination = {
   vaccine_name: string | null;
@@ -63,6 +64,7 @@ export default function HorsePassportScanner({ horseId }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [upgradeRequired, setUpgradeRequired] = useState(false);
 
   useEffect(() => {
     const urls = files.map((file) => URL.createObjectURL(file));
@@ -73,6 +75,7 @@ export default function HorsePassportScanner({ horseId }: Props) {
   function chooseFiles(event: React.ChangeEvent<HTMLInputElement>) {
     setError(null);
     setSaved(false);
+    setUpgradeRequired(false);
     setData(null);
     const selected = Array.from(event.target.files ?? []);
     if (selected.length > 10) {
@@ -92,6 +95,7 @@ export default function HorsePassportScanner({ horseId }: Props) {
     setBusy(true);
     setError(null);
     setSaved(false);
+    setUpgradeRequired(false);
 
     try {
       const formData = new FormData();
@@ -120,7 +124,9 @@ export default function HorsePassportScanner({ horseId }: Props) {
         confidence: typeof extracted.confidence === "number" ? extracted.confidence : null,
       });
     } catch (scanError) {
-      setError(scanError instanceof Error ? scanError.message : "Passport scan failed.");
+      const message = scanError instanceof Error ? scanError.message : "Passport scan failed.";
+      setError(message);
+      setUpgradeRequired(message.includes("active Pro or Enterprise subscription"));
     } finally {
       setBusy(false);
     }
@@ -201,7 +207,18 @@ export default function HorsePassportScanner({ horseId }: Props) {
 
       {files.length > 0 ? <div className="mt-5"><div className="mb-3 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-gray-200">Passport pages</p><p className="mt-1 text-xs text-gray-500">Pages are kept in upload order so you can verify them visually.</p></div><span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-gray-400">{files.length} / 10</span></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{files.map((file, index) => <div key={`${file.name}-${index}`} className="overflow-hidden rounded-2xl border border-white/10 bg-[#0B1422]"><div className="aspect-[3/4] bg-black/20">{previewUrls[index] ? <img src={previewUrls[index]} alt={`Passport page ${index + 1}`} className="h-full w-full object-cover" /> : null}</div><div className="border-t border-white/10 px-3 py-2.5"><p className="text-[10px] font-bold uppercase tracking-[1.5px] text-blue-400">Page {index + 1}</p><p className="mt-1 truncate text-[11px] text-gray-500">{file.name}</p></div></div>)}</div></div> : null}
 
-      {error ? <p className="mt-4 rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-300">{error}</p> : null}
+      {error ? (
+        <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-300">
+          {error}
+          {upgradeRequired ? (
+            <p className="mt-2">
+              <Link href="/account/subscription" className="font-bold text-blue-300 underline underline-offset-4 hover:text-blue-200">
+                View Pro and Enterprise plans
+              </Link>
+            </p>
+          ) : null}
+        </div>
+      ) : null}
       {saved ? <p className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-emerald-300">Passport data and detected vaccinations were saved to this horse profile.</p> : null}
 
       {data ? <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-[#0B1422]">
