@@ -15,6 +15,7 @@ type Props = {
   snapshot: SubscriptionSnapshot;
   plans: PlanRow[];
   invoices: BillingHistoryRow[];
+  aiUsage?: { used: number; quota: number; remaining: number; periodEnd: string | null } | null;
   checkoutStatus?: string | null;
   errorMessage?: string | null;
 };
@@ -39,6 +40,7 @@ export default function SubscriptionDashboard({
   snapshot,
   plans,
   invoices,
+  aiUsage,
   checkoutStatus,
   errorMessage,
 }: Props) {
@@ -164,6 +166,31 @@ export default function SubscriptionDashboard({
               <p className="mt-1 text-gray-400">
                 {t("remainingListings", { count: snapshot.usage.remainingListings })}
               </p>
+            ) : null}
+            {aiUsage && aiUsage.quota > 0 ? (
+              <div className="mt-4 border-t border-white/10 pt-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-semibold text-white">AI usage</p>
+                  <p className="text-xs text-gray-400">{aiUsage.used}/{aiUsage.quota}</p>
+                </div>
+                <div
+                  className="mt-2 h-2 overflow-hidden rounded-full bg-white/10"
+                  role="progressbar"
+                  aria-label="Monthly AI usage"
+                  aria-valuemin={0}
+                  aria-valuemax={aiUsage.quota}
+                  aria-valuenow={aiUsage.used}
+                >
+                  <div
+                    className="h-full rounded-full bg-blue-500"
+                    style={{ width: `${Math.min(100, (aiUsage.used / aiUsage.quota) * 100)}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-gray-400">
+                  {aiUsage.remaining} AI requests remaining this billing period
+                  {aiUsage.periodEnd ? ` · Resets ${formatDate(aiUsage.periodEnd, locale)}` : ""}
+                </p>
+              </div>
             ) : null}
             {snapshot.subscription.current_period_end ? (
               <p className="mt-3 text-gray-400">
