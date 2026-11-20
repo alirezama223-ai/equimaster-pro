@@ -74,7 +74,7 @@ function DocumentTypeLabel({ type }: { type: string }) {
   return <span>{labels[type] ?? type}</span>;
 }
 
-export default function MyHorseProfile({ horse, sireLine, vaccinations, vetVisits, breedingEvents, documents, addVaccination, addVetVisit, addBreedingEvent, uploadDocument, deleteDocument, updateNotes, updateHorse }: { horse: Horse; sireLine: PedigreeEntry[]; vaccinations: Vaccination[]; vetVisits: VetVisit[]; breedingEvents: BreedingEvent[]; documents: HorseDocument[]; addVaccination: Action; addVetVisit: Action; addBreedingEvent: Action; uploadDocument: Action; deleteDocument: Action; updateNotes: Action; updateHorse: Action }) {
+export default function MyHorseProfile({ horse, sireLine, vaccinations, vetVisits, breedingEvents, documents, addVaccination, addVetVisit, addBreedingEvent, uploadDocument, deleteDocument, updateNotes, updateHorse }: { horse: Horse; sireLine: PedigreeEntry[]; vaccinations: Vaccination[]; vetVisits: VetVisit[]; breedingEvents: BreedingEvent[]; documents: HorseDocument[]; addVaccination: VaccinationFormAction; addVetVisit: Action; addBreedingEvent: Action; uploadDocument: Action; deleteDocument: Action; updateNotes: Action; updateHorse: Action }) {
   const byName = new Map(sireLine.map((item) => [item.name, item]));
   const root = byName.get(horse.name) ?? sireLine[0];
   const sire = root?.sire ? byName.get(root.sire) : undefined;
