@@ -47,13 +47,47 @@ export async function deletePersonalHorse(formData: FormData) {
   redirect("/account/my-horses");
 }
 
-export async function addHorseVaccination(formData: FormData) {
+export type VaccinationActionState = { success: boolean; message: string };
+
+export async function addHorseVaccination(_prevState: VaccinationActionState, formData: FormData): Promise<VaccinationActionState> {
   "use server";
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser(); if (!user) redirect("/account");
-  const horse = await getOwnedHorse(supabase, user.id, String(formData.get("horse_id") || "")); if (!horse?.pedigree_horse_id) return;
-  await supabase.from("horse_vaccinations").insert({ created_by: user.id, pedigree_horse_id: horse.pedigree_horse_id, vaccine_name: String(formData.get("vaccine_name") || "").trim(), administered_date: String(formData.get("administered_date") || ""), next_due_date: String(formData.get("next_due_date") || "") || null, batch_number: String(formData.get("batch_number") || "").trim() || null, notes: String(formData.get("notes") || "").trim() || null });
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) redirect("/account");
+
+  const horseId = String(formData.get("horse_id") || "").trim();
+  const vaccineName = String(formData.get("vaccine_name") || "").trim();
+  const administeredDate = String(formData.get("administered_date") || "").trim();
+  const nextDueDate = String(formData.get("next_due_date") || "").trim() || null;
+
+  if (!horseId || !vaccineName || !administeredDate) {
+    return { success: false, message: "Please enter the vaccine name and vaccination date." };
+  }
+
+  const horse = await getOwnedHorse(supabase, user.id, horseId);
+  if (!horse) return { success: false, message: "Horse record not found or you do not have access to it." };
+  if (!horse.pedigree_horse_id) {
+    console.error("Vaccination save blocked: horse has no pedigree_horse_id", { horseId: horse.id });
+    return { success: false, message: "This horse record is missing its internal link. Please contact support; no vaccination was saved." };
+  }
+
+  const { error } = await supabase.from("horse_vaccinations").insert({
+    created_by: user.id,
+    pedigree_horse_id: horse.pedigree_horse_id,
+    vaccine_name: vaccineName,
+    administered_date: administeredDate,
+    next_due_date: nextDueDate,
+    batch_number: String(formData.get("batch_number") || "").trim() || null,
+    notes: String(formData.get("notes") || "").trim() || null,
+  });
+
+  if (error) {
+    console.error("Could not save horse vaccination", { code: error.code, message: error.message, details: error.details, hint: error.hint, horseId: horse.id });
+    return { success: false, message: "The vaccination could not be saved. Please try again. If it happens again, contact support." };
+  }
+
   revalidatePath(`/account/my-horses/${horse.id}`);
+  return { success: true, message: "Vaccination saved successfully." };
 }
 
 export async function addHorseVetVisit(formData: FormData) {
